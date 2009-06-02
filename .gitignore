@@ -2,3 +2,6 @@ log/*.log
 tmp/**/*
 doc/api
 doc/app
+*~
+db/*.sqlite*
+db/schema.rb

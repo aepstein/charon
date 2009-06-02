@@ -1,0 +1,2 @@
+module PublicationExpensesHelper
+end

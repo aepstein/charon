@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  no_of_issues: 1
+  no_of_copies_per_issue: 1
+  total_copies: 1
+  purchase_price: 9.99
+  revenue: 9.99
+  cost_publication: 9.99
+  total_cost_publication: 9.99
+
+two:
+  no_of_issues: 1
+  no_of_copies_per_issue: 1
+  total_copies: 1
+  purchase_price: 9.99
+  revenue: 9.99
+  cost_publication: 9.99
+  total_cost_publication: 9.99

@@ -1,0 +1,32 @@
+<h1>Listing publication_expenses</h1>
+
+<table>
+  <tr>
+    <th>No of issues</th>
+    <th>No of copies per issue</th>
+    <th>Total copies</th>
+    <th>Purchase price</th>
+    <th>Revenue</th>
+    <th>Cost publication</th>
+    <th>Total cost publication</th>
+  </tr>
+
+<% @publication_expenses.each do |publication_expense| %>
+  <tr>
+    <td><%=h publication_expense.no_of_issues %></td>
+    <td><%=h publication_expense.no_of_copies_per_issue %></td>
+    <td><%=h publication_expense.total_copies %></td>
+    <td><%=h publication_expense.purchase_price %></td>
+    <td><%=h publication_expense.revenue %></td>
+    <td><%=h publication_expense.cost_publication %></td>
+    <td><%=h publication_expense.total_cost_publication %></td>
+    <td><%= link_to 'Show', publication_expense %></td>
+    <td><%= link_to 'Edit', edit_publication_expense_path(publication_expense) %></td>
+    <td><%= link_to 'Destroy', publication_expense, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New publication_expense', new_publication_expense_path %>
