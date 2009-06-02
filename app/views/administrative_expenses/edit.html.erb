@@ -1,0 +1,33 @@
+<h1>Editing Administrative Expenses Addendum</h1>
+
+<% form_for(@administrative_expense) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :copies, "Number of copies" %><br />
+    <%= f.text_field :copies %>
+  </p>
+
+  <p>
+    <%= f.label :repairs_restocking, "Repairs and Restocking" %><br />
+    $<%= f.text_field :repairs_restocking %>
+  </p>
+
+  <p>
+    Mailbox at Willard Straight Hall ($25 for renewal, $40 for new registration<br />
+	<%= f.radio_button(:mailbox_wsh, 25) %> <%= f.label :mailbox_wsh_25, "$25" %><br />
+	<%= f.radio_button(:mailbox_wsh, 40) %> <%= f.label :mailbox_wsh_40, "$40" %>
+  </p>
+
+  <p>
+    <%= f.label :total_request, "Total request" %><br />
+    $<%= f.text_field :total_request %>
+  </p>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @administrative_expense %> |
+<%= link_to 'Back', administrative_expenses_path %>
