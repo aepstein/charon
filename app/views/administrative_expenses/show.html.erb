@@ -1,4 +1,4 @@
-<p>
+<!--><p>
   <b>Copies:</b>
   <%=h @administrative_expense.copies %>
 </p>
@@ -21,8 +21,12 @@
 <p>
   <b>Total request:</b>
   <%=h @administrative_expense.total_request %>
-</p>
+</p>-->
 
+<p>
+  <b>Maximum request:</b> $<%=h @administrative_expense.total %>
+</p>
 
 <%= link_to 'Edit', edit_administrative_expense_path(@administrative_expense) %> |
 <%= link_to 'Back', administrative_expenses_path %>
+
