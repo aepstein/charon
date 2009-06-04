@@ -24,7 +24,7 @@
 </p>-->
 
 <p>
-  <b>Maximum request:</b> $<%=h @administrative_expense.total %>
+  <b>Maximum request:</b> <%=h number_to_currency(@administrative_expense.total) %>
 </p>
 
 <%= link_to 'Edit', edit_administrative_expense_path(@administrative_expense) %> |

@@ -1,0 +1,21 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  speaker_name: MyString
+  performance_date: 2009-06-04
+  mileage: 9.99
+  number_of_speakers: 1
+  nights_of_lodging: 1
+  engagement_fee: 9.99
+  car_rental: 9.99
+  tax_exempt_expenses: 9.99
+
+two:
+  speaker_name: MyString
+  performance_date: 2009-06-04
+  mileage: 9.99
+  number_of_speakers: 1
+  nights_of_lodging: 1
+  engagement_fee: 9.99
+  car_rental: 9.99
+  tax_exempt_expenses: 9.99

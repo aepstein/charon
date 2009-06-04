@@ -1,0 +1,2 @@
+module SpeakerExpensesHelper
+end

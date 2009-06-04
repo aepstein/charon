@@ -7,23 +7,9 @@ module NavigationHelpers
   #
   def path_to(page_name)
     case page_name
-    
+
     when /the homepage/
       '/'
-    when /the new local_event_expense page/
-      new_local_event_expense_path
-
-    when /the new local_event_expense page/
-      new_local_event_expense_path
-
-    when /the new local_event_expenses page/
-      new_local_event_expenses_path
-
-    when /the new local_event_expenses page/
-      new_local_event_expenses_path
-
-    when /the new local_event_expenses page/
-      new_local_event_expenses_path
 
     when /the new local_event_expense page/
       new_local_event_expense_path
@@ -33,11 +19,14 @@ module NavigationHelpers
 
     when /the new publication_expense page/
       new_publication_expense_path
+
+    when /the new travel_event_expense page/
+      new_travel_event_expense_path
 
     when /the new administrative_expense page/
       new_administrative_expense_path
 
-    
+
     # Add more mappings here.
     # Here is a more fancy example:
     #
@@ -52,3 +41,4 @@ module NavigationHelpers
 end
 
 World(NavigationHelpers)
+

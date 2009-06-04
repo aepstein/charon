@@ -1,0 +1,41 @@
+  <p>
+    <%= form.label :event_date, 'Date of Event' %><br />
+    <%= form.date_select :event_date %>
+  </p>
+  <p>
+    <%= form.label :event_title, 'Title of Event' %><br />
+    <%= form.text_field :event_title %>
+  </p>
+  <p>
+    <%= form.label :event_location, 'Location of Event' %><br />
+    <%= form.text_field :event_location %>
+  </p>
+  <p>
+    <%= form.label :event_purpose, 'Purpose of Event' %><br />
+    <%= form.text_area :event_purpose, :size => "40x6" %>
+  </p>
+  <p>
+    <%= form.label :members_per_group, 'Number of members participating per group or team' %><br />
+    <%= form.text_field :members_per_group %>
+  </p>
+  <p>
+    <%= form.label :number_of_groups, 'Number of groups or teams participating' %><br />
+    <%= form.text_field :number_of_groups %>
+  </p>
+  <p>
+    <%= form.label :mileage, 'Total travel mileage' %><br />
+    <%= form.text_field :mileage %>
+  </p>
+  <p>
+    <%= form.label :nights_of_lodging, 'Nights of lodging required' %><br />
+    <%= form.text_field :nights_of_lodging %>
+  </p>
+  <p>
+    <%= form.label :per_person_fees, 'Fees per person, excluding team or group fees' %><br />
+    <%= form.text_field :per_person_fees %>
+  </p>
+  <p>
+    <%= form.label :per_group_fees, 'Fees per group or team, excluding per person fees' %><br />
+    <%= form.text_field :per_group_fees %>
+  </p>
+
