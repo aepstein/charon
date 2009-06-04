@@ -1,0 +1,29 @@
+class TravelEventExpense < ActiveRecord::Base
+  before_save :calculate_total
+
+  def calculate_total
+    self.total_eligible_expenses = total_per_person_fees + total_per_group_fees + mileage_cost + lodging_cost
+  end
+
+  def participants
+    members_per_group * number_of_groups
+  end
+
+  def total_per_person_fees
+    participants * per_person_fees
+  end
+
+  def total_per_group_fees
+    number_of_groups * per_group_fees
+  end
+
+  def mileage_cost
+    0.05 * participants * mileage
+  end
+
+  def lodging_cost
+    10 * participants * nights_of_lodging
+  end
+
+end
+

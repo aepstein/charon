@@ -1,0 +1,27 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  event_date: 2009-06-04
+  event_title: MyString
+  event_location: MyString
+  event_purpose: MyString
+  members_per_group: 1
+  number_of_groups: 1
+  mileage: 9.99
+  nights_of_lodging: 1
+  per_person_fees: 9.99
+  per_group_fees: 1
+  total_eligible_expenses: 9.99
+
+two:
+  event_date: 2009-06-04
+  event_title: MyString
+  event_location: MyString
+  event_purpose: MyString
+  members_per_group: 1
+  number_of_groups: 1
+  mileage: 9.99
+  nights_of_lodging: 1
+  per_person_fees: 9.99
+  per_group_fees: 1
+  total_eligible_expenses: 9.99
