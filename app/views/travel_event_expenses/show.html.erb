@@ -1,58 +1,23 @@
 <p>
-  <b>Event date:</b>
-  <%=h @travel_event_expense.event_date %>
+  <b>Event date:</b> <%=h @travel_event_expense.event_date %>
 </p>
 
 <p>
-  <b>Event title:</b>
-  <%=h @travel_event_expense.event_title %>
+  <b>Event title:</b> <%=h @travel_event_expense.event_title %>
 </p>
 
 <p>
-  <b>Event location:</b>
-  <%=h @travel_event_expense.event_location %>
+  <b>Event location:</b> <%=h @travel_event_expense.event_location %>
 </p>
 
 <p>
-  <b>Event purpose:</b>
-  <%=h @travel_event_expense.event_purpose %>
+  <b>Event purpose:</b> <%=h @travel_event_expense.event_purpose %>
 </p>
 
 <p>
-  <b>Members per group:</b>
-  <%=h @travel_event_expense.members_per_group %>
+  <b>Total eligible expenses:</b> <%=h number_to_currency(@travel_event_expense.total_eligible_expenses) %>
 </p>
-
-<p>
-  <b>Number of groups:</b>
-  <%=h @travel_event_expense.number_of_groups %>
-</p>
-
-<p>
-  <b>Mileage:</b>
-  <%=h @travel_event_expense.mileage %>
-</p>
-
-<p>
-  <b>Nights of lodging:</b>
-  <%=h @travel_event_expense.nights_of_lodging %>
-</p>
-
-<p>
-  <b>Per person fees:</b>
-  <%=h @travel_event_expense.per_person_fees %>
-</p>
-
-<p>
-  <b>Per group fees:</b>
-  <%=h @travel_event_expense.per_group_fees %>
-</p>
-
-<p>
-  <b>Total eligible expenses:</b>
-  <%=h @travel_event_expense.total_eligible_expenses %>
-</p>
-
 
 <%= link_to 'Edit', edit_travel_event_expense_path(@travel_event_expense) %> |
 <%= link_to 'Back', travel_event_expenses_path %>
+

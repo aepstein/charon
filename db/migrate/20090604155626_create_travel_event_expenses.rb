@@ -10,7 +10,7 @@ class CreateTravelEventExpenses < ActiveRecord::Migration
       t.decimal :mileage
       t.integer :nights_of_lodging
       t.decimal :per_person_fees
-      t.integer :per_group_fees
+      t.decimal :per_group_fees
       t.decimal :total_eligible_expenses
 
       t.timestamps
@@ -21,3 +21,4 @@ class CreateTravelEventExpenses < ActiveRecord::Migration
     drop_table :travel_event_expenses
   end
 end
+
