@@ -10,6 +10,30 @@ module NavigationHelpers
     
     when /the homepage/
       '/'
+    when /the new local_event_expense page/
+      new_local_event_expense_path
+
+    when /the new local_event_expense page/
+      new_local_event_expense_path
+
+    when /the new local_event_expenses page/
+      new_local_event_expenses_path
+
+    when /the new local_event_expenses page/
+      new_local_event_expenses_path
+
+    when /the new local_event_expenses page/
+      new_local_event_expenses_path
+
+    when /the new local_event_expense page/
+      new_local_event_expense_path
+
+    when /the new publication_expense page/
+      new_publication_expense_path
+
+    when /the new publication_expense page/
+      new_publication_expense_path
+
     when /the new administrative_expense page/
       new_administrative_expense_path
 

@@ -1,0 +1,16 @@
+<h1>Editing local_event_expense</h1>
+
+<% form_for(@local_event_expense) do |f| %>
+  <%= f.error_messages %>
+
+ <%= include :partial => 'form',
+              :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @local_event_expense %> |
+<%= link_to 'Back', local_event_expenses_path %>
+

@@ -1,3 +1,4 @@
+<!-->
 <p>
   <b>No of issues:</b>
   <%=h @publication_expense.no_of_issues %>
@@ -8,20 +9,12 @@
   <%=h @publication_expense.no_of_copies_per_issue %>
 </p>
 
-<p>
-  <b>Total copies:</b>
-  <%=h @publication_expense.total_copies %>
-</p>
 
 <p>
   <b>Purchase price:</b>
   <%=h @publication_expense.purchase_price %>
 </p>
 
-<p>
-  <b>Revenue:</b>
-  <%=h @publication_expense.revenue %>
-</p>
 
 <p>
   <b>Cost publication:</b>
@@ -29,10 +22,23 @@
 </p>
 
 <p>
-  <b>Total cost publication:</b>
-  <%=h @publication_expense.total_cost_publication %>
+  <b>Total copies:</b> <%=h @publication_expense.total_copies %>
+</p>
+
+-->
+
+
+
+
+<p>
+  <b>Revenue:</b> $<%=h @publication_expense.revenue %>
+</p>
+
+<p>
+  <b>Total cost publication:</b> $<%=h @publication_expense.total_cost_publication %>
 </p>
 
 
 <%= link_to 'Edit', edit_publication_expense_path(@publication_expense) %> |
 <%= link_to 'Back', publication_expenses_path %>
+
