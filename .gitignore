@@ -3,5 +3,5 @@ tmp/**/*
 doc/api
 doc/app
 *~
-db/*.sqlite*
+db/*.sqlite3
 db/schema.rb

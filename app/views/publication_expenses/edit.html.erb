@@ -3,34 +3,9 @@
 <% form_for(@publication_expense) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :no_of_issues %><br />
-    <%= f.text_field :no_of_issues %>
-  </p>
-  <p>
-    <%= f.label :no_of_copies_per_issue %><br />
-    <%= f.text_field :no_of_copies_per_issue %>
-  </p>
-  <p>
-    <%= f.label :total_copies %><br />
-    <%= f.text_field :total_copies %>
-  </p>
-  <p>
-    <%= f.label :purchase_price %><br />
-    <%= f.text_field :purchase_price %>
-  </p>
-  <p>
-    <%= f.label :revenue %><br />
-    <%= f.text_field :revenue %>
-  </p>
-  <p>
-    <%= f.label :cost_publication %><br />
-    <%= f.text_field :cost_publication %>
-  </p>
-  <p>
-    <%= f.label :total_cost_publication %><br />
-    <%= f.text_field :total_cost_publication %>
-  </p>
+  <%= include :partial => 'form',
+              :object => f %>
+
   <p>
     <%= f.submit 'Update' %>
   </p>
@@ -38,3 +13,4 @@
 
 <%= link_to 'Show', @publication_expense %> |
 <%= link_to 'Back', publication_expenses_path %>
+

@@ -1,0 +1,16 @@
+<h1>Editing Administrative Expenses Addendum</h1>
+
+<% form_for(@administrative_expense) do |f| %>
+  <%= f.error_messages %>
+
+  <%= render :partial => 'form',
+             :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @administrative_expense %> |
+<%= link_to 'Back', administrative_expenses_path %>
+

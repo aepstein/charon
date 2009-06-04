@@ -1,6 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
+<<<<<<< HEAD:config/routes.rb
   map.resources :publication_expenses
 
+=======
+  map.resources :administrative_expenses
+  map.resources :publication_expenses
+>>>>>>> 217e65ba06df3b390ded6e8d57adba64fdc078fa:config/routes.rb
   map.resources :organizations
 
   # The priority is based upon order of creation: first created -> highest priority.

@@ -10,6 +10,9 @@ module NavigationHelpers
     
     when /the homepage/
       '/'
+    when /the new administrative_expense page/
+      new_administrative_expense_path
+
     
     # Add more mappings here.
     # Here is a more fancy example:
