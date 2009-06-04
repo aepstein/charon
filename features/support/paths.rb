@@ -10,6 +10,12 @@ module NavigationHelpers
     
     when /the homepage/
       '/'
+    when /the new publication_expense page/
+      new_publication_expense_path
+
+    when /the new publication_expense page/
+      new_publication_expense_path
+
     when /the new administrative_expense page/
       new_administrative_expense_path
 

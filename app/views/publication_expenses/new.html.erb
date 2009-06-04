@@ -3,7 +3,7 @@
 <% form_for(@publication_expense) do |f| %>
   <%= f.error_messages %>
 
-  <%= include :partial => 'form',
+  <%= render :partial => 'form',
               :object => f %>
 
   <p>
