@@ -1,0 +1,2 @@
+module DurableGoodsAddendumsHelper
+end

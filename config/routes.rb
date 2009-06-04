@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :durable_goods_addendums
+
   map.resources :local_event_expenses
 
 

@@ -1,0 +1,26 @@
+<h1>Listing durable_goods_addendums</h1>
+
+<table>
+  <tr>
+    <th>Description</th>
+    <th>Quantity</th>
+    <th>Unit price</th>
+    <th>Total</th>
+  </tr>
+
+<% @durable_goods_addendums.each do |durable_goods_addendum| %>
+  <tr>
+    <td><%=h durable_goods_addendum.description %></td>
+    <td><%=h durable_goods_addendum.quantity %></td>
+    <td><%=h durable_goods_addendum.unit_price %></td>
+    <td><%=h durable_goods_addendum.total %></td>
+    <td><%= link_to 'Show', durable_goods_addendum %></td>
+    <td><%= link_to 'Edit', edit_durable_goods_addendum_path(durable_goods_addendum) %></td>
+    <td><%= link_to 'Destroy', durable_goods_addendum, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New durable_goods_addendum', new_durable_goods_addendum_path %>

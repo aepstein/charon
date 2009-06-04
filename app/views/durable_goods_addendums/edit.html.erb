@@ -1,0 +1,28 @@
+<h1>Editing durable_goods_addendum</h1>
+
+<% form_for(@durable_goods_addendum) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :description %><br />
+    <%= f.text_field :description %>
+  </p>
+  <p>
+    <%= f.label :quantity %><br />
+    <%= f.text_field :quantity %>
+  </p>
+  <p>
+    <%= f.label :unit_price %><br />
+    <%= f.text_field :unit_price %>
+  </p>
+  <p>
+    <%= f.label :total %><br />
+    <%= f.text_field :total %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @durable_goods_addendum %> |
+<%= link_to 'Back', durable_goods_addendums_path %>
