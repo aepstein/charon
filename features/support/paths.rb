@@ -10,6 +10,9 @@ module NavigationHelpers
     
     when /the homepage/
       '/'
+    when /the new travel_event_expense page/
+      new_travel_event_expense_path
+
     when /the new administrative_expense page/
       new_administrative_expense_path
 

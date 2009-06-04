@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :speaker_expenses
+
   map.resources :travel_event_expenses
 
   map.resources :administrative_expenses
