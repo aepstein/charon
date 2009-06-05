@@ -1,0 +1,2 @@
+module RequestStructuresHelper
+end

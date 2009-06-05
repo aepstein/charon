@@ -1,0 +1,34 @@
+<h1>Listing speaker_expenses</h1>
+
+<table>
+  <tr>
+    <th>Speaker name</th>
+    <th>Performance date</th>
+    <th>Mileage</th>
+    <th>Number of speakers</th>
+    <th>Nights of lodging</th>
+    <th>Engagement fee</th>
+    <th>Car rental</th>
+    <th>Tax exempt expenses</th>
+  </tr>
+
+<% @speaker_expenses.each do |speaker_expense| %>
+  <tr>
+    <td><%=h speaker_expense.speaker_name %></td>
+    <td><%=h speaker_expense.performance_date %></td>
+    <td><%=h speaker_expense.mileage %></td>
+    <td><%=h speaker_expense.number_of_speakers %></td>
+    <td><%=h speaker_expense.nights_of_lodging %></td>
+    <td><%=h speaker_expense.engagement_fee %></td>
+    <td><%=h speaker_expense.car_rental %></td>
+    <td><%=h speaker_expense.tax_exempt_expenses %></td>
+    <td><%= link_to 'Show', speaker_expense %></td>
+    <td><%= link_to 'Edit', edit_speaker_expense_path(speaker_expense) %></td>
+    <td><%= link_to 'Destroy', speaker_expense, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New speaker_expense', new_speaker_expense_path %>

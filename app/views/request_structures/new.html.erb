@@ -1,0 +1,15 @@
+<h1>New request_structure</h1>
+
+<% form_for(@request_structure) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.submit 'Create' %>
+  </p>
+<% end %>
+
+<%= link_to 'Back', request_structures_path %>

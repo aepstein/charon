@@ -1,11 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :request_structures
-
-  map.resources :durable_goods_addendums
-
+  map.resources :durable_good_expenses
   map.resources :local_event_expenses
-
-
+  map.resources :speaker_expenses
+  map.resources :travel_event_expenses
   map.resources :administrative_expenses
   map.resources :publication_expenses
   map.resources :organizations
