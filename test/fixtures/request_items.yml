@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  form_id: 1
+  form_type: MyString
+  request_amount: 9.99
+  requestor_comment: MyString
+  allocation_amount: 9.99
+  allocator_comment: MyString
+  sft: 1
+  rgt: 1
+  request_node_id: 1
+
+two:
+  form_id: 1
+  form_type: MyString
+  request_amount: 9.99
+  requestor_comment: MyString
+  allocation_amount: 9.99
+  allocator_comment: MyString
+  sft: 1
+  rgt: 1
+  request_node_id: 1

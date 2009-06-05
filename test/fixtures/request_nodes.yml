@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  form_type: MyString
+  item_amount_limit: 9.99
+  item_quantity_limit: 1
+  request_structure_id: 1
+  parent_id: 1
+
+two:
+  name: MyString
+  form_type: MyString
+  item_amount_limit: 9.99
+  item_quantity_limit: 1
+  request_structure_id: 1
+  parent_id: 1

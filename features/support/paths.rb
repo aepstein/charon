@@ -10,6 +10,15 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new request_item page/
+      new_request_item_path
+
+    when /the new request_node page/
+      new_request_node_path
+
+    when /the new request_structure page/
+      new_request_structure_path
+
 
     when /the new local_event_expense page/
       new_local_event_expense_path

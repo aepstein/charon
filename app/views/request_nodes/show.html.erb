@@ -1,0 +1,34 @@
+<p>
+  <b>Name:</b>
+  <%=h @request_node.name %>
+</p>
+
+<p>
+  <b>Form type:</b>
+  <%=h @request_node.form_type %>
+</p>
+
+<p>
+  <b>Item amount limit:</b>
+  <%=h @request_node.item_amount_limit %>
+</p>
+
+<p>
+  <b>Item quantity limit:</b>
+  <%=h @request_node.item_quantity_limit %>
+</p>
+
+<p>
+  <b>Request structure:</b>
+  <%=h @request_node.request_structure_id %>
+</p>
+
+<p>
+  <b>Parent:</b>
+  <%=h @request_node.parent_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_request_node_path(@request_node) %> |
+<%= link_to 'Back', request_nodes_path %>
+

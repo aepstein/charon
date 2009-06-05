@@ -1,0 +1,16 @@
+<h1>Editing request_item</h1>
+
+<% form_for(@request_item) do |f| %>
+  <%= f.error_messages %>
+
+   <%= include :partial => 'form',
+              :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @request_item %> |
+<%= link_to 'Back', request_items_path %>
+

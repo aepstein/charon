@@ -3,13 +3,13 @@
 <% form_for(@request_structure) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
+   <%= render :partial => 'form',
+              :object => f %>
+
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
 
 <%= link_to 'Back', request_structures_path %>
+
