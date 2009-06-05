@@ -1,0 +1,2 @@
+module DurableGoodExpensesHelper
+end

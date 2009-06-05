@@ -2,12 +2,12 @@
 
 one:
   description: MyString
-  quantity: 9.99
-  unit_price: 9.99
+  quantity: 1.5
+  price: 1.5
   total: 9.99
 
 two:
   description: MyString
-  quantity: 9.99
-  unit_price: 9.99
+  quantity: 1.5
+  price: 1.5
   total: 9.99
