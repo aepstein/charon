@@ -7,7 +7,7 @@ class CreateRequestItems < ActiveRecord::Migration
       t.string :requestor_comment
       t.decimal :allocation_amount
       t.string :allocator_comment
-      t.integer :sft
+      t.integer :lft
       t.integer :rgt
       t.integer :request_node_id
 
@@ -19,3 +19,4 @@ class CreateRequestItems < ActiveRecord::Migration
     drop_table :request_items
   end
 end
+

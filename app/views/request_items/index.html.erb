@@ -8,7 +8,7 @@
     <th>Requestor comment</th>
     <th>Allocation amount</th>
     <th>Allocator comment</th>
-    <th>Sft</th>
+    <th>Lft</th>
     <th>Rgt</th>
     <th>Request node</th>
   </tr>
@@ -21,7 +21,7 @@
     <td><%=h request_item.requestor_comment %></td>
     <td><%=h request_item.allocation_amount %></td>
     <td><%=h request_item.allocator_comment %></td>
-    <td><%=h request_item.sft %></td>
+    <td><%=h request_item.lft %></td>
     <td><%=h request_item.rgt %></td>
     <td><%=h request_item.request_node_id %></td>
     <td><%= link_to 'Show', request_item %></td>
@@ -34,3 +34,4 @@
 <br />
 
 <%= link_to 'New request_item', new_request_item_path %>
+
