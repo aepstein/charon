@@ -2,8 +2,8 @@
 
 <table>
   <tr>
-    <th>Form</th>
-    <th>Form type</th>
+    <th>Requestable id</th>
+    <th>Requestable type</th>
     <th>Request amount</th>
     <th>Requestor comment</th>
     <th>Allocation amount</th>
@@ -15,8 +15,8 @@
 
 <% @request_items.each do |request_item| %>
   <tr>
-    <td><%=h request_item.form_id %></td>
-    <td><%=h request_item.form_type %></td>
+    <td><%=h request_item.requestable_id %></td>
+    <td><%=h request_item.requestable_type %></td>
     <td><%=h request_item.request_amount %></td>
     <td><%=h request_item.requestor_comment %></td>
     <td><%=h request_item.allocation_amount %></td>

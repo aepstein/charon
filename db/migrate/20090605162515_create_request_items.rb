@@ -1,8 +1,8 @@
 class CreateRequestItems < ActiveRecord::Migration
   def self.up
     create_table :request_items do |t|
-      t.integer :form_id
-      t.string :form_type
+      t.integer :requestable_id
+      t.string :requestable_type
       t.decimal :request_amount
       t.string :requestor_comment
       t.decimal :allocation_amount
