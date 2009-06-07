@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new request page/
+      new_request_path
+
     when /the new request_item page/
       new_request_item_path
 
