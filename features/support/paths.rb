@@ -11,11 +11,8 @@ module NavigationHelpers
     when /the homepage/
       '/'
 
-    when /the new request page with the request_structure named "([^"])"/ do |name|
-      new_request_path(
-        :request_structure_id => RequestStructure.find_by_name(name).id
-      )
-    end
+    when /the new request page"/
+      new_request_path( :request_structure => Factory(:request_structure) )
 
     when /the new request_item page/
       new_request_item_path
