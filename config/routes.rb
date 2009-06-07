@@ -1,8 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :requests
   map.resources :request_items
-
   map.resources :request_nodes
-
   map.resources :request_structures
   map.resources :durable_good_expenses
   map.resources :local_event_expenses
