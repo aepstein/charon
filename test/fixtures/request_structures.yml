@@ -1,7 +1,8 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  name: MyString
+  name: First Request Structure
 
 two:
-  name: MyString
+  name: Second Request Structure
+

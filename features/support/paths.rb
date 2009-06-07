@@ -10,8 +10,12 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
-    when /the new request page/
-      new_request_path
+
+    when /the new request page with the request_structure named "([^"])"/ do |name|
+      new_request_path(
+        :request_structure_id => RequestStructure.find_by_name(name).id
+      )
+    end
 
     when /the new request_item page/
       new_request_item_path
@@ -22,12 +26,8 @@ module NavigationHelpers
     when /the new request_structure page/
       new_request_structure_path
 
-
     when /the new local_event_expense page/
       new_local_event_expense_path
-
-    when /the new publication_expense page/
-      new_publication_expense_path
 
     when /the new publication_expense page/
       new_publication_expense_path

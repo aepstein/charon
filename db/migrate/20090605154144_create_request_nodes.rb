@@ -2,7 +2,7 @@ class CreateRequestNodes < ActiveRecord::Migration
   def self.up
     create_table :request_nodes do |t|
       t.string :name
-      t.string :form_type
+      t.string :requestable_type
       t.decimal :item_amount_limit
       t.integer :item_quantity_limit
       t.integer :request_structure_id
@@ -16,3 +16,4 @@ class CreateRequestNodes < ActiveRecord::Migration
     drop_table :request_nodes
   end
 end
+
