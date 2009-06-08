@@ -34,5 +34,5 @@ config.gem 'cucumber', :lib => false, :version => '>=0.3.9'
 config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http://gems.github.com'
 config.gem 'Selenium', :lib => false
 config.gem 'selenium-client', :lib => false
-config.gem 'bmabey-database_cleaner', :lib => 'database_cleaner'
+config.gem 'bmabey-database_cleaner', :lib => 'database_cleaner', :source => 'http://gems.github.com'
 
