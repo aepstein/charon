@@ -9,6 +9,7 @@ class CreateRequestItems < ActiveRecord::Migration
       t.string :allocator_comment
       t.integer :request_id
       t.integer :request_node_id
+      t.integer :parent_id
       t.integer :position
 
       t.timestamps
