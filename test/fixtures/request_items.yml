@@ -7,8 +7,6 @@ one:
   requestor_comment: MyString
   allocation_amount: 9.99
   allocator_comment: MyString
-  lft: 1
-  rgt: 1
   request_node_id: 1
 
 two:
@@ -18,7 +16,5 @@ two:
   requestor_comment: MyString
   allocation_amount: 9.99
   allocator_comment: MyString
-  lft: 1
-  rgt: 1
   request_node_id: 1
 
