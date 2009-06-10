@@ -10,18 +10,18 @@
     <%= f.text_field :request_structure_id %>
   </p>
 
-  <% for item in @request.request_items %>
-    <% fields_for "request[request_items][]", item do |item_f| %>
-      <%= render :partial => 'item_form', :object => item_f %>
+  <div id="items">
+    <% @request.request_items.each do |item| %>
+      <%= render :partial => 'item_form', :object => item %>
     <% end %>
-  <% end %>
+  </div>
 
-  <p><%= add_item_link 'Add an item' %></p>
+  <p><%= add_item_link 'Add an item', 'items' %></p>
 
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
-
+<div class="test"></div>
 <%= link_to 'Back', requests_path %>
 

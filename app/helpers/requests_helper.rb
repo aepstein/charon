@@ -1,7 +1,14 @@
 module RequestsHelper
-  def add_item_link(name)
-    link_to_function name do |page|
-      page.insert_html :bottom, :items, :partial => 'item_form', :object => nil
+
+  def fields_for_item(item, &block)
+    prefix = item.new_record? ? 'new' : 'existing'
+    fields_for("request[#{prefix}_request_items][]", item, &block)
+    #fields_for("request[request_items][]", item, &block)
+  end
+
+  def add_item_link(text, element_id)
+    link_to_function text do |page|
+      page.insert_html :bottom, element_id, :partial => 'item_form', :object => RequestItem.new
     end
   end
 end
