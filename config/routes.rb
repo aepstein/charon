@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :requests
+  map.resources :requests, { :new => 'js_form' }
   map.resources :request_items
   map.resources :request_nodes
   map.resources :request_structures
