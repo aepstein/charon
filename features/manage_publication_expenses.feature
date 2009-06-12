@@ -1,7 +1,7 @@
 Feature: Manage publication_expenses
   In order to request funds to produce a community publication
   As an applicant
-  wants publication addendum form
+  I want a publication addendum form
 
   @la254
   Scenario: Register new publication_expense

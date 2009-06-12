@@ -1,0 +1,12 @@
+<div class="request_item_form">
+  <p>
+    <%= request_item_form.label :request_amount, 'Amount of request: $' %>
+    <%= request_item_form.text_field :request_amount %>
+  </p>
+  <p>
+    <%= request_item_form.label :requestor_comment, 'Requestor comments: ' %>
+    <%= request_item_form.text_area :requestor_comment %>
+  </p>
+  <%= remove_link_unless_new_record(request_item_form) %>
+</div>
+

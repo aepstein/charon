@@ -1,8 +1,10 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :requests
+  map.resources :requests, :except => [ :new, :create ]
   map.resources :request_items
   map.resources :request_nodes
-  map.resources :request_structures
+  map.resources :request_structures do |request_structure|
+    request_structure.resources :request_items, :only => [ :new, :create ]
+  end
   map.resources :durable_good_expenses
   map.resources :local_event_expenses
   map.resources :speaker_expenses

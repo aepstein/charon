@@ -21,37 +21,9 @@ class RequestsController < ApplicationController
     end
   end
 
-  # GET /requests/new
-  # GET /requests/new.xml
-  def new
-    @request = Request.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @request }
-    end
-  end
-
   # GET /requests/1/edit
   def edit
     @request = Request.find(params[:id])
-  end
-
-  # POST /requests
-  # POST /requests.xml
-  def create
-    @request = Request.new(params[:request])
-
-    respond_to do |format|
-      if @request.save
-        flash[:notice] = 'Request was successfully created.'
-        format.html { redirect_to(@request) }
-        format.xml  { render :xml => @request, :status => :created, :location => @request }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @request.errors, :status => :unprocessable_entity }
-      end
-    end
   end
 
   # PUT /requests/1
@@ -83,3 +55,4 @@ class RequestsController < ApplicationController
     end
   end
 end
+
