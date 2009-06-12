@@ -11,15 +11,16 @@ module RequestsHelper
       page.insert_html :bottom, element_id, :partial => 'item_form', :object => RequestItem.new
     end
   end
-end
 
-#  def add_task_link(name, form)
-  #  link_to_function name do |page|
-  #    task = render(:partial => 'node_form', :locals => { :pf => form })
-  #    page << %{
-#var new_task_id = "new_" + new Date().getTime();
-#$('tasks').insert({ bottom: "#{ escape_javascript task }".replace(/new_\\d+/g, new_task_id) });
-#}
- #   end
-  #end
+  def add_item_link_2(link_text, element_id)
+    link_to_function link_text do |page|
+      item = render(:partial => 'item_form', :object => RequestItem.new)
+      page << %{
+var new_item_id = "new_" + new Date().getTime();
+$('items').insert({ bottom: "#{ escape_javascript item }".replace(/new_\\d+/g, new_item_id) });
+}
+    end
+  end
+
+end
 

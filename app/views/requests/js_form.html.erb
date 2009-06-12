@@ -16,7 +16,7 @@
     <% end %>
   </div>
 
-  <p><%= add_item_link 'Add an item', 'items' %></p>
+  <p><%= link_to_function "Add child item", "add_child_item($('items'), 1)" %></p>
 
   <p>
     <%= f.submit 'Create' %>

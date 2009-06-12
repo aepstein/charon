@@ -3,5 +3,8 @@ class RequestItem < ActiveRecord::Base
   belongs_to :request_node
   belongs_to :request
 
+  acts_as_tree
+
+  accepts_nested_attributes_for :children
 end
 
