@@ -1,5 +1,7 @@
 <h1>New request</h1>
 
+<%= javascript_include_tag :defaults %>
+
 <% form_for(@request) do |f| %>
   <%= f.error_messages %>
 
@@ -8,7 +10,10 @@
     <%= f.text_field :request_structure_id %>
   </p>
 
+
   <div id="items">Items</div>
+
+  <p><%= add_item_link 'Add an item' %></p>
 
   <p>
     <%= f.submit 'Create' %>

@@ -1,0 +1,13 @@
+<% new_id = (Time.now.to_f * 1000).round.to_s %>
+
+<div class="item" id="new_1">
+  <% fields_for_item(item_form) do |item_f| %>
+    <%= item_f.label :request_amount %>
+    <%= item_f.text_field :request_amount %>
+    <%= item_f.hidden_field :should_destroy, :value => '0' %>
+    <%= link_to_function 'remove', 'mark_to_destroy(this)' %>
+  <% end %>
+
+  <%= link_to_function "Add child item", "add_child_item(this.up(), 1)" %>
+</div>
+

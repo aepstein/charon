@@ -82,4 +82,14 @@ class RequestsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  def js_form
+    @request = Request.new
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @request }
+    end
+  end
 end
+
