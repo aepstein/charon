@@ -18,9 +18,15 @@
   </p>
 
 <p>
-    <%= form.label :request_structure_id,"Structure Id" %><br />
-    <%= form.text_field :request_structure_id %>
+    <%= form.label :request_structure_id,"Structure Id" %>
+    <% @rs= RequestStructure.find(:all)%>
+
+
+   <%= form.collection_select :request_structure_id, @rs, :id, :id %>
+
+
   </p>
+
 
 <p>
     <%= form.label :parent_id,"Parent ID" %><br />
