@@ -1,0 +1,15 @@
+  <tr>
+    <td><%=h request_item.request_node.name %></td>
+    <td><%=h request_item.request_amount %></td>
+    <td><%=h request_item.allocation_amount %></td>
+    <td><%= link_to 'Show', request_item %></td>
+    <td><%= link_to 'Edit', edit_request_item_path(request_item) %></td>
+    <td><%= link_to 'Destroy', request_item, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+  <tr>
+    <td colspan="6"><strong>Requestor comment:</strong><%=h request_item.requestor_comment %></td>
+    <td colspan="6"><strong>Allocator comment:</strong><%=h request_item.allocator_comment %></td>
+  </tr>
+  <%= render :partial => 'item',
+             :collection => request.request_items.children_of(request_item) %>
+

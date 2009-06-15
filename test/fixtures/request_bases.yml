@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  request_structure_id: 1
+  open_at: 2009-06-15 12:32:51
+  closed_at: 2009-06-15 12:32:51
+
+two:
+  request_structure_id: 1
+  open_at: 2009-06-15 12:32:51
+  closed_at: 2009-06-15 12:32:51

@@ -1,8 +1,9 @@
 class RequestsController < ApplicationController
-  # GET /requests
-  # GET /requests.xml
+  # GET /request_bases/:request_basis_id/requests
+  # GET /request_bases/:request_basis_id/requests.xml
   def index
-    @requests = Request.all
+    @request_basis = RequestBasis.find(params[:request_basis_id])
+    @requests = @request_basis.requests
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,10 +22,11 @@ class RequestsController < ApplicationController
     end
   end
 
-  # GET /requests/new
-  # GET /requests/new.xml
+  # GET /request_bases/:request_basis_id/requests/new
+  # GET /request_bases/:request_basis_id/requests/new.xml
   def new
-    @request = Request.new
+    @request = RequestBasis.find(params[:request_basis_id]).requests.build
+    @request.request_items.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -32,15 +34,10 @@ class RequestsController < ApplicationController
     end
   end
 
-  # GET /requests/1/edit
-  def edit
-    @request = Request.find(params[:id])
-  end
-
-  # POST /requests
-  # POST /requests.xml
+  # POST /request_bases/:request_basis_id/requests
+  # POST /request_bases/:request_basis_id/requests.xml
   def create
-    @request = Request.new(params[:request])
+    @request = RequestBasis.find(params[:request_basis_id]).requests.build
 
     respond_to do |format|
       if @request.save
@@ -52,6 +49,11 @@ class RequestsController < ApplicationController
         format.xml  { render :xml => @request.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  # GET /requests/1/edit
+  def edit
+    @request = Request.find(params[:id])
   end
 
   # PUT /requests/1

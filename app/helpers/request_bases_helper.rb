@@ -1,0 +1,2 @@
+module RequestBasesHelper
+end

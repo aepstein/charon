@@ -1,8 +1,9 @@
 class RequestNodesController < ApplicationController
-  # GET /request_nodes
-  # GET /request_nodes.xml
+  # GET /request_structures/:request_structure_id/request_nodes
+  # GET /request_structures/:request_structure_id/request_nodes.xml
   def index
-    @request_nodes = RequestNode.all
+    @request_structure = RequestStructure.find(params[:request_structure_id])
+    @request_nodes = @request_structure.request_nodes
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,10 +22,10 @@ class RequestNodesController < ApplicationController
     end
   end
 
-  # GET /request_nodes/new
-  # GET /request_nodes/new.xml
+  # GET /request_structures/:request_structure_id/request_nodes/new
+  # GET /request_structures/:request_structure_id/request_nodes/new.xml
   def new
-    @request_node = RequestNode.new
+    @request_node = RequestStructure.find(params[:request_structure_id]).request_nodes.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,10 +38,10 @@ class RequestNodesController < ApplicationController
     @request_node = RequestNode.find(params[:id])
   end
 
-  # POST /request_nodes
-  # POST /request_nodes.xml
+  # POST /request_structures/:request_structure_id/request_nodes
+  # POST /request_structures/:request_structure_id/request_nodes.xml
   def create
-    @request_node = RequestNode.new(params[:request_node])
+    @request_node = RequestStructure.find(params[:request_structure_id]).request_nodes.build(params[:request_node])
 
     respond_to do |format|
       if @request_node.save
@@ -83,3 +84,4 @@ class RequestNodesController < ApplicationController
     end
   end
 end
+

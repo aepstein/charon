@@ -1,7 +1,7 @@
 class CreateRequests < ActiveRecord::Migration
   def self.up
     create_table :requests do |t|
-      t.integer :request_structure_id
+      t.integer :request_basis_id
 
       t.timestamps
     end
@@ -11,3 +11,4 @@ class CreateRequests < ActiveRecord::Migration
     drop_table :requests
   end
 end
+

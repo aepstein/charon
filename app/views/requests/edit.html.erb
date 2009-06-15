@@ -1,12 +1,8 @@
 <h1>Editing request</h1>
 
 <% form_for(@request) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :request_structure_id %><br />
-    <%= f.text_field :request_structure_id %>
-  </p>
+<%= render :partial => 'form',
+           :object => f %>
   <p>
     <%= f.submit 'Update' %>
   </p>
@@ -14,3 +10,4 @@
 
 <%= link_to 'Show', @request %> |
 <%= link_to 'Back', requests_path %>
+

@@ -1,8 +1,9 @@
 class RequestItemsController < ApplicationController
-  # GET /request_items
-  # GET /request_items.xml
+  # GET /requests/:request_id/request_items
+  # GET /requests/:request_id/request_items.xml
   def index
-    @request_items = RequestItem.all
+    @request = Request.find(params[:request_id])
+    @request_items = @request.request_items
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,10 +22,13 @@ class RequestItemsController < ApplicationController
     end
   end
 
-  # GET /request_items/new
-  # GET /request_items/new.xml
+  # GET /requests/:request_id/request_items/new
+  # GET /requests/:request_id/request_items/new.xml
   def new
-    @request_item = RequestItem.new
+    @request_item = Request.find(params[:request_id]).request_items.build
+    @request_item.request_node = RequestNode.find(params[:request_node_id])
+    @request_item.requestable_type = @request_item.requestable_node.requestable_type
+    @request_item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,10 +41,10 @@ class RequestItemsController < ApplicationController
     @request_item = RequestItem.find(params[:id])
   end
 
-  # POST /request_items
-  # POST /request_items.xml
+  # POST /requests/:request_id/request_items
+  # POST /requests/:request_id/request_items.xml
   def create
-    @request_item = RequestItem.new(params[:request_item])
+    @request_item = Request.find(params[:request_id]).request_items.build(params[:request_item])
 
     respond_to do |format|
       if @request_item.save
@@ -83,3 +87,4 @@ class RequestItemsController < ApplicationController
     end
   end
 end
+

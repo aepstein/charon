@@ -3,8 +3,8 @@
 <% form_for(@request_node) do |f| %>
   <%= f.error_messages %>
 
-  <%= include :partial => 'form',
-              :object => f %>
+  <%= render :partial => 'form',
+             :object => f %>
 
   <p>
     <%= f.submit 'Update' %>
@@ -12,5 +12,5 @@
 <% end %>
 
 <%= link_to 'Show', @request_node %> |
-<%= link_to 'Back', request_nodes_path %>
+<%= link_to 'Back', request_structure_request_nodes_path( @request_structure ) %>
 

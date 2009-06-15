@@ -1,8 +1,12 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :requests, { :new => 'js_form' }
-  map.resources :request_items
-  map.resources :request_nodes
-  map.resources :request_structures
+  map.resources :request_bases, :shallow => true do |request_basis|
+    request_basis.resources :requests do |request|
+      request.resources :request_items
+    end
+  end
+  map.resources :request_structures, :shallow => true do |request_structure|
+    request_structure.resources :request_nodes
+  end
   map.resources :durable_good_expenses
   map.resources :local_event_expenses
   map.resources :speaker_expenses

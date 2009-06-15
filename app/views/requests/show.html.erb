@@ -1,8 +1,13 @@
 <p>
   <b>Request structure:</b>
-  <%=h @request.request_structure_id %>
+  <%=h @request.request_basis.request_structure.name %>
 </p>
 
+<p>
+<%= link_to 'See request items',
+            request_request_items_path( @request.id ) %>
+</p>
 
 <%= link_to 'Edit', edit_request_path(@request) %> |
-<%= link_to 'Back', requests_path %>
+<%= link_to 'Back', request_basis_requests_path(@request.request_basis_id) %>
+

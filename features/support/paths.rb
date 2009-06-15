@@ -10,6 +10,8 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new request_basis page/
+      new_request_basis_path
 
     when /the new request page"/
       new_request_path( :request_structure => Factory(:request_structure) )
