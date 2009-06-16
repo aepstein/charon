@@ -77,3 +77,14 @@ function add_child_item(el, depth) {
   }
 }
 
+// set the request_node_id in the URL to create a new request_item
+function item_url(link, node_id) {
+  var i = link.href.indexOf("?request_node_id=");
+  if (i > -1) {
+    //link.href.replace(/request_node_id=[0-9]+/, 'request_node_id=' + node_id);
+    link.href = link.href.substring(0, i);
+  }
+
+  link.href += "?request_node_id=" + node_id;
+}
+
