@@ -1,0 +1,13 @@
+<h1>Register</h1>
+
+<% form_for @user, :url => account_path do |f| %>
+<p><label for="net_id">NetID</label><br/>
+<%= f.text_field :net_id %></p>
+<p><label for="email">Email</label><br/>
+<% end %>
+<%= f.text_field :email %></p>
+  <%= f.error_messages %>
+  <%= render :partial => "form", :object => f %>
+  <%= f.submit "Register" %>
+<% end %>
+
