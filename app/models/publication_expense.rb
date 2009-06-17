@@ -1,4 +1,5 @@
 class PublicationExpense < ActiveRecord::Base
+  has_one :request_item, :as => :requestable
   before_save :calculate_copies
 
 	def calculate_copies

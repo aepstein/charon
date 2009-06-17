@@ -16,8 +16,12 @@
 </table>
 
 <p>
-<%= collection_select RequestNode, :request_node_id, @request.request_basis.request_structure.request_nodes.root,
-                      :id, :name, {}, { :onchange => 'item_url(this.next("a"), this.value)' } %>
+<select onchange="item_url(this.next('a'), this.value)">
+<%= options_from_collection_for_select(
+                     @request.request_basis.request_structure.request_nodes.root,
+                     :id,
+                     :name ) %>
+</select>
 <br />
 <%= link_to 'New request_item', new_request_request_item_path( @request.id ) %>
 </p>
