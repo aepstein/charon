@@ -1,4 +1,6 @@
 class TravelEventExpense < ActiveRecord::Base
+  has_one :request_item, :as => :requestable
+
   before_save :calculate_total
 
   def calculate_total

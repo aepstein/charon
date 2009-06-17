@@ -27,7 +27,7 @@ class RequestItemsController < ApplicationController
   def new
     @request_item = Request.find(params[:request_id]).request_items.build
     @request_item.request_node = RequestNode.find(params[:request_node_id])
-    @request_item.requestable_type = @request_item.request_node.requestable_type
+    @request_item.requestable = @request_item.request_node.requestable_type.constantize.new
     @request_item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
 
     respond_to do |format|

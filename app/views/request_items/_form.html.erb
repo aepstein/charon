@@ -1,3 +1,9 @@
+
+<% fields_for :requestable do |requestable_form| %>
+  <%= render :partial => "#{form.object.requestable_type.tableize}/form",
+             :object => requestable_form %>
+<% end %>
+
   <p>
     <%= form.label :request_amount,"Requested Amount" %><br />
     <%= form.text_field :request_amount %>
