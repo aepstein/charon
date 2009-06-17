@@ -1,0 +1,19 @@
+<h2><%=h @user.name(:full) %></h2>
+
+<dl>
+  <dt>NetID:</dt>
+  <dd><%=h @user.net_id %></dd>
+
+  <dt>Email:</dt>
+  <dd><%=h @user.email %></dd>
+
+  <dt>Date of Birth:</dt>
+  <dd><%=h @user.date_of_birth.to_s(:long) if @user.date_of_birth %></dd>
+
+  <dt>Last login:</dt>
+  <dd><%=h @user.last_login_at.to_s(:short) if @user.last_login_at %></dd>
+</dl>
+
+
+<%= link_to 'Edit', edit_account_path %>
+

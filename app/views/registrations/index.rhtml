@@ -1,0 +1,10 @@
+<h2>All Registrations</h2>
+
+<%= render :partial => "search" %>
+
+<ul>
+<% @registrations.each do |reg| %>
+  <li><%= link_to h(reg.name), registration_path(reg) %></li>
+<% end -%>
+</ul>
+
