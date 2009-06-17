@@ -1,5 +1,3 @@
-<%= javascript_include_tag :defaults %>
-
 <h1>Listing request_items</h1>
 
 <table>
@@ -16,13 +14,15 @@
 </table>
 
 <p>
-<select onchange="item_url(this.next('a'), this.value)">
+New Request Item:
+<select id="request_node" onchange="new_item_url(this.value)">
+<option value="">Select a node</option>
 <%= options_from_collection_for_select(
                      @request.request_basis.request_structure.request_nodes.root,
                      :id,
                      :name ) %>
 </select>
-<br />
-<%= link_to 'New request_item', new_request_request_item_path( @request.id ) %>
+
+<!--<%= link_to 'New request_item', new_request_request_item_path( @request.id ) %>-->
 </p>
 

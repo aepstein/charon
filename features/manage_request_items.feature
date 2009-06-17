@@ -24,3 +24,14 @@ Feature: Manage request_items
     And I should see "3"
     And I should see "101"
 
+  @requestitem
+  Scenario: Select a request_node to go to the new request_item page
+    Given I am on the request_item page
+    When I select "admin node" from "request_node"
+    Then I should see "requestable_copies"
+    And I should see "requestable_repairs_restocking"
+    And I should see "requestable_mailbox_wsh_25"
+    And I should see "requestable_total_request"
+    And I should see "request_item_request_amount"
+    And I should see "request_item_requestor_comment"
+

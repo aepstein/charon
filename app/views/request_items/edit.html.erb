@@ -3,7 +3,7 @@
 <% form_for(@request_item) do |f| %>
   <%= f.error_messages %>
 
-   <%= include :partial => 'form',
+   <%= render :partial => 'form',
               :object => f %>
 
   <p>
@@ -12,5 +12,5 @@
 <% end %>
 
 <%= link_to 'Show', @request_item %> |
-<%= link_to 'Back', request_items_path %>
+<%= link_to 'Back', request_request_items_path(@request_item.request_id) %>
 

@@ -3,7 +3,6 @@ Feature: Manage travel_event_expenses
   As an applicant
   I want travel event expenses form
 
-  @jdm65
   Scenario: Register new travel_event_expense
     Given I am on the new travel_event_expense page
     When I fill in "travel_event_expense_members_per_group" with "3"

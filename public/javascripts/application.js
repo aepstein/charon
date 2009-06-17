@@ -78,13 +78,11 @@ function add_child_item(el, depth) {
 }
 
 // set the request_node_id in the URL to create a new request_item
-function item_url(link, node_id) {
-  if (link.href.indexOf("request_node_id=") > -1) {
-    link.href = link.href.replace(/request_node_id=[0-9]+/, 'request_node_id=' + node_id);
-  }
-  else if (link.href.search(/\?.+=/) > -1) {
-    link.href += "&request_node_id=" + node_id;
-  }
-  else link.href += "?request_node_id=" + node_id;
+function new_item_url(node_id) {
+  if (node_id == "") return;
+  var url = "" + window.location;
+  if (url.charAt(url.length - 1) != "/") url += "/";
+  url += "new?request_node_id=" + node_id;
+  window.location = url;
 }
 
