@@ -1,0 +1,28 @@
+<h1>Listing bases</h1>
+
+<table>
+  <tr>
+    <th>Structure</th>
+    <th>Open at</th>
+    <th>Closed at</th>
+  </tr>
+
+<% @bases.each do |basis| %>
+  <tr>
+    <td><%=h basis.structure_id %></td>
+    <td><%=h basis.open_at %></td>
+    <td><%=h basis.closed_at %></td>
+    <td><%= link_to 'Show', basis %></td>
+    <td><%= link_to 'Edit', edit_basis_path(basis) %></td>
+    <td><%= link_to 'Destroy',
+                    basis,
+                    :confirm => 'Are you sure?',
+                    :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New basis', new_basis_path %>
+

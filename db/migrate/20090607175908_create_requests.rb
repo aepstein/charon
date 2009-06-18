@@ -1,7 +1,7 @@
 class CreateRequests < ActiveRecord::Migration
   def self.up
     create_table :requests do |t|
-      t.integer :request_basis_id
+      t.integer :basis_id
 
       t.timestamps
     end

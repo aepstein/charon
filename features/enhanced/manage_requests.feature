@@ -4,15 +4,15 @@ Feature: Manage requests
   I want to manage requests
 
   Scenario: Register new request
-    Given the following request_structures:
+    Given the following structures:
       | name   |
       | first  |
       | second |
-    Given the following request_nodes:
+    Given the following nodes:
       | structure | parent | name  |
       | first     |        | root  |
       | first     | root   | child |
-    And I am on the new request page with the request_structure named "first"
+    And I am on the new request page with the structure named "first"
     And I follow "Add root item"
     And I follow "Add child item"
     And I follow "Add child item"

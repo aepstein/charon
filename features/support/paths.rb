@@ -10,23 +10,23 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
-    when /the new request_item page/
-      new_request_item_path
+    when /the new item page/
+      new_item_path
 
-    when /the new request_basis page/
-      new_request_basis_path
+    when /the new basis page/
+      new_basis_path
 
     when /the new request page"/
-      new_request_path( :request_structure => Factory(:request_structure) )
+      new_request_path
 
-    when /the new request_item page/
-      new_request_item_path
+    when /the new item page/
+      new_item_path
 
-    when /the new request_node page/
-      new_request_node_path
+    when /the new node page/
+      new_node_path
 
-    when /the new request_structure page/
-      new_request_structure_path
+    when /the new structure page/
+      new_structure_path
 
     when /the new local_event_expense page/
       new_local_event_expense_path

@@ -1,0 +1,16 @@
+<h1>Editing node</h1>
+
+<% form_for(@node) do |f| %>
+  <%= f.error_messages %>
+
+  <%= render :partial => 'form',
+             :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @node %> |
+<%= link_to 'Back', structure_nodes_path( @node.structure ) %>
+

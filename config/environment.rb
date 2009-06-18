@@ -40,5 +40,6 @@ Rails::Initializer.run do |config|
   # config.i18n.default_locale = :de
   config.gem "aunderwo-acts_as_tree", :lib => "acts_as_tree", :source => "http://gems.github.com/"
   config.gem "authlogic"
+  config.gem "calendar_date_select"
 end
 

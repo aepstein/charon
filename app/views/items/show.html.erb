@@ -1,0 +1,39 @@
+<p>
+  <b>Form:</b>
+  <%=h @item.requestable_id %>
+</p>
+
+<p>
+  <b>Form type:</b>
+  <%=h @item.requestable_type %>
+</p>
+
+<p>
+  <b>Request amount:</b>
+  <%=h @item.amount %>
+</p>
+
+<p>
+  <b>Requestor comment:</b>
+  <%=h @item.requestor_comment %>
+</p>
+
+<p>
+  <b>Allocation amount:</b>
+  <%=h @item.allocation_amount %>
+</p>
+
+<p>
+  <b>Allocator comment:</b>
+  <%=h @item.allocator_comment %>
+</p>
+
+<p>
+  <b>Request node:</b>
+  <%=h @item.node_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_item_path(@item) %> |
+<%= link_to 'Back', request_items_path(@item.request_id) %>
+

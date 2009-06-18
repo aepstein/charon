@@ -1,9 +1,9 @@
 class RequestsController < ApplicationController
-  # GET /request_bases/:request_basis_id/requests
-  # GET /request_bases/:request_basis_id/requests.xml
+  # GET /bases/:basis_id/requests
+  # GET /bases/:basis_id/requests.xml
   def index
-    @request_basis = RequestBasis.find(params[:request_basis_id])
-    @requests = @request_basis.requests
+    @basis = Basis.find(params[:basis_id])
+    @requests = @basis.requests
 
     respond_to do |format|
       format.html # index.html.erb
@@ -22,11 +22,11 @@ class RequestsController < ApplicationController
     end
   end
 
-  # GET /request_bases/:request_basis_id/requests/new
-  # GET /request_bases/:request_basis_id/requests/new.xml
+  # GET /bases/:basis_id/requests/new
+  # GET /bases/:basis_id/requests/new.xml
   def new
-    @request = RequestBasis.find(params[:request_basis_id]).requests.build
-    @request.request_items.build
+    @request = Basis.find(params[:basis_id]).requests.build
+    @request.items.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -34,10 +34,10 @@ class RequestsController < ApplicationController
     end
   end
 
-  # POST /request_bases/:request_basis_id/requests
-  # POST /request_bases/:request_basis_id/requests.xml
+  # POST /bases/:basis_id/requests
+  # POST /bases/:basis_id/requests.xml
   def create
-    @request = RequestBasis.find(params[:request_basis_id]).requests.build
+    @request = Basis.find(params[:basis_id]).requests.build
 
     respond_to do |format|
       if @request.save
@@ -80,18 +80,10 @@ class RequestsController < ApplicationController
     @request.destroy
 
     respond_to do |format|
-      format.html { redirect_to(requests_url) }
+      format.html { redirect_to(basis_requests_url(@request.basis)) }
       format.xml  { head :ok }
     end
   end
 
-  def js_form
-    @request = Request.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @request }
-    end
-  end
 end
 

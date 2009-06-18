@@ -1,11 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :request_bases, :shallow => true do |request_basis|
-    request_basis.resources :requests do |request|
-      request.resources :request_items
+  map.resources :bases, :shallow => true do |basis|
+    basis.resources :requests do |request|
+      request.resources :items
     end
   end
-  map.resources :request_structures, :shallow => true do |request_structure|
-    request_structure.resources :request_nodes
+  map.resources :structures, :shallow => true do |structure|
+    structure.resources :nodes
   end
   map.resources :durable_good_expenses
   map.resources :local_event_expenses

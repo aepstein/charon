@@ -1,0 +1,18 @@
+  <%= form.error_messages %>
+
+  <p>
+    <%= form.label :structure_id %><br />
+    <%= form.collection_select :structure_id,
+                               Structure.find(:all),
+                               :id,
+                               :name %>
+  </p>
+  <p>
+    <%= form.label :open_at %><br />
+    <%= form.calendar_date_select :open_at %>
+  </p>
+  <p>
+    <%= form.label :closed_at %><br />
+    <%= form.calendar_date_select :closed_at %>
+  </p>
+

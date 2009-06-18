@@ -1,0 +1,16 @@
+<h1>Editing structure</h1>
+
+<% form_for(@structure) do |f| %>
+  <%= f.error_messages %>
+
+  <%= render :partial => 'form',
+             :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @structure %> |
+<%= link_to 'Back', structures_path %>
+
