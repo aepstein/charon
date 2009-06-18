@@ -1,0 +1,131 @@
+<h2> Registration for <em><%=h @registration.name %></em></h2>
+
+<p>
+  This registration <% if @registration.organization %>
+  is associated with the organization
+  <em><%= link_to h(@registration.organization.name), organization_path(@registration.organization) %></em>.
+<% else -%>
+  is not associated with a organization.
+  <% form_tag new_organization_path do %>
+    <%= hidden_field_tag :registration_id, @registration.id %>
+    <%= submit_tag 'Create a organization' %> from this registration
+  <% end %>
+<% end -%>
+</p>
+<hr />
+<dl>
+  <dt>Purpose</dt>
+  <dd><%=h @registration.purpose %></dd>
+
+  <dt>Org Email</dt>
+  <dd><%=h @registration.org_email %></dd>
+
+  <dt>OrgID</dt>
+  <dd><%=@registration.org_id %></dd>
+
+  <dt>When Updated</dt>
+  <dd><%=h @registration.when_updated %></dd>
+
+  <dt>Funding sources</dt>
+  <dd><%=h @registration.funding_sources %></dd>
+
+  <dt>Independent?</dt>
+  <dd><%= @registration.is_independent? ? 'YES' : 'NO' %></dd>
+
+  <dt>Registered?</dt>
+  <dd><%=h @registration.is_registered? ? 'YES' : 'NO' %></dd>
+
+  <dt>Number of Alumni</dt>
+  <dd><%=@registration.number_of_alumni %></dd>
+
+  <dt>Number of Faculty</dt>
+  <dd><%=@registration.number_of_faculty %></dd>
+
+  <dt>Number of Grads</dt>
+  <dd><%=@registration.number_of_grads %></dd>
+
+  <dt>Number of Others</dt>
+  <dd><%=@registration.number_of_others %></dd>
+
+  <dt>Number of Staff</dt>
+  <dd><%=@registration.number_of_staff %></dd>
+
+  <dt>Number of Undergrads</dt>
+  <dd><%=@registration.number_of_undergrads %></dd>
+
+  <dt>Advisor</dt>
+  <dd><dl>
+    <dt>NetID</dt>
+    <dd><%=h @registration.adv_net_id %></dd>
+
+    <dt>Email</dt>
+    <dd><%=h @registration.adv_email %></dd>
+
+    <dt>First Name</dt>
+    <dd><%=h @registration.adv_first_name %></dd>
+
+    <dt>Last Name</dt>
+    <dd><%=h @registration.adv_last_name %></dd>
+
+    <dt>Address</dt>
+    <dd><%=h @registration.adv_address %></dd>
+  </dl></dd>
+
+  <dt>President</dt>
+  <dd><dl>
+    <dt>NetID</dt>
+    <dd><%=h @registration.pre_net_id %></dd>
+
+    <dt>Email</dt>
+    <dd><%=h @registration.pre_email %></dd>
+
+    <dt>First Name</dt>
+    <dd><%=h @registration.pre_first_name %></dd>
+
+    <dt>Last Name</dt>
+    <dd><%=h @registration.pre_last_name %></dd>
+  </dl></dd>
+
+  <dt>Vice President</dt>
+  <dd><dl>
+    <dt>NetID</dt>
+    <dd><%=h @registration.vpre_net_id %></dd>
+
+    <dt>Email</dt>
+    <dd><%=h @registration.vpre_email %></dd>
+
+    <dt>First Name</dt>
+    <dd><%=h @registration.vpre_first_name %></dd>
+
+    <dt>Last Name</dt>
+    <dd><%=h @registration.vpre_last_name %></dd>
+  </dl></dd>
+  <dt>Treasurer</dt>
+  <dd><dl>
+    <dt>NetID</dt>
+    <dd><%=h @registration.tre_net_id %></dd>
+
+    <dt>Email</dt>
+    <dd><%=h @registration.tre_email %></dd>
+
+    <dt>First Name</dt>
+    <dd><%=h @registration.tre_first_name %></dd>
+
+    <dt>Last Name</dt>
+    <dd><%=h @registration.tre_last_name %></dd>
+  </dl></dd>
+  <dt>Officer</dt>
+  <dd><dl>
+    <dt>NetID</dt>
+    <dd><%=h @registration.officer_net_id %></dd>
+
+    <dt>Email</dt>
+    <dd><%=h @registration.officer_email %></dd>
+
+    <dt>First Name</dt>
+    <dd><%=h @registration.officer_first_name %></dd>
+
+    <dt>Last Name</dt>
+    <dd><%=h @registration.officer_last_name %></dd>
+  </dl></dd>
+

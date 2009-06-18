@@ -1,4 +1,5 @@
 class Registration < ActiveRecord::Base
+    acts_as_ferret
   has_one :organization, :dependent => :nullify
   has_many :memberships,
            :dependent => :destroy
@@ -16,7 +17,7 @@ class Registration < ActiveRecord::Base
     name
   end
    def self.search(query = nil)
-    query.blank? ? Registration.find(:all, :order => :name) : Registration.find_by_contents(query+'*')
+    query.blank? ? Registration.find(:all, :order => :name) : Registration.find_with_ferret(query+'*')
 
   end
 

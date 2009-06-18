@@ -1,16 +1,19 @@
+<p><label for="net_id">NetID</label><br/>
+<%= form.text_field :net_id %></p>
  <p>
   <strong>First name:</strong>
-    <%= f.text_field :first_name %>
+  <br />
+    <%= form.text_field :first_name %>
   </p>
   <p>
   <strong>Middle name:</strong>
   <br/>
-    <%= f.text_field :middle_name %>
+    <%= form.text_field :middle_name %>
   </p>
   <p>
   <strong>Last name:</strong>
   <br/>
-    <%= f.text_field :last_name %>
+    <%= form.text_field :last_name %>
   </p>
 
 <%= form.label :password, form.object.new_record? ? nil : "Change password" %><br />
