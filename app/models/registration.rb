@@ -1,5 +1,4 @@
 class Registration < ActiveRecord::Base
-    acts_as_ferret
   has_one :organization, :dependent => :nullify
   has_many :memberships,
            :dependent => :destroy
@@ -15,10 +14,6 @@ class Registration < ActiveRecord::Base
 
   def to_s
     name
-  end
-   def self.search(query = nil)
-    query.blank? ? Registration.find(:all, :order => :name) : Registration.find_with_ferret(query+'*')
-
   end
 
    # Find registrations which are not matched to a group, ordered by name
