@@ -15,10 +15,6 @@ class Registration < ActiveRecord::Base
   def to_s
     name
   end
-   def self.search(query = nil)
-    query.blank? ? Registration.find(:all, :order => :name) : Registration.find_by_contents(query+'*')
-
-  end
 
    # Find registrations which are not matched to a group, ordered by name
   def self.find_unmatched

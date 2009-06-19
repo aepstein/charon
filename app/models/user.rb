@@ -1,24 +1,20 @@
 class User < ActiveRecord::Base
-   acts_as_authentic
+ acts_as_authentic do |c|
+   c.validate_email_field = false
+   c.login_field = 'net_id'
+ end
  STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
   has_many :memberships,
            :dependent => :destroy
-  has_many :organizations, :through => :memberships
-  validates_presence_of     :net_id, :email
+  has_many :roles
+  validates_presence_of     :net_id
   validates_uniqueness_of   :net_id
-  validates_inclusion_of    :status, :in => STATUSES
-  validates_format_of       :net_id,  :with => CornellNetId::VALID_NET_ID,
-                                      :message => "must be a valid NetID"
-  validates_format_of       :email,   :with => /[^\s]+@[\w\d]+.[\w\d]+/,
-                                      :message => "must be a valid email address"
-
   before_validation_on_create :extract_email
+=begin
+  validates_inclusion_of    :status, :in => STATUSES
+
   before_create :import_simple_ldap_attributes
-
-  def roles
-    @roles ||= groups.inject({}) {|m,g| m[g] = memberships.find_by_group_id(g).role; m }
-  end
-
+=end
   def login!
     update_attribute :last_login_at, Time.now
   end
@@ -71,6 +67,16 @@ class User < ActiveRecord::Base
       self.email = "#{self.net_id}@cornell.edu"
     end
 
+=begin
+  def ldap_entry
+    return nil if @ldap_entry == false
+    begin
+      @ldap_entry ||= CornellDirectoryImporter::Record.find net_id
+    rescue Exception
+      @ldap_entry = false
+    end
+  end
+
     def import_simple_ldap_attributes
       if ldap_entry then
         self.first_name = ldap_entry.first_name unless ldap_entry.first_name.nil?
@@ -79,5 +85,6 @@ class User < ActiveRecord::Base
         self.status = ldap_entry.status unless ldap_entry.status.nil?
       end
     end
+=end
    end
 
