@@ -82,7 +82,7 @@ function new_item_url(node_id) {
   if (node_id == "") return;
   var url = "" + window.location;
   if (url.charAt(url.length - 1) != "/") url += "/";
-  url += "new?request_node_id=" + node_id;
+  url += "new?node_id=" + node_id;
   window.location = url;
 }
 

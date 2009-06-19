@@ -2,7 +2,7 @@
 
 <% form_for( :item,
              @item,
-             :url => items_path( @item.id ),
+             :url => request_items_path( @item.request ),
              :method => :post ) do |f| %>
   <%= f.error_messages %>
 
@@ -16,5 +16,5 @@
   </p>
 <% end %>
 
-<%= link_to 'Back', items_path( @item.id ) %>
+<%= link_to 'Back', request_items_path( @item.request ) %>
 

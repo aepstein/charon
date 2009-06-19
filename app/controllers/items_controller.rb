@@ -44,7 +44,9 @@ class ItemsController < ApplicationController
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
-    @item = Request.find(params[:request_id]).items.build(params[:item])
+    @item = Request.find(params[:request_id]).items.build
+    @item.requestable = Node.find(params[:item][:node_id]).requestable_type.constantize.new
+    @item.attributes = params[:item]
 
     respond_to do |format|
       if @item.save
@@ -82,7 +84,7 @@ class ItemsController < ApplicationController
     @item.destroy
 
     respond_to do |format|
-      format.html { redirect_to(request_items_url(@item.request) }
+      format.html { redirect_to(request_items_url(@item.request)) }
       format.xml  { head :ok }
     end
   end
