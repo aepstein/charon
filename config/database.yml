@@ -21,7 +21,15 @@ production:
   pool: 5
   timeout: 5000
 
+external_registrations:
+  adapter: mysql
+  database: external_registrations_test
+  username: test
+  password: test
+  host: localhost
+
 cucumber:
   <<: *TEST
 cucumber:
   <<: *TEST
+
