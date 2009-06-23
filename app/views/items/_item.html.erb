@@ -7,8 +7,8 @@
     <td><%= link_to 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
   <tr>
-    <td colspan="6"><strong>Requestor comment:</strong><%=h item.requestor_comment %></td>
-    <td colspan="6"><strong>Allocator comment:</strong><%=h item.allocator_comment %></td>
+    <td colspan="6"><strong>Requestor comment:</strong> <%=h item.requestor_comment %></td>
+    <td colspan="6"><strong>Allocator comment:</strong> <%=h item.allocator_comment %></td>
   </tr>
   <%= render :partial => 'item',
              :collection => item.request.items.children_of(item) %>

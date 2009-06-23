@@ -1,10 +1,13 @@
-<p>
-    <%= form.label :allocation_amount,"Allocation Amount" %><br />
-    <%= form.text_field :allocation_amount %>
-  </p>
+<%= render :partial => "#{allocator_form.object.node.requestable_type.tableize}/allocator_info",
+           :object => allocator_form.object.allocatable %>
 
 <p>
-    <%= form.label :allocator_comment,"Allocator Comment" %><br />
-    <%= form.text_field :allocator_comment%>
-  </p>
+  <%= allocator_form.label :allocation_amount,"Allocation Amount" %><br />
+  <%= allocator_form.text_field :allocation_amount %>
+</p>
+
+<p>
+  <%= allocator_form.label :allocator_comment,"Allocator Comment" %><br />
+  <%= allocator_form.text_field :allocator_comment%>
+</p>
 

@@ -1,0 +1,16 @@
+<h1>Allocating item</h1>
+
+<% form_for(@item) do |f| %>
+  <%= f.error_messages %>
+
+   <%= render :partial => 'allocator_form',
+              :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @item %> |
+<%= link_to 'Back', request_items_path(@item.request) %>
+
