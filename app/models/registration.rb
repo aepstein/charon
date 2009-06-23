@@ -3,7 +3,7 @@ class Registration < ActiveRecord::Base
   has_many :memberships,
            :dependent => :destroy
   has_many :users, :through => :memberships, :uniq => true
-  validates_uniqueness_of :org_id
+  validates_uniqueness_of :id
 
   after_save :sync_members
   PREFIX_MAP = {'pre' =>     'president',
