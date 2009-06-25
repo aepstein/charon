@@ -1,11 +1,9 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :addresses
-
   map.resources :memberships
-
   map.resources :bases, :shallow => true do |basis|
     basis.resources :requests do |request|
-      request.resources :items
+      request.resources :items, :member => { :allocate => :get }
     end
   end
   map.resources :structures, :shallow => true do |structure|

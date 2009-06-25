@@ -28,6 +28,7 @@ class ItemsController < ApplicationController
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:node_id])
     @item.requestable = @item.node.requestable_type.constantize.new
+    @item.allocatable = @item.requestable.clone
     @item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
 
     respond_to do |format|
@@ -41,10 +42,21 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
+  # GET /items/1/allocate
+  def allocate
+    @item = Item.find(params[:id])
+  end
+
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
-    @item = Request.find(params[:request_id]).items.build(params[:item])
+    @item = Request.find(params[:request_id]).items.build
+    @item.node = Node.find(params[:item][:node_id])
+    @item.requestable = @item.node.requestable_type.constantize.new
+    @item.requestable.attributes = params[:item][:requestable_attributes]
+    @item.allocatable = @item.requestable.clone
+    params[:item].delete(:requestable_attributes)
+    @item.attributes = params[:item]
 
     respond_to do |format|
       if @item.save
@@ -82,7 +94,7 @@ class ItemsController < ApplicationController
     @item.destroy
 
     respond_to do |format|
-      format.html { redirect_to(request_items_url(@item.request) }
+      format.html { redirect_to(request_items_url(@item.request)) }
       format.xml  { head :ok }
     end
   end

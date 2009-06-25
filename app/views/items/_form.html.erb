@@ -1,6 +1,6 @@
 
-<% fields_for :requestable do |requestable_form| %>
-  <%= render :partial => "#{form.object.request_node.requestable_type.tableize}/form",
+<% form.fields_for :requestable do |requestable_form| %>
+  <%= render :partial => "#{form.object.node.requestable_type.tableize}/form",
              :object => requestable_form %>
 <% end %>
 

@@ -5,6 +5,8 @@ class CreateItems < ActiveRecord::Migration
       t.string :requestable_type
       t.decimal :request_amount
       t.string :requestor_comment
+      t.integer :allocatable_id
+      t.string :allocatable_type
       t.decimal :allocation_amount
       t.string :allocator_comment
       t.integer :request_id
