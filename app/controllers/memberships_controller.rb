@@ -1,8 +1,9 @@
 class MembershipsController < ApplicationController
-  # GET /memberships
-  # GET /memberships.xml
+  # GET /organizations/:organization_id/memberships
+  # GET /organizations/:organization_id/memberships.xml
   def index
-    @memberships = Membership.all
+    @organization = Organization.find(params[:organization_id])
+    @memberships = @organization.memberships
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,10 +22,10 @@ class MembershipsController < ApplicationController
     end
   end
 
-  # GET /memberships/new
-  # GET /memberships/new.xml
+  # GET /organizations/:organization_id/memberships/new
+  # GET /organizations/:organization_id/memberships/new.xml
   def new
-    @membership = Membership.new
+    @membership = Organization.find(params[:organization_id]).memberships.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,10 +38,10 @@ class MembershipsController < ApplicationController
     @membership = Membership.find(params[:id])
   end
 
-  # POST /memberships
-  # POST /memberships.xml
+  # POST /organizations/:organization_id/memberships
+  # POST /organizations/:organization_id/memberships.xml
   def create
-    @membership = Membership.new(params[:membership])
+    @membership = Organization.find(params[:organization_id]).memberships.build(params[:membership])
 
     respond_to do |format|
       if @membership.save
@@ -83,3 +84,4 @@ class MembershipsController < ApplicationController
     end
   end
 end
+

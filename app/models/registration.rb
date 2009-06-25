@@ -1,5 +1,10 @@
 class Registration < ActiveRecord::Base
-  has_one :organization, :dependent => :nullify
+  named_scope :active,
+              :conditions => 'registrations.id NOT IN (SELECT parent_id FROM registrations)'
+  named_scope :unmatched,
+              :conditions => { :organization_id => nil }
+  acts_as_tree
+  belongs_to :organization
   has_many :memberships, :dependent => :destroy do
     def with_role(role)
       self.select { |membership| membership.role_id == role.id }
@@ -11,6 +16,9 @@ class Registration < ActiveRecord::Base
       self.with_role(role).each do |membership|
         if users.include?(membership.user)
           users.delete membership.user
+          membership.organization = proxy_owner.organization if proxy_owner.organization_id_changed?
+          membership.active = proxy_owner.active?
+          membership.save if membership.changed?
         else
           self.delete membership
         end
@@ -18,7 +26,8 @@ class Registration < ActiveRecord::Base
       users.each do |user|
         self.create( :user => user,
                      :role => role,
-                     :organization => proxy_owner.organization )
+                     :organization => proxy_owner.organization,
+                     :active => proxy_owner.active? )
       end
     end
   end
@@ -41,6 +50,7 @@ class Registration < ActiveRecord::Base
       users
     end
   end
+
   validates_uniqueness_of :id
 
   after_save :synchronize_memberships
@@ -57,6 +67,10 @@ class Registration < ActiveRecord::Base
     end
   end
 
+  def active?
+    children.empty?
+  end
+
   def self.prefix_map
     @@prefix_map ||= {'pre' =>     Role.find_or_create_by_name('president'),
                       'vpre' =>    Role.find_or_create_by_name('vice-president'),
@@ -67,16 +81,6 @@ class Registration < ActiveRecord::Base
 
   def to_s
     name
-  end
-
-  # Find registrations which are not matched to a group, ordered by name
-  def self.find_unmatched
-    Registration.find( :all,
-                          :conditions => [
-                            "registrations.id NOT IN " +
-                            "(SELECT registration_id " +
-                            "FROM organizations)" ],
-                          :order => :name )
   end
 
   protected

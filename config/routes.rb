@@ -15,11 +15,13 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :travel_event_expenses
   map.resources :administrative_expenses
   map.resources :publication_expenses
-  map.resources :organizations
+  map.resources :organizations, :shallow => true do |organization|
+    organization.resources :memberships
+  end
   map.resources :roles
   map.resources :users
-  map.resources :memberships
   map.resources :registrations
+
   # The priority is based upon order of creation: first created -> highest priority.
 
   # Sample of regular route:

@@ -2,6 +2,8 @@ class CreateRegistrations < ActiveRecord::Migration
   def self.up
     create_table :registrations, :id => false do |t|
       t.integer :id, { :key => true, :null => false }
+      t.integer :parent_id
+      t.integer :organization_id
       t.string :name
       t.string :purpose
       t.boolean :is_independent

@@ -5,6 +5,7 @@ class CreateMemberships < ActiveRecord::Migration
       t.integer :user_id
       t.integer :registration_id
       t.integer :role_id
+      t.boolean :active
 
       t.timestamps
     end
