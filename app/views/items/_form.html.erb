@@ -1,16 +1,19 @@
+<% fields_for :version do |version_form| %>
 
-<% form.fields_for :requestable do |requestable_form| %>
-  <%= render :partial => "#{form.object.node.requestable_type.tableize}/form",
-             :object => requestable_form %>
+  <% fields_for :requestable do |requestable_form| %>
+    <%= render :partial => "#{form.object.node.requestable_type.tableize}/form",
+               :object => requestable_form %>
+  <% end %>
+
+  <p>
+    <%= version_form.label :amount,"Requested Amount" %><br />
+    <%= version_form.text_field :amount %>
+  </p>
+
+  <p>
+    <%= version_form.label :comment,"Requestor Comment" %><br />
+    <%= version_form.text_field :comment %>
+  </p>
+
 <% end %>
-
-  <p>
-    <%= form.label :request_amount,"Requested Amount" %><br />
-    <%= form.text_field :request_amount %>
-  </p>
-
-  <p>
-    <%= form.label :requestor_comment,"Requestor Comment" %><br />
-    <%= form.text_field :requestor_comment %>
-  </p>
 

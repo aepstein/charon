@@ -1,0 +1,17 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  item_id: 1
+  requestable_type: MyString
+  requestable_id: 1
+  amount: 9.99
+  comment: MyText
+  stage_id: 1
+
+two:
+  item_id: 1
+  requestable_type: MyString
+  requestable_id: 1
+  amount: 9.99
+  comment: MyText
+  stage_id: 1

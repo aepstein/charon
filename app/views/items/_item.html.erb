@@ -1,15 +1,15 @@
   <tr>
     <td><%=h item.node.name %></td>
-    <td><%=h item.request_amount %></td>
-    <td><%=h item.allocation_amount %></td>
-    <td><%= link_to 'Show', item %></td>
-    <td><%= link_to 'Edit', edit_item_path(item) %></td>
-    <td><%= link_to 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%=h number_to_currency(item.request_amount) %></td>
+    <td><%=h item.requestor_comment %></td>
+    <td><%=h number_to_currency(item.allocation_amount) %></td>
+    <td><%=h item.allocator_comment %></td>
+    <td><%= link_to 'Show', item %>
+        <%= link_to 'Edit', edit_item_path(item) %>
+        <%= link_to 'Allocate', '/items/' + item.id.to_s + '/allocate' %>
+        <%= link_to 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
-  <tr>
-    <td colspan="6"><strong>Requestor comment:</strong> <%=h item.requestor_comment %></td>
-    <td colspan="6"><strong>Allocator comment:</strong> <%=h item.allocator_comment %></td>
-  </tr>
+
   <%= render :partial => 'item',
              :collection => item.request.items.children_of(item) %>
 

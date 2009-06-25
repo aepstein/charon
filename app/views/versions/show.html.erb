@@ -1,0 +1,33 @@
+<p>
+  <b>Item:</b>
+  <%=h @version.item_id %>
+</p>
+
+<p>
+  <b>Requestable type:</b>
+  <%=h @version.requestable_type %>
+</p>
+
+<p>
+  <b>Requestable:</b>
+  <%=h @version.requestable_id %>
+</p>
+
+<p>
+  <b>Amount:</b>
+  <%=h @version.amount %>
+</p>
+
+<p>
+  <b>Comment:</b>
+  <%=h @version.comment %>
+</p>
+
+<p>
+  <b>Stage:</b>
+  <%=h @version.stage_id %>
+</p>
+
+
+<%= link_to 'Edit', edit_version_path(@version) %> |
+<%= link_to 'Back', versions_path %>
