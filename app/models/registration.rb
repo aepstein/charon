@@ -3,6 +3,9 @@ class Registration < ActiveRecord::Base
               :conditions => 'registrations.id NOT IN (SELECT parent_id FROM registrations)'
   named_scope :unmatched,
               :conditions => { :organization_id => nil }
+  named_scope :named, lambda { |name|
+                { :conditions => [ "registrations.name LIKE '%?%'", name ] }
+              }
   acts_as_tree
   belongs_to :organization
   has_many :memberships, :dependent => :destroy do
@@ -36,16 +39,15 @@ class Registration < ActiveRecord::Base
     # in the flat records
     def for_prefix(prefix)
       users = Array.new
-      proxy_owner.fetch_user_attributes(prefix).each do |attributes|
-        (attributes[:net_ids].to_net_ids +
-         attributes[:emails].to_net_ids ).uniq.each do |net_id|
-          user = User.find_or_initialize_by_net_id(net_id)
-          if user.new_record?
-            user.attributes = attributes
-            user.save
-          end
-          users << user
+      attributes = proxy_owner.user_attributes_for_prefix(prefix)
+      (attributes[:net_ids].to_net_ids +
+       attributes[:emails].to_net_ids ).uniq.each do |net_id|
+        user = User.find_or_initialize_by_net_id(net_id)
+        if user.new_record?
+          user.attributes = attributes
+          user.save
         end
+        users << user
       end
       users
     end
@@ -53,17 +55,39 @@ class Registration < ActiveRecord::Base
 
   validates_uniqueness_of :id
 
+  before_save :verify_parent_exists, :update_organization
   after_save :synchronize_memberships
+
+  # Eliminates reference to parent registration if registration is not in
+  # database.
+  def verify_parent_exists
+    parent_id = nil unless Registration.exists?(parent_id)
+  end
+
+  def update_organization
+    organization.update_attributes(attributes_for_organization) if organization_id? && active?
+  end
 
   # Synchronizes memberships associated with this registration
   # Eliminates memberships no longer asserted by the registration
   # Adds new memberships asserted by the registration
+  # Touches parent if it still has active memberships
   # TODO: Keep in mind that as presently structured, each prefix must correspond
   # to a different role or some records will not be correctly synchronized.
   def synchronize_memberships
-    self.prefix_map.each do |prefix, role|
+    Registration.prefix_map.each do |prefix, role|
       memberships.synchronize( users.for_prefix(prefix),
                                role )
+    end
+    parent.touch if parent_id? && parent.memberships.active.size > 0
+  end
+
+  def attributes_for_organization
+    names = name.split(',')
+    if names.size > 1
+      { :first_name => names.pop.strip, :last_name => names.join(',') }
+    else
+      { :first_name => '', :last_name => names.pop }
     end
   end
 
@@ -83,16 +107,15 @@ class Registration < ActiveRecord::Base
     name
   end
 
-  protected
-    # Returns hash of officer information, including array of
-    # net ids
-    # TODO: Include email (but only if valid)
-    def fetch_user_attributes(pre)
-      { :first_name => self["#{pre}_first_name"] || '',
-        :last_name => self["#{pre}_last_name"] || '',
-        :emails => self["#{pre}_email"] || '',
-        :net_ids => self["#{pre}_net_id"] || ''}
-    end
+  # Returns hash of officer information, including array of
+  # net ids
+  # TODO: Include email (but only if valid)
+  def user_attributes_for_prefix(prefix)
+    { :first_name => self["#{prefix}_first_name"] || '',
+      :last_name => self["#{prefix}_last_name"] || '',
+      :emails => self["#{prefix}_email"] || '',
+      :net_ids => self["#{prefix}_net_id"] || ''}
+  end
 
 end
 

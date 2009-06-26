@@ -1,18 +1,5 @@
 <h2> Registration for <em><%=h @registration.name %></em></h2>
 
-<p>
-  This registration <% if @registration.organization %>
-  is associated with the organization
-  <em><%= link_to h(@registration.organization.name), organization_path(@registration.organization) %></em>.
-<% else -%>
-  is not associated with a organization.
-  <% form_tag new_organization_path do %>
-    <%= hidden_field_tag :registration_id, @registration.id %>
-    <%= submit_tag 'Create a organization' %> from this registration
-  <% end %>
-<% end -%>
-</p>
-<hr />
 <dl>
   <dt>Purpose</dt>
   <dd><%=h @registration.purpose %></dd>
@@ -20,14 +7,17 @@
   <dt>Org Email</dt>
   <dd><%=h @registration.org_email %></dd>
 
-  <dt>OrgID</dt>
-  <dd><%=@registration.org_id %></dd>
+  <dt>Organization</dt>
+  <dd><%=h @registration.organization %></dd>
 
   <dt>When Updated</dt>
   <dd><%=h @registration.when_updated %></dd>
 
   <dt>Funding sources</dt>
   <dd><%=h @registration.funding_sources %></dd>
+
+  <dt>Active?</dt>
+  <dd><%=h @registration.active? ? 'YES' : 'NO' %></dd>
 
   <dt>Independent?</dt>
   <dd><%= @registration.is_independent? ? 'YES' : 'NO' %></dd>
@@ -128,4 +118,5 @@
     <dt>Last Name</dt>
     <dd><%=h @registration.officer_last_name %></dd>
   </dl></dd>
+</dl>
 

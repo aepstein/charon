@@ -1,7 +1,7 @@
 class CreateRegistrations < ActiveRecord::Migration
   def self.up
-    create_table :registrations, :id => false do |t|
-      t.integer :id, { :key => true, :null => false }
+    create_table :registrations do |t|
+      t.integer :id, { :null => false }
       t.integer :parent_id
       t.integer :organization_id
       t.string :name
@@ -40,7 +40,6 @@ class CreateRegistrations < ActiveRecord::Migration
       t.string :officer_net_id
       t.timestamps
     end
-    add_index :registrations, :org_id, :unique => true
   end
 
   def self.down
