@@ -51,19 +51,19 @@ class ItemsController < ApplicationController
   def create
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:item][:node_id])
-    @requestable = @item.node.requestable_type.constantize.new
-    @requestable.attributes = params[:requestable_attributes]
     @version = Version.new
-    @version.attributes = params[:version]
     @version.item = @item
-    @version.requestable = @requestable
+    @version.requestable = @item.node.requestable_type.constantize.new
+    @version.requestable.attributes = params[:requestable]
     @version.stage = Stage.find_or_create_by_name('request')
+    @version.attributes = params[:version]
 
     respond_to do |format|
-      if @item.save
+      if @item.save && @version.save
         flash[:notice] = 'Item was successfully created.'
         format.html { redirect_to(@item) }
         format.xml  { render :xml => @item, :status => :created, :location => @item }
+
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity }
@@ -92,8 +92,10 @@ class ItemsController < ApplicationController
   # DELETE /items/1.xml
   def destroy
     @item = Item.find(params[:id])
-    @item.requestable.destroy if @item.requestable
-    @item.allocatable.destroy if @item.allocatable
+    @item.versions.each do |version|
+      version.requestable.destroy if version.requestable
+      version.destroy
+    end
     @item.destroy
 
     respond_to do |format|

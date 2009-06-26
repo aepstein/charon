@@ -1,36 +1,11 @@
 <p>
-  <b>Form:</b>
-  <%=h @item.requestable_id %>
-</p>
-
-<p>
   <b>Form type:</b>
-  <%=h @item.requestable_type %>
-</p>
-
-<p>
-  <b>Request amount:</b>
-  <%=h @item.request_amount %>
-</p>
-
-<p>
-  <b>Requestor comment:</b>
-  <%=h @item.requestor_comment %>
-</p>
-
-<p>
-  <b>Allocation amount:</b>
-  <%=h @item.allocation_amount %>
-</p>
-
-<p>
-  <b>Allocator comment:</b>
-  <%=h @item.allocator_comment %>
+  <%=h @item.node.requestable_type %>
 </p>
 
 <p>
   <b>Request node:</b>
-  <%=h @item.node_id %>
+  <%=h @item.node.name %>
 </p>
 
 

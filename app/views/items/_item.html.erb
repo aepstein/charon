@@ -1,13 +1,17 @@
   <tr>
     <td><%=h item.node.name %></td>
-    <td><%=h number_to_currency(item.request_amount) %></td>
-    <td><%=h item.requestor_comment %></td>
-    <td><%=h number_to_currency(item.allocation_amount) %></td>
-    <td><%=h item.allocator_comment %></td>
-    <td><%= link_to 'Show', item %>
-        <%= link_to 'Edit', edit_item_path(item) %>
-        <%= link_to 'Allocate', '/items/' + item.id.to_s + '/allocate' %>
+    <td colspan="3">&nbsp;</td>
+    <td><%= link_to 'Edit', edit_item_path(item) %>
         <%= link_to 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+  <tr>
+    <%= render :partial => 'version',
+               :collection => item.versions %>
+  </tr>
+  <tr>
+    <td align="center">-></td>
+    <td><%= link_to 'add next stage', new_item_version_path(item) + '?stage_id=1' %></td>
+    <td colspan="3">&nbsp;</td>
   </tr>
 
   <%= render :partial => 'item',

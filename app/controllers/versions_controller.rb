@@ -1,8 +1,9 @@
 class VersionsController < ApplicationController
-  # GET /versions
-  # GET /versions.xml
+  # GET /items/:item_id/versions
+  # GET /items/:item_id/versions.xml
   def index
-    @versions = Version.all
+    @item = Item.find(params[:item_id])
+    @versions = @item.versions
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,10 +22,12 @@ class VersionsController < ApplicationController
     end
   end
 
-  # GET /versions/new
-  # GET /versions/new.xml
+  # GET /items/:item_id/versions/new
+  # GET /items/:item_id/versions/new.xml
   def new
-    @version = Version.new
+    @version = Item.find(params[:item_id]).versions.build
+    @version.requestable = Item.find(params[:item_id]).node.requestable_type.constantize.new
+    @version.stage = Stage.find_or_create_by_name('request')
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,10 +40,16 @@ class VersionsController < ApplicationController
     @version = Version.find(params[:id])
   end
 
-  # POST /versions
-  # POST /versions.xml
+  # POST /items/:item_id/versions
+  # POST /items/:item_id/versions.xml
   def create
-    @version = Version.new(params[:version])
+    @item = Item.find(params[:item_id])
+    @version = @item.versions.build
+    #@version.item = @item
+    @version.requestable = @item.node.requestable_type.constantize.new
+    @version.requestable.attributes = params[:requestable]
+    @version.stage = Stage.find_or_create_by_name('request')
+    @version.attributes = params[:version]
 
     respond_to do |format|
       if @version.save
@@ -83,3 +92,4 @@ class VersionsController < ApplicationController
     end
   end
 end
+
