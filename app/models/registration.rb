@@ -3,8 +3,16 @@ class Registration < ActiveRecord::Base
               :conditions => 'registrations.id NOT IN (SELECT parent_id FROM registrations)'
   named_scope :unmatched,
               :conditions => { :organization_id => nil }
-  named_scope :named, lambda { |name|
+  named_scope :named,
+              lambda { |name|
                 { :conditions => [ "registrations.name LIKE '%?%'", name ] }
+              }
+  named_scope :percent_members_of_type,
+              lambda { |percent, type|
+                { :conditions => [ " ? < ( number_of_#{type.to_s} / ( " +
+                                   "number_of_undergrads + number_of_grads + " +
+                                   "number_of_staff + number_of_faculty + " +
+                                   "number_of_others ) )", percent.to_i] }
               }
   acts_as_tree
   belongs_to :organization

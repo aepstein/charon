@@ -1,5 +1,5 @@
 class LocalEventExpense < ActiveRecord::Base
-  has_one :request_item, :as => :requestable
+  has_one :version, :as => :requestable
   before_save :calculate_local_event_expense
 
 	def calculate_local_event_expense
