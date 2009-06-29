@@ -1,9 +1,9 @@
 class RequestsController < ApplicationController
-  # GET /bases/:basis_id/requests
-  # GET /bases/:basis_id/requests.xml
+  # GET /organizations/:organization_id/requests
+  # GET /organizations/:organization_id/requests.xml
   def index
-    @basis = Basis.find(params[:basis_id])
-    @requests = @basis.requests
+    @organization = Organization.find(params[:organization_id])
+    @requests = @organization.requests
 
     respond_to do |format|
       format.html # index.html.erb
@@ -22,11 +22,12 @@ class RequestsController < ApplicationController
     end
   end
 
-  # GET /bases/:basis_id/requests/new
-  # GET /bases/:basis_id/requests/new.xml
+  # GET /organizations/:organization_id/requests/new
+  # GET /organizations/:organization_id/requests/new.xml
   def new
-    @request = Basis.find(params[:basis_id]).requests.build
-    @request.items.build
+    @organization = Organization.find(params[:organization_id])
+    @request = @organization.requests.build
+    @request.basis = Basis.find(params[:basis_id]) if params.has_key?(:basis_id)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -34,10 +35,11 @@ class RequestsController < ApplicationController
     end
   end
 
-  # POST /bases/:basis_id/requests
-  # POST /bases/:basis_id/requests.xml
+  # POST /organizations/:organization_id/requests
+  # POST /organizations/:organization_id/requests.xml
   def create
-    @request = Basis.find(params[:basis_id]).requests.build
+    @organization = Organization.find(params[:organization_id])
+    @request = @organization.requests.build(params[:request])
 
     respond_to do |format|
       if @request.save
@@ -80,7 +82,7 @@ class RequestsController < ApplicationController
     @request.destroy
 
     respond_to do |format|
-      format.html { redirect_to(basis_requests_url(@request.basis)) }
+      format.html { redirect_to(organization_requests_url(@request.organization)) }
       format.xml  { head :ok }
     end
   end

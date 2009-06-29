@@ -1,12 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :addresses
   map.resources :stages
-  map.resources :bases, :shallow => true do |basis|
-    basis.resources :requests do |request|
-      request.resources :items do |item|
-        item.resources :versions
-      end
-    end
-  end
+  map.resources :bases
   map.resources :structures, :shallow => true do |structure|
     structure.resources :nodes
   end
@@ -16,7 +11,17 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :travel_event_expenses
   map.resources :administrative_expenses
   map.resources :publication_expenses
-  map.resources :organizations
+  map.resources :organizations, :shallow => true do |organization|
+    organization.resources :memberships
+    organization.resources :requests do |request|
+      request.resources :items do |item|
+        item.resources :versions
+      end
+    end
+  end
+  map.resources :roles
+  map.resources :users
+  map.resources :registrations
 
   # The priority is based upon order of creation: first created -> highest priority.
 
@@ -61,8 +66,6 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id.:format'
   map.resource :user_session
   map.root :controller => "user_sessions", :action => "new" # optional, this just sets the root route
-  map.resource :account, :controller => "users"
-  map.resources :users
 
 end
 

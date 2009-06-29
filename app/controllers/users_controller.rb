@@ -6,18 +6,24 @@ class UsersController < ApplicationController
     @users = User.search(params[:query])
     flash[:message] = "There were no people matching " +
     						 "<em>#{params[:query]}</em>." if @users.empty?
+
     redirect_to user_path(@users.first) if @users.size == 1
   end
 
   def new
-    @user = User.new
+   @user = User.new
+
+     respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @user }
+    end
   end
 
   def create
     @user = User.new(params[:user])
     if @user.save
       flash[:notice] = "Account registered!"
-      redirect_back_or_default account_url
+      redirect_back_or_default user_url
     else
       render :action => :new
     end
@@ -25,9 +31,12 @@ class UsersController < ApplicationController
 
   def show
       begin
-      @person = User.find( params[:id], :include => :organizations )
+      @user = User.find( params[:id])
     rescue ActiveRecord::RecordNotFound
-      redirect_to user_path
+     respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml => @user }
+    end
   end
 
    def edit

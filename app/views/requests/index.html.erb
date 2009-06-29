@@ -7,7 +7,7 @@
 
 <% @requests.each do |request| %>
   <tr>
-    <td><%=h request.basis_id %></td>
+    <td><%=h request.basis.name %></td>
     <td><%= link_to 'Show', request %></td>
     <td><%= link_to 'Edit', edit_request_path(request) %></td>
     <td><%= link_to 'Destroy', request, :confirm => 'Are you sure?', :method => :delete %></td>
@@ -17,5 +17,5 @@
 
 <br />
 
-<%= link_to 'New request', new_basis_request_path( @basis.id ) %>
+<%= link_to 'New request', new_organization_request_path( @organization.id ) %>
 

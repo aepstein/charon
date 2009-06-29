@@ -38,8 +38,12 @@ Rails::Initializer.run do |config|
   # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
-  config.gem "aunderwo-acts_as_tree", :lib => "acts_as_tree", :source => "http://gems.github.com/"
-  config.gem "authlogic"
-  config.gem "calendar_date_select"
+  config.gem 'aunderwo-acts_as_tree', :lib => 'acts_as_tree', :source => 'http://gems.github.com/'
+  config.gem 'authlogic'
+  config.gem 'calendar_date_select'
+  config.gem 'mislav-will_paginate', :lib => 'will_paginate', :source => 'http://gems.github.com'
+  config.gem 'ruby-net-ldap', :lib => 'net/ldap'
+  config.gem 'activeldap', :lib => 'active_ldap'
+  config.gem 'mysql' #May need to sudo apt-get install libmysqlclient15-dev
 end
 

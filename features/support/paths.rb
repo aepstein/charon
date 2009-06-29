@@ -16,8 +16,8 @@ module NavigationHelpers
     when /the new basis page/
       new_basis_path
 
-    when /the new request page"/
-      new_request_path
+    when /^"(.*)'s new request page"$/
+      new_organization_request_path(Organization.find_by_last_name($1))
 
     when /the new item page/
       new_item_path
@@ -39,7 +39,6 @@ module NavigationHelpers
 
     when /the new administrative_expense page/
       new_administrative_expense_path
-
 
     # Add more mappings here.
     # Here is a more fancy example:
