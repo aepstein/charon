@@ -1,6 +1,7 @@
 class Organization < ActiveRecord::Base
   has_many :registrations
   has_many :memberships
+  has_and_belongs_to_many :requests
   before_validation :format_name
 
   def name

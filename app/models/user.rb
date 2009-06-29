@@ -1,9 +1,8 @@
 class User < ActiveRecord::Base
- acts_as_authentic do |c|
-   c.validate_email_field = false
-   c.login_field = 'net_id'
- end
- STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
+  acts_as_authentic do |c|
+    c.login_field = 'net_id'
+  end
+  STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
   has_many :memberships,
            :dependent => :destroy
   has_many :roles
@@ -25,53 +24,6 @@ class User < ActiveRecord::Base
   before_save :import_simple_ldap_attributes
   before_update :import_complex_ldap_attributes
   after_create :import_complex_ldap_attributes
-
-  def login!
-    update_attribute :last_login_at, Time.now
-  end
-
-  def may_be_updated_by?(user)
-    return true if user==self
-    false
-  end
-
-  def may_be_created_by?(user)
-    false
-  end
-
-  def may_be_destroyed_by?(user)
-    false
-  end
-
-  def may_be_shown_to?(user)
-    user==self
-  end
-
-  def may_create?(resource)
-    return resource.may_be_created_by?(self) unless is_admin?
-    true
-  end
-
-  def may_update?(resource)
-    return resource.may_be_updated_by?(self) unless is_admin?
-    true
-  end
-
-  def may_destroy?(resource)
-    return resource.may_be_destroyed_by?(self) unless is_admin?
-    true
-  end
-
-  def may_see?(resource)
-    return resource.may_be_shown_to?(self) unless is_admin?
-    true
-  end
-
-  # TODO: Add superuser flag so any user can be designated for admin
-  # privileges
-  def is_admin?
-    true
-  end
 
 protected
   def extract_email

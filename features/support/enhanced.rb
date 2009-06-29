@@ -1,3 +1,5 @@
+DatabaseCleaner.strategy = :truncation
+
 Webrat.configure do |config|
   config.mode = :selenium
   # Selenium defaults to using the selenium environment. Use the following to override this.

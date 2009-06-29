@@ -1,12 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :addresses
   map.resources :stages
-  map.resources :versions
-  map.resources :bases, :shallow => true do |basis|
-    basis.resources :requests do |request|
-      request.resources :items, :member => { :allocate => :get }
-    end
-  end
+  map.resources :bases
   map.resources :structures, :shallow => true do |structure|
     structure.resources :nodes
   end
@@ -18,6 +13,11 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :publication_expenses
   map.resources :organizations, :shallow => true do |organization|
     organization.resources :memberships
+    organization.resources :requests do |request|
+      request.resources :items do |item|
+        item.resources :versions
+      end
+    end
   end
   map.resources :roles
   map.resources :users

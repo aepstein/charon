@@ -2,17 +2,23 @@
 
 <% form_for( :request,
              @request,
-             :url => basis_requests_path(
-                     @request.basis_id ),
+             :url => organization_requests_path(
+                     @organization.id ),
              :method => :post ) do |f| %>
   <%= f.error_messages %>
 
-<%= render :partial => 'form',
-           :object => f %>
+  <%= render :partial => 'form',
+             :object => f %>
+
+  <%= f.label :basis_id, 'Basis for request' %>
+  <%= f.collection_select :basis_id,
+                          Basis.find(:all),
+                          :id,
+                          :name %>
   <p>
     <%= f.submit 'Create' %>
   </p>
 
 <% end %>
-<%= link_to 'Back', basis_requests_path( @request.basis_id ) %>
+<%= link_to 'Back', organization_requests_path( @organization.id ) %>
 

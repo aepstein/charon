@@ -1,3 +1,4 @@
+<h1>Showing request</h1>
 <p>
   <b>Request structure:</b>
   <%=h @request.basis.structure.name %>
@@ -8,6 +9,9 @@
             request_items_path( @request.id ) %>
 </p>
 
-<%= link_to 'Edit', edit_request_path(@request) %> |
-<%= link_to 'Back', basis_requests_path(@request.basis_id) %>
+<%= link_to 'Edit', edit_request_path(@request) %>
+<% @request.organizations.each do |organization| %>
+ | <%= link_to "Back to #{organization.name} requests",
+             organization_requests_path(organization) %>
+<% end %>
 
