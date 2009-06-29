@@ -24,7 +24,7 @@ Feature: Manage items
     And I should see "3"
     And I should see "101"
 
-  @requestitem
+
   Scenario: Select a node to go to the new item page
     Given I am on the item page
     When I select "admin node" from "node"
