@@ -2,7 +2,7 @@
 
 <% form_for( :version,
              @version,
-             :url => new_item_version_path(@version.item),
+             :url => item_versions_path(@version.item),
              :method => :post ) do |f| %>
   <%= f.error_messages %>
 

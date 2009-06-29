@@ -25,9 +25,11 @@ class VersionsController < ApplicationController
   # GET /items/:item_id/versions/new
   # GET /items/:item_id/versions/new.xml
   def new
-    @version = Item.find(params[:item_id]).versions.build
-    @version.requestable = Item.find(params[:item_id]).node.requestable_type.constantize.new
-    @version.stage = Stage.find_or_create_by_name('request')
+    @item = Item.find(params[:item_id])
+    @stage = Stage.find_or_create_by_position(@item.versions.next_stage)
+    @version = @item.versions.build
+    @version.requestable = @item.node.requestable_type.constantize.new
+    @version.stage = @stage
 
     respond_to do |format|
       format.html # new.html.erb
@@ -45,10 +47,10 @@ class VersionsController < ApplicationController
   def create
     @item = Item.find(params[:item_id])
     @version = @item.versions.build
-    #@version.item = @item
     @version.requestable = @item.node.requestable_type.constantize.new
-    @version.requestable.attributes = params[:requestable]
-    @version.stage = Stage.find_or_create_by_name('request')
+    @version.requestable.attributes = params[:version][:requestable_attributes]
+    @version.stage = Stage.find_or_create_by_position(params[:stage_pos])
+    params[:version].delete(:requestable_attributes)
     @version.attributes = params[:version]
 
     respond_to do |format|

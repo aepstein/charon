@@ -27,8 +27,11 @@ class ItemsController < ApplicationController
   def new
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:node_id])
-    @requestable = @item.node.requestable_type.constantize.new
     @item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
+    @stage = Stage.find_or_create_by_position(@item.versions.next_stage)
+    @version = @item.versions.build
+    @version.requestable = @item.node.requestable_type.constantize.new
+    @version.stage = @stage
 
     respond_to do |format|
       format.html # new.html.erb
@@ -41,21 +44,16 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
-  # GET /items/1/allocate
-  def allocate
-    @item = Item.find(params[:id])
-  end
-
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:item][:node_id])
-    @version = Version.new
-    @version.item = @item
+    @version = @item.versions.build
     @version.requestable = @item.node.requestable_type.constantize.new
-    @version.requestable.attributes = params[:requestable]
-    @version.stage = Stage.find_or_create_by_name('request')
+    @version.requestable.attributes = params[:version][:requestable_attributes]
+    @version.stage = Stage.find_or_create_by_position(params[:stage_pos])
+    params[:version].delete(:requestable_attributes)
     @version.attributes = params[:version]
 
     respond_to do |format|
