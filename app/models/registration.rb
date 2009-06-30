@@ -1,4 +1,5 @@
 class Registration < ActiveRecord::Base
+  default_scope :order => "registrations.name, registrations.parent_id DESC"
   named_scope :active,
               :conditions => 'registrations.id NOT IN (SELECT parent_id FROM registrations)'
   named_scope :unmatched,
@@ -9,7 +10,7 @@ class Registration < ActiveRecord::Base
               }
   named_scope :percent_members_of_type,
               lambda { |percent, type|
-                { :conditions => [ " ? < ( number_of_#{type.to_s} / ( " +
+                { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
                                    "number_of_undergrads + number_of_grads + " +
                                    "number_of_staff + number_of_faculty + " +
                                    "number_of_others ) )", percent.to_i] }
