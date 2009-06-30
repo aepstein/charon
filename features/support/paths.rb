@@ -19,6 +19,9 @@ module NavigationHelpers
     when /^"(.*)'s new request page"$/
       new_organization_request_path(Organization.find_by_last_name($1))
 
+    when /^"(.*)'s requests page"$/
+      organization_requests_path(Organization.find_by_last_name($1))
+
     when /the new item page/
       new_item_path
 
