@@ -1,35 +1,18 @@
 <h1>New version</h1>
 
-<% form_for(@version) do |f| %>
+<% form_for( :version,
+             @version,
+             :url => item_versions_path(@version.item),
+             :method => :post ) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :item_id %><br />
-    <%= f.text_field :item_id %>
-  </p>
-  <p>
-    <%= f.label :requestable_type %><br />
-    <%= f.text_field :requestable_type %>
-  </p>
-  <p>
-    <%= f.label :requestable_id %><br />
-    <%= f.text_field :requestable_id %>
-  </p>
-  <p>
-    <%= f.label :amount %><br />
-    <%= f.text_field :amount %>
-  </p>
-  <p>
-    <%= f.label :comment %><br />
-    <%= f.text_area :comment %>
-  </p>
-  <p>
-    <%= f.label :stage_id %><br />
-    <%= f.text_field :stage_id %>
-  </p>
+  <%= render :partial => "form",
+             :object => f %>
+
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
 
-<%= link_to 'Back', versions_path %>
+<%= link_to 'Back', request_items_path(@version.item.request) %>
+

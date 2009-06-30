@@ -27,8 +27,11 @@ class ItemsController < ApplicationController
   def new
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:node_id])
-    @requestable = @item.node.requestable_type.constantize.new
     @item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
+    @stage = Stage.find_or_create_by_position(@item.versions.next_stage)
+    @version = @item.versions.build
+    @version.requestable = @item.node.requestable_type.constantize.new
+    @version.stage = @stage
 
     respond_to do |format|
       format.html # new.html.erb
@@ -41,29 +44,24 @@ class ItemsController < ApplicationController
     @item = Item.find(params[:id])
   end
 
-  # GET /items/1/allocate
-  def allocate
-    @item = Item.find(params[:id])
-  end
-
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:item][:node_id])
-    @requestable = @item.node.requestable_type.constantize.new
-    @requestable.attributes = params[:requestable_attributes]
-    @version = Version.new
+    @version = @item.versions.build
+    @version.requestable = @item.node.requestable_type.constantize.new
+    @version.requestable.attributes = params[:version][:requestable_attributes]
+    @version.stage = Stage.find_or_create_by_position(params[:stage_pos])
+    params[:version].delete(:requestable_attributes)
     @version.attributes = params[:version]
-    @version.item = @item
-    @version.requestable = @requestable
-    @version.stage = Stage.find_or_create_by_name('request')
 
     respond_to do |format|
-      if @item.save
+      if @item.save && @version.save
         flash[:notice] = 'Item was successfully created.'
         format.html { redirect_to(@item) }
         format.xml  { render :xml => @item, :status => :created, :location => @item }
+
       else
         format.html { render :action => "new" }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity }
@@ -92,8 +90,10 @@ class ItemsController < ApplicationController
   # DELETE /items/1.xml
   def destroy
     @item = Item.find(params[:id])
-    @item.requestable.destroy if @item.requestable
-    @item.allocatable.destroy if @item.allocatable
+    @item.versions.each do |version|
+      version.requestable.destroy if version.requestable
+      version.destroy
+    end
     @item.destroy
 
     respond_to do |format|

@@ -1,0 +1,27 @@
+  <p>
+    Form type: <%= @version.requestable_type %>
+  </p>
+
+  <p>
+    Stage: <%= @version.stage.name %>
+  </p>
+
+  <% form.fields_for :requestable do |requestable_form| %>
+    <%= render :partial => "#{form.object.requestable_type.tableize}/form",
+               :object => requestable_form %>
+  <% end %>
+
+  <p>
+    <%= form.label :amount %><br />
+    $<%= form.text_field :amount %>
+  </p>
+
+  <p>
+    <%= form.label :comment %><br />
+    <%= form.text_field :comment %>
+  </p>
+
+  <p>
+    <%= hidden_field_tag :stage_pos, @version.stage.position %>
+  </p>
+

@@ -25,9 +25,10 @@
 
 <p>
   <b>Stage:</b>
-  <%=h @version.stage_id %>
+  <%=h @version.stage.name %>
 </p>
 
 
 <%= link_to 'Edit', edit_version_path(@version) %> |
-<%= link_to 'Back', versions_path %>
+<%= link_to 'Back', request_items_path(@version.item.request) %>
+

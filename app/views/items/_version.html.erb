@@ -1,0 +1,8 @@
+  <tr>
+    <td align="center">-></td>
+    <td><%=h version.stage.name %></td>
+    <td><%=h number_to_currency(version.amount) %></td>
+    <td><%=h version.comment %></td>
+    <td><%= link_to 'Edit', edit_version_path(version) %></td>
+  </tr>
+
