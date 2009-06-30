@@ -10,17 +10,14 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
-    when /the new item page/
-      new_request_item_path(1)
+    when /the items page/
+      request_items_path(1)
 
     when /the new basis page/
       new_basis_path
 
     when /^"(.*)'s new request page"$/
       new_organization_request_path(Organization.find_by_last_name($1))
-
-    when /the new item page/
-      new_item_path
 
     when /the new node page/
       new_node_path

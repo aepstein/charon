@@ -3,17 +3,23 @@ Feature: Manage items
   As an applicant
   wants request item form
 
-  @requestitem
+  @item
   Scenario: Register new item
-    Given I am on the new item page
-    When I fill in "item_requestable_id" with "1"
-    And I fill in "item_requestable_type" with "admin"
-    And I fill in "item_request_amount" with "1000"
-    And I fill in "item_requestor_comment" with "Good"
-    And I fill in "item_allocation_amount" with "600"
-    And I fill in "item_allocator_comment" with "Bad"
+    Given the following requests:
+        | id |
+        | 1 |
+    And the following nodes:
+        | id | name | requestable_type |
+        | 1 | node1 | AdministrativeExpense |
+    And the following items:
+        | id | request_id | node_id |
+        | 1 | 1 | 1 |
+    And I am on the items page
+
+    When I follow "add next stage"
     And I fill in "item_node_id" with "101"
     And I press "Create"
+
     Then I should see "1"
     And I should see "admin"
     And I should see "1000"
