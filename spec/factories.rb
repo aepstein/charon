@@ -21,3 +21,13 @@ Factory.define :structure do |f|
   f.sequence(:name) { |n| "Structure #{n}" }
 end
 
+Factory.define :request do
+end
+
+Factory.define :node do
+end
+
+Factory.define :item do |f|
+  f.sequence(:request_id) { |n| "Item #{n}" }
+end
+
