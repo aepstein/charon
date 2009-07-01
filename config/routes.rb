@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :approvals, :only => [ :index, :destroy ]
   map.resources :addresses
   map.resources :stages
   map.resources :bases
@@ -13,7 +14,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :publication_expenses
   map.resources :organizations, :shallow => true do |organization|
     organization.resources :memberships
-    organization.resources :requests do |request|
+    organization.resources :requests, :member => { :approve => :post } do |request|
       request.resources :items do |item|
         item.resources :versions
       end
