@@ -87,5 +87,23 @@ class RequestsController < ApplicationController
     end
   end
 
+  # POST /requests/:request_id/approve
+  # POST /requests/:request_id/approve.xml
+  def approve
+    @approval = Request.find(params[:request_id]).approvals.build(:user => current_user)
+
+    respond_to do |format|
+      if @approval.save
+        flash[:notice] = 'Approval was successfully created.'
+        format.html { redirect_to(@approval) }
+        format.xml  { render :xml => @approval, :status => :created, :location => @approval }
+      else
+        # TODO how to handle a failed approval.
+        format.html { render :action => "show" }
+        format.xml  { render :xml => @approval.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
 end
 

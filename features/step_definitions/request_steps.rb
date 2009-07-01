@@ -1,5 +1,10 @@
 Given /^the following requests:$/ do |requests|
-  Request.create!(requests.hashes)
+  requests.hashes.each do |request|
+    if request.has_key?('organizations')
+      organizations = request['organizations'].split(', ').map { |o| Organization.find_by_last_name(o.strip) }
+    end
+    Factory('request', request).organizations << organizations
+  end
 end
 
 Given /^the following (.+) records?:$/ do |factory, table|

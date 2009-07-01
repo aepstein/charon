@@ -4,12 +4,36 @@ Feature: Manage requests
   As a requestor or reviewer
   I want to manage requests
 
-  Scenario: Register new request
+  Background:
     Given the following organization records:
-      | last_name |
+      | last_name      |
       | organization 1 |
-    And 1 basis record
+      | organization 2 |
+      | organization 3 |
+    And the following requests:
+      | organizations                  |
+      | organization 1, organization 2 |
+      | organization 2                 |
+
+  Scenario: Register new request
     When I am on "organization 1's new request page"
     And I press "Create"
     Then I should see "Showing request"
+
+  Scenario: List requests for an organization with 1 request
+    When I am on "organization 1's requests page"
+    Then I should see the following requests:
+
+  Scenario: List of requests for an organization with 2 requests
+    When I am on "organization 2's requests page"
+    Then I should see the following requests:
+
+  Scenario: List of requests for an organization with no requests
+    When I am on "organization 3's requests page"
+    Then I should see the following requests:
+
+  Scenario: Approve request for existing organization
+    When I am on "organization 1's requests page"
+    And I press "Approve"
+    Then I should see "Approval was successfully created"
 
