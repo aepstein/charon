@@ -3,6 +3,7 @@ Feature: Manage administrative_expenses
   As an applicant
   I want administrative expenses form
 
+  @jdm65
   Scenario: Register new administrative_expense
     Given I am on the new administrative_expense page
     When I fill in "administrative_expense_copies" with "1"

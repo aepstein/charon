@@ -10,8 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+
     when /the items page/
-      request_items_path(1)
+      request_items_path(Request.find(:first))
 
     when /the new basis page/
       new_basis_path

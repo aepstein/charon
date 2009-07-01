@@ -11,23 +11,26 @@ Factory.define :user do |f|
   f.password_confirmation "pjlmiok"
 end
 
+Factory.define :structure do |f|
+  f.sequence(:name) { |n| "Structure #{n}" }
+end
+
+Factory.define :node do |f|
+  f.association :structure, :factory => :structure
+end
+
 Factory.define :basis do |f|
   f.association :structure, :factory => :structure
   f.open_at DateTime.now
   f.closed_at DateTime.now + 10.days
 end
 
-Factory.define :structure do |f|
-  f.sequence(:name) { |n| "Structure #{n}" }
-end
-
-Factory.define :request do
-end
-
-Factory.define :node do
+Factory.define :request do |f|
+  f.association :basis, :factory => :basis
 end
 
 Factory.define :item do |f|
-  f.sequence(:request_id) { |n| "Item #{n}" }
+  f.association :request, :factory => :request
+  f.association :node, :factory => :node
 end
 

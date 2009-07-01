@@ -1,5 +1,7 @@
 Given /^the following items:$/ do |items|
-  Item.create!(items.hashes)
+  items.hashes.each do |item|
+    Factory('item', item)
+  end
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) item$/ do |pos|

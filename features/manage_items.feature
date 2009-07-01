@@ -5,15 +5,8 @@ Feature: Manage items
 
   @item
   Scenario: Register new item
-    Given the following requests:
-        | id |
-        | 1 |
-    And the following nodes:
-        | id | name | requestable_type |
-        | 1 | node1 | AdministrativeExpense |
-    And the following items:
-        | id | request_id | node_id |
-        | 1 | 1 | 1 |
+
+    Given 1 item record
     And I am on the items page
 
     When I follow "add next stage"
