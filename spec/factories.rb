@@ -16,6 +16,7 @@ Factory.define :structure do |f|
 end
 
 Factory.define :node do |f|
+  f.requestable_type "AdministrativeExpense"
   f.association :structure, :factory => :structure
 end
 
@@ -32,5 +33,12 @@ end
 Factory.define :item do |f|
   f.association :request, :factory => :request
   f.association :node, :factory => :node
+end
+
+Factory.define :version do |f|
+  f.association :item, :factory => :item
+end
+
+Factory.define :stage do |f|
 end
 

@@ -6,9 +6,14 @@
     Stage: <%= @version.stage.name %>
   </p>
 
-  <% form.fields_for :requestable do |requestable_form| %>
-    <%= render :partial => "#{form.object.requestable_type.tableize}/form",
-               :object => requestable_form %>
+  <% if @version.stage.name == "request" %>
+    <% form.fields_for :requestable do |requestable_form| %>
+      <%= render :partial => "#{@version.requestable_type.tableize}/form",
+                :object => requestable_form %>
+    <% end %>
+  <% elsif @version.stage.name == "allocation" %>
+    <%= render :partial => "#{@version.requestable_type.tableize}/allocation",
+               :object => @prev_version.requestable %>
   <% end %>
 
   <p>

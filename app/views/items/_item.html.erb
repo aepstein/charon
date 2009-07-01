@@ -4,15 +4,17 @@
     <td><%= link_to 'Edit', edit_item_path(item) %>
         <%= link_to 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
-  <tr>
-    <%= render :partial => 'version',
-               :collection => item.versions %>
-  </tr>
-  <tr>
-    <td align="center">-></td>
-    <td><%= link_to 'add next stage', new_item_version_path(item) %></td>
-    <td colspan="3">&nbsp;</td>
-  </tr>
+
+  <%= render :partial => 'version',
+             :collection => item.versions %>
+
+  <% if item.versions.next_stage <= 2 %> <!-- there are only two stages (request and allocation) as of now -->
+    <tr>
+      <td align="center">-></td>
+      <td><%= link_to 'add next stage', new_item_version_path(item) %></td>
+      <td colspan="3">&nbsp;</td>
+    </tr>
+  <% end %>
 
   <%= render :partial => 'item',
              :collection => item.request.items.children_of(item) %>

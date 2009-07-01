@@ -32,6 +32,9 @@ class ItemsController < ApplicationController
     @version = @item.versions.build
     @version.requestable = @item.node.requestable_type.constantize.new
     @version.stage = @stage
+    @item.versions.each do |v|
+      @prev_version = v if v.stage.position == @stage.position - 1
+    end
 
     respond_to do |format|
       format.html # new.html.erb

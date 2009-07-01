@@ -5,28 +5,46 @@ Feature: Manage items
 
   @item
   Scenario: Register new item
-
     Given 1 item record
+    And the following stage record:
+      | name    | position |
+      | request | 1        |
     And I am on the items page
 
+    Then I should see "add next stage"
+
     When I follow "add next stage"
-    And I fill in "item_node_id" with "101"
+    Then I should see "Form type: AdministrativeExpense"
+    And I should see "Stage: request"
+
+    When I fill in "version_amount" with "100"
+    And I fill in "version_comment" with "this is only a test"
     And I press "Create"
+    Then I should see "Version was successfully created."
+    And I should see "Requestable type: AdministrativeExpense"
+    And I should see "Amount: $100.00"
+    And I should see "Comment: this is only a test"
 
-    Then I should see "1"
-    And I should see "admin"
-    And I should see "1000"
-    And I should see "Good"
-    And I should see "600"
-    And I should see "Bad"
-    And I should see "2"
-    And I should see "3"
-    And I should see "101"
+  @item
+  Scenario: Do not show link for next stage if the item already has two
+    Given the following item record:
+      | id |
+      | 1 |
+    And the following version records:
+      | stage_id | item_id |
+      | 1 | 1 |
+      | 2 | 1 |
+    And the following stage records:
+      | id | name       | position |
+      | 1  | request    | 1        |
+      | 2  | allocation | 2        |
+    And I am on the items page
 
+    Then I should not see "add next stage"
 
   Scenario: Select a node to go to the new item page
-    Given I am on the item page
-    When I select "admin node" from "node"
+    Given I am on the items page
+    When I select "admin expense node" from "node"
     Then I should see "requestable_copies"
     And I should see "requestable_repairs_restocking"
     And I should see "requestable_mailbox_wsh_25"

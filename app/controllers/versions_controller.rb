@@ -30,6 +30,9 @@ class VersionsController < ApplicationController
     @version = @item.versions.build
     @version.requestable = @item.node.requestable_type.constantize.new
     @version.stage = @stage
+    @item.versions.each do |v|
+      @prev_version = v if v.stage.position == @stage.position - 1
+    end
 
     respond_to do |format|
       format.html # new.html.erb
@@ -40,6 +43,9 @@ class VersionsController < ApplicationController
   # GET /versions/1/edit
   def edit
     @version = Version.find(params[:id])
+    @version.item.versions.each do |v|
+      @prev_version = v if v.stage.position == @version.stage.position - 1
+    end
   end
 
   # POST /items/:item_id/versions
@@ -48,9 +54,9 @@ class VersionsController < ApplicationController
     @item = Item.find(params[:item_id])
     @version = @item.versions.build
     @version.requestable = @item.node.requestable_type.constantize.new
-    @version.requestable.attributes = params[:version][:requestable_attributes]
+    @version.requestable.attributes = params[:version][:requestable_attributes] if params[:version].has_key?(:requestable_attributes)
     @version.stage = Stage.find_or_create_by_position(params[:stage_pos])
-    params[:version].delete(:requestable_attributes)
+    #params[:version].delete(:requestable_attributes) if params[:version].has_key?(:requestable_attributes)
     @version.attributes = params[:version]
 
     respond_to do |format|

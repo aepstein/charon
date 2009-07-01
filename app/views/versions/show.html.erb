@@ -4,23 +4,12 @@
 </p>
 
 <p>
-  <b>Requestable type:</b>
-  <%=h @version.requestable_type %>
-</p>
-
-<p>
   <b>Requestable:</b>
   <%=h @version.requestable_id %>
 </p>
 
 <p>
-  <b>Amount:</b>
-  <%=h @version.amount %>
-</p>
-
-<p>
-  <b>Comment:</b>
-  <%=h @version.comment %>
+  <b>Requestable type:</b> <%=h @version.requestable_type %>
 </p>
 
 <p>
@@ -28,6 +17,13 @@
   <%=h @version.stage.name %>
 </p>
 
+<p>
+  <b>Amount:</b> <%=h number_to_currency(@version.amount) %>
+</p>
+
+<p>
+  <b>Comment:</b> <%=h @version.comment %>
+</p>
 
 <%= link_to 'Edit', edit_version_path(@version) %> |
 <%= link_to 'Back', request_items_path(@version.item.request) %>
