@@ -20,5 +20,10 @@ class SpeakerExpense < ActiveRecord::Base
   def meals_cost
     30 * number_of_speakers * nights_of_lodging
   end
+
+	def max_request
+	  tax_exempt_expenses
+  end
+
 end
 

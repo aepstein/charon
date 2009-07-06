@@ -5,7 +5,6 @@ class CreateAdministrativeExpenses < ActiveRecord::Migration
       t.decimal :copies_expense
       t.decimal :repairs_restocking
       t.integer :mailbox_wsh
-      t.decimal :total_request
       t.decimal :total
 
       t.timestamps
@@ -17,3 +16,4 @@ class CreateAdministrativeExpenses < ActiveRecord::Migration
     drop_table :administrative_expenses
   end
 end
+

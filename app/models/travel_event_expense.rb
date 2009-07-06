@@ -1,6 +1,5 @@
 class TravelEventExpense < ActiveRecord::Base
   has_one :version, :as => :requestable
-
   before_save :calculate_total
 
   def calculate_total
@@ -25,6 +24,10 @@ class TravelEventExpense < ActiveRecord::Base
 
   def lodging_cost
     10 * participants * nights_of_lodging
+  end
+
+  def max_request
+    total_eligible_expenses
   end
 
 end

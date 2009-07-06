@@ -1,32 +1,41 @@
-  <p>
-    Form type: <%= @version.requestable_type %>
-  </p>
+<p>
+  Form type: <%= @version.requestable_type %>
+</p>
 
-  <p>
-    Stage: <%= @version.stage.name %>
-  </p>
+<p>
+  Stage: <%= @version.stage.name %>
+</p>
 
-  <% if @version.stage.name == "request" %>
-    <% form.fields_for :requestable do |requestable_form| %>
-      <%= render :partial => "#{@version.requestable_type.tableize}/form",
-                :object => requestable_form %>
-    <% end %>
-  <% elsif @version.stage.name == "allocation" %>
-    <%= render :partial => "#{@version.requestable_type.tableize}/allocation",
-               :object => @prev_version.requestable %>
+<fieldset>
+
+  <legend><b>Requestable Info</b></legend>
+
+  <% form.fields_for :requestable do |requestable_form| %>
+    <%= render :partial => "#{@version.requestable_type.tableize}/form",
+               :object => requestable_form %>
   <% end %>
 
-  <p>
-    <%= form.label :amount %><br />
-    $<%= form.text_field :amount %>
-  </p>
+  <% if @version.requestable.max_request %>
+    <p>Maximum request: <%=h number_to_currency(@version.requestable.max_request) %></p>
+  <% end %>
 
-  <p>
-    <%= form.label :comment %><br />
-    <%= form.text_field :comment %>
-  </p>
+  <% if @version.stage.name == "allocation" %>
+    <p>Requested amount: <%=h number_to_currency(@prev_version.amount) %></p>
+  <% end %>
 
-  <p>
-    <%= hidden_field_tag :stage_pos, @version.stage.position %>
-  </p>
+</fieldset>
+
+<p>
+  <%= form.label :amount %><br />
+  $<%= form.text_field :amount %>
+</p>
+
+<p>
+  <%= form.label :comment %><br />
+  <%= form.text_field :comment %>
+</p>
+
+<p>
+  <%= hidden_field_tag :stage_pos, @version.stage.position %>
+</p>
 
