@@ -1,0 +1,20 @@
+<h1>Editing registered_membership_condition</h1>
+
+<% form_for(@registered_membership_condition) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :membership_type %><br />
+    <%= f.text_field :membership_type %>
+  </p>
+  <p>
+    <%= f.label :membership_percentage %><br />
+    <%= f.text_field :membership_percentage %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @registered_membership_condition %> |
+<%= link_to 'Back', registered_membership_conditions_path %>

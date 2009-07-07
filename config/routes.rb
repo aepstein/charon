@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :registered_membership_conditions
+
   map.resources :fulfillments
   map.resources :approvals, :only => [ :index, :destroy ]
   map.resources :addresses

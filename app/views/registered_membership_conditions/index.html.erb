@@ -1,0 +1,22 @@
+<h1>Listing registered_membership_conditions</h1>
+
+<table>
+  <tr>
+    <th>Membership type</th>
+    <th>Membership percentage</th>
+  </tr>
+
+<% @registered_membership_conditions.each do |registered_membership_condition| %>
+  <tr>
+    <td><%=h registered_membership_condition.membership_type %></td>
+    <td><%=h registered_membership_condition.membership_percentage %></td>
+    <td><%= link_to 'Show', registered_membership_condition %></td>
+    <td><%= link_to 'Edit', edit_registered_membership_condition_path(registered_membership_condition) %></td>
+    <td><%= link_to 'Destroy', registered_membership_condition, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New registered_membership_condition', new_registered_membership_condition_path %>

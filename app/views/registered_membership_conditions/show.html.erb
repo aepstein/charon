@@ -1,0 +1,13 @@
+<p>
+  <b>Membership type:</b>
+  <%=h @registered_membership_condition.membership_type %>
+</p>
+
+<p>
+  <b>Membership percentage:</b>
+  <%=h @registered_membership_condition.membership_percentage %>
+</p>
+
+
+<%= link_to 'Edit', edit_registered_membership_condition_path(@registered_membership_condition) %> |
+<%= link_to 'Back', registered_membership_conditions_path %>
