@@ -3,17 +3,13 @@
 <table>
   <tr>
     <th>Condition</th>
-    <th>Condition type</th>
     <th>Fulfiller</th>
-    <th>Fulfiller type</th>
   </tr>
 
 <% @fulfillments.each do |fulfillment| %>
   <tr>
-    <td><%=h fulfillment.condition_id %></td>
-    <td><%=h fulfillment.condition_type %></td>
-    <td><%=h fulfillment.fulfiller_id %></td>
-    <td><%=h fulfillment.fulfiller_type %></td>
+    <td><%=h fulfillment.condition %></td>
+    <td><%=h fulfillment.fulfiller %></td>
     <td><%= link_to 'Show', fulfillment %></td>
     <td><%= link_to 'Edit', edit_fulfillment_path(fulfillment) %></td>
     <td><%= link_to 'Destroy', fulfillment, :confirm => 'Are you sure?', :method => :delete %></td>
@@ -24,3 +20,4 @@
 <br />
 
 <%= link_to 'New fulfillment', new_fulfillment_path %>
+

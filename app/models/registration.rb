@@ -1,4 +1,5 @@
 class Registration < ActiveRecord::Base
+  MEMBER_TYPES = %w( undergrads grads staff faculty others )
   default_scope :order => "registrations.name, registrations.parent_id DESC"
   named_scope :active,
               :conditions => 'registrations.id NOT IN (SELECT parent_id FROM registrations)'
@@ -8,7 +9,7 @@ class Registration < ActiveRecord::Base
               lambda { |name|
                 { :conditions => [ "registrations.name LIKE '%?%'", name ] }
               }
-  named_scope :percent_members_of_type,
+  named_scope :min_percent_members_of_type,
               lambda { |percent, type|
                 { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
                                    "number_of_undergrads + number_of_grads + " +
@@ -61,11 +62,19 @@ class Registration < ActiveRecord::Base
       users
     end
   end
+  has_many :fulfillments, :as => :fulfiller
+  has_many :conditions, :through => :fulfillments
 
   validates_uniqueness_of :id
 
   before_save :verify_parent_exists, :update_organization
-  after_save :synchronize_memberships
+  after_save :synchronize_memberships, :synchronize_fulfillments
+
+  def synchronize_fulfillments
+    RegisteredMembershipCondition.all.each do |condition|
+      condition.fulfillments.synchronize(self)
+    end
+  end
 
   # Eliminates reference to parent registration if registration is not in
   # database.
@@ -98,6 +107,19 @@ class Registration < ActiveRecord::Base
     else
       { :first_name => '', :last_name => names.pop }
     end
+  end
+
+  named_scope :min_percent_members_of_type,
+              lambda { |percent, type|
+                { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
+                                   "number_of_undergrads + number_of_grads + " +
+                                   "number_of_staff + number_of_faculty + " +
+                                   "number_of_others ) )", percent.to_i] }
+              }
+
+  def percent_members_of_type(type)
+    self.send("number_of_#{type.to_s}") * 100.0 / ( number_of_undergrads +
+      number_of_grads + number_of_staff + number_of_faculty + number_of_others )
   end
 
   def active?

@@ -42,3 +42,12 @@ end
 Factory.define :stage do |f|
 end
 
+Factory.define :registration do |f|
+  f.name 'Registered Organization'
+end
+
+Factory.define :registered_membership_condition do |f|
+  f.membership_type 'undergrads'
+  f.membership_percentage 50
+end
+

@@ -10,9 +10,18 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+
+    when /the new fulfillment page/
+      new_fulfillment_path
+
+    when /the fulfillments page/
+      fulfillments_path
+
+    when /the new registration page/
+      new_registration_path
+
     when /the new registered_membership_condition page/
       new_registered_membership_condition_path
-
 
     when /the items page/
       request_items_path(Request.find(:first))
