@@ -1,0 +1,23 @@
+<p>
+  <b>Condition:</b>
+  <%=h @fulfillment.condition_id %>
+</p>
+
+<p>
+  <b>Condition type:</b>
+  <%=h @fulfillment.condition_type %>
+</p>
+
+<p>
+  <b>Fulfiller:</b>
+  <%=h @fulfillment.fulfiller_id %>
+</p>
+
+<p>
+  <b>Fulfiller type:</b>
+  <%=h @fulfillment.fulfiller_type %>
+</p>
+
+
+<%= link_to 'Edit', edit_fulfillment_path(@fulfillment) %> |
+<%= link_to 'Back', fulfillments_path %>

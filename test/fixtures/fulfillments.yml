@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  condition_id: 1
+  condition_type: MyString
+  fulfiller_id: 1
+  fulfiller_type: MyString
+
+two:
+  condition_id: 1
+  condition_type: MyString
+  fulfiller_id: 1
+  fulfiller_type: MyString
