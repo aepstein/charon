@@ -7,7 +7,6 @@
     <th>Repairs restocking</th>
     <th>Mailbox wsh</th>
     <th>Maximum request</th>
-    <th>Total request</th>
   </tr>
 
 <% @administrative_expenses.each do |administrative_expense| %>
@@ -17,7 +16,6 @@
     <td><%=h administrative_expense.repairs_restocking %></td>
     <td><%=h administrative_expense.mailbox_wsh %></td>
     <td><%=h administrative_expense.total %></td>
-    <td><%=h administrative_expense.total_request %></td>
     <td><%= link_to 'Show', administrative_expense %></td>
     <td><%= link_to 'Edit', edit_administrative_expense_path(administrative_expense) %></td>
     <td><%= link_to 'Destroy', administrative_expense, :confirm => 'Are you sure?', :method => :delete %></td>
