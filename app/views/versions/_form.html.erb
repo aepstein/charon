@@ -1,5 +1,5 @@
 <p>
-  Form type: <%= @version.requestable_type %>
+  Form type: <%= @version.item.node.requestable_type %>
 </p>
 
 <p>
@@ -10,8 +10,11 @@
 
   <legend><b>Requestable Info</b></legend>
 
-  <% form.fields_for :requestable do |requestable_form| %>
-    <%= render :partial => "#{@version.requestable_type.tableize}/form",
+  <% form.fields_for( :requestable,
+                      @version.requestable,
+                      :url => item_versions_path(@version.item),
+                      :method => :post ) do |requestable_form| %>
+    <%= render :partial => "#{@version.item.node.requestable_type.tableize}/form",
                :object => requestable_form %>
   <% end %>
 

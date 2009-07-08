@@ -6,6 +6,7 @@ class CreateAdministrativeExpenses < ActiveRecord::Migration
       t.decimal :repairs_restocking
       t.integer :mailbox_wsh
       t.decimal :total
+      t.integer :version_id
 
       t.timestamps
     end

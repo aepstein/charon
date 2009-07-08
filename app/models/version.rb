@@ -1,14 +1,13 @@
 class Version < ActiveRecord::Base
   belongs_to :item
-  belongs_to :requestable, :polymorphic => true, :autosave => true
   belongs_to :stage
-  has_one :adminstrative_expense
+  has_one :administrative_expense
   has_one :local_event_expense
   has_one :speaker_expense
   has_one :travel_event_expense
   has_one :durable_goods_expense
   has_one :publication_expense
-  accepts_nested_attributes_for :requestable
+  accepts_nested_attributes_for :administrative_expense #:requestable
 
   def validate
     if self.amount > self.requestable.max_request:
