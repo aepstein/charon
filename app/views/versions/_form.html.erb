@@ -1,5 +1,5 @@
 <p>
-  Form type: <%= @version.requestable_type %>
+  Form type: <%= @version.item.node.requestable_type %>
 </p>
 
 <p>
@@ -10,8 +10,11 @@
 
   <legend><b>Requestable Info</b></legend>
 
-  <% form.fields_for :requestable do |requestable_form| %>
-    <%= render :partial => "#{@version.requestable_type.tableize}/form",
+  <% form.fields_for( :requestable,
+                      @version.requestable,
+                      :url => item_versions_path(@version.item),
+                      :method => :post ) do |requestable_form| %>
+    <%= render :partial => "#{@version.item.node.requestable_type.tableize}/form",
                :object => requestable_form %>
   <% end %>
 
@@ -19,19 +22,19 @@
     <p>Maximum request: <%=h number_to_currency(@version.requestable.max_request) %></p>
   <% end %>
 
-  <% if @version.stage.name == "allocation" %>
+  <% if @version.stage.name == "Allocation" %>
     <p>Requested amount: <%=h number_to_currency(@prev_version.amount) %></p>
   <% end %>
 
 </fieldset>
 
 <p>
-  <%= form.label :amount %><br />
+  <%= form.label :amount, @version.stage.name + " Amount" %><br />
   $<%= form.text_field :amount %>
 </p>
 
 <p>
-  <%= form.label :comment %><br />
+  <%= form.label :comment, @version.stage.name + " Comment" %><br />
   <%= form.text_field :comment %>
 </p>
 

@@ -78,6 +78,9 @@ class VersionsController < ApplicationController
   # PUT /versions/1.xml
   def update
     @version = Version.find(params[:id])
+    @version.item.versions.each do |v|
+      @prev_version = v if v.stage.position == @version.stage.position - 1
+    end
 
     respond_to do |format|
       if @version.update_attributes(params[:version])

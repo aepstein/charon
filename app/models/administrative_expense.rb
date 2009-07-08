@@ -1,5 +1,5 @@
 class AdministrativeExpense < ActiveRecord::Base
-  has_one :version, :as => :requestable
+  belongs_to :version
 	before_save :calculate_total
 
 	def calculate_total

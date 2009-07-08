@@ -30,6 +30,7 @@ class ItemsController < ApplicationController
     @item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
     @stage = Stage.find_or_create_by_position(@item.versions.next_stage)
     @version = @item.versions.build
+    @version.item = @item
     @version.requestable = @item.node.requestable_type.constantize.new
     @version.stage = @stage
     @item.versions.each do |v|
@@ -53,14 +54,15 @@ class ItemsController < ApplicationController
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:item][:node_id])
     @version = @item.versions.build
+    @version.item = @item
     @version.requestable = @item.node.requestable_type.constantize.new
-    @version.requestable.attributes = params[:version][:requestable_attributes]
+    @version.requestable.attributes = params[:version][:requestable]
     @version.stage = Stage.find_or_create_by_position(params[:stage_pos])
-    params[:version].delete(:requestable_attributes)
+    params[:version].delete(:requestable)
     @version.attributes = params[:version]
 
     respond_to do |format|
-      if @item.save && @version.save
+      if @item.save
         flash[:notice] = 'Item was successfully created.'
         format.html { redirect_to(@item) }
         format.xml  { render :xml => @item, :status => :created, :location => @item }
