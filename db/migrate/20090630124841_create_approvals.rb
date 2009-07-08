@@ -2,8 +2,7 @@ class CreateApprovals < ActiveRecord::Migration
   def self.up
     create_table :approvals do |t|
       t.integer :user_id
-      t.integer :approvable_id
-      t.string :approvable_type
+      t.integer :request_id
 
       t.timestamps
     end
@@ -13,3 +12,4 @@ class CreateApprovals < ActiveRecord::Migration
     drop_table :approvals
   end
 end
+

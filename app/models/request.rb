@@ -1,6 +1,6 @@
 class Request < ActiveRecord::Base
   belongs_to :basis
-  has_many :approvals, :as => :approvable
+  has_many :approvals
   has_many :items do
     def children_of(request_item)
       self.select { |item| item.parent_id == request_item.id }
@@ -70,5 +70,8 @@ class Request < ActiveRecord::Base
     false
   end
 
+  def to_s
+    "Request of #{organizations.join(", ")} from #{basis}"
+  end
 end
 
