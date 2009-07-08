@@ -62,19 +62,11 @@ class Registration < ActiveRecord::Base
       users
     end
   end
-  has_many :fulfillments, :as => :fulfiller
-  has_many :conditions, :through => :fulfillments
 
   validates_uniqueness_of :id
 
   before_save :verify_parent_exists, :update_organization
-  after_save :synchronize_memberships, :synchronize_fulfillments
-
-  def synchronize_fulfillments
-    RegisteredMembershipCondition.all.each do |condition|
-      condition.fulfillments.synchronize(self)
-    end
-  end
+  after_save :synchronize_memberships
 
   # Eliminates reference to parent registration if registration is not in
   # database.
