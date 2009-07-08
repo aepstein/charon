@@ -60,7 +60,7 @@ class ItemsController < ApplicationController
     @version.attributes = params[:version]
 
     respond_to do |format|
-      if @item.save && @version.save
+      if @item.save
         flash[:notice] = 'Item was successfully created.'
         format.html { redirect_to(@item) }
         format.xml  { render :xml => @item, :status => :created, :location => @item }
