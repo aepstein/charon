@@ -22,6 +22,7 @@ end
 
 Factory.define :basis do |f|
   f.association :structure, :factory => :structure
+  f.kind 'safc'
   f.open_at DateTime.now
   f.closed_at DateTime.now + 10.days
 end

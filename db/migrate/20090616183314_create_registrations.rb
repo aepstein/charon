@@ -6,8 +6,8 @@ class CreateRegistrations < ActiveRecord::Migration
       t.integer :organization_id
       t.string :name
       t.string :purpose
-      t.boolean :is_independent
-      t.boolean :is_registered
+      t.boolean :independent
+      t.boolean :registered
       t.string :funding_sources
       t.integer :number_of_undergrads
       t.integer :number_of_grads
