@@ -12,7 +12,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :travel_event_expenses
   map.resources :administrative_expenses
   map.resources :publication_expenses
-  map.resources :organizations, :shallow => true do |organization|
+  map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
     organization.resources :memberships
     organization.resources :requests, :member => { :approve => :post } do |request|
       request.resources :items do |item|

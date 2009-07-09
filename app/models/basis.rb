@@ -8,7 +8,6 @@ class Basis < ActiveRecord::Base
   named_scope :upcoming, lambda {
     { :conditions => [ 'open_at > ?', DateTime.now ] }
   }
-
   belongs_to :structure
   has_many :requests
 
