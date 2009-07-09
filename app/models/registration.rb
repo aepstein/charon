@@ -2,7 +2,8 @@ class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   default_scope :order => "registrations.name, registrations.parent_id DESC"
   named_scope :active,
-              :conditions => 'registrations.id NOT IN (SELECT parent_id FROM registrations)'
+              :conditions => 'registrations.id NOT IN ' +
+                             '(SELECT r.parent_id FROM registrations AS r)'
   named_scope :unmatched,
               :conditions => { :organization_id => nil }
   named_scope :named,
@@ -16,7 +17,9 @@ class Registration < ActiveRecord::Base
                                    "number_of_staff + number_of_faculty + " +
                                    "number_of_others ) )", percent.to_i] }
               }
+
   acts_as_tree
+
   belongs_to :organization
   has_many :memberships, :dependent => :destroy do
     def with_role(role)

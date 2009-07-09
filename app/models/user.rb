@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
   has_many :memberships,
            :dependent => :destroy
-  has_many :roles, :include => { :memberships => :organization } :through => :memberships do
+  has_many :roles, :include => { :memberships => :organization }, :through => :memberships do
     def in(group)
       self.select { role.membership.active? &&
                     ( role.membership.send(group.class.underscore) == group ) }

@@ -3,6 +3,10 @@ Factory.define :organization do |f|
   f.sequence(:last_name) { |n| "Organization #{n}"}
 end
 
+Factory.define :registration do |f|
+  f.sequence(:name) { |n| "Registered Organization #{n}" }
+end
+
 Factory.define :user do |f|
   f.first_name "John"
   f.sequence(:last_name) { |n| "Doe #{n}"}
@@ -13,6 +17,7 @@ end
 
 Factory.define :structure do |f|
   f.sequence(:name) { |n| "Structure #{n}" }
+  f.kind 'safc'
 end
 
 Factory.define :node do |f|
@@ -22,7 +27,6 @@ end
 
 Factory.define :basis do |f|
   f.association :structure, :factory => :structure
-  f.kind 'safc'
   f.open_at DateTime.now
   f.closed_at DateTime.now + 10.days
 end
@@ -45,10 +49,5 @@ end
 
 Factory.define :registration do |f|
   f.name 'Registered Organization'
-end
-
-Factory.define :registered_membership_condition do |f|
-  f.membership_type 'undergrads'
-  f.membership_percentage 50
 end
 

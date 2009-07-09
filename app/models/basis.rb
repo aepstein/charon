@@ -1,6 +1,4 @@
 class Basis < ActiveRecord::Base
-  KINDS = %w( safc gpsafc )
-
   named_scope :closed, lambda {
     { :conditions => [ 'closed_at < ?', DateTime.now ] }
   }
@@ -14,11 +12,16 @@ class Basis < ActiveRecord::Base
   belongs_to :structure
   has_many :requests
 
+
   validates_presence_of :structure
-  validates_inclusion_of :kind, :in => KINDS
+  validates_datetime :closed_at, :after => :open_at
 
   def name
     "#{structure.name} beginning at #{open_at.to_s}"
+  end
+
+  def open?
+    (open_at < DateTime.now) && (closed_at > DateTime.now)
   end
 end
 

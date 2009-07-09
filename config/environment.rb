@@ -47,5 +47,6 @@ Rails::Initializer.run do |config|
   config.gem 'mysql' #May need to sudo apt-get install libmysqlclient15-dev
   config.gem 'rubyist-aasm', :lib => 'aasm', :source => 'http://gems.github.com'
   config.gem 'thoughtbot-paperclip', :lib => 'paperclip', :source => 'http://gems.github.com'
+  config.gem 'validates_timeliness'
 end
 
