@@ -1,6 +1,6 @@
 class LocalEventExpense < ActiveRecord::Base
-  has_one :version, :as => :requestable
-  before_save :calculate_local_event_expense
+  belongs_to :version
+	before_validation :calculate_local_event_expense
 
 	def calculate_local_event_expense
 		self.total_copy_rate = number_of_publicity_copies * 0.03

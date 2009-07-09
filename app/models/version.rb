@@ -7,10 +7,15 @@ class Version < ActiveRecord::Base
   has_one :travel_event_expense
   has_one :durable_goods_expense
   has_one :publication_expense
-  accepts_nested_attributes_for :administrative_expense #:requestable
+  accepts_nested_attributes_for :administrative_expense
+  accepts_nested_attributes_for :local_event_expense
+  accepts_nested_attributes_for :speaker_expense
+  accepts_nested_attributes_for :travel_event_expense
+  accepts_nested_attributes_for :durable_goods_expense
+  accepts_nested_attributes_for :publication_expense
 
   def validate
-    if self.amount > self.requestable.max_request:
+    if amount > requestable.max_request:
       errors.add(:amount, "is greater than the maximum request!")
     end
   end

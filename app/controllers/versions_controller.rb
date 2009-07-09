@@ -25,14 +25,14 @@ class VersionsController < ApplicationController
   # GET /items/:item_id/versions/new
   # GET /items/:item_id/versions/new.xml
   def new
-    @item = Item.find(params[:item_id])
-    @stage = Stage.find_or_create_by_position(@item.versions.next_stage)
-    @version = @item.versions.build
-    @version.stage = @stage
-    @item.versions.each do |v|
-      @prev_version = v if v.stage.position == @stage.position - 1
+    @version = Item.find(params[:item_id]).versions.build
+    @version.stage = Stage.find_or_create_by_position(@version.item.versions.next_stage)
+    if @version.stage.position > 1:
+      @prev_version = @version.item.versions.prev_version(@version.stage.position)
+      @version.requestable = @prev_version.requestable.clone
+    else
+      @version.requestable = @version.build_requestable
     end
-    @version.requestable = @prev_version.requestable.clone
 
     respond_to do |format|
       format.html # new.html.erb
@@ -43,23 +43,20 @@ class VersionsController < ApplicationController
   # GET /versions/1/edit
   def edit
     @version = Version.find(params[:id])
-    @version.item.versions.each do |v|
-      @prev_version = v if v.stage.position == @version.stage.position - 1
-    end
+    @prev_version = @version.item.versions.prev_version(@version.stage.position)
   end
 
   # POST /items/:item_id/versions
   # POST /items/:item_id/versions.xml
   def create
-    @item = Item.find(params[:item_id])
-    @version = @item.versions.build
+    @version = Item.find(params[:item_id]).versions.build
     @version.stage = Stage.find_or_create_by_position(params[:stage_pos])
-    @item.versions.each do |v|
-      @prev_version = v if v.stage.position == @version.stage.position - 1
+    if @version.stage.position > 1:
+      @prev_version = @version.item.versions.prev_version(@version.stage.position)
+      @version.requestable = @prev_version.requestable.clone
+    else
+      @version.requestable = @version.item.node.requestable_type.constantize.new
     end
-    @version.requestable = @prev_version.requestable.clone
-    @version.requestable.attributes = params[:version][:requestable_attributes]
-    params[:version].delete(:requestable_attributes)
     @version.attributes = params[:version]
 
     respond_to do |format|
@@ -78,9 +75,7 @@ class VersionsController < ApplicationController
   # PUT /versions/1.xml
   def update
     @version = Version.find(params[:id])
-    @version.item.versions.each do |v|
-      @prev_version = v if v.stage.position == @version.stage.position - 1
-    end
+    @prev_version = @version.item.versions.prev_version(@version.stage.position)
 
     respond_to do |format|
       if @version.update_attributes(params[:version])

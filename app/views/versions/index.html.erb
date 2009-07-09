@@ -4,7 +4,6 @@
   <tr>
     <th>Item</th>
     <th>Requestable type</th>
-    <th>Requestable</th>
     <th>Amount</th>
     <th>Comment</th>
     <th>Stage</th>
@@ -13,11 +12,10 @@
 <% @versions.each do |version| %>
   <tr>
     <td><%=h version.item_id %></td>
-    <td><%=h version.requestable_type %></td>
-    <td><%=h version.requestable_id %></td>
+    <td><%=h version.item.node.requestable_type %></td>
     <td><%=h version.amount %></td>
     <td><%=h version.comment %></td>
-    <td><%=h version.stage_id %></td>
+    <td><%=h version.stage.name %></td>
     <td><%= link_to 'Show', version %></td>
     <td><%= link_to 'Edit', edit_version_path(version) %></td>
     <td><%= link_to 'Destroy', version, :confirm => 'Are you sure?', :method => :delete %></td>
@@ -27,5 +25,5 @@
 
 <br />
 
-<%= link_to 'New version', new_version_path %>
+<%= link_to 'New version', new_item_version_path(@item) %>
 

@@ -1,6 +1,6 @@
 class AdministrativeExpense < ActiveRecord::Base
   belongs_to :version
-	before_save :calculate_total
+	before_validation :calculate_total
 
 	def calculate_total
 		self.copies_expense = 0.03 * copies

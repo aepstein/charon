@@ -4,18 +4,19 @@ class Item < ActiveRecord::Base
   has_many :versions, :autosave => true do
     def next_stage
       pos = 0
-      versions = self.select { |version| true }
-      versions.each do |v|
+      self.select{ |version| not version.new_record? }.each do |v|
         pos = [pos, v.stage.position].max
       end
       pos + 1
+    end
+    def prev_version(stage_pos)
+      self.select { |version| version.stage.position == stage_pos - 1 }[0]
     end
     def last_version
       self.select { |version| version.stage.position == self.versions.next_stage - 1 }
     end
   end
   acts_as_tree
-  validates_associated :versions, :message => "invalid amount"
 
 end
 

@@ -1,5 +1,5 @@
 class DurableGoodExpense < ActiveRecord::Base
-  has_one :version, :as => :requestable
+  belongs_to :version
 
 	def max_request
 	  total

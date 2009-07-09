@@ -1,15 +1,15 @@
 <p>
-  <b>Item:</b>
+  <b>Item id:</b>
   <%=h @version.item_id %>
 </p>
 
 <p>
-  <b>Requestable:</b>
-  <%=h @version.requestable_id %>
+  <b>Requestable id:</b>
+  <%=h @version.requestable.id %>
 </p>
 
 <p>
-  <b>Requestable type:</b> <%=h @version.requestable_type %>
+  <b>Requestable type:</b> <%=h @version.item.node.requestable_type %>
 </p>
 
 <p>
@@ -22,11 +22,11 @@
 </p>
 
 <p>
-  <b><%=h @version.stage.name %> Amount:</b> <%=h number_to_currency(@version.amount) %>
+  <b><%=h @version.stage.name %> amount:</b> <%=h number_to_currency(@version.amount) %>
 </p>
 
 <p>
-  <b><%=h @version.stage.name %> Comment:</b> <%=h @version.comment %>
+  <b><%=h @version.stage.name %> comment:</b> <%=h @version.comment %>
 </p>
 
 <%= link_to 'Edit', edit_version_path(@version) %> |

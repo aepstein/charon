@@ -10,7 +10,7 @@
 
   <legend><b>Requestable Info</b></legend>
 
-  <% form.fields_for( :requestable,
+  <% form.fields_for( @version.requestable.class.to_s.underscore.to_sym,
                       @version.requestable,
                       :url => item_versions_path(@version.item),
                       :method => :post ) do |requestable_form| %>
@@ -22,7 +22,7 @@
     <p>Maximum request: <%=h number_to_currency(@version.requestable.max_request) %></p>
   <% end %>
 
-  <% if @version.stage.name == "Allocation" %>
+  <% if @version.stage.position > 1 %>
     <p>Requested amount: <%=h number_to_currency(@prev_version.amount) %></p>
   <% end %>
 

@@ -1,6 +1,6 @@
 class PublicationExpense < ActiveRecord::Base
-  has_one :version, :as => :requestable
-  before_save :calculate_copies
+  belongs_to :version
+	before_validation :calculate_copies
 
 	def calculate_copies
 		self.total_copies = no_of_issues * no_of_copies_per_issue

@@ -1,6 +1,6 @@
 class TravelEventExpense < ActiveRecord::Base
-  has_one :version, :as => :requestable
-  before_save :calculate_total
+  belongs_to :version
+	before_validation :calculate_total
 
   def calculate_total
     self.total_eligible_expenses = total_person_fees + total_group_fees + mileage_cost + lodging_cost
