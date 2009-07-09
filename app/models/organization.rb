@@ -22,5 +22,18 @@ class Organization < ActiveRecord::Base
     end
   end
 
+  def safc_eligible?
+    return false if registrations.active.first.nil?
+    registrations.active.first.safc_eligible?
+  end
+
+  def gpsafc_eligible?
+    return false if registrations.active.first.nil?
+    registrations.active.first.gpsafc_eligible?
+  end
+
+  def to_s
+    name
+  end
 end
 

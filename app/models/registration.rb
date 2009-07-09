@@ -1,21 +1,25 @@
 class Registration < ActiveRecord::Base
+  MEMBER_TYPES = %w( undergrads grads staff faculty others )
   default_scope :order => "registrations.name, registrations.parent_id DESC"
   named_scope :active,
-              :conditions => 'registrations.id NOT IN (SELECT parent_id FROM registrations)'
+              :conditions => 'registrations.id NOT IN ' +
+                             '(SELECT r.parent_id FROM registrations AS r)'
   named_scope :unmatched,
               :conditions => { :organization_id => nil }
   named_scope :named,
               lambda { |name|
                 { :conditions => [ "registrations.name LIKE '%?%'", name ] }
               }
-  named_scope :percent_members_of_type,
+  named_scope :min_percent_members_of_type,
               lambda { |percent, type|
                 { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
                                    "number_of_undergrads + number_of_grads + " +
                                    "number_of_staff + number_of_faculty + " +
                                    "number_of_others ) )", percent.to_i] }
               }
+
   acts_as_tree
+
   belongs_to :organization
   has_many :memberships, :dependent => :destroy do
     def with_role(role)
@@ -98,6 +102,29 @@ class Registration < ActiveRecord::Base
     else
       { :first_name => '', :last_name => names.pop }
     end
+  end
+
+  named_scope :min_percent_members_of_type,
+              lambda { |percent, type|
+                { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
+                                   "number_of_undergrads + number_of_grads + " +
+                                   "number_of_staff + number_of_faculty + " +
+                                   "number_of_others ) )", percent.to_i] }
+              }
+
+  def percent_members_of_type(type)
+    self.send("number_of_#{type.to_s}") * 100.0 / ( number_of_undergrads +
+      number_of_grads + number_of_staff + number_of_faculty + number_of_others )
+  end
+
+  def safc_eligible?
+    return false if percent_members_of_type(:undergrads) < 60.0
+    registered?
+  end
+
+  def gpsafc_eligible?
+    return false if percent_members_of_type(:grads) < 40.0
+    registered?
   end
 
   def active?

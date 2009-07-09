@@ -11,6 +11,9 @@ module NavigationHelpers
     when /the homepage/
       '/'
 
+    when /the new registration page/
+      new_registration_path
+
     when /the items page/
       request_items_path(Request.find(:first))
 

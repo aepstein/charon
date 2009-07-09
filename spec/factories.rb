@@ -3,6 +3,10 @@ Factory.define :organization do |f|
   f.sequence(:last_name) { |n| "Organization #{n}"}
 end
 
+Factory.define :registration do |f|
+  f.sequence(:name) { |n| "Registered Organization #{n}" }
+end
+
 Factory.define :user do |f|
   f.first_name "John"
   f.sequence(:last_name) { |n| "Doe #{n}"}
@@ -13,6 +17,7 @@ end
 
 Factory.define :structure do |f|
   f.sequence(:name) { |n| "Structure #{n}" }
+  f.kind 'safc'
 end
 
 Factory.define :node do |f|
@@ -40,5 +45,9 @@ Factory.define :version do |f|
 end
 
 Factory.define :stage do |f|
+end
+
+Factory.define :registration do |f|
+  f.name 'Registered Organization'
 end
 

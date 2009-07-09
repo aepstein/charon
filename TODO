@@ -1,0 +1,18 @@
+ - a node should specify the request basis to which the target account should belong
+ - a node should be able to specify an arbitrary list of required attachments for a given stage
+ - should have ability to upload required attachments using paperclip gem
+ - attachments should not necessarily be required to validate -- assume they will not necessarily
+   be scanned in during process
+ - should restrict access to items/versions based user role in organization, organization eligibility
+ - list open bases
+ - list current bases
+ - list upcoming bases
+ - on release of a request, should add appropriate money to account corresponding to basis with same
+   ownership as requestor -- create account if doesn't exist, only transfer positive difference from last
+   release if there was a previous request to this account
+ - members of an organization with "reviewer" roles [president, treasurer, advisor, reviewer]
+   should be able to review and approve requests from accounts for the organization is an owner
+ - global "releaser" and "admin" roles allow broader authority to release transactions
+   and do anything else that would otherwise be restricted
+ - should be able to produce pdf edition of request, including list of attachments (still) required
+

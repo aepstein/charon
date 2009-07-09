@@ -6,15 +6,15 @@ class CreateRegistrations < ActiveRecord::Migration
       t.integer :organization_id
       t.string :name
       t.string :purpose
-      t.boolean :is_independent
-      t.boolean :is_registered
+      t.boolean :independent
+      t.boolean :registered, { :null => false, :default => false }
       t.string :funding_sources
-      t.integer :number_of_undergrads
-      t.integer :number_of_grads
-      t.integer :number_of_staff
-      t.integer :number_of_faculty
-      t.integer :number_of_alumni
-      t.integer :number_of_others
+      t.integer :number_of_undergrads, { :null => false, :default => 0 }
+      t.integer :number_of_grads, { :null => false, :default => 0 }
+      t.integer :number_of_staff, { :null => false, :default => 0 }
+      t.integer :number_of_faculty, { :null => false, :default => 0 }
+      t.integer :number_of_alumni, { :null => false, :default => 0 }
+      t.integer :number_of_others, { :null => false, :default => 0 }
       t.string :org_email
       t.datetime :when_updated
       t.string :adv_first_name
