@@ -25,14 +25,6 @@ class OrganizationsController < ApplicationController
   # GET /organizations/1/profile.xml
   def profile
     @organization = Organization.find(params[:id])
-    eligible_requests = []
-    Basis.open.each do |basis|
-      @request = basis.requests.build
-      @request.organizations << @organization
-      eligible_requests << @request
-    end
-
-    started_requests = @organization.requests
 
     respond_to do |format|
       format.html # profile.html.erb

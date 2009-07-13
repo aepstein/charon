@@ -8,7 +8,7 @@ class Basis < ActiveRecord::Base
   named_scope :upcoming, lambda {
     { :conditions => [ 'open_at > ?', DateTime.now ] }
   }
-  named_scope :no_draft_for, lambda { |organization|
+  named_scope :no_draft_request_for, lambda { |organization|
     { :include => [ :structure ],
       :conditions => [
       'bases.id NOT IN (SELECT basis_id FROM requests, organizations_requests ' +

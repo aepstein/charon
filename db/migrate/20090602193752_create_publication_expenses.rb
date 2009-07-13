@@ -8,6 +8,7 @@ class CreatePublicationExpenses < ActiveRecord::Migration
       t.decimal :revenue
       t.decimal :cost_publication
       t.decimal :total_cost_publication
+      t.integer :version_id
 
       t.timestamps
     end
@@ -17,3 +18,4 @@ class CreatePublicationExpenses < ActiveRecord::Migration
     drop_table :publication_expenses
   end
 end
+

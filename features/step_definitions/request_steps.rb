@@ -2,8 +2,11 @@ Given /^the following requests:$/ do |requests|
   requests.hashes.each do |request|
     if request.has_key?('organizations')
       organizations = request['organizations'].split(', ').map { |o| Organization.find_by_last_name(o.strip) }
+      request.delete('organizations')
     end
-    Factory('request', request).organizations << organizations
+    request_object = Factory.build('request', request)
+    request_object.organizations << organizations
+    request_object.save
   end
 end
 

@@ -5,6 +5,7 @@ class CreateDurableGoodExpenses < ActiveRecord::Migration
       t.float :quantity
       t.float :price
       t.decimal :total
+      t.integer :version_id
 
       t.timestamps
     end
@@ -14,3 +15,4 @@ class CreateDurableGoodExpenses < ActiveRecord::Migration
     drop_table :durable_good_expenses
   end
 end
+

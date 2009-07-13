@@ -36,3 +36,5 @@ cucumber:
 
 cucumber:
   <<: *TEST
+cucumber:
+  <<: *TEST

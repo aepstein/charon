@@ -9,6 +9,7 @@ class CreateSpeakerExpenses < ActiveRecord::Migration
       t.decimal :engagement_fee
       t.decimal :car_rental
       t.decimal :tax_exempt_expenses
+      t.integer :version_id
 
       t.timestamps
     end
@@ -18,3 +19,4 @@ class CreateSpeakerExpenses < ActiveRecord::Migration
     drop_table :speaker_expenses
   end
 end
+

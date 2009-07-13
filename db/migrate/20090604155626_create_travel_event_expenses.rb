@@ -12,6 +12,7 @@ class CreateTravelEventExpenses < ActiveRecord::Migration
       t.decimal :per_person_fees
       t.decimal :per_group_fees
       t.decimal :total_eligible_expenses
+      t.integer :version_id
 
       t.timestamps
     end

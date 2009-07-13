@@ -6,6 +6,12 @@ class Organization < ActiveRecord::Base
       Basis.open.no_draft_request_for( proxy_owner
       ).select { |b| b.eligible_to_request?(proxy_owner) }.map { |b| b.requests.build_for( proxy_owner ) }
     end
+    def started
+      self.select { |request| request.status != "released" }
+    end
+    def released
+      self.select { |request| request.status == "released" }
+    end
   end
 
   before_validation :format_name
@@ -26,10 +32,6 @@ class Organization < ActiveRecord::Base
       self.first_name = "#{first_name} #{match[1]}".strip
       self.last_name = match[2]
     end
-  end
-
-  def requestable_bases
-
   end
 
   def safc_eligible?

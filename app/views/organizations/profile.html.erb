@@ -3,15 +3,17 @@
 <h2>Bases for you to make requests</h2>
 
 <%= render :partial => 'request/request',
-           :collection => @organization.requests.creatable ) %>
+           :collection => @organization.requests.creatable %>
 
 <h2>Requests you've started</h2>
 
 <%= render :partial => 'request/request',
            :collection => @organization.requests.started %>
 
-<h2>Released requests that have been released</h2>
+<% unless @organization.requests.released.empty? %>
+<h2>Requests that have been released</h2>
 
 <%= render :partial => 'request/request',
            :collection => @organization.requests.released %>
+<% end %>
 

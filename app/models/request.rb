@@ -1,4 +1,7 @@
 class Request < ActiveRecord::Base
+  named_scope :started, lambda {
+    { :conditions => [ "status != 'released'" ] }
+  }
   belongs_to :basis
   has_many :approvals
   has_many :items do

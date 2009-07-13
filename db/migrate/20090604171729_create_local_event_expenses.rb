@@ -14,6 +14,7 @@ class CreateLocalEventExpenses < ActiveRecord::Migration
       t.decimal :total_eligible_Expenses
       t.decimal :admission_charge_revenue
       t.decimal :total_request_amount
+      t.integer :version_id
 
       t.timestamps
     end
