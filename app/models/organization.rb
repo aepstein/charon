@@ -1,7 +1,13 @@
 class Organization < ActiveRecord::Base
   has_many :registrations
   has_many :memberships
-  has_and_belongs_to_many :requests
+  has_and_belongs_to_many :requests do
+    def creatable
+      Basis.open.no_draft_request_for( proxy_owner
+      ).select { |b| b.eligible_to_request?(proxy_owner) }.map { |b| b.requests.build_for( proxy_owner ) }
+    end
+  end
+
   before_validation :format_name
 
   def name
@@ -20,6 +26,10 @@ class Organization < ActiveRecord::Base
       self.first_name = "#{first_name} #{match[1]}".strip
       self.last_name = match[2]
     end
+  end
+
+  def requestable_bases
+
   end
 
   def safc_eligible?

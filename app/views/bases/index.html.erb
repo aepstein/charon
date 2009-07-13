@@ -7,19 +7,9 @@
     <th>Closed at</th>
   </tr>
 
-<% @bases.each do |basis| %>
-  <tr>
-    <td><%=h basis.structure_id %></td>
-    <td><%=h basis.open_at %></td>
-    <td><%=h basis.closed_at %></td>
-    <td><%= link_to 'Show', basis %></td>
-    <td><%= link_to 'Edit', edit_basis_path(basis) %></td>
-    <td><%= link_to 'Destroy',
-                    basis,
-                    :confirm => 'Are you sure?',
-                    :method => :delete %></td>
-  </tr>
-<% end %>
+<%= render :partial => 'basis',
+           :collection => @bases %>
+
 </table>
 
 <br />
