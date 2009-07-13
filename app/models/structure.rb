@@ -22,5 +22,8 @@ class Structure < ActiveRecord::Base
                 "may not exceed maximum requestors." ) if minimum_requestors > maximum_requestors
   end
 
+  def eligible_to_request?(organization)
+    organization.send("#{kind}_eligible?")
+  end
 end
 

@@ -8,9 +8,23 @@ class Basis < ActiveRecord::Base
   named_scope :upcoming, lambda {
     { :conditions => [ 'open_at > ?', DateTime.now ] }
   }
+  named_scope :no_draft_for, lambda { |organization|
+    { :include => [ :structure ],
+      :conditions => [
+      'bases.id NOT IN (SELECT basis_id FROM requests, organizations_requests ' +
+      'WHERE requests.id=organizations_requests.request_id AND ' +
+      "requests.status = 'draft' AND organizations_requests.organization_id = ? )",
+      organization.id ] }
+  }
   belongs_to :structure
-  has_many :requests
+  has_many :requests do
+    def build_for( organization )
+      r = self.build
+      r.organizations << organization
+    end
+  end
 
+  delegate :eligible_to_request?, :to => :structure
 
   validates_presence_of :structure
   validates_datetime :closed_at, :after => :open_at
