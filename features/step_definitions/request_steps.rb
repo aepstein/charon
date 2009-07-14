@@ -5,9 +5,15 @@ Given /^the following requests:$/ do |requests|
       request.delete('organizations')
     end
     request_object = Factory.build('request', request)
-    request_object.organizations << organizations
+    request_object.organizations = organizations if organizations
     request_object.save
   end
+end
+
+Given /there is a released request/ do
+  r = Factory(:request)
+  r.status = "released"
+  r.save
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) request$/ do |pos|

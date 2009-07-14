@@ -6,12 +6,6 @@ class Organization < ActiveRecord::Base
       Basis.open.no_draft_request_for( proxy_owner
       ).select { |b| b.eligible_to_request?(proxy_owner) }.map { |b| b.requests.build_for( proxy_owner ) }
     end
-    def started
-      self.select { |request| request.status != "released" }
-    end
-    def released
-      self.select { |request| request.status == "released" }
-    end
   end
 
   before_validation :format_name

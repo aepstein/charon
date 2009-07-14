@@ -1,18 +1,19 @@
 <h1><%=h @organization %> Profile</h1>
 
+<% unless @organization.requests.creatable.empty? %>
 <h2>Bases for you to make requests</h2>
-
 <%= render :partial => 'request/request',
            :collection => @organization.requests.creatable %>
+<% end %>
 
+<% unless @organization.requests.draft.empty? %>
 <h2>Requests you've started</h2>
-
 <%= render :partial => 'request/request',
-           :collection => @organization.requests.started %>
+           :collection => @organization.requests.draft %>
+<% end %>
 
 <% unless @organization.requests.released.empty? %>
 <h2>Requests that have been released</h2>
-
 <%= render :partial => 'request/request',
            :collection => @organization.requests.released %>
 <% end %>

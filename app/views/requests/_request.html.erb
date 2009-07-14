@@ -8,7 +8,7 @@
   <p>
     <%=h request.to_s %>
 
-  <% if request.status == released %>
+  <% if request.status == "released" %>
     <%= link_to 'Show', request %>
   <% else %>
     <%= link_to 'Edit', edit_request_path(request) %> |

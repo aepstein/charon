@@ -47,7 +47,3 @@ end
 Factory.define :stage do |f|
 end
 
-Factory.define :registration do |f|
-  f.name 'Registered Organization'
-end
-

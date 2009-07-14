@@ -30,5 +30,6 @@ describe Request do
     @request.organizations.delete_all
     @request.save.should == false
   end
+
 end
 

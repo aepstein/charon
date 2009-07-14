@@ -4,27 +4,40 @@ Feature: Manage organizations
   wants organizations profile page
 
   @organization
-  Scenario: Provide Edit and Destroy links for incomplete requests
-    Given the following organization record:
-      | id | last_name |
-      | 1  | miner     |
-    And the following request record:
-      | status |
-      | draft  |
-    And I am on the 1 organization profile page
+  Scenario: Show the heading for requests that can be made
+    Given the following registered organizations:
+      | last_name |
+      | miner     |
+    And the following requests:
+      | status | organizations |
+      | draft  | miner         |
+    And there is an open basis
+    And I am on "the miner organization profile page"
 
-    Then I should see "Edit"
-    And I should see "Destroy"
+    Then I should see "Bases for you to make requests"
 
   @organization
-  Scenario: Provide a View link for released requests
-    Given the following organization record:
-      | id | last_name |
-      | 1  | miner     |
+  Scenario: Show the heading for incomplete requests
+    Given the following registered organizations:
+      | last_name |
+      | miner     |
+    And the following requests:
+      | status | organizations |
+      | draft  | miner         |
+    And I am on "the miner organization profile page"
+
+    Then I should see "Requests you've started"
+
+  @organization
+  Scenario: Show the heading for released requests
+    Given the following registered organizations:
+      | last_name |
+      | miner     |
     And the following requests:
       | status   | organizations |
       | released | miner         |
-    And I am on the 1 organization profile page
+    And there is a released request
+    And I am on "the miner organization profile page"
 
-    Then I should see "Show"
+    Then I should see "Requests that have been released"
 
