@@ -25,11 +25,11 @@ describe Organization do
     @registered_organization.gpsafc_eligible?.should == true
   end
 
-  it "should have a requests.started method that returns draft requests" do
+  it "should have a requests.draft method that returns draft requests" do
     request = Factory.build(:request)
     request.organizations << @registered_organization
-    request.save
-    @registered_organization.requests << request
+    request.save.should == true
+    @registered_organization.requests.should include(request)
     @registered_organization.requests.first.status = "draft"
     @registered_organization.requests.draft.empty?.should == false
   end
