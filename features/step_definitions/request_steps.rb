@@ -13,10 +13,8 @@ Given /^the following requests:$/ do |requests|
   end
 end
 
-Given /there is a released request/ do
-  r = Factory(:request)
-  r.status = "released"
-  r.save
+When /^I select basis ([0-9]+) as the basis$/ do |id|
+  select(Basis.find(id).name, :from => "request[basis_id]")
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) request$/ do |pos|

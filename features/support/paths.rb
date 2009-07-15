@@ -26,7 +26,7 @@ module NavigationHelpers
     when /^"(.*)'s requests page"$/
       organization_requests_path(Organization.find_by_last_name($1))
 
-    when /^"the (.+) organization profile page"$/
+    when /^the (.+) organization profile page$/
       "organizations/" + Organization.find_by_last_name($1).id.to_s + "/profile"
 
     when /the new item page/

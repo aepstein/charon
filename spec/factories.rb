@@ -26,7 +26,7 @@ end
 
 Factory.define :basis do |f|
   f.association :structure, :factory => :structure
-  f.open_at DateTime.now
+  f.open_at DateTime.now - 1.days
   f.closed_at DateTime.now + 10.days
 end
 

@@ -1,43 +1,53 @@
 Feature: Manage organizations
   In order to Manage requests for an organization
   As a member of an organization
-  wants organizations profile page
+  I want the organization profile page
 
-  @organization
-  Scenario: Show the heading for requests that can be made
+  Background:
     Given the following registered organizations:
       | last_name |
       | miner     |
-    And the following requests:
-      | status | organizations |
-      | draft  | miner         |
-    And there is an open basis
-    And I am on "the miner organization profile page"
 
+  Scenario: Show the heading for requests that can be madeCreate a new request
+    Given 1 basis record
+    And I am on the miner organization profile page
     Then I should see "Bases for you to make requests"
 
   @organization
+  Scenario: Create a new request
+    Given 1 basis record
+    And I am on the miner organization profile page
+    Then I should see "Bases for you to make requests"
+    And I should see "Create"
+    When I follow "Create"
+    Then I should see "New Request for miner"
+
+    When I select basis 1 as the basis
+    And I press "Create"
+    Then I should be on the items page
+
   Scenario: Show the heading for incomplete requests
-    Given the following registered organizations:
-      | last_name |
-      | miner     |
-    And the following requests:
+    Given the following requests:
       | status | organizations |
       | draft  | miner         |
-    And I am on "the miner organization profile page"
-
+    And I am on the miner organization profile page
     Then I should see "Requests you've started"
 
-  @organization
+  Scenario: Edit a request
+    Given the following requests:
+      | status | organizations |
+      | draft  | miner         |
+    And I am on the miner organization profile page
+    When I follow "Edit"
+    Then I should see "Editing Request for miner"
+
+    When I press "Update"
+    Then I should be on the miner organization profile page
+
   Scenario: Show the heading for released requests
-    Given the following registered organizations:
-      | last_name |
-      | miner     |
-    And the following requests:
+    Given the following requests:
       | status   | organizations |
       | released | miner         |
-    And there is a released request
-    And I am on "the miner organization profile page"
-
+    And I am on the miner organization profile page
     Then I should see "Requests that have been released"
 

@@ -25,19 +25,28 @@ describe Organization do
     @registered_organization.gpsafc_eligible?.should == true
   end
 
+  it "should have a requests.creatable method that returns requests that can be made" do
+    basis = Factory(:basis)
+    Basis.open.no_draft_request_for(@registered_organization).should include(basis)
+    basis.eligible_to_request?(@registered_organization).should == true
+    @registered_organization.requests.creatable.size.should == 1
+    @registered_organization.requests.creatable.first.class.should == Request
+  end
+
   it "should have a requests.draft method that returns draft requests" do
     request = Factory.build(:request)
     request.organizations << @registered_organization
     request.save.should == true
     @registered_organization.requests.should include(request)
-    @registered_organization.requests.first.status = "draft"
     @registered_organization.requests.draft.empty?.should == false
   end
 
-  it "should have a requests.creatable method that returns requests that can be made" do
-  end
-
   it "should have a requests.released method that returns released requests" do
+    request = Factory.build(:request, { :status => "released" })
+    request.organizations << @registered_organization
+    request.save.should == true
+    @registered_organization.requests.should include(request)
+    @registered_organization.requests.released.empty?.should == false
   end
 
   it "should reformat last_name of organizations such that An|A|The|Cornell are moved to first_name" do

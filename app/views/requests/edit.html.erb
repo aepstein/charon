@@ -1,13 +1,18 @@
-<h1>Editing request</h1>
+<h1>Editing Request for <%=h @request.organizations.first.name %></h1>
 
-<% form_for(@request) do |f| %>
-<%= render :partial => 'form',
-           :object => f %>
+<% form_for( :request,
+             @request,
+             :url => "organizations/" + @request.organizations.first.id.to_s + "/profile",
+             :method => :post ) do |f| %>
+
+  <%= f.error_messages %>
+  <%= render :partial => 'form',
+             :object => f %>
   <p>
     <%= f.submit 'Update' %>
   </p>
 <% end %>
 
 <%= link_to 'Show', @request %> |
-<%= link_to 'Back', organization_requests_path( @request.organization ) %>
+<%= link_to 'Back', organization_requests_path( @request.organizations.first ) %>
 

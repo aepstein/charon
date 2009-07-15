@@ -21,6 +21,7 @@ class Basis < ActiveRecord::Base
     def build_for( organization )
       r = self.build
       r.organizations << organization
+      r
     end
   end
 

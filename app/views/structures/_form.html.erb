@@ -3,3 +3,8 @@
     <%= form.text_field :name %>
  </p>
 
+ <p>
+    <%= form.label :kind,"Kind" %><br />
+    <%= form.select :kind, {"SAFC", "safc", "GPSAFC", "gpsafc"} %>
+ </p>
+

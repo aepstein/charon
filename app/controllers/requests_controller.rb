@@ -44,7 +44,7 @@ class RequestsController < ApplicationController
     respond_to do |format|
       if @request.save
         flash[:notice] = 'Request was successfully created.'
-        format.html { redirect_to(@request) }
+        format.html { redirect_to(request_items_path(@request)) }
         format.xml  { render :xml => @request, :status => :created, :location => @request }
       else
         format.html { render :action => "new" }
