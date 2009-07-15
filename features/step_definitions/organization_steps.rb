@@ -10,7 +10,7 @@ Given /the following registered organizations/ do |organizations|
     registration = Factory( :registration,
                             { :registered => true,
                               :number_of_undergrads => 60,
-                              :name => org.last_name })
+                              :name => org.name })
     registration.active?.should == true
     registration.safc_eligible?.should == true
     org.registrations << registration
