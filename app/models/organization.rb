@@ -11,7 +11,7 @@ class Organization < ActiveRecord::Base
   before_validation :format_name
 
   def name
-    first_name.nil? || first_name.empty? ? last_name : "#{first_name} #{last_name}"
+    ( first_name.nil? || first_name.empty? ) ? last_name : "#{first_name} #{last_name}"
   end
 
   def self.find_or_create_by_registration(registration)
@@ -22,6 +22,7 @@ class Organization < ActiveRecord::Base
   end
 
   def format_name
+    self.first_name = "" unless first_name.class == String
     while match = last_name.match(/\A(Cornell|The|An|A)\s+(.*)\Z/) do
       self.first_name = "#{first_name} #{match[1]}".strip
       self.last_name = match[2]

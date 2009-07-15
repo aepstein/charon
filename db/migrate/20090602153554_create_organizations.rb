@@ -1,8 +1,8 @@
 class CreateOrganizations < ActiveRecord::Migration
   def self.up
     create_table :organizations do |t|
-      t.string :first_name
-      t.string :last_name
+      t.string :first_name, { :null => false, :default => "" }
+      t.string :last_name, { :null => false }
 
       t.timestamps
     end
@@ -12,3 +12,4 @@ class CreateOrganizations < ActiveRecord::Migration
     drop_table :organizations
   end
 end
+

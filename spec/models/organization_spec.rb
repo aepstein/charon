@@ -39,5 +39,24 @@ describe Organization do
 
   it "should have a requests.released method that returns released requests" do
   end
+
+  it "should reformat last_name of organizations such that An|A|The|Cornell are moved to first_name" do
+    organization = Factory(:organization)
+    parameters = {
+      "A Club" => { :first => "A", :last => "Club" },
+      "An Club" => { :first => "An", :last => "Club" },
+      "The Club" => { :first => "The", :last => "Club" },
+      "Cornell Club" => { :first => "Cornell", :last => "Club" },
+      "The Cornell Club" => { :first => "The Cornell", :last => "Club" },
+      "club" => { :first => "", :last => "club" }
+    }
+    parameters.each do |last_name, results|
+      organization.last_name = last_name
+      organization.save.should == true
+      organization.first_name.should == results[:first]
+      organization.last_name.should == results[:last]
+      organization.first_name = "" && organization.last_name == ""
+    end
+  end
 end
 

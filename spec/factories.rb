@@ -1,5 +1,4 @@
 Factory.define :organization do |f|
-  f.first_name ""
   f.sequence(:last_name) { |n| "Organization #{n}"}
 end
 
