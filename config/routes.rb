@@ -2,9 +2,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :approvals, :only => [ :index, :destroy ]
   map.resources :addresses
   map.resources :stages
-  map.resources :bases
   map.resources :structures, :shallow => true do |structure|
     structure.resources :nodes
+    structure.resources :bases
   end
   map.resources :durable_good_expenses
   map.resources :local_event_expenses

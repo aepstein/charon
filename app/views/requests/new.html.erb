@@ -2,8 +2,9 @@
 
 <% form_for(:request,
             @request,
-            :url => request_items_path(@request),
+            :url => organization_requests_path(@organization),
             :method => :post) do |f| %>
+
   <%= f.error_messages %>
 
   <%= render :partial => 'form',
@@ -11,7 +12,7 @@
 
   <%= f.label :basis_id, 'Basis for request' %>
   <%= f.collection_select :basis_id,
-                          Basis.find(:all),
+                          @organization.requests.creatable.map { |r| r.basis },
                           :id,
                           :name %>
   <p>
@@ -19,5 +20,5 @@
   </p>
 
 <% end %>
-<%= link_to 'Back', "organizations/" + @organization.id.to_s + "/profile" %>
+<%= link_to 'Back', profile_organization_path( @organization ) %>
 

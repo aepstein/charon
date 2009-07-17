@@ -2,13 +2,10 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Basis do
   before(:each) do
-    @valid_attributes = {
-
-    }
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:basis).new_record?.should == false
+    Factory(:basis).id.should_not be_nil
   end
 
   it "should not save with a close date before the open date" do

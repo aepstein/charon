@@ -1,15 +1,15 @@
 Given /^the following requests:$/ do |requests|
-  requests.hashes.each do |request|
-    if request.has_key?('organizations')
-      organizations = request['organizations'].split(', ').map do |o|
+  requests.hashes.each do |request_attributes|
+    if request_attributes.has_key?('organizations') then
+      organizations = request_attributes['organizations'].split(', ').map do |o|
         Organization.find_by_last_name(o.strip)
       end
       organizations.each { |o| o.class.should == Organization }
-      request.delete('organizations')
+      attributes = request_attributes.merge( { 'organizations' => organizations } )
+    else
+      attributes = request_attributes
     end
-    request_object = Factory.build('request', request)
-    request_object.organizations = organizations
-    request_object.save.should == true
+    Factory('request', attributes)
   end
 end
 

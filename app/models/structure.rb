@@ -9,6 +9,7 @@ class Structure < ActiveRecord::Base
       self.select { |n| n.parent_id.nil? }
     end
   end
+  has_many :bases
   has_many :requests
 
   validates_inclusion_of :kind, :in => KINDS
@@ -24,6 +25,10 @@ class Structure < ActiveRecord::Base
 
   def eligible_to_request?(organization)
     organization.send("#{kind}_eligible?")
+  end
+
+  def to_s
+    name
   end
 end
 

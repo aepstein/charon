@@ -26,7 +26,8 @@ class RequestsController < ApplicationController
   # GET /organizations/:organization_id/requests/new.xml
   def new
     @organization = Organization.find(params[:organization_id])
-    @request = @organization.requests.build
+    @request = Request.new
+    @request.organizations << @organization
     @request.basis = Basis.find(params[:basis_id]) if params.has_key?(:basis_id)
 
     respond_to do |format|
@@ -38,8 +39,9 @@ class RequestsController < ApplicationController
   # POST /organizations/:organization_id/requests
   # POST /organizations/:organization_id/requests.xml
   def create
+    @request = Request.new(params[:request])
     @organization = Organization.find(params[:organization_id])
-    @request = @organization.requests.build(params[:request])
+    @request.organizations << @organization
 
     respond_to do |format|
       if @request.save
@@ -66,7 +68,7 @@ class RequestsController < ApplicationController
     respond_to do |format|
       if @request.update_attributes(params[:request])
         flash[:notice] = 'Request was successfully updated.'
-        format.html { redirect_to(@request) }
+        format.html { redirect_to(request_items_path(@request)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }

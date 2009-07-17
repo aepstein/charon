@@ -5,7 +5,7 @@ describe Structure do
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:structure).new_record?.should == false
+    Factory(:structure).id.should_not be_nil
   end
 
   it "should not save with an unallowed kind" do
