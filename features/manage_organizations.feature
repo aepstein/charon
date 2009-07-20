@@ -8,7 +8,7 @@ Feature: Manage organizations
       | last_name |
       | miner     |
 
-  Scenario: Show the heading for requests that can be madeCreate a new request
+  Scenario: Show the heading for requests that can be made
     Given 1 basis record
     And I am on the miner organization profile page
     Then I should see "Bases for you to make requests"
