@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
       (self.in(group) & Role.finance_officer_roles).size > 0
     end
   end
+  has_many :registrations, :through => :memberships
   has_many :addresses, :as => :addressable, :dependent => :destroy do
     def by_label(label)
       self.select { |a| a.label == label}[0]
@@ -52,9 +53,9 @@ protected
 
   def import_simple_ldap_attributes
     if ldap_entry then
-      self.first_name = ldap_entry.first_name unless ldap_entry.first_name.nil?
-      self.middle_name = ldap_entry.middle_name unless ldap_entry.middle_name.nil?
-      self.last_name = ldap_entry.last_name unless ldap_entry.last_name.nil?
+      self.first_name = ldap_entry.first_name.titleize unless ldap_entry.first_name.nil?
+      self.middle_name = ldap_entry.middle_name.titleize unless ldap_entry.middle_name.nil?
+      self.last_name = ldap_entry.last_name.titleize unless ldap_entry.last_name.nil?
       self.status = ldap_entry.status unless ldap_entry.status.nil?
     end
   end

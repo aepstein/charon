@@ -62,7 +62,9 @@ module RegistrationImporter
 
     def attributes_for_local
       out = Hash.new
-      RegistrationImporter::ATTR_MAP.each_pair { |key, value| out[value] = send(key) }
+      RegistrationImporter::ATTR_MAP.each_pair do |key, value|
+        out[value] = send(key) if send("#{key}?")
+      end
       out
     end
 
