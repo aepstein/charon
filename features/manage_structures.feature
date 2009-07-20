@@ -7,7 +7,8 @@ Feature: Manage structures
     Given I am on the new structure page
     When I fill in "structure_name" with "Lovish"
     And I press "Create"
-    Then I should see "Lovish"
+    Then I should see "Structure was successfully created."
+    And I should see "Lovish"
 
   Scenario: Delete structure
     Given the following structures:
