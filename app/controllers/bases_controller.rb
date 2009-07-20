@@ -1,8 +1,9 @@
 class BasesController < ApplicationController
-  # GET /bases
-  # GET /bases.xml
+  # GET /structures/:structure_id/bases
+  # GET /structures/:structure_id/bases.xml
   def index
-    @bases = Basis.all
+    @structure = Structure.find(params[:structure_id])
+    @bases = @structure.bases
 
     respond_to do |format|
       format.html # index.html.erb
@@ -21,10 +22,10 @@ class BasesController < ApplicationController
     end
   end
 
-  # GET /bases/new
-  # GET /bases/new.xml
+  # GET /structures/:structure_id/bases/new
+  # GET /structures/:structure_id/bases/new.xml
   def new
-    @basis = Basis.new
+    @basis = Structure.find(params[:structure_id]).bases.build
 
     respond_to do |format|
       format.html # new.html.erb
@@ -37,10 +38,10 @@ class BasesController < ApplicationController
     @basis = Basis.find(params[:id])
   end
 
-  # POST /bases
-  # POST /bases.xml
+  # POST /structures/:structure_id/bases
+  # POST /structures/:structure_id/bases.xml
   def create
-    @basis = Basis.new(params[:basis])
+    @basis = Structure.find(params[:structure_id]).bases.build(params[:basis])
 
     respond_to do |format|
       if @basis.save

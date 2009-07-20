@@ -1,6 +1,9 @@
-<h1>New basis</h1>
+<h1>New basis with <%=h @basis.structure %> structure</h1>
 
-<% form_for(@basis) do |f| %>
+<% form_for( :basis,
+             @basis,
+             :url => structure_bases_path(@basis.structure) ) do |f| %>
+
   <%= render :partial => 'form',
              :object => f %>
   <p>
@@ -8,5 +11,5 @@
   </p>
 <% end %>
 
-<%= link_to 'Back', bases_path %>
+<%= link_to 'Back', structure_bases_path( @basis.structure ) %>
 

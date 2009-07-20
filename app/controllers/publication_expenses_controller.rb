@@ -44,7 +44,7 @@ class PublicationExpensesController < ApplicationController
 
     respond_to do |format|
       if @publication_expense.save
-        flash[:notice] = 'PublicationExpense was successfully created.'
+        flash[:notice] = 'Publication expense was successfully created.'
         format.html { redirect_to(@publication_expense) }
         format.xml  { render :xml => @publication_expense, :status => :created, :location => @publication_expense }
       else
@@ -83,3 +83,4 @@ class PublicationExpensesController < ApplicationController
     end
   end
 end
+

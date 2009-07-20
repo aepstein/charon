@@ -17,23 +17,23 @@ module NavigationHelpers
     when /the items page/
       request_items_path(Request.find(:first))
 
-    when /the new basis page/
-      new_basis_path
+    when /^"(.+)'s new basis page"$/
+      new_structure_basis_path( Structure.find_by_name($1) )
 
-    when /^"(.*)'s new request page"$/
-      new_organization_request_path(Organization.find_by_last_name($1))
+    when /^"(.+)'s new request page"$/
+      new_organization_request_path( Organization.find_by_last_name($1) )
 
-    when /^"(.*)'s requests page"$/
-      organization_requests_path(Organization.find_by_last_name($1))
+    when /^"(.+)'s requests page"$/
+      organization_requests_path( Organization.find_by_last_name($1) )
 
-    when /^the (.+) organization profile page$/
-      "organizations/" + Organization.find_by_last_name($1).id.to_s + "/profile"
+    when /^"(.+)'s organization profile page"$/
+      profile_organization_path( Organization.find_by_last_name($1) )
 
     when /the new item page/
       new_item_path
 
-    when /the new node page/
-      new_node_path
+    when /^"(.+)'s new node page"$/
+      new_structure_node_path( Structure.find_by_name($1) )
 
     when /the new structure page/
       new_structure_path

@@ -1,29 +1,16 @@
 Feature: Manage bases
-  In order to [goal]
-  [stakeholder]
-  wants [behaviour]
+  In order to set terms on which requests are made
+  As a reviewer
+  I want to manage bases
 
   Scenario: Register new basis
-    Given I am on the new basis page
-    When I fill in "Structure" with "structure_id 1"
-    And I fill in "Open at" with "open_at 1"
-    And I fill in "Closed at" with "closed_at 1"
+    Given the following structures:
+      | name |
+      | test |
+    And I am on "test's new basis page"
+    When I fill in "Name" with "Basis 1"
+    And I fill in "Open at" with "2009-10-15 12:00:00"
+    And I fill in "Closed at" with "2009-10-20 12:00:00"
     And I press "Create"
-    Then I should see "structure_id 1"
-    And I should see "open_at 1"
-    And I should see "closed_at 1"
-
-  Scenario: Delete basis
-    Given the following bases:
-      |structure_id|open_at|closed_at|
-      |structure_id 1|open_at 1|closed_at 1|
-      |structure_id 2|open_at 2|closed_at 2|
-      |structure_id 3|open_at 3|closed_at 3|
-      |structure_id 4|open_at 4|closed_at 4|
-    When I delete the 3rd basis
-    Then I should see the following bases:
-      |structure_id|open_at|closed_at|
-      |structure_id 1|open_at 1|closed_at 1|
-      |structure_id 2|open_at 2|closed_at 2|
-      |structure_id 4|open_at 4|closed_at 4|
+    Then I should see "Basis was successfully created."
 

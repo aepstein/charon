@@ -14,17 +14,3 @@ Feature: Manage travel_event_expenses
     And I press "Create"
     Then I should see "Total eligible expenses: $230.00"
 
-  Scenario: Delete travel_event_expense
-    Given the following travel_event_expenses:
-      ||
-      ||
-      ||
-      ||
-      ||
-    When I delete the 3rd travel_event_expense
-    Then I should see the following travel_event_expenses:
-      ||
-      ||
-      ||
-      ||
-

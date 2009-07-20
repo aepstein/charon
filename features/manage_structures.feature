@@ -3,7 +3,6 @@ Feature: Manage structures
   As an applicant
   I want a structure form
 
-@request
   Scenario: Register new structure
     Given I am on the new structure page
     When I fill in "structure_name" with "Lovish"

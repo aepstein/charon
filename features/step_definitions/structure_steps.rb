@@ -1,5 +1,7 @@
 Given /^the following structures:$/ do |structures|
-  Structure.create!(structures.hashes)
+  structures.hashes.each do |structure_attributes|
+    Factory(:structure, structure_attributes)
+  end
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) structure$/ do |pos|

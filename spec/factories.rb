@@ -6,6 +6,16 @@ Factory.define :registration do |f|
   f.sequence(:name) { |n| "Registered Organization #{n}" }
 end
 
+Factory.define :safc_eligible_registration, :parent => :registration do |f|
+  f.registered true
+  f.number_of_undergrads 50
+end
+
+Factory.define :gpsafc_eligible_registration, :parent => :registration do |f|
+  f.registered true
+  f.number_of_grads 50
+end
+
 Factory.define :user do |f|
   f.first_name "John"
   f.sequence(:last_name) { |n| "Doe #{n}"}
@@ -21,11 +31,12 @@ end
 
 Factory.define :node do |f|
   f.requestable_type "AdministrativeExpense"
-  f.association :structure, :factory => :structure
+  f.association :structure
 end
 
 Factory.define :basis do |f|
-  f.association :structure, :factory => :structure
+  f.sequence(:name) { |n| "Basis #{n}" }
+  f.association :structure
   f.open_at DateTime.now - 1.days
   f.closed_at DateTime.now + 10.days
 end
@@ -44,5 +55,6 @@ Factory.define :version do |f|
 end
 
 Factory.define :stage do |f|
+  f.sequence(:name) { |n| "Stage #{n}" }
 end
 

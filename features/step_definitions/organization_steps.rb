@@ -1,15 +1,10 @@
-Given /the following registered organizations/ do |organizations|
-  organizations.hashes.each do |organization|
-    org = Factory.build(:organization, organization)
-    registration = Factory( :registration,
-                            { :registered => true,
-                              :number_of_undergrads => 60,
-                              :name => org.name })
-    registration.active?.should == true
-    registration.safc_eligible?.should == true
-    org.registrations << registration
-    org.save.should == true
-    org.safc_eligible?.should == true
+Given /the following (.+) eligible organizations:/ do |kind, organizations|
+  organizations.hashes.each do |organization_attributes|
+    organization = Factory(:organization,organization_attributes)
+    organization.registrations << Factory(
+      "#{kind}_eligible_registration".to_sym,
+      { :name => organization.name }
+    )
   end
 end
 

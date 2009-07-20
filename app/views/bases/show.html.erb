@@ -1,7 +1,4 @@
-<p>
-  <b>Structure:</b>
-  <%=h @basis.structure_id %>
-</p>
+<h1>Showing basis for <%=h @basis.structure %> structure</h1>
 
 <p>
   <b>Open at:</b>
@@ -15,5 +12,5 @@
 
 
 <%= link_to 'Edit', edit_basis_path(@basis) %> |
-<%= link_to 'Back', bases_path %>
+<%= link_to 'Back', structure_bases_path( @basis.structure ) %>
 

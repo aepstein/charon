@@ -10,6 +10,8 @@ class Organization < ActiveRecord::Base
 
   before_validation :format_name
 
+  validates_uniqueness_of :last_name, :scope => :first_name
+
   def name
     ( first_name.nil? || first_name.empty? ) ? last_name : "#{first_name} #{last_name}"
   end

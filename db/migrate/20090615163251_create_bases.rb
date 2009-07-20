@@ -1,9 +1,10 @@
 class CreateBases < ActiveRecord::Migration
   def self.up
     create_table :bases do |t|
-      t.integer :structure_id
-      t.datetime :open_at
-      t.datetime :closed_at
+      t.string :name, :null => false
+      t.integer :structure_id, :null => false
+      t.datetime :open_at, :null => false
+      t.datetime :closed_at, :null => false
 
       t.timestamps
     end
