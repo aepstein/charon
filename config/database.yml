@@ -23,18 +23,7 @@ production:
 
 external_registrations:
   adapter: mysql
-  database: external_registrations_test
-  username: test
-  password: test
+  database: sao_test
+  username: root
   host: localhost
 
-cucumber:
-  <<: *TEST
-cucumber:
-  <<: *TEST
-
-
-cucumber:
-  <<: *TEST
-cucumber:
-  <<: *TEST

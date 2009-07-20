@@ -17,6 +17,14 @@ class Registration < ActiveRecord::Base
                                    "number_of_staff + number_of_faculty + " +
                                    "number_of_others ) )", percent.to_i] }
               }
+  named_scope :min_percent_members_of_type,
+              lambda { |percent, type|
+                { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
+                                   "number_of_undergrads + number_of_grads + " +
+                                   "number_of_staff + number_of_faculty + " +
+                                   "number_of_others ) )", percent.to_i] }
+              }
+
 
   acts_as_tree
 
@@ -52,18 +60,34 @@ class Registration < ActiveRecord::Base
     # in the flat records
     def for_prefix(prefix)
       users = Array.new
-      attributes = proxy_owner.user_attributes_for_prefix(prefix)
-      (attributes[:net_ids].to_net_ids +
-       attributes[:emails].to_net_ids ).uniq.each do |net_id|
+      net_ids_for_prefix(prefix).each do |net_id|
         user = User.find_or_initialize_by_net_id(net_id)
         if user.new_record?
-          user.attributes = attributes
+          user.attributes = attributes_for_prefix(prefix)
           user.save
         end
         users << user
       end
       users
     end
+
+    def attributes_for_prefix(prefix)
+      { :first_name => proxy_owner.send("#{prefix}_first_name") || '',
+        :last_name => proxy_owner.send("#{prefix}_last_name") || '',
+        :password => 'secret',
+        :password_confirmation => 'secret' }
+    end
+
+    def net_ids_for_prefix(prefix)
+      net_ids = Array.new
+      %w( email net_id ).each do |value|
+        if proxy_owner.send("#{prefix}_#{value}?")
+          net_ids += proxy_owner.send("#{prefix}_#{value}").to_net_ids
+        end
+      end
+      net_ids.uniq
+    end
+
   end
 
   validates_uniqueness_of :id
@@ -104,14 +128,6 @@ class Registration < ActiveRecord::Base
     end
   end
 
-  named_scope :min_percent_members_of_type,
-              lambda { |percent, type|
-                { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
-                                   "number_of_undergrads + number_of_grads + " +
-                                   "number_of_staff + number_of_faculty + " +
-                                   "number_of_others ) )", percent.to_i] }
-              }
-
   def percent_members_of_type(type)
     self.send("number_of_#{type.to_s}") * 100.0 / ( number_of_undergrads +
       number_of_grads + number_of_staff + number_of_faculty + number_of_others )
@@ -141,16 +157,6 @@ class Registration < ActiveRecord::Base
 
   def to_s
     name
-  end
-
-  # Returns hash of officer information, including array of
-  # net ids
-  # TODO: Include email (but only if valid)
-  def user_attributes_for_prefix(prefix)
-    { :first_name => self["#{prefix}_first_name"] || '',
-      :last_name => self["#{prefix}_last_name"] || '',
-      :emails => self["#{prefix}_email"] || '',
-      :net_ids => self["#{prefix}_net_id"] || ''}
   end
 
 end

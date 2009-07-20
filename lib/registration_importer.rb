@@ -41,7 +41,16 @@ module RegistrationImporter
     establish_connection :external_registrations
     set_table_name "organizations"
     set_primary_key "org_id"
-    default_scope :select => RegistrationImporter::ATTR_MAP.keys
+    default_scope :select => RegistrationImporter::ATTR_MAP.keys.join(', ')
+    named_scope :importable, lambda {
+      if Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission]) then
+      { :conditions => [
+          "updaters_date_submission > ?",
+          Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission]) ] }
+      else
+      { }
+      end.merge( { :order => :updaters_date_submission } )
+    }
 
     def registration_approved
       read_attribute(:registration_approved) == 'Approved'
@@ -53,26 +62,23 @@ module RegistrationImporter
 
     def attributes_for_local
       out = Hash.new
-      attributes.each_pair do |key, value|
-        out[RegistrationImporter::ATTR_MAP[key]] = value if @@ATTR_MAP.has_key?(key)
-      end
+      RegistrationImporter::ATTR_MAP.each_pair { |key, value| out[value] = send(key) }
       out
     end
 
-    # Updates local registrations according to upstream changes in registrations
-    # Returns number of registrations update
-    def self.update_local
-      from_date = registrations.find(:first, :order => 'updated_at DESC').when_updated
-      i = 0
-      self.find( :all,
-                 :conditions => [ 'updaters_date_submission >= ?',  from_date ],
-                 :order => :updaters_date_submission ).each do |external|
-        local = Registration.find_or_initialize_by_id(external.org_id)
-        local.attributes = external.attributes_for_local
-        local.save
-        i += 1
+    # Returns number of records imported
+    def self.import
+      count = 0
+      Registration.transaction do
+        ExternalRegistration.importable.each do |external|
+          registration = Registration.find_or_initialize_by_id( external.org_id )
+          registration.attributes = external.attributes_for_local
+          registration.save && count += 1 if registration.new_record? || registration.changed?
+        end
       end
+      count
     end
+
   end
 end
 
