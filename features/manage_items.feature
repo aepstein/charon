@@ -1,55 +1,63 @@
-@wip
+@item
 Feature: Manage items
   In order to Manage structure of items using request item
   As an applicant
   wants request item form
 
-  @item
-  Scenario: Register new item
-    Given 1 item record
-    And the following stage record:
-      | name    | position |
-      | request | 1        |
-    And I am on the items page
+  Background:
+    Given the following safc eligible organizations:
+      | last_name      |
+      | organization 1 |
+    And the following requests:
+      | status | organizations |
+      | draft  | organization 1|
+    And the following stage records:
+      | id | name       | position |
+      | 1  | Request    | 1        |
+      | 2  | Allocation | 2        |
 
+  Scenario: Register new item
+    Given the following items:
+      | request_id |
+      | 1          |
+    And I am on the items page
     Then I should see "add next stage"
 
     When I follow "add next stage"
     Then I should see "Form type: AdministrativeExpense"
-    And I should see "Stage: request"
+    And I should see "Stage: Request"
 
-    When I fill in "version_amount" with "100"
+    When I fill in "version_administrative_expense_attributes_copies" with "100"
+    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
+    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
+    And I fill in "version_amount" with "100"
     And I fill in "version_comment" with "this is only a test"
     And I press "Create"
     Then I should see "Version was successfully created."
     And I should see "Requestable type: AdministrativeExpense"
-    And I should see "Amount: $100.00"
-    And I should see "Comment: this is only a test"
+    And I should see "Request amount: $100.00"
+    And I should see "Request comment: this is only a test"
 
-  @item
   Scenario: Do not show link for next stage if the item already has two
-    Given the following item record:
-      | id |
-      | 1 |
-    And the following version records:
-      | stage_id | item_id |
-      | 1 | 1 |
-      | 2 | 1 |
-    And the following stage records:
-      | id | name       | position |
-      | 1  | request    | 1        |
-      | 2  | allocation | 2        |
+    Given the following items:
+      | request_id |
+      | 1          |
+    And the following versions:
+      | stage_id | item_id | amount |
+      | 1        | 1       | 100    |
+      | 2        | 1       | 100    |
     And I am on the items page
-
     Then I should not see "add next stage"
 
-  Scenario: Select a node to go to the new item page
-    Given I am on the items page
-    When I select "admin expense node" from "node"
-    Then I should see "requestable_copies"
-    And I should see "requestable_repairs_restocking"
-    And I should see "requestable_mailbox_wsh_25"
-    And I should see "requestable_total_request"
-    And I should see "request_item_amount"
-    And I should see "item_requestor_comment"
+  Scenario: Select a node to go to the new item page (uses javascript)
+    Given the following items:
+      | request_id |
+      | 1          |
+    And I am on the items page
+    When I select "administrative expense" from "node"
+    Then I should see "Number of copies"
+    And I should see "Repairs and Restocking"
+    And I should see "Mailbox at Willard Straight Hall"
+    And I should see "Request Amount"
+    And I should see "Request Comment"
 

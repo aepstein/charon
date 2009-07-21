@@ -50,3 +50,5 @@ Rails::Initializer.run do |config|
   config.gem 'validates_timeliness'
 end
 
+CalendarDateSelect.format = :hyphen_ampm
+

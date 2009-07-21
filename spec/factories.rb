@@ -31,6 +31,7 @@ end
 
 Factory.define :node do |f|
   f.requestable_type "AdministrativeExpense"
+  f.name "administrative expense"
   f.association :structure
 end
 
@@ -51,10 +52,16 @@ Factory.define :item do |f|
 end
 
 Factory.define :version do |f|
-  f.association :item, :factory => :item
+  #f.association :item, :factory => :item
 end
 
 Factory.define :stage do |f|
   f.sequence(:name) { |n| "Stage #{n}" }
+end
+
+Factory.define :administrative_expense do |f|
+  f.copies 100
+  f.repairs_restocking 100
+  f.mailbox_wsh 25
 end
 

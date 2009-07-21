@@ -1,9 +1,12 @@
 Given /^the following bases:$/ do |bases|
-  Basis.create!(bases.hashes)
+  #Basis.create!(bases.hashes)
+  bases.hashes.each do |basis|
+    Factory(:basis, basis)
+  end
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) basis$/ do |pos|
-  visit bases_url
+  visit structure_bases_url(Structure.find(:first))
   within("table > tr:nth-child(#{pos.to_i+1})") do
     click_link "Destroy"
   end

@@ -76,10 +76,11 @@ class BasesController < ApplicationController
   # DELETE /bases/1.xml
   def destroy
     @basis = Basis.find(params[:id])
+    @structure = @basis.structure
     @basis.destroy
 
     respond_to do |format|
-      format.html { redirect_to(bases_url) }
+      format.html { redirect_to(structure_bases_url(@structure)) }
       format.xml  { head :ok }
     end
   end

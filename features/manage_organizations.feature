@@ -13,7 +13,20 @@ Feature: Manage organizations
     And I am on "organization 1's organization profile page"
     Then I should see "Bases for you to make requests"
 
-  @organization
+  Scenario: Show the heading for incomplete requests
+    Given the following requests:
+      | status | organizations |
+      | draft  | organization 1|
+    And I am on "organization 1's organization profile page"
+    Then I should see "Requests you've started"
+
+  Scenario: Show the heading for released requests
+    Given the following requests:
+      | status   | organizations |
+      | released | organization 1|
+    And I am on "organization 1's organization profile page"
+    Then I should see "Requests that have been released"
+
   Scenario: Create a new request
     Given 1 basis record
     And I am on "organization 1's organization profile page"
@@ -25,13 +38,6 @@ Feature: Manage organizations
     And I press "Create"
     Then I should be on the items page
 
-  Scenario: Show the heading for incomplete requests
-    Given the following requests:
-      | status | organizations |
-      | draft  | organization 1|
-    And I am on "organization 1's organization profile page"
-    Then I should see "Requests you've started"
-
   Scenario: Edit a request
     Given the following requests:
       | status | organizations |
@@ -42,11 +48,4 @@ Feature: Manage organizations
 
     When I press "Update"
     Then I should see "Request was successfully updated."
-
-  Scenario: Show the heading for released requests
-    Given the following requests:
-      | status   | organizations |
-      | released | organization 1|
-    And I am on "organization 1's organization profile page"
-    Then I should see "Requests that have been released"
 
