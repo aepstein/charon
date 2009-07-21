@@ -4,17 +4,11 @@ class User < ActiveRecord::Base
   end
   STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
   has_many :memberships,
+           :include => [ :organization, :role ],
            :dependent => :destroy
-  has_many :roles, :include => { :memberships => :organization }, :through => :memberships do
-    def in(group)
-      self.select { role.membership.active? &&
-                    ( role.membership.send(group.class.underscore) == group ) }
-    end
-    def officer_in?(group)
-      (self.in(group) & Role.officer_roles).size > 0
-    end
-    def finance_officer_in?(group)
-      (self.in(group) & Role.finance_officer_roles).size > 0
+  has_many :roles, :through => :memberships do
+    def in(organization)
+      proxy_owner.memberships.active.in(organization).map { |m| m.role }
     end
   end
   has_many :addresses, :as => :addressable, :dependent => :destroy do
@@ -35,6 +29,15 @@ class User < ActiveRecord::Base
   before_save :import_simple_ldap_attributes
   before_update :import_complex_ldap_attributes
   after_create :import_complex_ldap_attributes
+
+  def officer_in?(organization)
+    (roles.in(organization) & Role.officer_roles).size > 0
+  end
+
+  def finance_officer_in?(organization)
+    (roles.in(organization) & Role.finance_officer_roles).size > 0
+  end
+
 
 protected
   def extract_email

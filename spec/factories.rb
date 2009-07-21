@@ -22,6 +22,28 @@ Factory.define :user do |f|
   f.sequence(:net_id) { |n| "zzz#{n}"}
   f.password "pjlmiok"
   f.password_confirmation "pjlmiok"
+  f.status "undergrad"
+end
+
+Factory.define :role do |f|
+end
+
+Factory.define :membership do |f|
+  f.active true
+  f.association :user, :factory => :user
+  f.association :role, :factory => :role
+end
+
+Factory.define :president_membership, :parent => :membership do |f|
+  f.association :role, :factory => :role, :name => "president"
+end
+
+Factory.define :treasurer_membership, :parent => :membership do |f|
+  f.association :role, :factory => :role, :name => "treasurer"
+end
+
+Factory.define :advisor_membership, :parent => :membership do |f|
+  f.association :role, :factory => :role, :name => "advisor"
 end
 
 Factory.define :structure do |f|

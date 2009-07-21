@@ -17,6 +17,9 @@ module NavigationHelpers
     when /the items page/
       request_items_path(Request.find(:first))
 
+    when /^"(.+)'s basis page"$/
+      structure_bases_path( Structure.find_by_name($1) )
+
     when /^"(.+)'s new basis page"$/
       new_structure_basis_path( Structure.find_by_name($1) )
 
@@ -35,8 +38,14 @@ module NavigationHelpers
     when /^"(.+)'s new node page"$/
       new_structure_node_path( Structure.find_by_name($1) )
 
+    when /^"(.+)'s node page"$/
+      structure_nodes_path( Structure.find_by_name($1) )
+
     when /the new structure page/
       new_structure_path
+
+    when /the structures page/
+      structures_path
 
     when /the new local_event_expense page/
       new_local_event_expense_path

@@ -10,17 +10,25 @@ Feature: Manage structures
     Then I should see "Structure was successfully created."
     And I should see "Lovish"
 
+  Scenario: Edit structure
+    Given 1 structure record
+    And I am on the structures page
+    When I follow "Edit"
+    And I fill in "structure_name" with "changed"
+    And I press "Update"
+    Then I should see "Structure was successfully updated."
+
   Scenario: Delete structure
     Given the following structures:
-      |name|
-      |name 1|
-      |name 2|
-      |name 3|
-      |name 4|
+      | name  |
+      | name 1 |
+      | name 2 |
+      | name 3 |
+      | name 4 |
     When I delete the 3rd structure
     Then I should see the following structures:
-      |name|
-      |name 1|
-      |name 2|
-      |name 4|
+      | name |
+      | name 1 |
+      | name 2 |
+      | name 4 |
 
