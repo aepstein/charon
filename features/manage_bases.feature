@@ -14,3 +14,19 @@ Feature: Manage bases
     And I press "Create"
     Then I should see "Basis was successfully created."
 
+  @wip
+  Scenario: Delete basis
+    Given 1 structure record
+    And the following bases:
+      |name| structure_id |
+      |name 1| 1 |
+      |name 2| 1 |
+      |name 3| 1 |
+      |name 4| 1 |
+    When I delete the 3rd basis
+    Then I should see the following bases:
+      |name|
+      |name 1|
+      |name 2|
+      |name 4|
+
