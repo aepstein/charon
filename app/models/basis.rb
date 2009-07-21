@@ -1,12 +1,12 @@
 class Basis < ActiveRecord::Base
   named_scope :closed, lambda {
-    { :conditions => [ 'closed_at < ?', DateTime.now ] }
+    { :conditions => [ 'closed_at < ?', DateTime.now.utc ] }
   }
   named_scope :open, lambda {
-    { :conditions => [ 'open_at < ? AND closed_at > ?', DateTime.now, DateTime.now ] }
+    { :conditions => [ 'open_at < ? AND closed_at > ?', DateTime.now.utc, DateTime.now.utc ] }
   }
   named_scope :upcoming, lambda {
-    { :conditions => [ 'open_at > ?', DateTime.now ] }
+    { :conditions => [ 'open_at > ?', DateTime.now.utc ] }
   }
   named_scope :no_draft_request_for, lambda { |organization|
     { :include => [ :structure ],
@@ -30,6 +30,7 @@ class Basis < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_presence_of :name
   validates_presence_of :structure
+  validates_datetime :open_at
   validates_datetime :closed_at, :after => :open_at
 
   def open?
