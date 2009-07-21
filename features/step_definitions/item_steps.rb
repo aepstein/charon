@@ -1,9 +1,9 @@
 Given /^the following items:$/ do |items|
   items.hashes.each do |item|
-    item_object = Factory(:item, item)
-    item_object.node = Factory(:node)
-    item_object.request.basis.structure.nodes << item_object.node
-    item_object.save
+    Factory(:item, item)
+    #item_object = Factory(:item, item)
+    #item_object.request.basis.structure.nodes << item_object.node
+    #item_object.save
   end
 end
 

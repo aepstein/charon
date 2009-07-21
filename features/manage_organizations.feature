@@ -37,6 +37,7 @@ Feature: Manage organizations
     When I select basis 1 as the basis
     And I press "Create"
     Then I should be on the items page
+    And I should see "Request was successfully created."
 
   Scenario: Edit a request
     Given the following requests:

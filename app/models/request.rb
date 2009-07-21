@@ -67,27 +67,26 @@ class Request < ActiveRecord::Base
 #    released_at = DateTime.now
   end
 
-  def may?(user, action)
-    case action
-    when :create, :update
-      return false unless basis.open?
-      return false if organizations.select { |o| organizations.allowed?(o) }.empty?
-      if draft?
-        organizations.each { |o| return true if user.roles.officer_in?(o) }
-      end
-      if review?
-        # TODO basis should provide eligible reviewers through a controlling organization
-      end
-    when :approve
-      organizations.select { |o| return false unless organizations.allowed?(o) }
-      if draft? || approved_draft?
-        organizations.each { |o| return true if user.roles.finance_officer_in?(o) }
-      end
-      if review? || approved_review?
-        # TODO basis should provide eligible approvers through a controlling organization
-      end
-      return true
+  def may_create?(user)
+    return true unless organizations.select { |o| user.finance_officer_in?(o) }.empty?
+    false
+  end
+
+  def may_update?(user)
+    organizations.each do |o|
+      return true if o.memberships.map { |m| m.user }.include?(user)
     end
+    false
+  end
+
+  def may_see?(user)
+    return true unless organizations.select { |o| user.roles.in(o).size > 0 }.empty?
+    false
+  end
+
+  def may_approve?(user)
+    return true unless organizations.select { |o| user.finance_officer_in?(o) }.empty?
+    #return true if memberships.map { |m| m.user }.include?(user)
     false
   end
 
