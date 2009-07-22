@@ -73,9 +73,12 @@ class Request < ActiveRecord::Base
   end
 
   def may_update?(user)
-    organizations.each do |o|
-      return true if o.memberships.map { |m| m.user }.include?(user)
-    end
+    return true unless organizations.select { |o| user.roles.in(o).size > 0 }.empty?
+    false
+  end
+
+  def may_destroy?(user)
+    return true unless organizations.select { |o| user.roles.in(o).size > 0 }.empty?
     false
   end
 
@@ -86,7 +89,11 @@ class Request < ActiveRecord::Base
 
   def may_approve?(user)
     return true unless organizations.select { |o| user.finance_officer_in?(o) }.empty?
-    #return true if memberships.map { |m| m.user }.include?(user)
+    false
+  end
+
+  def may_review?(user)
+    return true unless organizations.select { |o| user.finance_officer_in?(o) }.empty?
     false
   end
 

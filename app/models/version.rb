@@ -1,6 +1,6 @@
 class Version < ActiveRecord::Base
+  STAGE_NAMES = %w[ request review ]
   belongs_to :item
-  belongs_to :stage
   has_one :administrative_expense
   has_one :local_event_expense
   has_one :speaker_expense
@@ -20,6 +20,10 @@ class Version < ActiveRecord::Base
     end
   end
 
+  def stage
+    STAGE_NAMES[stage_id]
+  end
+
   def requestable
     self.send("#{item.node.requestable_type.underscore}")
   end
@@ -33,5 +37,32 @@ class Version < ActiveRecord::Base
     self.send("#{item.node.requestable_type.underscore}=",requestable)
   end
 
+  def may_create?(user)
+    if stage_id == 1
+      return item.request.may_allocate?(user)
+    else
+      return false
+    end
+  end
+
+  def may_update?(user)
+    if stage_id == 1
+      return item.request.may_allocate?(user)
+    else
+      return item.request.may_update?(user)
+    end
+  end
+
+  def may_destroy?(user)
+    false
+  end
+
+  def may_see?(user)
+    if stage_id == 1
+      return item.request.may_allocate?(user) || item.request.may_review?(user)
+    else
+      return item.request.may_see?(user)
+    end
+  end
 end
 

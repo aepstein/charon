@@ -1,6 +1,7 @@
 class Organization < ActiveRecord::Base
   has_many :registrations
   has_many :memberships
+  has_many :bases
   has_and_belongs_to_many :requests do
     def creatable
       Basis.open.no_draft_request_for( proxy_owner

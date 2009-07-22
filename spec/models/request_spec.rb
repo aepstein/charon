@@ -43,7 +43,6 @@ describe Request do
   end
 
   it "should be able to be created only by finance officers of its organization(s)" do
-    #@request.memberships.include?(@pres_membership).should == true
     @request.may_create?(@pres_membership.user).should == true
     @request.may_create?(@tre_membership.user).should == true
     @request.may_create?(@adv_membership.user).should == true

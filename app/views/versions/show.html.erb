@@ -14,7 +14,7 @@
 
 <p>
   <b>Stage:</b>
-  <%=h @version.stage.name %>
+  <%=h @version.stage %>
 </p>
 
 <p>
@@ -22,11 +22,11 @@
 </p>
 
 <p>
-  <b><%=h @version.stage.name %> amount:</b> <%=h number_to_currency(@version.amount) %>
+  <b><%=h @version.stage %> amount:</b> <%=h number_to_currency(@version.amount) %>
 </p>
 
 <p>
-  <b><%=h @version.stage.name %> comment:</b> <%=h @version.comment %>
+  <b><%=h @version.stage %> comment:</b> <%=h @version.comment %>
 </p>
 
 <%= link_to 'Edit', edit_version_path(@version) %> |

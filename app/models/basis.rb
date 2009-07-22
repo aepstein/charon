@@ -17,6 +17,7 @@ class Basis < ActiveRecord::Base
       organization.id ] }
   }
   belongs_to :structure
+  belongs_to :organization
   has_many :requests do
     def build_for( organization )
       r = self.build
@@ -30,6 +31,7 @@ class Basis < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_presence_of :name
   validates_presence_of :structure
+  validates_presence_of :organization
   validates_datetime :open_at
   validates_datetime :closed_at, :after => :open_at
 

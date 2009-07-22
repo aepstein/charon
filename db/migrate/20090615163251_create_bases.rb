@@ -5,6 +5,7 @@ class CreateBases < ActiveRecord::Migration
       t.integer :structure_id, :null => false
       t.datetime :open_at, :null => false
       t.datetime :closed_at, :null => false
+      t.integer :organization_id, :null => false
 
       t.timestamps
     end

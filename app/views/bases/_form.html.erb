@@ -11,6 +11,13 @@
                                :name %>
   </p>
   <p>
+    <%= form.label :organization_id %><br />
+    <%= form.collection_select :organization_id,
+                               Organization.find(:all),
+                               :id,
+                               :name %>
+  </p>
+  <p>
     <%= form.label :open_at %><br />
     <%= form.calendar_date_select :open_at %>
   </p>
