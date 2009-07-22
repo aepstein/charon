@@ -1,7 +1,11 @@
 Given /^the following bases:$/ do |bases|
   #Basis.create!(bases.hashes)
-  bases.hashes.each do |basis|
-    Factory(:basis, basis)
+  bases.hashes.each do |basis_attributes|
+    complex_attributes = Hash.new
+    if basis_attributes['structure'] then
+      complex_attributes['structure'] = Structure.find_by_name( basis_attributes['structure'].strip )
+    end
+    Factory(:basis, basis_attributes.merge( complex_attributes ) )
   end
 end
 
