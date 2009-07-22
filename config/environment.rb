@@ -43,7 +43,7 @@ Rails::Initializer.run do |config|
   config.gem 'calendar_date_select'
   config.gem 'mislav-will_paginate', :lib => 'will_paginate', :source => 'http://gems.github.com'
   config.gem 'ruby-net-ldap', :lib => 'net/ldap'
-  config.gem 'activeldap', :lib => 'active_ldap'
+  config.gem 'activeldap', :lib => 'active_ldap', :version => '1.0.9'
   config.gem 'mysql' #May need to sudo apt-get install libmysqlclient15-dev
   config.gem 'rubyist-aasm', :lib => 'aasm', :source => 'http://gems.github.com'
   config.gem 'thoughtbot-paperclip', :lib => 'paperclip', :source => 'http://gems.github.com'
