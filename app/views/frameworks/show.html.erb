@@ -1,0 +1,18 @@
+<p>
+  <b>Name:</b>
+  <%=h @framework.name %>
+</p>
+
+<p>
+  <b>Member percentage:</b>
+  <%=h @framework.member_percentage %>
+</p>
+
+<p>
+  <b>Member percentage type:</b>
+  <%=h @framework.member_percentage_type %>
+</p>
+
+
+<%= link_to 'Edit', edit_framework_path(@framework) %> |
+<%= link_to 'Back', frameworks_path %>

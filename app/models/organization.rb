@@ -1,10 +1,14 @@
 class Organization < ActiveRecord::Base
-  has_many :registrations
+  has_many :registrations do
+    def current
+      self.active.first
+    end
+  end
   has_many :memberships
   has_and_belongs_to_many :requests do
     def creatable
       Basis.open.no_draft_request_for( proxy_owner
-      ).select { |b| b.eligible_to_request?(proxy_owner) }.map { |b| b.requests.build_for( proxy_owner ) }
+      ).select { |b| proxy_owner.eligible_for?(b.framework) }.map { |b| b.requests.build_for( proxy_owner ) }
     end
   end
 
@@ -31,14 +35,10 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  def safc_eligible?
-    return false if registrations.active.first.nil?
-    registrations.active.first.safc_eligible?
-  end
-
-  def gpsafc_eligible?
-    return false if registrations.active.first.nil?
-    registrations.active.first.gpsafc_eligible?
+  def eligible_for?(framework)
+    return true unless framework.must_register?
+    return false unless registrations.current
+    registations.current.eligible_for? framework
   end
 
   def to_s

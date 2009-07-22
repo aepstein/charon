@@ -1,5 +1,5 @@
 class Request < ActiveRecord::Base
-
+  ACTIONS = %w( create update destroy see approve accept revise review release )
   belongs_to :basis
   has_many :approvals
   has_many :items do
@@ -12,9 +12,15 @@ class Request < ActiveRecord::Base
   end
   has_and_belongs_to_many :organizations do
     def allowed?(organization)
-      organization.send("#{proxy_owner.basis.structure.kind}_eligible?")
+      organization.eligible_for?(proxy_owner.framework)
     end
   end
+
+  delegate :structure, :to => :basis
+  delegate :framework, :to => :basis
+  delegate :permissions, :to => :framework
+  delegate :requestors, :to => :organizations
+  delegate :reviewer, :to => :basis
 
   validate :must_have_open_basis, :must_have_eligible_organizations
 
@@ -36,58 +42,57 @@ class Request < ActiveRecord::Base
 
   include AASM
   aasm_column :status
-  aasm_initial_state :draft
-  aasm_state :draft
-  aasm_state :approved_draft
+  aasm_initial_state :started
+  aasm_state :completed
+  aasm_state :submitted
   aasm_state :accepted
-  aasm_state :review
-  aasm_state :approved_review
+  aasm_state :reviewed
+  aasm_state :certified
   aasm_state :released
 
   aasm_event :accept do
-    transitions :to => :accepted, :from => :approved_draft
+    transitions :to => :accepted, :from => :submitted
 #    accepted_at = DateTime.now
   end
-  aasm_event :review do
-    transitions :to => :reviewed, :from => :accepted
+  aasm_event :submit do
+    transitions :to => :submitted, :from => :completed
   end
   aasm_event :approve do
-    transitions :to => :approved_draft, :from => :draft
-    transitions :to => :approved_review, :from => :review
+    transitions :to => :completed, :from => :started
+    transitions :to => :reviewed, :from => :accepted
 #    draft_approved_at = DateTime.now unless draft_approved_at?
 #    review_approved_at = DateTime.now unless review_approved_at?
   end
   aasm_event :unapprove do
-    transitions :from => :approved_draft, :to => :draft
-    transitions :from => :approved_review, :to => :review
-    # TODO remove approval timestamps if all approvals for class of review are blank
+    transitions :to => :started, :from => :completed
+    transitions :to => :accepted, :from => :reviewed
   end
   aasm_event :release do
-    transitions :to => :released, :from => :approved_review
+    transitions :to => :released, :from => :certified
 #    released_at = DateTime.now
   end
 
-  def may_create?(user)
-    return true unless organizations.select { |o| user.finance_officer_in?(o) }.empty?
-    false
-  end
-
-  def may_update?(user)
-    organizations.each do |o|
-      return true if o.memberships.map { |m| m.user }.include?(user)
+  # Lists actions available to user on the request
+  def may(user)
+    Permission::CONTEXTS.each do |context|
+      actions = permissions.allowed_actions( user.roles.in( send(context) ),
+                                             context,
+                                             status )
+      return actions if actions.first
     end
-    false
+    Array.new
   end
 
-  def may_see?(user)
-    return true unless organizations.select { |o| user.roles.in(o).size > 0 }.empty?
-    false
-  end
-
-  def may_approve?(user)
-    return true unless organizations.select { |o| user.finance_officer_in?(o) }.empty?
-    #return true if memberships.map { |m| m.user }.include?(user)
-    false
+  # Creates permission checking methods
+  # May need to override some to provide additional logic (experiment with super)
+  ACTIONS.each do |action|
+    define_method("may_#{action}?") do |user|
+      # may need to override with custom methods for some actions
+      # return false if basis.closed?
+      # return true if user.admin?
+      return true if may(user).include?(action)
+      false
+    end
   end
 
   def to_s

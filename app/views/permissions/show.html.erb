@@ -1,0 +1,30 @@
+<p>
+  <b>Framework:</b>
+  <%=h @permission.framework %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%=h @permission.state %>
+</p>
+
+<p>
+  <b>Role:</b>
+  <%=h @permission.role %>
+</p>
+
+<p>
+  <b>Action:</b>
+  <%=h @permission.action %>
+</p>
+
+<p>
+  <b>Stage:</b>
+  <%=h @permission.stage_id %>
+</p>
+
+<p>
+<%= link_to 'Edit', edit_permission_path(@permission) %> |
+<%= link_to 'Back', framework_permissions_path(@permission.framework) %>
+</p>
+

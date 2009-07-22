@@ -1,0 +1,18 @@
+<h1>Listing permissions in <%=h @framework %></h1>
+
+<table>
+  <tr>
+    <th>Framework</th>
+    <th>State</th>
+    <th>Role</th>
+    <th>Action</th>
+    <th>Stage</th>
+  </tr>
+
+  <%= render :partial => 'permission', :collection => @permissions  %>
+</table>
+
+<br />
+
+<%= link_to 'New permission', new_framework_permission_path(@framework) %>
+

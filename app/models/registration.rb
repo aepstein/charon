@@ -133,14 +133,12 @@ class Registration < ActiveRecord::Base
       number_of_grads + number_of_staff + number_of_faculty + number_of_others )
   end
 
-  def safc_eligible?
-    return false if percent_members_of_type(:undergrads) < 60.0
-    registered?
-  end
-
-  def gpsafc_eligible?
-    return false if percent_members_of_type(:grads) < 40.0
-    registered?
+  def eligible_for?(framework)
+    return false unless registered?
+    if framework.member_percentage
+      percent_members_of_type(framework.member_percentage_type) >= framework.member_percentage
+    end
+    true
   end
 
   def active?

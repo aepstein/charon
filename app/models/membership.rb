@@ -2,7 +2,7 @@ class Membership < ActiveRecord::Base
   named_scope :active,
               :conditions => { :active => true }
   named_scope :in, lambda { |organization|
-    { :conditions => { :organization_id => organization.id } }
+    { :conditions => { :organization => organization } }
   }
 
   belongs_to :user

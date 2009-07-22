@@ -7,8 +7,8 @@ class User < ActiveRecord::Base
            :include => [ :organization, :role ],
            :dependent => :destroy
   has_many :roles, :through => :memberships do
-    def in(organization)
-      proxy_owner.memberships.active.in(organization).map { |m| m.role }
+    def in(organizations)
+      proxy_owner.memberships.active.in(organizations).map { |m| m.role }
     end
   end
   has_many :registrations, :through => :memberships

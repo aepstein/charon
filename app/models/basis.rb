@@ -17,6 +17,7 @@ class Basis < ActiveRecord::Base
       organization.id ] }
   }
   belongs_to :structure
+  belongs_to :framework
   has_many :requests do
     def build_for( organization )
       r = self.build
@@ -25,7 +26,7 @@ class Basis < ActiveRecord::Base
     end
   end
 
-  delegate :eligible_to_request?, :to => :structure
+  delegate :reviewer, :to => :organization
 
   validates_uniqueness_of :name
   validates_presence_of :name

@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  member_percentage: 1
+  member_percentage_type: MyString
+
+two:
+  name: MyString
+  member_percentage: 1
+  member_percentage_type: MyString

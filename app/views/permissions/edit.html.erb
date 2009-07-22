@@ -1,0 +1,18 @@
+<h1>Editing permission</h1>
+
+<% form_for(@permission) do |f| %>
+  <%= f.error_messages %>
+
+
+  <%= render :partial => 'form', :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<p>
+<%= link_to 'Show', @permission %> |
+<%= link_to 'Back', framework_permissions_path( @permission.framework ) %>
+</p>
+

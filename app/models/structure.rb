@@ -1,5 +1,4 @@
 class Structure < ActiveRecord::Base
-  KINDS = %w( safc gpsafc )
 
   has_many :nodes do
     def children_of(node)
@@ -11,8 +10,8 @@ class Structure < ActiveRecord::Base
   end
   has_many :bases
   has_many :requests
+  belongs_to :framework
 
-  validates_inclusion_of :kind, :in => KINDS
   validates_numericality_of :minimum_requestors, :only_integer => true
   validates_numericality_of :maximum_requestors, :only_integer => true
 
@@ -24,7 +23,7 @@ class Structure < ActiveRecord::Base
   end
 
   def eligible_to_request?(organization)
-    organization.send("#{kind}_eligible?")
+    framework.organization_eligible?(organization)
   end
 
   def to_s

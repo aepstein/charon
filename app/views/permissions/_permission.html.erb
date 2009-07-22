@@ -1,0 +1,11 @@
+  <tr>
+    <td><%=h permission.framework %></td>
+    <td><%=h permission.state %></td>
+    <td><%=h permission.role %></td>
+    <td><%=h permission.action %></td>
+    <td><%=h permission.stage_id %></td>
+    <td><%= link_to 'Show', permission %></td>
+    <td><%= link_to 'Edit', edit_permission_path(permission) %></td>
+    <td><%= link_to 'Destroy', permission, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+

@@ -1,0 +1,15 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  framework: 
+  state: MyString
+  role: 
+  action: MyString
+  stage_id: 1
+
+two:
+  framework: 
+  state: MyString
+  role: 
+  action: MyString
+  stage_id: 1
