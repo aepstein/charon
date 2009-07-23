@@ -8,7 +8,7 @@
   <%= render :partial => 'version',
              :collection => item.versions %>
 
-  <% if item.versions.next_stage <= 2 %> <!-- there are only two stages (request and allocation) as of now -->
+  <% if item.versions.next_stage <= 1 %> <!-- there are only two stages (request and review) as of now -->
     <tr>
       <td align="center">-></td>
       <td><%= link_to 'add next stage', new_item_version_path(item) %></td>

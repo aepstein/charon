@@ -3,7 +3,7 @@
 </p>
 
 <p>
-  Stage: <%= @version.stage.name %>
+  Stage: <%= @version.stage %>
 </p>
 
 <fieldset>
@@ -22,23 +22,23 @@
     <p>Maximum request: <%=h number_to_currency(@version.requestable.max_request) %></p>
   <% end %>
 
-  <% if @version.stage.position > 1 %>
+  <% if @version.stage_id > 0 %>
     <p>Requested amount: <%=h number_to_currency(@prev_version.amount) %></p>
   <% end %>
 
 </fieldset>
 
 <p>
-  <%= form.label :amount, @version.stage.name + " Amount" %><br />
+  <%= form.label :amount, @version.stage + " Amount" %><br />
   $<%= form.text_field :amount %>
 </p>
 
 <p>
-  <%= form.label :comment, @version.stage.name + " Comment" %><br />
+  <%= form.label :comment, @version.stage + " Comment" %><br />
   <%= form.text_field :comment %>
 </p>
 
 <p>
-  <%= hidden_field_tag :stage_pos, @version.stage.position %>
+  <%= hidden_field_tag :stage_pos, @version.stage_id %>
 </p>
 

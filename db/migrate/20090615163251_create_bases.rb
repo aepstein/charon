@@ -4,7 +4,7 @@ class CreateBases < ActiveRecord::Migration
       t.string :name, :null => false
       t.references :framework, :null => false
       t.references :organization, :null => false
-      t.integer :structure_id, :null => false
+      t.references :structure, :null => false
       t.datetime :open_at, :null => false
       t.datetime :closed_at, :null => false
 

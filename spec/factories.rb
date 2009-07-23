@@ -72,6 +72,10 @@ Factory.define :advisor_membership, :parent => :membership do |f|
   f.association :role, :factory => :role, :name => "advisor"
 end
 
+Factory.define :vp_membership, :parent => :membership do |f|
+  f.association :role, :factory => :role, :name => "vice-president"
+end
+
 Factory.define :structure do |f|
   f.sequence(:name) { |n| "Structure #{n}" }
   f.kind 'safc'
@@ -97,12 +101,14 @@ Factory.define :request do |f|
 end
 
 Factory.define :item do |f|
-  f.association :request, :factory => :request
+  #f.association :request, :factory => :request
   f.association :node, :factory => :node
 end
 
 Factory.define :version do |f|
-  #f.association :item, :factory => :item
+  f.amount 1
+  f.stage_id 0
+  f.association :item, :factory => :item
 end
 
 Factory.define :stage do |f|

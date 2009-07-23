@@ -33,6 +33,7 @@ class Basis < ActiveRecord::Base
   validates_presence_of :organization
   validates_presence_of :framework
   validates_presence_of :structure
+  validates_presence_of :organization
   validates_datetime :open_at
   validates_datetime :closed_at, :after => :open_at
 

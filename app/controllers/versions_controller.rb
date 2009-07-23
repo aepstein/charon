@@ -26,9 +26,9 @@ class VersionsController < ApplicationController
   # GET /items/:item_id/versions/new.xml
   def new
     @version = Item.find(params[:item_id]).versions.build
-    @version.stage = Stage.find_or_create_by_position(@version.item.versions.next_stage)
-    if @version.stage.position > 1:
-      @prev_version = @version.item.versions.prev_version(@version.stage.position)
+    @version.stage_id = @version.item.versions.next_stage
+    if @version.stage_id > 0:
+      @prev_version = @version.item.versions.prev_version(@version.stage_id)
       @version.requestable = @prev_version.requestable.clone
     else
       @version.requestable = @version.build_requestable
@@ -43,16 +43,16 @@ class VersionsController < ApplicationController
   # GET /versions/1/edit
   def edit
     @version = Version.find(params[:id])
-    @prev_version = @version.item.versions.prev_version(@version.stage.position)
+    @prev_version = @version.item.versions.prev_version(@version.stage_id)
   end
 
   # POST /items/:item_id/versions
   # POST /items/:item_id/versions.xml
   def create
     @version = Item.find(params[:item_id]).versions.build
-    @version.stage = Stage.find_or_create_by_position(params[:stage_pos])
-    if @version.stage.position > 1:
-      @prev_version = @version.item.versions.prev_version(@version.stage.position)
+    @version.stage_id = params[:stage_pos]
+    if @version.stage_id > 0:
+      @prev_version = @version.item.versions.prev_version(@version.stage_id)
       @version.requestable = @prev_version.requestable.clone
     else
       @version.requestable = @version.item.node.requestable_type.constantize.new
@@ -75,7 +75,7 @@ class VersionsController < ApplicationController
   # PUT /versions/1.xml
   def update
     @version = Version.find(params[:id])
-    @prev_version = @version.item.versions.prev_version(@version.stage.position)
+    @prev_version = @version.item.versions.prev_version(@version.stage_id)
 
     respond_to do |format|
       if @version.update_attributes(params[:version])

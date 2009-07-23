@@ -7,10 +7,14 @@ Feature: Manage bases
     Given the following structures:
       | name |
       | test |
+    And the following safc eligible organizations:
+      | last_name      |
+      | organization 1 |
 
   Scenario: Register new basis
     Given I am on "test's new basis page"
     When I fill in "Name" with "Basis 1"
+    And I select "organization 1" from "Organization"
     And I fill in "Open at" with "2009-10-15 12:00:00"
     And I fill in "Closed at" with "2009-10-20 12:00:00"
     And I press "Create"
@@ -18,8 +22,8 @@ Feature: Manage bases
 
   Scenario: Edit basis
     Given the following bases:
-      | name   | structure_id |
-      | name 1 | 1            |
+      | name   | structure_id | organization_id |
+      | name 1 | 1            | 1               |
     And I am on "test's basis page"
     When I follow "Edit"
     And I fill in "Open at" with "2009-10-15 12:00:00"
@@ -29,11 +33,11 @@ Feature: Manage bases
 
   Scenario: Delete basis
     Given the following bases:
-      | name   | structure_id |
-      | name 1 | 1            |
-      | name 2 | 1            |
-      | name 3 | 1            |
-      | name 4 | 1            |
+      | name   | structure_id | organization_id |
+      | name 1 | 1            | 1               |
+      | name 2 | 1            | 1               |
+      | name 3 | 1            | 1               |
+      | name 4 | 1            | 1               |
     When I delete the 3rd basis
     Then I should see the following bases:
       | name|
