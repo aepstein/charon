@@ -16,6 +16,8 @@ class Basis < ActiveRecord::Base
       "requests.status = 'draft' AND organizations_requests.organization_id = ? )",
       organization.id ] }
   }
+
+  belongs_to :organization
   belongs_to :structure
   belongs_to :framework
   has_many :requests do
@@ -26,10 +28,10 @@ class Basis < ActiveRecord::Base
     end
   end
 
-  delegate :reviewer, :to => :organization
-
   validates_uniqueness_of :name
   validates_presence_of :name
+  validates_presence_of :organization
+  validates_presence_of :framework
   validates_presence_of :structure
   validates_datetime :open_at
   validates_datetime :closed_at, :after => :open_at

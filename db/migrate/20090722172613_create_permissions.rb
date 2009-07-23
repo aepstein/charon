@@ -5,7 +5,7 @@ class CreatePermissions < ActiveRecord::Migration
       t.string :status, :null => false
       t.references :role, :null => false
       t.string :action, :null => false
-      t.string :context, :null => false
+      t.string :perspective, :null => false
 
       t.timestamps
     end

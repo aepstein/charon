@@ -19,8 +19,6 @@ class Request < ActiveRecord::Base
   delegate :structure, :to => :basis
   delegate :framework, :to => :basis
   delegate :permissions, :to => :framework
-  delegate :requestors, :to => :organizations
-  delegate :reviewer, :to => :basis
 
   validate :must_have_open_basis, :must_have_eligible_organizations
 
@@ -72,11 +70,19 @@ class Request < ActiveRecord::Base
 #    released_at = DateTime.now
   end
 
+  def requestors
+    organizations
+  end
+
+  def reviewer
+    basis.organization
+  end
+
   # Lists actions available to user on the request
   def may(user)
-    Permission::CONTEXTS.each do |context|
-      actions = permissions.allowed_actions( user.roles.in( send(context) ),
-                                             context,
+    Permission::PERSPECTIVES.each do |perspective|
+      actions = permissions.allowed_actions( user.roles.in( send(perspective) ),
+                                             perspective,
                                              status )
       return actions if actions.first
     end

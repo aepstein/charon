@@ -4,12 +4,13 @@ end
 
 Factory.define :framework do |f|
   f.sequence(:name) { |n| "Sequence #{n}" }
+  f.member_percentage nil
 end
 
 Factory.define :permission do |f|
   f.association :role
   f.association :framework
-  f.add_attribute(:context, 'requestors')
+  f.perspective 'requestors'
   f.status Request.aasm_states.first
   f.action Request::ACTIONS.first
 end
@@ -84,6 +85,7 @@ end
 
 Factory.define :basis do |f|
   f.sequence(:name) { |n| "Basis #{n}" }
+  f.association :organization
   f.association :framework
   f.association :structure
   f.open_at DateTime.now - 1.days
