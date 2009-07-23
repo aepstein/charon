@@ -7,10 +7,10 @@ Factory.define :framework do |f|
 end
 
 Factory.define :permission do |f|
-  f.association :role, :factory => :role
-  f.association :framework, :factory => :framework
-  f.context 'requestors'
-  f.status Request.aasm_states
+  f.association :role
+  f.association :framework
+  f.add_attribute(:context, 'requestors')
+  f.status Request.aasm_states.first
   f.action Request::ACTIONS.first
 end
 
