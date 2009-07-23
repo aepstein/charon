@@ -75,7 +75,7 @@ class Request < ActiveRecord::Base
   end
 
   def reviewer
-    basis.organization
+    [ basis.organization ]
   end
 
   # Lists actions available to user on the request

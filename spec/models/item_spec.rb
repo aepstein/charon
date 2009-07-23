@@ -28,24 +28,32 @@ describe Item do
     @item.versions.next_stage.should == 2
   end
 
-  it "should be able to be created by any user who can update its request" do
-    @item.may_create?(@pres_membership.user).should == true
-    @item.may_create?(@other_membership.user).should == true
+  it "should have may_create? which returns same value as request.may_update?" do
+    @item.request.stub!(:may_update?).and_return(true)
+    @item.may_create?(nil).should == true
+    @item.request.stub!(:may_update?).and_return(false)
+    @item.may_create?(nil).should == false
   end
 
-  it "should be able to be updated by any user who can update its request" do
+  it "should have may_update? which returns same value as request.may_update?" do
+    @item.request.stub!(:may_update?).and_return(true)
     @item.may_update?(@pres_membership.user).should == true
-    @item.may_update?(@other_membership.user).should == true
+    @item.request.stub!(:may_update?).and_return(false)
+    @item.may_update?(@other_membership.user).should == false
   end
 
-  it "should be able to be destroyed by any user who can update its request" do
-    @item.may_destroy?(@pres_membership.user).should == true
-    @item.may_destroy?(@other_membership.user).should == true
+  it "should have may_destroy? which returns same value as request.may_update?" do
+    @item.request.stub!(:may_update?).and_return(true)
+    @item.may_destroy?(nil).should == true
+    @item.request.stub!(:may_update?).and_return(false)
+    @item.may_destroy?(nil).should == false
   end
 
-  it "should be viewable by any user who can see its request" do
-    @item.may_see?(@pres_membership.user).should == true
-    @item.may_see?(@other_membership.user).should == true
+  it "should have may_see? which returns same value as request.may_see?" do
+    @item.request.stub!(:may_see?).and_return(true)
+    @item.may_see?(nil).should == true
+    @item.request.stub!(:may_see?).and_return(false)
+    @item.may_see?(nil).should == false
   end
 end
 

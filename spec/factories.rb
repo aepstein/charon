@@ -97,12 +97,13 @@ Factory.define :basis do |f|
 end
 
 Factory.define :request do |f|
-  f.association :basis, :factory => :basis
+  f.association :basis
+  f.organizations { |o| [ o.assocation(:organization) ] }
 end
 
 Factory.define :item do |f|
-  #f.association :request, :factory => :request
-  f.association :node, :factory => :node
+  f.association :request
+  f.association :node
 end
 
 Factory.define :version do |f|

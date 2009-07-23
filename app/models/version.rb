@@ -14,6 +14,8 @@ class Version < ActiveRecord::Base
   accepts_nested_attributes_for :durable_goods_expense
   accepts_nested_attributes_for :publication_expense
 
+  delegate :request, :to => :item
+
   def validate
     if amount > requestable.max_request:
       errors.add(:amount, "is greater than the maximum request!")
@@ -38,19 +40,13 @@ class Version < ActiveRecord::Base
   end
 
   def may_create?(user)
-    if stage_id == 1
-      return item.request.may_allocate?(user)
-    else
-      return false
-    end
+    return request.may_allocate?(user) if stage_id == 1
+    false
   end
 
   def may_update?(user)
-    if stage_id == 1
-      return item.request.may_allocate?(user)
-    else
-      return item.request.may_update?(user)
-    end
+    return request.may_allocate?(user) if stage_id == 1
+    request.may_update?(user)
   end
 
   def may_destroy?(user)
@@ -59,10 +55,9 @@ class Version < ActiveRecord::Base
 
   def may_see?(user)
     if stage_id == 1
-      return item.request.may_allocate?(user) || item.request.may_review?(user)
-    else
-      return item.request.may_see?(user)
+      return request.may_allocate?(user) || request.may_review?(user)
     end
+    request.may_see?(user)
   end
 end
 
