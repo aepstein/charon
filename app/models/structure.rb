@@ -10,7 +10,6 @@ class Structure < ActiveRecord::Base
   end
   has_many :bases
   has_many :requests
-  belongs_to :framework
 
   validates_numericality_of :minimum_requestors, :only_integer => true
   validates_numericality_of :maximum_requestors, :only_integer => true
@@ -20,10 +19,6 @@ class Structure < ActiveRecord::Base
   def minimum_may_not_exceed_maximum_requestors
     errors.add( :minimum_requestors,
                 "may not exceed maximum requestors." ) if minimum_requestors > maximum_requestors
-  end
-
-  def eligible_to_request?(organization)
-    framework.organization_eligible?(organization)
   end
 
   def to_s

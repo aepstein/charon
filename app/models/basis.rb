@@ -40,5 +40,9 @@ class Basis < ActiveRecord::Base
   def open?
     (open_at < DateTime.now) && (closed_at > DateTime.now)
   end
+
+  def eligible_to_request?(organization)
+    framework.organization_eligible?(organization)
+  end
 end
 

@@ -21,6 +21,10 @@ class Framework < ActiveRecord::Base
     self.member_percentage_type = nil if member_percentage_type && member_percentage_type.empty?
   end
 
+  def organization_eligible?( organization )
+    organization.eligible_for? self
+  end
+
   def to_s
     name
   end
