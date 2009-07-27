@@ -15,9 +15,9 @@ Feature: Manage requests
       | gpsafc 1  |
       | gpsafc 2  |
     And the following structures:
-      | name             | kind   |
-      | safc structure   | safc   |
-      | gpsafc structure | gpsafc |
+      | name             |
+      | safc structure   |
+      | gpsafc structure |
     And the following bases:
       | name           | structure        |
       | safc basis 1   | safc structure   |

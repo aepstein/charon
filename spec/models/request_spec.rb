@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Request do
   before(:each) do
     @request = Factory.build(:request)
-    @request.organizations << Factory(:organization)
+    #@request.organizations << Factory(:organization)
   end
 
   it "should create a new instance given valid attributes" do

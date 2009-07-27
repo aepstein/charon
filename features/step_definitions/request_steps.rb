@@ -9,7 +9,7 @@ Given /^the following requests:$/ do |requests|
     if request_attributes['basis'] then
       complex_attributes['basis'] = Basis.find_by_name(request_attributes['basis'])
     end
-    Factory('request', request_attributes.merge( complex_attributes ) )
+    Factory(:request, request_attributes.merge( complex_attributes ) )
   end
 end
 
