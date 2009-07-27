@@ -1,5 +1,5 @@
 class Permission < ActiveRecord::Base
-  PERSPECTIVES = %w( requestors reviewer )
+  PERSPECTIVES = %w( requestor reviewer )
   belongs_to :framework
   belongs_to :role
 
@@ -7,7 +7,7 @@ class Permission < ActiveRecord::Base
   validates_presence_of :framework
   validates_inclusion_of :action, :in => Request::ACTIONS
   validates_inclusion_of :perspective, :in => PERSPECTIVES
-  validates_inclusion_of :status, :in => Request.aasm_states
+  validates_inclusion_of :status, :in => Request.aasm_states.map { |s| s.name.to_s }
 
   named_scope :role, lambda { |role_ids|
     { :conditions => { :role_id => role_ids } }

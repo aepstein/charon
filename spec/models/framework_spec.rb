@@ -52,8 +52,8 @@ describe Framework do
     allowed_perspective = Permission::PERSPECTIVES.first
     disallowed_perspective = Permission::PERSPECTIVES.last
     allowed_perspective.should_not == disallowed_perspective
-    allowed_status = Request.aasm_states.first
-    disallowed_status = Request.aasm_states.last
+    allowed_status = Request.aasm_states.first.name.to_s
+    disallowed_status = Request.aasm_states.last.name.to_s
     allowed_status.should_not == disallowed_status
     allowed_action = Request::ACTIONS.first
     disallowed_action = Request::ACTIONS.last

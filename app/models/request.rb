@@ -41,6 +41,7 @@ class Request < ActiveRecord::Base
   include AASM
   aasm_column :status
   aasm_initial_state :started
+  aasm_state :started
   aasm_state :completed
   aasm_state :submitted
   aasm_state :accepted
@@ -70,20 +71,19 @@ class Request < ActiveRecord::Base
 #    released_at = DateTime.now
   end
 
-  def requestors
-    organizations
-  end
+  alias :requestors :organizations
 
-  def reviewer
+  def reviewers
+    return Array.new unless basis.organization
     [ basis.organization ]
   end
 
   # Lists actions available to user on the request
   def may(user)
     Permission::PERSPECTIVES.each do |perspective|
-      actions = permissions.allowed_actions( user.roles.in( send(perspective) ),
+      actions = permissions.allowed_actions( user.roles.in( send(perspective.pluralize) ),
                                              perspective,
-                                             status )
+                                             status.to_s )
       return actions if actions.first
     end
     Array.new

@@ -10,21 +10,6 @@ describe Organization do
     Factory(:organization).new_record?.should == false
   end
 
-  it "should be safc_eligible if given a safc-eligible, active registration" do
-    @registered_organization.registrations.first.update_attributes( { :number_of_undergrads => 60 } )
-    @registered_organization.registrations.first.safc_eligible?.should == true
-    @registered_organization.registrations.first.active?.should == true
-    @registered_organization.safc_eligible?.should == true
-  end
-
-  it "should be safc_eligible if given a gpsafc-eligible, active registration" do
-    registration = Factory(:registration)
-    @registered_organization.registrations.first.update_attributes( { :number_of_grads => 40 } )
-    @registered_organization.registrations.first.gpsafc_eligible?.should == true
-    @registered_organization.registrations.first.active?.should == true
-    @registered_organization.gpsafc_eligible?.should == true
-  end
-
   it "should have a requests.creatable method that returns requests that can be made" do
     basis = Factory(:basis)
     Basis.open.no_draft_request_for(@registered_organization).should include(basis)
@@ -33,12 +18,12 @@ describe Organization do
     @registered_organization.requests.creatable.first.class.should == Request
   end
 
-  it "should have a requests.draft method that returns draft requests" do
+  it "should have a requests.started method that returns started requests" do
     request = Factory.build(:request)
     request.organizations << @registered_organization
     request.save.should == true
     @registered_organization.requests.should include(request)
-    @registered_organization.requests.draft.empty?.should == false
+    @registered_organization.requests.started.empty?.should == false
   end
 
   it "should have a requests.released method that returns released requests" do

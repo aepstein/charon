@@ -2,24 +2,8 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Request do
   before(:each) do
-    @registered_organization = Factory(:organization)
-    @registered_organization.registrations << Factory(:registration)
-    @registered_organization.registrations.first.update_attributes(
-      { :registered => true, :number_of_undergrads => 10 }
-    )
-
-    @pres_membership = Factory(:president_membership)
-    @tre_membership = Factory(:treasurer_membership)
-    @adv_membership = Factory(:advisor_membership)
-    @other_membership = Factory(:membership)
-
-    @registered_organization.memberships << @pres_membership
-    @registered_organization.memberships << @tre_membership
-    @registered_organization.memberships << @adv_membership
-    @registered_organization.memberships << @other_membership
-
     @request = Factory.build(:request)
-    @request.organizations << @registered_organization
+    @request.organizations << Factory(:organization)
   end
 
   it "should create a new instance given valid attributes" do
@@ -42,32 +26,22 @@ describe Request do
     @request.save.should == false
   end
 
-  it "should be able to be created only by finance officers of its organization(s)" do
-    @request.may_create?(@pres_membership.user).should == true
-    @request.may_create?(@tre_membership.user).should == true
-    @request.may_create?(@adv_membership.user).should == true
-    @request.may_create?(@other_membership.user).should == false
-  end
-
-  it "should be able to be updated by any member of its organization(s)" do
-    @request.may_update?(@pres_membership.user).should == true
-    @request.may_update?(@tre_membership.user).should == true
-    @request.may_update?(@adv_membership.user).should == true
-    @request.may_update?(@other_membership.user).should == true
-  end
-
-  it "should be viewable by any member of its organization(s)" do
-    @request.may_see?(@pres_membership.user).should == true
-    @request.may_see?(@tre_membership.user).should == true
-    @request.may_see?(@adv_membership.user).should == true
-    @request.may_see?(@other_membership.user).should == true
-  end
-
-  it "should be able to be approved only by finance officers of its organization(s)" do
-    @request.may_approve?(@pres_membership.user).should == true
-    @request.may_approve?(@tre_membership.user).should == true
-    @request.may_approve?(@adv_membership.user).should == true
-    @request.may_approve?(@other_membership.user).should == false
+  it "should have a may method for retrieving a user's permissions in framework" do
+    allowed_role = Factory(:role, :name => 'allowed')
+    disallowed_role = Factory(:role, :name => 'disallowed')
+    allowed_user = Factory(:user)
+    disallowed_user = Factory(:user)
+    @request.framework.permissions.create( :role => allowed_role,
+      :action => Request::ACTIONS.first, :perspective => Permission::PERSPECTIVES.first,
+      :status => Request.aasm_initial_state.to_s )
+    organization = @request.send(Permission::PERSPECTIVES.first.pluralize).first
+    organization.memberships.create( :user => allowed_user,
+      :role => allowed_role, :active => true ).id.should_not be_nil
+    organization.memberships.create( :user => disallowed_user,
+      :role => disallowed_role, :active => true ).id.should_not be_nil
+    @request.may(allowed_user).size.should == 1
+    @request.may(allowed_user).first.should == Request::ACTIONS.first
+    @request.may(disallowed_user).should be_empty
   end
 
 end

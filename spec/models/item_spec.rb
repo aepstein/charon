@@ -2,16 +2,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Item do
   before(:each) do
-    @registered_organization = Factory(:organization)
-    @registered_organization.registrations << Factory(:registration, { :registered => true, :number_of_undergrads => 10 })
-    @pres_membership = Factory(:president_membership)
-    @other_membership = Factory(:membership)
-    @registered_organization.memberships << @pres_membership
-    @registered_organization.memberships << @other_membership
-    @request = Factory.build(:request)
-    @request.organizations << @registered_organization
-    @item = Factory(:item)
-    @item.request = @request
+    basis = Factory(:basis)
+    basis.structure.nodes.create(Factory.attributes_for(:node))
+    request = Factory(:request, :basis => basis, :organizations => [ Factory(:organization) ])
+    @item = request.items.build(:node => basis.structure.nodes.first)
+  end
+
+  it "should save with valid attributes" do
+    @item.save.should == true
   end
 
   it "should have a next_stage method that returns the stage_id of the next version to be made" do
@@ -37,9 +35,9 @@ describe Item do
 
   it "should have may_update? which returns same value as request.may_update?" do
     @item.request.stub!(:may_update?).and_return(true)
-    @item.may_update?(@pres_membership.user).should == true
+    @item.may_update?(nil).should == true
     @item.request.stub!(:may_update?).and_return(false)
-    @item.may_update?(@other_membership.user).should == false
+    @item.may_update?(nil).should == false
   end
 
   it "should have may_destroy? which returns same value as request.may_update?" do

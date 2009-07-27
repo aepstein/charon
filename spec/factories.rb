@@ -10,8 +10,8 @@ end
 Factory.define :permission do |f|
   f.association :role
   f.association :framework
-  f.perspective 'requestors'
-  f.status Request.aasm_states.first
+  f.perspective Permission::PERSPECTIVES.first
+  f.status Request.aasm_states.first.name.to_s
   f.action Request::ACTIONS.first
 end
 
@@ -78,7 +78,6 @@ end
 
 Factory.define :structure do |f|
   f.sequence(:name) { |n| "Structure #{n}" }
-  f.kind 'safc'
 end
 
 Factory.define :node do |f|
@@ -98,7 +97,7 @@ end
 
 Factory.define :request do |f|
   f.association :basis
-  f.organizations { |o| [ o.assocation(:organization) ] }
+#  f.organizations { |o| [ o.association(:organization) ] }
 end
 
 Factory.define :item do |f|
