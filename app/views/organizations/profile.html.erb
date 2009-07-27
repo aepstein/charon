@@ -6,10 +6,10 @@
            :collection => @organization.requests.creatable %>
 <% end %>
 
-<% unless @organization.requests.draft.empty? %>
+<% unless @organization.requests.started.empty? %>
 <h2>Requests you've started</h2>
 <%= render :partial => 'requests/request',
-           :collection => @organization.requests.draft %>
+           :collection => @organization.requests.started %>
 <% end %>
 
 <% unless @organization.requests.released.empty? %>

@@ -60,22 +60,6 @@ Factory.define :membership do |f|
   f.association :role, :factory => :role
 end
 
-Factory.define :president_membership, :parent => :membership do |f|
-  f.association :role, :factory => :role, :name => "president"
-end
-
-Factory.define :treasurer_membership, :parent => :membership do |f|
-  f.association :role, :factory => :role, :name => "treasurer"
-end
-
-Factory.define :advisor_membership, :parent => :membership do |f|
-  f.association :role, :factory => :role, :name => "advisor"
-end
-
-Factory.define :vp_membership, :parent => :membership do |f|
-  f.association :role, :factory => :role, :name => "vice-president"
-end
-
 Factory.define :structure do |f|
   f.sequence(:name) { |n| "Structure #{n}" }
 end
@@ -97,7 +81,8 @@ end
 
 Factory.define :request do |f|
   f.association :basis
-#  f.organizations { |o| [ o.association(:organization) ] }
+  #f.organizations [ Factory(:organization) ]
+  f.organizations { |o| [ o.association(:organization) ] }
 end
 
 Factory.define :item do |f|
@@ -108,7 +93,8 @@ end
 Factory.define :version do |f|
   f.amount 1
   f.stage_id 0
-  f.association :item, :factory => :item
+  f.association :item
+  f.association :administrative_expense
 end
 
 Factory.define :stage do |f|

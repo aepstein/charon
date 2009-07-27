@@ -3,15 +3,15 @@ class Item < ActiveRecord::Base
   belongs_to :request
   has_many :versions, :autosave => true do
     def next_stage
-      pos = 0
-      self.select { |version| not version.new_record? }.each do |v|
-        pos = [pos, v.stage_id + 1].max
-      end
-      pos
+      saved_versions = self.select { |version| not version.new_record? }
+      return saved_versions.map { |v| v.stage_id }.max + 1 if saved_versions.size > 0
+      0
     end
+
     def prev_version(stage_pos)
       self.select { |version| version.stage_id == stage_pos - 1 }[0]
     end
+
     def last_version
       self.select { |version| version.stage_id == self.versions.next_stage - 1 }[0]
     end
