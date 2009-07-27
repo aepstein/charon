@@ -35,3 +35,4 @@ config.gem 'thoughtbot-factory_girl', :lib => 'factory_girl', :source => 'http:/
 config.gem 'selenium-client', :lib => false
 config.gem 'bmabey-database_cleaner', :lib => 'database_cleaner', :source => 'http://gems.github.com'
 config.gem 'ruby-ldapserver', :lib => false
+config.gem 'spork', :lib => false
