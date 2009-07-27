@@ -8,9 +8,9 @@ describe Item do
     @other_membership = Factory(:membership)
     @registered_organization.memberships << @pres_membership
     @registered_organization.memberships << @other_membership
-    @request = Factory.build(:request)
+    @request = Factory(:request)
     @request.organizations << @registered_organization
-    @item = Factory(:item)
+    @item = Factory(:item, { :request => @request })
     @item.request = @request
   end
 

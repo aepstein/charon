@@ -98,7 +98,8 @@ end
 
 Factory.define :request do |f|
   f.association :basis
-  f.organizations { |o| [ o.assocation(:organization) ] }
+  f.organizations [Factory(:organization)]
+ # f.organizations { |o| [ o.association(:organization) ] }
 end
 
 Factory.define :item do |f|

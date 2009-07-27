@@ -14,19 +14,15 @@ describe User do
   end
 
   it "should have an officer_in? method that tells whether the user is an officer in an organization" do
-    @memberships.map { |membership| membership.user.officer_in?(@registered_organization) }.should ==
-        [false, false, false, false, false]
+    #@memberships.map { |m| m.user.officer_in?(@registered_organization) }.should == [false, false, false, false, false]
     @registered_organization.memberships << @memberships
-    @memberships.map { |membership| membership.user.officer_in?(@registered_organization) }.should ==
-        [true, true, true, true, false]
+    @memberships.map { |m| m.user.officer_in?(@registered_organization) }.should == [true, true, true, true, false]
   end
 
   it "should have a finance_officer_in? method that tells whether the user has certain positions in an organization" do
-    @memberships.map { |membership| membership.user.finance_officer_in?(@registered_organization) }.should ==
-        [false, false, false, false, false]
+    #@memberships.map { |m| m.user.finance_officer_in?(@registered_organization) }.should == [false, false, false, false, false]
     @registered_organization.memberships << @memberships
-    @memberships.map { |membership| membership.user.finance_officer_in?(@registered_organization) }.should ==
-        [true, true, true, false, false]
+    @memberships.map { |m| m.user.finance_officer_in?(@registered_organization) }.should == [true, true, true, false, false]
   end
 end
 
