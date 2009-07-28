@@ -5,6 +5,7 @@ Given /^the following bases:$/ do |bases|
     if basis_attributes['structure'] then
       complex_attributes['structure'] = Structure.find_by_name( basis_attributes['structure'].strip )
     end
+    complex_attributes['framework'] = Framework.find_by_name(basis_attributes['framework'].strip) if basis_attributes['framework']
     Factory(:basis, basis_attributes.merge( complex_attributes ) )
   end
 end

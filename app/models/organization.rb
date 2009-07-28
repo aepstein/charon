@@ -42,6 +42,15 @@ class Organization < ActiveRecord::Base
     registations.current.eligible_for? framework
   end
 
+  def may_see?(user)
+    true
+  end
+
+  # TODO is this sufficient?
+  def may_edit?(user)
+    user.admin?
+  end
+
   def to_s
     name
   end

@@ -13,7 +13,7 @@ class Basis < ActiveRecord::Base
       :conditions => [
       'bases.id NOT IN (SELECT basis_id FROM requests, organizations_requests ' +
       'WHERE requests.id=organizations_requests.request_id AND ' +
-      "requests.status = 'draft' AND organizations_requests.organization_id = ? )",
+      "requests.status = 'started' AND organizations_requests.organization_id = ? )",
       organization.id ] }
   }
 

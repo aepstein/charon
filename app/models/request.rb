@@ -80,6 +80,7 @@ class Request < ActiveRecord::Base
 
   # Lists actions available to user on the request
   def may(user)
+    return Array.new if user.nil?
     Permission::PERSPECTIVES.each do |perspective|
       actions = permissions.allowed_actions( user.roles.in( send(perspective.pluralize) ),
                                              perspective,

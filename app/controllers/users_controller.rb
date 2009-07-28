@@ -13,7 +13,7 @@ class UsersController < ApplicationController
   def new
    @user = User.new
 
-     respond_to do |format|
+    respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user }
     end
@@ -30,22 +30,21 @@ class UsersController < ApplicationController
   end
 
   def show
-      begin
-      @user = User.find( params[:id])
+    @user = User.find(params[:id])
     rescue ActiveRecord::RecordNotFound
-     respond_to do |format|
+    respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
     end
   end
 
-   def edit
+  def edit
     @user = User.find(params[:id])
     raise AuthorizationError unless current_user.may_update?(@user)
   end
 
   def update
-  @user = User.find(params[:id])
+    @user = User.find(params[:id])
     raise AuthorizationError unless current_user.may_update?(@user)
 
     respond_to do |format|
@@ -64,6 +63,5 @@ class UsersController < ApplicationController
       end
     end
   end
-end
 end
 

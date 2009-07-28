@@ -4,6 +4,7 @@ class ItemsController < ApplicationController
   def index
     @request = Request.find(params[:request_id])
     @items = @request.items
+    raise AuthorizationError unless @request.may_see?(current_user)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,6 +16,7 @@ class ItemsController < ApplicationController
   # GET /items/1.xml
   def show
     @item = Item.find(params[:id])
+    raise AuthorizationError unless @item.may_see?(current_user)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -28,6 +30,7 @@ class ItemsController < ApplicationController
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:node_id])
     @item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
+    raise AuthorizationError unless @item.may_create?(current_user)
     @item.save
     redirect_to new_item_version_path(@item)
 
@@ -37,16 +40,12 @@ class ItemsController < ApplicationController
     #end
   end
 
-  # GET /items/1/edit
-  def edit
-    @item = Item.find(params[:id])
-  end
-
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
     @item = Request.find(params[:request_id]).items.build
     @item.node = Node.find(params[:item][:node_id])
+    raise AuthorizationError unless @item.may_create?(current_user)
 
     respond_to do |format|
       if @item.save
@@ -61,10 +60,17 @@ class ItemsController < ApplicationController
     end
   end
 
+  # GET /items/1/edit
+  def edit
+    @item = Item.find(params[:id])
+    raise AuthorizationError unless @item.may_update?(current_user)
+  end
+
   # PUT /items/1
   # PUT /items/1.xml
   def update
     @item = Item.find(params[:id])
+    raise AuthorizationError unless @item.may_update?(current_user)
 
     respond_to do |format|
       if @item.update_attributes(params[:item])
@@ -82,6 +88,7 @@ class ItemsController < ApplicationController
   # DELETE /items/1.xml
   def destroy
     @item = Item.find(params[:id])
+    raise AuthorizationError unless @item.may_destroy?(current_user)
     @item.versions.each do |version|
       version.requestable.destroy if version.requestable
       version.destroy

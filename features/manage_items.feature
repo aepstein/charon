@@ -8,8 +8,8 @@ Feature: Manage items
       | last_name      |
       | organization 1 |
     And the following requests:
-      | status | organizations |
-      | draft  | organization 1|
+      | status   | organizations  |
+      | started  | organization 1 |
 
   Scenario: Register new item
     Given the following items:

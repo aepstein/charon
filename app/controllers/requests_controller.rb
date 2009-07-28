@@ -4,6 +4,7 @@ class RequestsController < ApplicationController
   def index
     @organization = Organization.find(params[:organization_id])
     @requests = @organization.requests
+    raise AuthorizationError unless @organization.may_see?(current_user)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,6 +16,7 @@ class RequestsController < ApplicationController
   # GET /requests/1.xml
   def show
     @request = Request.find(params[:id])
+    raise AuthorizationError unless @request.may_see?(current_user)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -29,6 +31,7 @@ class RequestsController < ApplicationController
     @request = Request.new
     @request.organizations << @organization
     @request.basis = Basis.find(params[:basis_id]) if params.has_key?(:basis_id)
+    raise AuthorizationError unless @request.may_create?(current_user)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -42,6 +45,7 @@ class RequestsController < ApplicationController
     @request = Request.new(params[:request])
     @organization = Organization.find(params[:organization_id])
     @request.organizations << @organization
+    raise AuthorizationError unless @request.may_create?(current_user)
 
     respond_to do |format|
       if @request.save
@@ -58,12 +62,14 @@ class RequestsController < ApplicationController
   # GET /requests/1/edit
   def edit
     @request = Request.find(params[:id])
+    raise AuthorizationError unless @request.may_update?(current_user)
   end
 
   # PUT /requests/1
   # PUT /requests/1.xml
   def update
     @request = Request.find(params[:id])
+    raise AuthorizationError unless @request.may_update?(current_user)
 
     respond_to do |format|
       if @request.update_attributes(params[:request])
@@ -81,6 +87,7 @@ class RequestsController < ApplicationController
   # DELETE /requests/1.xml
   def destroy
     @request = Request.find(params[:id])
+    raise AuthorizationError unless @request.may_destroy?(current_user)
     @request.destroy
 
     respond_to do |format|
@@ -93,6 +100,7 @@ class RequestsController < ApplicationController
   # POST /requests/:request_id/approve.xml
   def approve
     @approval = Request.find(params[:request_id]).approvals.build(:user => current_user)
+    raise AuthorizationError unless @request.may_approve?(current_user)
 
     respond_to do |format|
       if @approval.save

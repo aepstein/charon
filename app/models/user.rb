@@ -39,6 +39,14 @@ class User < ActiveRecord::Base
     (roles.in(organization) & Role.finance_officer_roles).size > 0
   end
 
+  def full_name
+    name = ""
+    name << first_name + " " unless first_name.nil?
+    name << middle_name + " " unless middle_name.nil?
+    name << last_name unless last_name.nil?
+    name
+  end
+
 
 protected
   def extract_email

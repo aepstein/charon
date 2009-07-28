@@ -13,9 +13,11 @@ module NavigationHelpers
     when /the new user page/
       new_user_path
 
-
     when /the new registration page/
       new_registration_path
+
+  when /the login page/
+      new_user_session_path
 
     when /the items page/
       request_items_path(Request.find(:first))
