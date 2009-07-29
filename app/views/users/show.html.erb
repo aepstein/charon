@@ -1,7 +1,7 @@
 <h2><%=h @user.full_name %></h2>
 
 <p>
-  NetID:
+  Net Id:
   <%=h @user.net_id %>
 </p>
 
@@ -15,5 +15,11 @@
   <%=h @user.date_of_birth.to_s(:long) if @user.date_of_birth %>
 </p>
 
+<p>
+  Admin: <%= @user.admin? ? 'Yes' : 'No' %>
+</p>
+
+<p>
 <%= link_to 'Edit', edit_user_path(@user) %>
+</p>
 

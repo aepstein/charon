@@ -43,6 +43,22 @@ class User < ActiveRecord::Base
     name
   end
 
+  def may_create?(user)
+    user.admin?
+  end
+
+  def may_update?(user)
+    user.admin? || user == self
+  end
+
+  def may_destroy?(user)
+    user.admin?
+  end
+
+  def may_see?(user)
+    user.admin? || user == self
+  end
+
 protected
   def extract_email
     self.email = "#{self.net_id}@cornell.edu"

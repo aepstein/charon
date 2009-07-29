@@ -1,0 +1,12 @@
+  <tr>
+    <td><%=h user.first_name %></td>
+    <td><%=h user.middle_name %></td>
+    <td><%=h user.last_name %></td>
+    <td><%=h user.net_id %></td>
+    <td><%=h user.email %></td>
+    <td><%=h user.date_of_birth %></td>
+    <td><%= link_to_if user.may_see?(current_user), 'Show', user %></td>
+    <td><%= link_to_if user.may_update?(current_user), 'Edit', edit_user_path(user) %></td>
+    <td><%= link_to_if user.may_destroy?(current_user), 'Destroy', user_path(user), :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+

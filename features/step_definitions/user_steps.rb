@@ -1,5 +1,7 @@
 Given /^the following users:$/ do |users|
-  User.create!(users.hashes)
+  users.hashes.each do |user_attributes|
+    Factory(:user,user_attributes)
+  end
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) user$/ do |pos|
@@ -18,3 +20,4 @@ Then /^I should see the following users:$/ do |users|
     end
   end
 end
+

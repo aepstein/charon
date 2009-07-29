@@ -16,7 +16,7 @@ protected
     when AuthorizationError
 #      head :forbidden
       respond_to do |format|
-        format.html { redirect_to( :controller => '/static', :action => 'unauthorized' ) }
+        format.html { redirect_to( unauthorized_path ) }
       end
     else
       super(e)

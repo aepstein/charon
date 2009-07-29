@@ -10,13 +10,20 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+
     when /the new user page/
       new_user_path
+
+    when /^"(.+)'s edit user page"$/
+      edit_user_path(User.find_by_net_id($1))
+
+    when /^"(.+)'s show user page"$/
+      user_path(User.find_by_net_id($1))
 
     when /the new registration page/
       new_registration_path
 
-  when /the login page/
+    when /the login page/
       new_user_session_path
 
     when /the items page/
@@ -63,6 +70,9 @@ module NavigationHelpers
 
     when /the new administrative_expense page/
       new_administrative_expense_path
+
+    when /the unauthorized page/
+      unauthorized_path
 
     # Add more mappings here.
     # Here is a more fancy example:
