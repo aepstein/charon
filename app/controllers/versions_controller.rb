@@ -4,6 +4,7 @@ class VersionsController < ApplicationController
   def index
     @item = Item.find(params[:item_id])
     @versions = @item.versions
+    raise AuthorizationError unless @item.may_see?(current_user)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,6 +16,7 @@ class VersionsController < ApplicationController
   # GET /versions/1.xml
   def show
     @version = Version.find(params[:id])
+    raise AuthorizationError unless @version.may_see?(current_user)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -27,6 +29,8 @@ class VersionsController < ApplicationController
   def new
     @version = Item.find(params[:item_id]).versions.build
     @version.stage_id = @version.item.versions.next_stage
+    raise AuthorizationError unless @version.may_create?(current_user)
+
     if @version.stage_id > 0:
       @prev_version = @version.item.versions.prev_version(@version.stage_id)
       @version.requestable = @prev_version.requestable.clone
@@ -43,6 +47,7 @@ class VersionsController < ApplicationController
   # GET /versions/1/edit
   def edit
     @version = Version.find(params[:id])
+    raise AuthorizationError unless @version.may_update?(current_user)
     @prev_version = @version.item.versions.prev_version(@version.stage_id)
   end
 
@@ -51,6 +56,8 @@ class VersionsController < ApplicationController
   def create
     @version = Item.find(params[:item_id]).versions.build
     @version.stage_id = params[:stage_pos]
+    raise AuthorizationError unless @version.may_see?(current_user)
+
     if @version.stage_id > 0:
       @prev_version = @version.item.versions.prev_version(@version.stage_id)
       @version.requestable = @prev_version.requestable.clone
@@ -75,6 +82,7 @@ class VersionsController < ApplicationController
   # PUT /versions/1.xml
   def update
     @version = Version.find(params[:id])
+    raise AuthorizationError unless @version.may_update?(current_user)
     @prev_version = @version.item.versions.prev_version(@version.stage_id)
 
     respond_to do |format|
@@ -93,6 +101,7 @@ class VersionsController < ApplicationController
   # DELETE /versions/1.xml
   def destroy
     @version = Version.find(params[:id])
+    raise AuthorizationError unless @version.may_destroy?(current_user)
     @version.destroy
 
     respond_to do |format|

@@ -14,24 +14,50 @@ Feature: Manage requests
       | last_name |
       | gpsafc 1  |
       | gpsafc 2  |
+    And the following user records:
+      | net_id    | password | admin  |
+      | admin     | secret   | true   |
+      | requestor | secret   | false  |
+      | global    | secret   | false  |
+    And the following role records:
+      | name    |
+      | allowed |
+    And the following framework records:
+      | name   |
+      | safc   |
+      | gpsafc |
+    And the following permissions:
+      | framework | role    | status  | action  | perspective |
+      | safc      | allowed | started | create  | requestor   |
+      | safc      | allowed | started | update  | requestor   |
+      | safc      | allowed | started | destroy | requestor   |
+      | safc      | allowed | started | see     | requestor   |
+      | safc      | allowed | started | approve | requestor   |
+    And the following memberships:
+      | user      | organization | role    |
+      | requestor | safc 1       | allowed |
+      | requestor | safc 2       | allowed |
+      | requestor | safc 3       | allowed |
     And the following structures:
       | name             |
       | safc structure   |
       | gpsafc structure |
     And the following bases:
-      | name           | structure        |
-      | safc basis 1   | safc structure   |
-      | safc basis 2   | safc structure   |
-      | gpsafc basis 1 | gpsafc structure |
+      | name           | structure        | framework |
+      | safc basis 1   | safc structure   | safc      |
+      | safc basis 2   | safc structure   | safc      |
+      | gpsafc basis 1 | gpsafc structure | gpsafc    |
     And the following requests:
       | organizations   | basis          |
       | safc 1, safc 2  | safc basis 1   |
       | safc 2          | safc basis 2   |
       | gpsafc 1        | gpsafc basis 1 |
+    And I am logged in as "requestor" with password "secret"
 
   Scenario: Register new request
-    When I am on "safc 1's new request page"
-    And I select "safc basis 2" from "Basis"
+    Given I am on "safc 1's new request page"
+    Then I should see "Basis for request"
+    When I select "safc basis 2" from "Basis for request"
     And I press "Create"
     Then I should see "Request was successfully created."
 
@@ -41,20 +67,20 @@ Feature: Manage requests
       | Basis        |
       | safc basis 1 |
 
-  Scenario: List of requests for an organization with 2 requests
+  Scenario: List requests for an organization with 2 requests
     When I am on "safc 2's requests page"
     Then I should see the following requests:
       | Basis        |
       | safc basis 1 |
       | safc basis 2 |
 
-  Scenario: List of requests for an organization with no requests
+  Scenario: List requests for an organization with no requests
     When I am on "safc 3's requests page"
     Then I should see the following requests:
       | Basis |
 
   Scenario: Approve request for existing organization
     When I am on "safc 1's requests page"
-    And I press "Approve"
+    And I follow "Approve"
     Then I should see "Approval was successfully created"
 

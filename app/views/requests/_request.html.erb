@@ -1,15 +1,27 @@
-<% if request.new_record? %>
-  <p>
-    <%=h request.basis.name %>
-    <%= link_to_if (request.may_create?(current_user), 'Create', new_organization_request_path(request.organizations.first)) { "" } %>
-  </p>
+<% if request.may_see?(current_user) %>
 
-<% else %>
-  <p>
-    <%=h request.to_s %>
-    <%= link_to_if (request.may_see?(current_user), 'Show', request) { "" } %>
-    <%= link_to_if (request.may_update?(current_user), 'Edit', edit_request_path(request)) { "" } %>
-    <%= link_to_if (request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %>
-  </p>
+  <% if request.new_record? %>
+    <tr>
+      <td><%=h request.basis.name %></td>
+      <td>
+        <% form_tag organization_requests_path(request.organizations.first) do %>
+          <%= hidden_field_tag :basis_id, request.basis.id.to_s %>
+          <%= submit_tag 'Create' %>
+        <% end %>
+      </td>
+    </tr>
+  <% else %>
+    <tr>
+      <td><%=h request.basis.name %></td>
+      <td>
+        <%= link_to_if(request.may_see?(current_user), 'Show', request) { "" } %>
+        <%= link_to_if(request.may_update?(current_user), 'Edit', edit_request_path(request)) { "" } %>
+        <%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %>
+        <%= link_to_if(request.may_approve?(current_user), 'Approve', request) { "" } %>
+      </td>
+     </tr>
+
+  <% end %>
+
 <% end %>
 

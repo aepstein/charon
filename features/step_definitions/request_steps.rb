@@ -6,9 +6,7 @@ Given /^the following requests:$/ do |requests|
         Organization.find_by_last_name(o)
       end
     end
-    if request_attributes['basis'] then
-      complex_attributes['basis'] = Basis.find_by_name(request_attributes['basis'])
-    end
+    complex_attributes['basis'] = Basis.find_by_name(request_attributes['basis'].strip) if request_attributes['basis']
     Factory(:request, request_attributes.merge( complex_attributes ) )
   end
 end
