@@ -96,7 +96,7 @@ class Request < ActiveRecord::Base
     define_method("may_#{action}?") do |user|
       # may need to override with custom methods for some actions
       # return false if basis.closed?
-      # return true if user.admin?
+      return true if user.admin?
       return true if may(user).include?(action)
       false
     end

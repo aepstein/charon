@@ -2,20 +2,14 @@
 
 <table>
   <tr>
-    <th>Basis</th>
+    <td>Name</td>
+    <td>Options</td>
   </tr>
 
-<% @requests.each do |request| %>
-  <tr>
-    <td><%=h request.basis.name %></td>
-    <td><%= link_to 'Show', request %></td>
-    <td><%= link_to 'Edit', edit_request_path(request) %></td>
-    <td><%= link_to 'Destroy', request, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+  <%= render :partial => 'request', :collection => @requests %>
 </table>
 
-<br />
-
-<%= link_to 'New request', new_organization_request_path( @organization.id ) %>
+<p>
+<%= link_to_if(true, 'New request', new_organization_request_path(@organization.id)) { "" } %>
+</p>
 

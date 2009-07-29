@@ -25,6 +25,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations/1/profile.xml
   def profile
     @organization = Organization.find(params[:id])
+    raise AuthorizationError unless @organization.may_see?(current_user)
 
     respond_to do |format|
       format.html # profile.html.erb
