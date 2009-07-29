@@ -1,0 +1,4 @@
+admin:
+  net_id: admin
+  password: secret
+

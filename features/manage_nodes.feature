@@ -4,12 +4,16 @@ Feature: Manage nodes
   I want to create, list, and destroy nodes
 
   Background:
-    Given the following structures:
+    Given the following users:
+      | net_id  | password | admin |
+      | admin   | secret   | true  |
+    And the following structures:
       | name |
       | test |
 
-  Scenario: Register new node
-    Given I am on "test's new node page"
+  Scenario: Create new node
+    Given I am logged in as "admin" with password "secret"
+    And I am on "test's new node page"
     When I fill in "node_name" with "test node"
     And I fill in "node_requestable_type" with "AdministrativeExpense"
     And I fill in "node_item_amount_limit" with "1000.0"
@@ -18,7 +22,8 @@ Feature: Manage nodes
     Then I should see "Node was successfully created."
 
   Scenario: Edit node
-    Given the following nodes:
+    Given I am logged in as "admin" with password "secret"
+    And the following nodes:
       | structure_id | requestable_type      |
       | 1            | AdministrativeExpense |
     And I am on "test's node page"

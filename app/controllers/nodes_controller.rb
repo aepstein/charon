@@ -4,6 +4,7 @@ class NodesController < ApplicationController
   def index
     @structure = Structure.find(params[:structure_id])
     @nodes = @structure.nodes
+    raise AuthorizationError unless @structure.may_see?(current_user)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,6 +16,7 @@ class NodesController < ApplicationController
   # GET /nodes/1.xml
   def show
     @node = Node.find(params[:id])
+    raise AuthorizationError unless @node.may_see?(current_user)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -26,6 +28,7 @@ class NodesController < ApplicationController
   # GET /structures/:structure_id/nodes/new.xml
   def new
     @node = Structure.find(params[:structure_id]).nodes.build
+    raise AuthorizationError unless @node.may_create?(current_user)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -36,12 +39,14 @@ class NodesController < ApplicationController
   # GET /nodes/1/edit
   def edit
     @node = Node.find(params[:id])
+    raise AuthorizationError unless @node.may_update?(current_user)
   end
 
   # POST /structures/:structure_id/nodes
   # POST /structures/:structure_id/nodes.xml
   def create
     @node = Structure.find(params[:structure_id]).nodes.build(params[:node])
+    raise AuthorizationError unless @node.may_create?(current_user)
 
     respond_to do |format|
       if @node.save
@@ -59,6 +64,7 @@ class NodesController < ApplicationController
   # PUT /nodes/1.xml
   def update
     @node = Node.find(params[:id])
+    raise AuthorizationError unless @node.may_update?(current_user)
 
     respond_to do |format|
       if @node.update_attributes(params[:node])
@@ -76,6 +82,7 @@ class NodesController < ApplicationController
   # DELETE /nodes/1.xml
   def destroy
     @node = Node.find(params[:id])
+    raise AuthorizationError unless @node.may_destroy?(current_user)
     @node.destroy
 
     respond_to do |format|

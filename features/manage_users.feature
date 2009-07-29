@@ -1,4 +1,3 @@
-@current
 Feature: Manage users
   In order to authenticate and authorize people to work within the system
   As a user-based system

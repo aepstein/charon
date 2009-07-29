@@ -14,5 +14,10 @@ describe Structure do
     structure.maximum_requestors = 1
     structure.save.should == false
   end
+
+  it "should use global model authorization" do
+    Structure.included_modules.should include(GlobalModelAuthorization)
+  end
+
 end
 

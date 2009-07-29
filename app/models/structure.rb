@@ -16,6 +16,8 @@ class Structure < ActiveRecord::Base
 
   validate :minimum_may_not_exceed_maximum_requestors
 
+  include GlobalModelAuthorization
+
   def minimum_may_not_exceed_maximum_requestors
     errors.add( :minimum_requestors,
                 "may not exceed maximum requestors." ) if minimum_requestors > maximum_requestors
