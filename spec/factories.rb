@@ -46,7 +46,7 @@ Factory.define :user do |f|
   f.sequence(:last_name) { |n| "Doe #{n}"}
   f.sequence(:net_id) { |n| "zzz#{n}"}
   f.password "pjlmiok"
-  f.password_confirmation "pjlmiok"
+  f.password_confirmation { |u| u.password }
   f.status "undergrad"
 end
 
