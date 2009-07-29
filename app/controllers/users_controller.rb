@@ -12,6 +12,7 @@ class UsersController < ApplicationController
 
   def new
    @user = User.new
+   raise AuthorizationError unless @user.may_create?(current_user)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -21,6 +22,9 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(params[:user])
+    raise AuthorizationError unless @user.may_create?(current_user)
+    @user.admin = params[:user][:admin] if current_user.admin? && params[:user][:admin]
+
     if @user.save
       flash[:notice] = "Account registered!"
       redirect_back_or_default user_url

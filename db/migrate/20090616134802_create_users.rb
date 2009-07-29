@@ -12,7 +12,7 @@ class CreateUsers < ActiveRecord::Migration
       t.string :middle_name
       t.string :last_name
       t.date :date_of_birth
-      t.boolean :admin, :null => false, :default => false
+      t.boolean :admin, { :null => false, :default => false }
     end
 
     add_index :users, [ :net_id ], :unique => true

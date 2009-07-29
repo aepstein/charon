@@ -1,8 +1,12 @@
 class User < ActiveRecord::Base
+  STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
+
+  attr_protected :admin
+
   acts_as_authentic do |c|
     c.login_field = 'net_id'
   end
-  STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
+
   has_many :memberships,
            :include => [ :organization, :role ],
            :dependent => :destroy
@@ -23,21 +27,13 @@ class User < ActiveRecord::Base
       old
     end
   end
+
   validates_presence_of     :net_id
   validates_uniqueness_of   :net_id
   before_validation_on_create :extract_email
   validates_inclusion_of    :status, :in => STATUSES
   before_save :import_simple_ldap_attributes
-  before_update :import_complex_ldap_attributes
-  after_create :import_complex_ldap_attributes
-
-  def officer_in?(organization)
-    (roles.in(organization) & Role.officer_roles).size > 0
-  end
-
-  def finance_officer_in?(organization)
-    (roles.in(organization) & Role.finance_officer_roles).size > 0
-  end
+  after_save :import_complex_ldap_attributes
 
   def full_name
     name = ""
@@ -46,7 +42,6 @@ class User < ActiveRecord::Base
     name << last_name unless last_name.nil?
     name
   end
-
 
 protected
   def extract_email
