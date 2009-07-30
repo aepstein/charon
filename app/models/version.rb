@@ -1,5 +1,5 @@
 class Version < ActiveRecord::Base
-  STAGE_NAMES = %w[ request review ]
+  STAGE_NAMES = %w( request review )
   belongs_to :item
   has_one :administrative_expense
   has_one :local_event_expense

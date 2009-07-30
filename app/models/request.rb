@@ -102,6 +102,10 @@ class Request < ActiveRecord::Base
     end
   end
 
+  def self.aasm_state_names
+    Request.aasm_states.map { |s| s.name.to_s }
+  end
+
   def to_s
     "Request of #{organizations.join(", ")} from #{basis}"
   end

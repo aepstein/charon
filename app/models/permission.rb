@@ -7,7 +7,7 @@ class Permission < ActiveRecord::Base
   validates_presence_of :framework
   validates_inclusion_of :action, :in => Request::ACTIONS
   validates_inclusion_of :perspective, :in => PERSPECTIVES
-  validates_inclusion_of :status, :in => Request.aasm_states.map { |s| s.name.to_s }
+  validates_inclusion_of :status, :in => Request.aasm_state_names
 
   named_scope :role, lambda { |role_ids|
     { :conditions => { :role_id => role_ids } }
@@ -21,5 +21,16 @@ class Permission < ActiveRecord::Base
   named_scope :status, lambda { |statuses|
     { :conditions => { :status => statuses } }
   }
+
+  delegate :may_update?, :to => :framework
+  delegate :may_see?, :to => :framework
+
+  def may_create?(user)
+    may_update? user
+  end
+
+  def may_destroy?(user)
+    may_update? user
+  end
 end
 
