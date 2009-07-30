@@ -1,0 +1,18 @@
+  <p>
+    <%= form.label :name %><br />
+    <%= form.text_field :name %>
+  </p>
+  <p>
+    <%= form.label :must_register %>
+    <%= form.check_box :must_register %>
+  </p>
+  <p>
+    <%= form.label :member_percentage %><br />
+    <%= form.text_field :member_percentage %>
+  </p>
+  <p>
+    <%= form.label :member_percentage_type %><br />
+    <%= form.select :member_percentage_type, Registration::MEMBER_TYPES,
+          { :include_blank => true } %>
+  </p>
+

@@ -1,18 +1,18 @@
 <p>
-  <b>Name:</b>
+  <strong>Name:</strong>
   <%=h @framework.name %>
 </p>
 
 <p>
-  <b>Member percentage:</b>
-  <%=h @framework.member_percentage %>
+  <strong>Must register:</strong> <%=h @framework.must_register? ? "yes" : "no" %>
 </p>
 
 <p>
-  <b>Member percentage type:</b>
-  <%=h @framework.member_percentage_type %>
+  <strong>Member requirement:</strong> <%=h @framework.member_requirement %>
 </p>
 
-
+<p>
 <%= link_to 'Edit', edit_framework_path(@framework) %> |
 <%= link_to 'Back', frameworks_path %>
+</p>
+

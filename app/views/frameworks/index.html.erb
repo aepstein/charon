@@ -3,22 +3,15 @@
 <table>
   <tr>
     <th>Name</th>
-    <th>Member percentage</th>
-    <th>Member percentage type</th>
   </tr>
 
-<% @frameworks.each do |framework| %>
-  <tr>
-    <td><%=h framework.name %></td>
-    <td><%=h framework.member_percentage %></td>
-    <td><%=h framework.member_percentage_type %></td>
-    <td><%= link_to 'Show', framework %></td>
-    <td><%= link_to 'Edit', edit_framework_path(framework) %></td>
-    <td><%= link_to 'Destroy', framework, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+  <%= render :partial => 'framework', :collection => @frameworks %>
+
 </table>
 
 <br />
 
+<p>
 <%= link_to 'New framework', new_framework_path %>
+</p>
+

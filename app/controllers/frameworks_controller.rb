@@ -14,6 +14,7 @@ class FrameworksController < ApplicationController
   # GET /frameworks/1.xml
   def show
     @framework = Framework.find(params[:id])
+    raise AuthorizationError unless @framework.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -25,6 +26,7 @@ class FrameworksController < ApplicationController
   # GET /frameworks/new.xml
   def new
     @framework = Framework.new
+    raise AuthorizationError unless @framework.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -35,12 +37,14 @@ class FrameworksController < ApplicationController
   # GET /frameworks/1/edit
   def edit
     @framework = Framework.find(params[:id])
+    raise AuthorizationError unless @framework.may_update? current_user
   end
 
   # POST /frameworks
   # POST /frameworks.xml
   def create
     @framework = Framework.new(params[:framework])
+    raise AuthorizationError unless @framework.may_create? current_user
 
     respond_to do |format|
       if @framework.save
@@ -58,6 +62,7 @@ class FrameworksController < ApplicationController
   # PUT /frameworks/1.xml
   def update
     @framework = Framework.find(params[:id])
+    raise AuthorizationError unless @framework.may_update? current_user
 
     respond_to do |format|
       if @framework.update_attributes(params[:framework])
@@ -75,6 +80,7 @@ class FrameworksController < ApplicationController
   # DELETE /frameworks/1.xml
   def destroy
     @framework = Framework.find(params[:id])
+    raise AuthorizationError unless @framework.may_destroy? current_user
     @framework.destroy
 
     respond_to do |format|
@@ -83,3 +89,4 @@ class FrameworksController < ApplicationController
     end
   end
 end
+

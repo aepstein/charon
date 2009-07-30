@@ -1,4 +1,6 @@
 class Framework < ActiveRecord::Base
+  include GlobalModelAuthorization
+
   has_many :permissions do
     def allowed_actions(roles, perspective, status)
       self.role(roles.map { |r| r.id } ).perspective(perspective).status(status).map { |p| p.action }.uniq
@@ -23,6 +25,14 @@ class Framework < ActiveRecord::Base
 
   def organization_eligible?( organization )
     organization.eligible_for? self
+  end
+
+  def member_requirement
+    if member_percentage? && member_percentage_type? then
+      "#{member_percentage}% #{member_percentage_type}"
+    else
+      "none"
+    end
   end
 
   def to_s

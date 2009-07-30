@@ -3,21 +3,14 @@
 <% form_for(@framework) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :member_percentage %><br />
-    <%= f.text_field :member_percentage %>
-  </p>
-  <p>
-    <%= f.label :member_percentage_type %><br />
-    <%= f.text_field :member_percentage_type %>
-  </p>
+  <%= render :partial => 'form', :object => f %>
+
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
 
+<p>
 <%= link_to 'Back', frameworks_path %>
+</p>
+

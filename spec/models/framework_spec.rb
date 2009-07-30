@@ -69,5 +69,18 @@ describe Framework do
     @framework.permissions.allowed_actions([allowed_role], allowed_perspective, disallowed_status).should be_empty
     @framework.permissions.allowed_actions([], allowed_perspective, allowed_status).should be_empty
   end
+
+  it "should include the GlobalModelAuthorization module" do
+    Framework.included_modules.should include(GlobalModelAuthorization)
+  end
+
+  it "should have a member_requirement method that returns a string representation of the memberhsip requirement" do
+    framework = Factory(:framework)
+    framework.member_percentage = 50
+    framework.member_percentage_type = Registration::MEMBER_TYPES.first
+    framework.valid?.should == true
+    framework.member_requirement.should ==
+      "#{framework.member_percentage}% #{Registration::MEMBER_TYPES.first}"
+  end
 end
 
