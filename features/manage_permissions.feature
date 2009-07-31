@@ -30,6 +30,16 @@ Feature: Manage permissions
     And I should see "approve"
     And I should see "requestor"
 
+  Scenario Outline:
+    Given I am logged in as "<user>" with password "secret"
+    And I am on "safc's new permission page"
+    Then I should see "<see>"
+
+    Examples:
+      | user    | see            |
+      | admin   | New permission |
+      | regular | Unauthorized   |
+
   Scenario: Delete permission
     Given the following roles:
       | name      |
@@ -43,6 +53,7 @@ Feature: Manage permissions
       | safc      | started | treasurer | approve | requestor   |
       | safc      | started | advisor   | approve | requestor   |
       | safc      | started | officer   | approve | requestor   |
+    And I am logged in as "admin" with password "secret"
     When I delete the 3rd permission for "safc"
     Then I should see the following permissions:
       | status  | role      | action  | perspective |

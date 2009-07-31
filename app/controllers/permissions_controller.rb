@@ -3,6 +3,7 @@ class PermissionsController < ApplicationController
   # GET /framework/:framework_id/permissions.xml
   def index
     @framework = Framework.find(params[:framework_id])
+    raise AuthorizationError unless @framework.may_see? current_user
     @permissions = @framework.permissions
 
     respond_to do |format|
@@ -15,6 +16,7 @@ class PermissionsController < ApplicationController
   # GET /permissions/1.xml
   def show
     @permission = Permission.find(params[:id])
+    raise AuthorizationError unless @permission.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -26,6 +28,7 @@ class PermissionsController < ApplicationController
   # GET /framework/:framework_id/permissions/new.xml
   def new
     @permission = Framework.find(params[:framework_id]).permissions.build
+    raise AuthorizationError unless @permission.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -36,12 +39,14 @@ class PermissionsController < ApplicationController
   # GET /permissions/1/edit
   def edit
     @permission = Permission.find(params[:id])
+    raise AuthorizationError unless @permission.may_update? current_user
   end
 
   # POST /framework/:framework_id/permissions
   # POST /framework/:framework_id/permissions.xml
   def create
     @permission = Framework.find(params[:framework_id]).permissions.build(params[:permission])
+    raise AuthorizationError unless @permission.may_create? current_user
 
     respond_to do |format|
       if @permission.save
@@ -59,6 +64,7 @@ class PermissionsController < ApplicationController
   # PUT /permissions/1.xml
   def update
     @permission = Permission.find(params[:id])
+    raise AuthorizationError unless @permission.may_update? current_user
 
     respond_to do |format|
       if @permission.update_attributes(params[:permission])
@@ -76,6 +82,7 @@ class PermissionsController < ApplicationController
   # DELETE /permissions/1.xml
   def destroy
     @permission = Permission.find(params[:id])
+    raise AuthorizationError unless @permission.may_destroy? current_user
     @permission.destroy
 
     respond_to do |format|
