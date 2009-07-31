@@ -9,6 +9,13 @@ When /^I delete the (\d+)(?:st|nd|rd|th) role$/ do |pos|
   end
 end
 
-Then /^I should see the following roles:$/ do |expected_roles_table|
-  expected_roles_table.diff!(table_at('table').to_a)
+Then /^I should see the following roles:$/ do |roles|
+  roles.rows.each_with_index do |row, i|
+    row.each_with_index do |cell, j|
+      response.should have_selector("table > tr:nth-child(#{i+2}) > td:nth-child(#{j+1})") { |td|
+        td.inner_text.should == cell
+      }
+    end
+  end
 end
+

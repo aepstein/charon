@@ -3,13 +3,14 @@
 <% form_for(@role) do |f| %>
   <%= f.error_messages %>
 
-   <%= render :partial => 'form',
-              :object => f %>
+   <%= render :partial => 'form', :object => f %>
 
   <p>
     <%= f.submit 'Create' %>
   </p>
 <% end %>
 
+<p>
 <%= link_to 'Back', roles_path %>
+</p>
 

@@ -1,6 +1,7 @@
 class RolesController < ApplicationController
 
-
+  # GET /roles
+  # GET /roles.xml
   def index
     @roles = Role.all
 
@@ -10,9 +11,11 @@ class RolesController < ApplicationController
     end
   end
 
-
+  # GET /roles/:id
+  # GET /roles/:id.xml
   def show
     @role = Role.find(params[:id])
+    raise AuthorizationError unless @role.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -20,9 +23,11 @@ class RolesController < ApplicationController
     end
   end
 
-
+  # GET /roles/new
+  # GET /roles/new.xml
   def new
     @role = Role.new
+    raise AuthorizationError unless @role.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -30,13 +35,17 @@ class RolesController < ApplicationController
     end
   end
 
+  # GET /roles/:id/edit
   def edit
     @role = Role.find(params[:id])
+    raise AuthorizationError unless @role.may_update? current_user
   end
 
-
+  # POST /roles
+  # POST /roles.xml
   def create
     @role = Role.new(params[:role])
+    raise AuthorizationError unless @role.may_create? current_user
 
     respond_to do |format|
       if @role.save
@@ -50,9 +59,11 @@ class RolesController < ApplicationController
     end
   end
 
-
+  # PUT /roles/:id
+  # PUT /roles/:id.xml
   def update
     @role = Role.find(params[:id])
+    raise AuthorizationError unless @role.may_update? current_user
 
     respond_to do |format|
       if @role.update_attributes(params[:role])
@@ -66,9 +77,11 @@ class RolesController < ApplicationController
     end
   end
 
-
+  # DELETE /roles/:id
+  # DELETE /roles/:id.xml
   def destroy
     @role = Role.find(params[:id])
+    raise AuthorizationError unless @role.may_destroy? current_user
     @role.destroy
 
     respond_to do |format|
