@@ -2,11 +2,10 @@
 
 <table>
   <tr>
-    <th>Framework</th>
-    <th>State</th>
+    <th>Status</th>
     <th>Role</th>
     <th>Action</th>
-    <th>Stage</th>
+    <th>Perspective</th>
   </tr>
 
   <%= render :partial => 'permission', :collection => @permissions  %>
@@ -14,5 +13,7 @@
 
 <br />
 
+<p>
 <%= link_to 'New permission', new_framework_permission_path(@framework) %>
+</p>
 

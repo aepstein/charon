@@ -7,8 +7,8 @@ Given /^the following permissions:$/ do |permissions|
   end
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) permission$/ do |pos|
-  visit permissions_url
+When /^I delete the (\d+)(?:st|nd|rd|th) permission for "(.+)"$/ do |pos, framework|
+  visit framework_permissions_url( Framework.find_by_name( framework ) )
   within("table > tr:nth-child(#{pos.to_i+1})") do
     click_link "Destroy"
   end

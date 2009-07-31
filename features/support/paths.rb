@@ -10,9 +10,15 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new role page/
+      new_role_path
+
+
     when /the new framework page/
       new_framework_path
 
+    when /^"(.+)'s new permission page"$/
+      new_framework_permission_path(Framework.find_by_name($1))
 
     when /the new user page/
       new_user_path

@@ -1,17 +1,17 @@
   <p>
-    <%= f.label :status %><br />
-    <%= f.text_field :status %>
+    <%= form.label :status %><br />
+    <%= form.select :status, Request.aasm_state_names %>
   </p>
   <p>
-    <%= f.label :role %><br />
-    <%= f.text_field :role %>
+    <%= form.label :role_id %><br />
+    <%= form.collection_select :role_id, Role.all, :id, :name %>
   </p>
   <p>
-    <%= f.label :action %><br />
-    <%= f.text_field :action %>
+    <%= form.label :action %><br />
+    <%= form.select :action, Request::ACTIONS %>
   </p>
   <p>
-    <%= f.label :perspective %><br />
-    <%= f.text_field :perspective %>
+    <%= form.label :perspective %><br />
+    <%= form.select :perspective, Permission::PERSPECTIVES %>
   </p>
 
