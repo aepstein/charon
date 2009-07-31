@@ -1,44 +1,30 @@
-<p>
-  Form type: <%= @version.item.node.requestable_type %>
-</p>
-
-<p>
-  Stage: <%= @version.stage %>
-</p>
-
 <fieldset>
 
   <legend><b>Requestable Info</b></legend>
 
-  <% form.fields_for( @version.requestable.class.to_s.underscore.to_sym,
-                      @version.requestable,
-                      :url => item_versions_path(@version.item),
-                      :method => :post ) do |requestable_form| %>
-    <%= render :partial => "#{@version.item.node.requestable_type.tableize}/form",
+  <% form.fields_for( form.object.requestable.class.to_s.underscore.to_sym,
+                      form.object.requestable ) do |requestable_form| %>
+    <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form",
                :object => requestable_form %>
   <% end %>
 
-  <% if @version.requestable.max_request %>
-    <p>Maximum request: <%=h number_to_currency(@version.requestable.max_request) %></p>
-  <% end %>
-
-  <% if @version.stage_id > 0 %>
-    <p>Requested amount: <%=h number_to_currency(@prev_version.amount) %></p>
+  <% if form.object.requestable.max_request %>
+    <p>Maximum request: <%=h number_to_currency(form.object.requestable.max_request) %></p>
   <% end %>
 
 </fieldset>
 
 <p>
-  <%= form.label :amount, @version.stage + " Amount" %><br />
+  <%= form.label :amount, form.object.stage + " Amount" %><br />
   $<%= form.text_field :amount %>
 </p>
 
 <p>
-  <%= form.label :comment, @version.stage + " Comment" %><br />
+  <%= form.label :comment, form.object.stage + " Comment" %><br />
   <%= form.text_field :comment %>
 </p>
 
 <p>
-  <%= hidden_field_tag :stage_pos, @version.stage_id %>
+  <%= hidden_field_tag :stage_pos, form.object.stage_id %>
 </p>
 

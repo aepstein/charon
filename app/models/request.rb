@@ -2,9 +2,9 @@ class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve accept revise review release )
   belongs_to :basis
   has_many :approvals
-  has_many :items do
-    def children_of(request_item)
-      self.select { |item| item.parent_id == request_item.id }
+  has_many :items, :include => [ :node, :parent ] do
+    def children_of(parent_item)
+      self.select { |item| item.parent_id == parent_item.id }
     end
     def root
       self.select { |item| item.parent_id.nil? }
@@ -18,6 +18,7 @@ class Request < ActiveRecord::Base
 
   delegate :structure, :to => :basis
   delegate :framework, :to => :basis
+  delegate :nodes, :to => :structure
   delegate :permissions, :to => :framework
 
   validate :must_have_open_basis, :must_have_eligible_organizations
@@ -81,6 +82,7 @@ class Request < ActiveRecord::Base
   # Lists actions available to user on the request
   def may(user)
     return Array.new if user.nil?
+    return ACTIONS if user.admin?
     Permission::PERSPECTIVES.each do |perspective|
       actions = permissions.allowed_actions( user.roles.in( send(perspective.pluralize) ),
                                              perspective,
@@ -96,7 +98,6 @@ class Request < ActiveRecord::Base
     define_method("may_#{action}?") do |user|
       # may need to override with custom methods for some actions
       # return false if basis.closed?
-      return true if user.admin?
       return true if may(user).include?(action)
       false
     end

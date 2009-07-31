@@ -1,10 +1,6 @@
-Given /the following (.+) eligible organizations:/ do |kind, organizations|
+Given /the following organizations:/ do |organizations|
   organizations.hashes.each do |organization_attributes|
     organization = Factory(:organization, organization_attributes)
-    organization.registrations << Factory(
-      "#{kind}_eligible_registration".to_sym,
-      { :name => organization.name }
-    )
   end
 end
 

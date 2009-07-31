@@ -6,7 +6,7 @@ class CreateVersions < ActiveRecord::Migration
       t.integer :requestable_id
       t.decimal :amount
       t.text :comment
-      t.integer :stage_id
+      t.integer :stage_id, { :null => false, :default => 0 }
 
       t.timestamps
     end
@@ -16,3 +16,4 @@ class CreateVersions < ActiveRecord::Migration
     drop_table :versions
   end
 end
+

@@ -2,7 +2,7 @@
 table td { padding: 4px; }
 </style>
 
-<h1>Listing items</h1>
+<h1>Listing items for <%=h @request %></h1>
 
 <table>
   <tr>
@@ -13,20 +13,9 @@ table td { padding: 4px; }
     <th>Available commands</th>
   </tr>
 
-<%= render :partial => 'item',
-           :collection => @request.items.root %>
+<%= render :partial => 'item', :collection => @request.items.root %>
 
 </table>
 
-<p>
-New Item:
-<select id="node" onchange="new_item_url(this.value)">
-<option value="">Select a node</option>
-<%= options_from_collection_for_select(
-                     @request.basis.structure.nodes.root,
-                     :id,
-                     :name ) %>
-</select>
-
-</p>
+<%= render :partial => 'new_item', :object => @request.items.build %>
 

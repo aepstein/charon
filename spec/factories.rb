@@ -56,8 +56,9 @@ end
 
 Factory.define :membership do |f|
   f.active true
-  f.association :user, :factory => :user
-  f.association :role, :factory => :role
+  f.association :user
+  f.association :role
+  f.association :organization
 end
 
 Factory.define :structure do |f|
@@ -67,6 +68,7 @@ end
 Factory.define :node do |f|
   f.requestable_type "AdministrativeExpense"
   f.name "administrative expense"
+  f.item_quantity_limit 1
   f.association :structure
 end
 
@@ -81,13 +83,12 @@ end
 
 Factory.define :request do |f|
   f.association :basis
-  #f.organizations [ Factory(:organization) ]
   f.organizations { |o| [ o.association(:organization) ] }
 end
 
 Factory.define :item do |f|
   f.association :request
-  f.association :node
+  f.node { |item| item.association(:node, :structure => item.request.structure) }
 end
 
 Factory.define :version do |f|

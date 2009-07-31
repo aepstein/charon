@@ -44,5 +44,10 @@ describe Request do
     @request.may(disallowed_user).should be_empty
   end
 
+  it "should allow the administrator to take any action"
+    admin = Factory(:user, :admin => true)
+    Factory(:request).may(admin).should == Request::ACTIONS
+  end
+
 end
 

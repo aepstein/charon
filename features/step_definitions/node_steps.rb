@@ -1,5 +1,11 @@
 Given /^the following nodes:$/ do |nodes|
-  Node.create!(nodes.hashes)
+  nodes.hashes.each do |node_attributes|
+    complex_attributes = Hash.new
+    if node_attributes['structure'] then
+      complex_attributes['structure'] = Structure.find_by_name(node_attributes['structure'])
+    end
+    Factory(:node,node_attributes.merge(complex_attributes))
+  end
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) node$/ do |pos|

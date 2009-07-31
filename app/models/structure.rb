@@ -1,11 +1,14 @@
 class Structure < ActiveRecord::Base
 
-  has_many :nodes do
+  has_many :nodes, :include => [ :parent ] do
     def children_of(node)
-      self.select { |n| n.parent_id == node.id }
+      self.select { |n| n.parent == node }
     end
     def root
-      self.select { |n| n.parent_id.nil? }
+      self.select { |n| n.parent.nil? }
+    end
+    def allowed_under( node )
+      self.select { |n| n.parent == node }
     end
   end
   has_many :bases

@@ -9,7 +9,7 @@
   <%= f.hidden_field :parent_id %>
   <%= f.hidden_field :node_id %>
 
-  <% fields_for @version do |version_form| %>
+  <% fields_for @item.versions do |version_form| %>
   <%= render :partial => 'versions/form',
              :object => version_form %>
   <% end %>
@@ -19,5 +19,7 @@
   </p>
 <% end %>
 
+<p>
 <%= link_to 'Back', request_items_path( @item.request_id ) %>
+</p>
 

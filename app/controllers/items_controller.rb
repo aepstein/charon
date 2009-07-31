@@ -27,24 +27,21 @@ class ItemsController < ApplicationController
   # GET /requests/:request_id/items/new
   # GET /requests/:request_id/items/new.xml
   def new
-    @item = Request.find(params[:request_id]).items.build
-    @item.node = Node.find(params[:node_id])
-    @item.parent = Request.find(params[:parent_id]) if params.has_key?(:parent_id)
+    @item = Request.find(params[:request_id]).items.build(params[:item])
+    @item.versions.build( :item => @item )
+    @item.versions.first.build_requestable
     raise AuthorizationError unless @item.may_create?(current_user)
-    @item.save
-    redirect_to new_item_version_path(@item)
 
-    #respond_to do |format|
-      #format.html # new.html.erb
-      #format.xml  { render :xml => @item }
-    #end
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @item }
+    end
   end
 
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
-    @item = Request.find(params[:request_id]).items.build
-    @item.node = Node.find(params[:item][:node_id])
+    @item = Request.find(params[:request_id]).items.build(params[:item])
     raise AuthorizationError unless @item.may_create?(current_user)
 
     respond_to do |format|

@@ -18,6 +18,22 @@ class Item < ActiveRecord::Base
   end
   acts_as_tree
 
+  accepts_nested_attributes_for :versions
+
+  validates_presence_of :node
+  validates_presence_of :request
+  validate :node_must_be_allowed
+
+  def allowed_nodes
+    Node.allowed_for_children_of( request, parent )
+  end
+
+  def node_must_be_allowed
+    return if node.nil?
+    errors.add( :node_id, "must be an allowed node."
+    ) unless allowed_nodes.include?( node )
+  end
+
   def may_create?(user)
     request.may_update?(user)
   end

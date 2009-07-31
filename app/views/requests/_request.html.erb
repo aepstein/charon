@@ -15,6 +15,7 @@
       <td><%=h request.basis.name %></td>
       <td>
         <%= link_to_if(request.may_see?(current_user), 'Show', request) { "" } %>
+        <%= link_to_if(request.may_see?(current_user), 'Show Items', request_items_path(request) ) { "" } %>
         <%= link_to_if(request.may_update?(current_user), 'Edit', edit_request_path(request)) { "" } %>
         <%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %>
         <%= link_to_if(request.may_approve?(current_user), 'Approve', request) { "" } %>

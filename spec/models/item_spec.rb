@@ -9,7 +9,21 @@ describe Item do
   end
 
   it "should save with valid attributes" do
-    @item.save.should == true
+    Factory(:item).id.should_not be_nil
+  end
+
+  it "should not save if there are already too many corresponding root items" do
+    first = Factory(:item)
+    second = Factory.build(:item, :request => first.request, :node => first.node)
+    second.save.should == false
+  end
+
+  it "should not save if there are already too many corresponding items under parent" do
+    parent = Factory(:item)
+    child_node = Factory(:node, :parent => parent.node, :structure => parent.node.structure )
+    first = Factory(:item, :request => parent.request, :parent => parent, :node => child_node)
+    second = Factory.build(:item, :request => parent.request, :parent => parent, :node => child_node)
+    second.save.should == false
   end
 
   it "should have a next_stage method that returns the stage_id of the next version to be made" do

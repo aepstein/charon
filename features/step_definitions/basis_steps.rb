@@ -3,6 +3,7 @@ Given /^the following bases:$/ do |bases|
   bases.hashes.each do |basis_attributes|
     complex_attributes = Hash.new
     complex_attributes['structure'] = Structure.find_by_name( basis_attributes['structure'].strip) if basis_attributes['structure']
+    complex_attributes['organization'] = Organization.find_by_last_name( basis_attributes['organization'].strip) if basis_attributes['organization']
     complex_attributes['framework'] = Framework.find_by_name(basis_attributes['framework'].strip) if basis_attributes['framework']
     Factory(:basis, basis_attributes.merge( complex_attributes ) )
   end
