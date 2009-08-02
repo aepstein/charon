@@ -5,6 +5,7 @@ class ItemsController < ApplicationController
     @request = Request.find(params[:request_id])
     @items = @request.items
     raise AuthorizationError unless @request.may_see?(current_user)
+    @items.each { |item| item.versions.next }
 
     respond_to do |format|
       format.html # index.html.erb

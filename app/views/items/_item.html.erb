@@ -5,10 +5,6 @@
 
   <%= render :partial => 'version', :collection => item.versions %>
 
-  <% if item.versions.next then %>
-  <%= render :partial => 'new_version', :object => item.versions.next %>
-  <% end %>
-
   <%= render :partial => 'item', :collection => item.request.items.children_of(item) %>
 
   <%= render :partial => 'new_item', :object => item.request.items.build( :parent => item ) %>

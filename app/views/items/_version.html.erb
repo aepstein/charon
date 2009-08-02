@@ -1,8 +1,12 @@
-  <tr>
-    <td align="center">-></td>
-    <td><%=h version.stage %></td>
-    <td><%=h number_to_currency(version.amount) %></td>
-    <td><%=h version.comment %></td>
-    <td><%= link_to 'Edit', edit_version_path(version) %></td>
-  </tr>
+    <tr>
+      <td><%= version.perspective %></td>
+      <% if version.new_record? then %>
+      <td colspan="2" align="center"><em>None yet.</em></td>
+      <td><%= link_to "Add", new_item_version_path(version.item) %></td>
+      <% else %>
+      <td><%=h number_to_currency(version.amount) %></td>
+      <td><%=h version.comment %></td>
+      <td><%= link_to 'Edit', edit_version_path(version) %></td>
+      <% end %>
+    </tr>
 

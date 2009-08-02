@@ -16,7 +16,7 @@ class Version < ActiveRecord::Base
 
   validates_presence_of :item
   validates_inclusion_of :perspective, :in => PERSPECTIVES
-  validates_uniqueness_of :perspective, :scope => [ :item_id ]
+  validates_uniqueness_of :perspective, :scope => :item_id
   validate :amount_must_be_less_than_requestable_max
 
   delegate :request, :to => :item

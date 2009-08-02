@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new version page/
+      new_version_path
+
     when /the new role page/
       new_role_path
 

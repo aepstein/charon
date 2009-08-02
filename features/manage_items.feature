@@ -68,7 +68,6 @@ Feature: Manage items
       | president    | see "Add New Item"     |
       | commissioner | not see "Add New Item" |
 
-  @current
   Scenario: Delete an item
     Given the following items:
       | request    | node                   |
@@ -80,13 +79,39 @@ Feature: Manage items
     When I delete the 5th item of the 1st request
     Then I should see "Item was successfully destroyed."
     And I should see the following items:
-      | Item Type              |
+      | Perspective            |
       | administrative expense |
-      | Add requestor version  |
+      | requestor              |
       | durable good expense   |
-      | Add requestor version  |
+      | requestor              |
       | travel event expense   |
-      | Add requestor version  |
+      | requestor              |
+
+  Scenario: Show correct add version links
+    Given the following items:
+      | request | node                   |
+      | 1       | administrative expense |
+      | 1       | durable good expense   |
+      | 1       | publication expense    |
+    And the following versions:
+      | item | perspective |
+      | 1    | requestor   |
+      | 1    | reviewer    |
+      | 2    | requestor   |
+    And I am logged in as "admin" with password "secret"
+    When I am on "our club's requests page"
+    And I follow "Show Items"
+    Then I should see the following items:
+      | Perspective            | Amount    |
+      | administrative expense | Destroy   |
+      | requestor              | $0.00     |
+      | reviewer               | $0.00     |
+      | durable good expense   | Destroy   |
+      | requestor              | $0.00     |
+      | reviewer               | None yet. |
+      | publication expense    | Destroy   |
+      | requestor              | None yet. |
+
 #    And I fill in "version_administrative_expense_attributes_copies" with "100"
 #    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
 #    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"

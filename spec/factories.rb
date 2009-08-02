@@ -92,7 +92,7 @@ Factory.define :item do |f|
 end
 
 Factory.define :version do |f|
-  f.amount 100.0
+  f.amount 0.0
   f.perspective 'requestor'
   f.association :item
 end
