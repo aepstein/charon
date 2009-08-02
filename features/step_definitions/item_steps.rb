@@ -1,14 +1,14 @@
 Given /^the following items:$/ do |items|
-  items.hashes.each do |item|
-    Factory(:item, item)
-    #item_object = Factory(:item, item)
-    #item_object.request.basis.structure.nodes << item_object.node
-    #item_object.save
+  items.hashes.each do |item_attributes|
+    complex_attributes = Hash.new
+    complex_attributes['node'] = Node.find_by_name(item_attributes['node']) if item_attributes['node']
+    complex_attributes['request'] = Request.all[item_attributes['request'].to_i - 1] if item_attributes['request']
+    Factory(:item, item_attributes.merge( complex_attributes ) )
   end
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) item$/ do |pos|
-  visit items_url
+When /^I delete the (\d+)(?:st|nd|rd|th) item of the (\d+)(?:st|nd|rd|th) request$/ do |pos,request_id|
+  visit request_items_url( Request.find( request_id ) )
   within("table > tr:nth-child(#{pos.to_i+1})") do
     click_link "Destroy"
   end

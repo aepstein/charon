@@ -5,13 +5,13 @@ class Version < ActiveRecord::Base
   has_one :local_event_expense
   has_one :speaker_expense
   has_one :travel_event_expense
-  has_one :durable_goods_expense
+  has_one :durable_good_expense
   has_one :publication_expense
   accepts_nested_attributes_for :administrative_expense
   accepts_nested_attributes_for :local_event_expense
   accepts_nested_attributes_for :speaker_expense
   accepts_nested_attributes_for :travel_event_expense
-  accepts_nested_attributes_for :durable_goods_expense
+  accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
 
   validates_presence_of :item

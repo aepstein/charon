@@ -84,14 +84,11 @@ class ItemsController < ApplicationController
   def destroy
     @item = Item.find(params[:id])
     raise AuthorizationError unless @item.may_destroy?(current_user)
-    @item.versions.each do |version|
-      version.requestable.destroy if version.requestable
-      version.destroy
-    end
     @item.destroy
 
     respond_to do |format|
-      format.html { redirect_to(request_items_url(@item.request)) }
+      flash[:notice] = 'Item was successfully destroyed.'
+      format.html { redirect_to( request_items_url(@item.request) ) }
       format.xml  { head :ok }
     end
   end

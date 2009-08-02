@@ -1,4 +1,3 @@
-@current
 Feature: Manage items
   In order to Manage structure of items using request item
   As an applicant
@@ -50,7 +49,7 @@ Feature: Manage items
       | started  | our club       | annual budget |
 
   Scenario: Create new item
-    Given I am logged in as "admin" with password "secret"
+    Given I am logged in as "president" with password "secret"
     When I am on "our club's requests page"
     And I follow "Show Items"
     And I select "administrative expense" from "Add New Item"
@@ -68,6 +67,26 @@ Feature: Manage items
       | admin        | see "Add New Item"     |
       | president    | see "Add New Item"     |
       | commissioner | not see "Add New Item" |
+
+  @current
+  Scenario: Delete an item
+    Given the following items:
+      | request    | node                   |
+      | 1          | administrative expense |
+      | 1          | durable good expense   |
+      | 1          | publication expense    |
+      | 1          | travel event expense   |
+    And I am logged in as "president" with password "secret"
+    When I delete the 5th item of the 1st request
+    Then I should see "Item was successfully destroyed."
+    And I should see the following items:
+      | Item Type              |
+      | administrative expense |
+      | Add requestor version  |
+      | durable good expense   |
+      | Add requestor version  |
+      | travel event expense   |
+      | Add requestor version  |
 #    And I fill in "version_administrative_expense_attributes_copies" with "100"
 #    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
 #    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"

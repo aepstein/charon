@@ -4,7 +4,7 @@ class Node < ActiveRecord::Base
     parent_item_sql = parent_item.nil? ? "IS NULL" : "= #{parent_item.id}"
     parent_item_count_sql =
       "(SELECT COUNT(*) FROM items WHERE items.request_id = #{request.id} AND " +
-      "items.parent_id #{parent_item_sql})"
+      "items.node_id = nodes.id AND items.parent_id #{parent_item_sql})"
     { :conditions => "nodes.parent_id #{parent_node_sql} AND " +
                      "nodes.item_quantity_limit > #{parent_item_count_sql}" }
   }
