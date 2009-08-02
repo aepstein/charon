@@ -1,12 +1,11 @@
 class Permission < ActiveRecord::Base
-  PERSPECTIVES = %w( requestor reviewer )
   belongs_to :framework
   belongs_to :role
 
   validates_presence_of :role
   validates_presence_of :framework
   validates_inclusion_of :action, :in => Request::ACTIONS
-  validates_inclusion_of :perspective, :in => PERSPECTIVES
+  validates_inclusion_of :perspective, :in => Version::PERSPECTIVES
   validates_inclusion_of :status, :in => Request.aasm_state_names
 
   named_scope :role, lambda { |role_ids|

@@ -10,7 +10,7 @@ end
 Factory.define :permission do |f|
   f.association :role
   f.association :framework
-  f.perspective Permission::PERSPECTIVES.first
+  f.perspective Version::PERSPECTIVES.first
   f.status Request.aasm_states.first.name.to_s
   f.action Request::ACTIONS.first
 end
@@ -92,10 +92,9 @@ Factory.define :item do |f|
 end
 
 Factory.define :version do |f|
-  f.amount 1
-  f.stage_id 0
+  f.amount 100.0
+  f.perspective 'requestor'
   f.association :item
-  f.association :administrative_expense
 end
 
 Factory.define :stage do |f|
@@ -103,6 +102,7 @@ Factory.define :stage do |f|
 end
 
 Factory.define :administrative_expense do |f|
+  f.association :version
   f.copies 100
   f.repairs_restocking 100
   f.mailbox_wsh 25

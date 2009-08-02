@@ -25,7 +25,7 @@ describe Permission do
     permission.perspective = nil
     permission.save.should == false
     permission.perspective = "invalid"
-    Permission::PERSPECTIVES.should_not include(permission.perspective)
+    Version::PERSPECTIVES.should_not include(permission.perspective)
     permission.save.should == false
   end
 

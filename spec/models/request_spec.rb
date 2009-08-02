@@ -32,9 +32,9 @@ describe Request do
     allowed_user = Factory(:user)
     disallowed_user = Factory(:user)
     @request.framework.permissions.create( :role => allowed_role,
-      :action => Request::ACTIONS.first, :perspective => Permission::PERSPECTIVES.first,
+      :action => Request::ACTIONS.first, :perspective => Version::PERSPECTIVES.first,
       :status => Request.aasm_initial_state.to_s )
-    organization = @request.send(Permission::PERSPECTIVES.first.pluralize).first
+    organization = @request.send(Version::PERSPECTIVES.first.pluralize).first
     organization.memberships.create( :user => allowed_user,
       :role => allowed_role, :active => true ).id.should_not be_nil
     organization.memberships.create( :user => disallowed_user,
@@ -44,7 +44,7 @@ describe Request do
     @request.may(disallowed_user).should be_empty
   end
 
-  it "should allow the administrator to take any action"
+  it "should allow the administrator to take any action" do
     admin = Factory(:user, :admin => true)
     Factory(:request).may(admin).should == Request::ACTIONS
   end

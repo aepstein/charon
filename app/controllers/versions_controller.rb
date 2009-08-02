@@ -27,16 +27,8 @@ class VersionsController < ApplicationController
   # GET /items/:item_id/versions/new
   # GET /items/:item_id/versions/new.xml
   def new
-    @version = Item.find(params[:item_id]).versions.build
-    @version.stage_id = @version.item.versions.next_stage
+    @version = Item.find(params[:item_id]).versions.next
     raise AuthorizationError unless @version.may_create?(current_user)
-
-    if @version.stage_id > 0:
-      @prev_version = @version.item.versions.prev_version(@version.stage_id)
-      @version.requestable = @prev_version.requestable.clone
-    else
-      @version.requestable = @version.build_requestable
-    end
 
     respond_to do |format|
       format.html # new.html.erb
@@ -48,23 +40,13 @@ class VersionsController < ApplicationController
   def edit
     @version = Version.find(params[:id])
     raise AuthorizationError unless @version.may_update?(current_user)
-    @prev_version = @version.item.versions.prev_version(@version.stage_id)
   end
 
   # POST /items/:item_id/versions
   # POST /items/:item_id/versions.xml
   def create
-    @version = Item.find(params[:item_id]).versions.build
-    @version.stage_id = params[:stage_pos]
+    @version = Item.find(params[:item_id]).versions.next(params[:version])
     raise AuthorizationError unless @version.may_see?(current_user)
-
-    if @version.stage_id > 0:
-      @prev_version = @version.item.versions.prev_version(@version.stage_id)
-      @version.requestable = @prev_version.requestable.clone
-    else
-      @version.requestable = @version.item.node.requestable_type.constantize.new
-    end
-    @version.attributes = params[:version]
 
     respond_to do |format|
       if @version.save

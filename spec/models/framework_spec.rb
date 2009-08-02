@@ -49,8 +49,8 @@ describe Framework do
     allowed_role = Factory(:role)
     disallowed_role = Factory(:role)
     allowed_role.should_not == disallowed_role
-    allowed_perspective = Permission::PERSPECTIVES.first
-    disallowed_perspective = Permission::PERSPECTIVES.last
+    allowed_perspective = Version::PERSPECTIVES.first
+    disallowed_perspective = Version::PERSPECTIVES.last
     allowed_perspective.should_not == disallowed_perspective
     allowed_status = Request.aasm_states.first.name.to_s
     disallowed_status = Request.aasm_states.last.name.to_s

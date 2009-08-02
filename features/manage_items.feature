@@ -26,12 +26,12 @@ Feature: Manage items
       | name               |
       | budget             |
     And the following nodes:
-      | structure | requestable_type      |
-      | budget    | AdministrativeExpense |
-      | budget    | LocalEventExpense     |
-      | budget    | TravelEventExpense    |
-      | budget    | DurableGoodExpense    |
-      | budget    | PublicationExpense    |
+      | structure | requestable_type      | name                   |
+      | budget    | AdministrativeExpense | administrative expense |
+      | budget    | LocalEventExpense     | local event expense    |
+      | budget    | TravelEventExpense    | travel event expense   |
+      | budget    | DurableGoodExpense    | durable good expense   |
+      | budget    | PublicationExpense    | publication expense    |
     And the following frameworks:
       | name      |
       | undergrad |
@@ -53,18 +53,21 @@ Feature: Manage items
     Given I am logged in as "admin" with password "secret"
     When I am on "our club's requests page"
     And I follow "Show Items"
-    And I select "administrative expense" from "New Item"
-    And I press "Start"
-    And I fill in "version_administrative_expense_attributes_copies" with "100"
-    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
-    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
-    And I fill in "version_amount" with "100"
-    And I fill in "version_comment" with "this is only a test"
-    And I press "Create"
+    And I select "administrative expense" from "Add New Item"
+    And I press "Add"
     Then I should see "Item was successfully created."
-    And I should see "Requestable type: AdministrativeExpense"
-    And I should see "request amount: $100.00"
-    And I should see "request comment: this is only a test"
+#    And I fill in "version_administrative_expense_attributes_copies" with "100"
+#    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
+#    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
+#    And I fill in "version_amount" with "100"
+#    And I fill in "version_comment" with "this is only a test"
+#    And I press "Create"
+#    When I follow "Show"
+#    Then I should see "Requestable type: AdministrativeExpense"
+#    And I should see "Request node: administrative expense"
+#    And I should see "Maximum request: $200.00"
+#    And I should see "Requestor amount: $100.00"
+#    And I should see "Requestor comment: this is only a test"
 
 #  Scenario: Register new item
 #    Given the following items:

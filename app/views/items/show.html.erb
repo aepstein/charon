@@ -1,14 +1,15 @@
 <p>
-  <b>Form type:</b>
-  <%=h @item.node.requestable_type %>
+  <strong>Requestable type:</strong> <%=h @item.node.requestable_type %>
 </p>
 
 <p>
-  <b>Request node:</b>
-  <%=h @item.node.name %>
+  <strong>Request node:</strong> <%=h @item.node.name %>
 </p>
 
+<%= render :partial => 'versions/version', :collection => @item.versions %>
 
+<p>
 <%= link_to 'Edit', edit_item_path(@item) %> |
 <%= link_to 'Back', request_items_path(@item.request_id) %>
+</p>
 

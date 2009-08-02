@@ -1,5 +1,5 @@
 class Version < ActiveRecord::Base
-  STAGE_NAMES = %w( request review )
+  PERSPECTIVES = %w( requestor reviewer )
   belongs_to :item
   has_one :administrative_expense
   has_one :local_event_expense
@@ -14,38 +14,44 @@ class Version < ActiveRecord::Base
   accepts_nested_attributes_for :durable_goods_expense
   accepts_nested_attributes_for :publication_expense
 
+  validates_presence_of :item
+  validates_inclusion_of :perspective, :in => PERSPECTIVES
+  validates_uniqueness_of :perspective, :scope => [ :item_id ]
+  validate :amount_must_be_less_than_requestable_max
+
   delegate :request, :to => :item
 
-  def validate
-    if amount > requestable.max_request:
+  def amount_must_be_less_than_requestable_max
+    return if requestable.nil? || amount.nil?
+    if amount > requestable.max_request then
       errors.add(:amount, "is greater than the maximum request!")
     end
   end
 
-  def stage
-    STAGE_NAMES[stage_id]
-  end
-
-  def requestable
-    self.send("#{item.node.requestable_type.underscore}")
+  def requestable(force_reload=false)
+    return nil if item.nil?
+    self.send("#{item.node.requestable_type.underscore}",force_reload)
   end
   def build_requestable
+    return nil if item.nil?
     self.send("build_#{item.node.requestable_type.underscore}")
   end
   def create_requestable
+    return nil if item.nil?
     self.send("create_#{item.node.requestable_type.underscore}")
   end
   def requestable=(requestable)
+    return nil if item.nil?
     self.send("#{item.node.requestable_type.underscore}=",requestable)
   end
 
   def may_create?(user)
-    return request.may_allocate?(user) if stage_id == 1
+    return request.may_allocate?(user) if perspective == 'reviewer'
     false
   end
 
   def may_update?(user)
-    return request.may_allocate?(user) if stage_id == 1
+    return request.may_allocate?(user) if perspective == 'reviewer'
     request.may_update?(user)
   end
 
@@ -54,7 +60,7 @@ class Version < ActiveRecord::Base
   end
 
   def may_see?(user)
-    if stage_id == 1
+    if perspective == 'reviewer'
       return request.may_allocate?(user) || request.may_review?(user)
     end
     request.may_see?(user)

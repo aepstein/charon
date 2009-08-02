@@ -28,8 +28,6 @@ class ItemsController < ApplicationController
   # GET /requests/:request_id/items/new.xml
   def new
     @item = Request.find(params[:request_id]).items.build(params[:item])
-    @item.versions.build( :item => @item )
-    @item.versions.first.build_requestable
     raise AuthorizationError unless @item.may_create?(current_user)
 
     respond_to do |format|
@@ -47,7 +45,7 @@ class ItemsController < ApplicationController
     respond_to do |format|
       if @item.save
         flash[:notice] = 'Item was successfully created.'
-        format.html { redirect_to(@item) }
+        format.html { redirect_to( request_items_url(@item.request) ) }
         format.xml  { render :xml => @item, :status => :created, :location => @item }
 
       else

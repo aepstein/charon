@@ -1,12 +1,10 @@
 class CreateVersions < ActiveRecord::Migration
   def self.up
     create_table :versions do |t|
-      t.integer :item_id
-      t.string :requestable_type
-      t.integer :requestable_id
-      t.decimal :amount
+      t.integer :item_id, :null => false
+      t.decimal :amount, :null => false
       t.text :comment
-      t.integer :stage_id, { :null => false, :default => 0 }
+      t.string :perspective, { :null => false }
 
       t.timestamps
     end
