@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :requests, :only => [ :index ]
   map.resources :frameworks, :shallow => true do |framework|
     framework.resources :permissions
   end

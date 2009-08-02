@@ -2,9 +2,11 @@ class RequestsController < ApplicationController
   # GET /organizations/:organization_id/requests
   # GET /organizations/:organization_id/requests.xml
   def index
-    @organization = Organization.find(params[:organization_id])
-    @requests = @organization.requests
-    raise AuthorizationError unless @organization.may_see?(current_user)
+    @organization = Organization.find(params[:organization_id]) if params[:organization_id]
+    @basis = Basis.find(params[:basis_id]) if params[:basis_id]
+    @requests ||= @organization.requests if @organization
+    @requests ||= @basis.requests if @basis
+    @requests = Request.all
 
     respond_to do |format|
       format.html # index.html.erb

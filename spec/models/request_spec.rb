@@ -44,6 +44,17 @@ describe Request do
     @request.may(disallowed_user).should be_empty
   end
 
+  it "should have a retriever method for each perspective" do
+    request = Factory(:request)
+    Version::PERSPECTIVES.each do |perspective|
+      organizations = request.send(perspective.pluralize)
+      organizations.size.should > 0
+      organizations.each do |organization|
+        organization.class.should == Organization
+      end
+    end
+  end
+
   it "should allow the administrator to take any action" do
     admin = Factory(:user, :admin => true)
     Factory(:request).may(admin).should == Request::ACTIONS

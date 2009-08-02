@@ -6,8 +6,8 @@ Feature: Manage items
 
   Background:
     Given the following organizations:
-      | last_name  |
-      | our club   |
+      | last_name                |
+      | our club                 |
       | undergraduate commission |
     And the following users:
       | net_id       | password | admin |
@@ -43,11 +43,11 @@ Feature: Manage items
       | undergrad | started | president    | destroy    | requestor   |
       | undergrad | started | commissioner | see        | reviewer    |
     And the following bases:
-      | organization             | structure | framework |
-      | undergraduate commission | budget    | undergrad |
+      | name              | organization             | structure | framework |
+      | annual budget     | undergraduate commission | budget    | undergrad |
     And the following requests:
-      | status   | organizations  |
-      | started  | our club       |
+      | status   | organizations  | basis         |
+      | started  | our club       | annual budget |
 
   Scenario: Create new item
     Given I am logged in as "admin" with password "secret"
@@ -56,6 +56,18 @@ Feature: Manage items
     And I select "administrative expense" from "Add New Item"
     And I press "Add"
     Then I should see "Item was successfully created."
+
+  Scenario Outline: Create new item only if admin or may update request
+    Given I am logged in as "<user>" with password "secret"
+    When I am on the requests page
+    And I follow "Show Items"
+    Then I should <should>
+
+    Examples:
+      | user         | should                 |
+      | admin        | see "Add New Item"     |
+      | president    | see "Add New Item"     |
+      | commissioner | not see "Add New Item" |
 #    And I fill in "version_administrative_expense_attributes_copies" with "100"
 #    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
 #    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
