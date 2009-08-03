@@ -1,0 +1,25 @@
+<h1>Listing attachment types</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Maximum Size</th>
+  </tr>
+
+<% @attachment_types.each do |attachment_type| %>
+  <tr>
+    <td><%=h attachment_type.name %></td>
+    <td><%=h attachment_type.max_size_string %></td>
+    <td><%= link_to_if attachment_type.may_see?(current_user), 'Show', attachment_type %></td>
+    <td><%= link_to_if attachment_type.may_update?(current_user), 'Edit', edit_attachment_type_path(attachment_type) %></td>
+    <td><%= link_to_if attachment_type.may_destroy?(current_user), 'Destroy', attachment_type, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<p>
+<%= link_to 'New attachment_type', new_attachment_type_path %>
+</p>
+

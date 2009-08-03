@@ -1,0 +1,24 @@
+<h1>Editing attachment</h1>
+
+<% form_for( :attachment,
+             @attachment,
+             :url => attachment_path( @attachment ),
+             :html => { :multipart => true } ) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <strong>Attachment type:</strong> <%=h f.object.attachment_type.name %>
+  </p>
+
+  <%= render :partial => 'form', :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<p>
+<%= link_to 'Show', @attachment %> |
+<%= link_to 'Back', version_attachments_path(@attachment.attachable) %>
+</p>
+

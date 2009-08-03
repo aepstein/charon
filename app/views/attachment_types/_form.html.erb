@@ -1,0 +1,13 @@
+  <p>
+    <%= form.label :name %><br />
+    <%= form.text_field :name %>
+  </p>
+  <p>
+    <%= form.label :max_size_quantity %><br />
+    <%= form.text_field :max_size_quantity %>
+  </p>
+  <p>
+    <%= form.label :max_size_unit %><br />
+    <%= form.select :max_size_unit, AttachmentType::UNITS %>
+  </p>
+

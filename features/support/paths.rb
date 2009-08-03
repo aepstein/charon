@@ -10,6 +10,12 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new attachment page/
+      new_attachment_path
+
+    when /the new attachment_type page/
+      new_attachment_type_path
+
 
     when /the new version page of the (\d+)(?:st|nd|rd|th) item/
       new_item_version_path( Item.all[ $1.to_i - 1 ] )

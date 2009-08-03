@@ -1,0 +1,17 @@
+<h1>Editing attachment type</h1>
+
+<% form_for(@attachment_type) do |f| %>
+  <%= f.error_messages %>
+
+  <%= render :partial => 'form', :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<p>
+<%= link_to 'Show', @attachment_type %> |
+<%= link_to 'Back', attachment_types_path %>
+</p>
+

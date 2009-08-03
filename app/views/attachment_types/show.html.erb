@@ -1,0 +1,14 @@
+<p>
+  <strong>Name:</strong> <%=h @attachment_type.name %>
+</p>
+
+<p>
+  <b>Maximum size:</b> <%=h(
+    "#{@attachment_type.max_size_quantity} #{@attachment_type.max_size_unit.pluralize}" )%>
+</p>
+
+<p>
+<%= link_to 'Edit', edit_attachment_type_path(@attachment_type) %> |
+<%= link_to 'Back', attachment_types_path %>
+</p>
+

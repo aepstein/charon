@@ -8,10 +8,5 @@ describe AdministrativeExpense do
     Factory(:administrative_expense).id.should_not be_nil
   end
 
-  it "should not save without a version" do
-    administrative_expense = Factory(:administrative_expense)
-    administrative_expense.version = nil
-    administrative_expense.save.should == false
-  end
 end
 

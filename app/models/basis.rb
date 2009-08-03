@@ -20,7 +20,7 @@ class Basis < ActiveRecord::Base
   belongs_to :organization
   belongs_to :structure
   belongs_to :framework
-  has_many :requests do
+  has_many :requests, :dependent => :destroy do
     def build_for( organization )
       r = self.build
       r.organizations << organization

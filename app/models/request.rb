@@ -1,8 +1,8 @@
 class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve accept revise review release )
   belongs_to :basis
-  has_many :approvals
-  has_many :items, :include => [ :node, :parent, :versions ] do
+  has_many :approvals, :dependent => :destroy
+  has_many :items, :dependent => :destroy, :include => [ :node, :parent, :versions ] do
     def children_of(parent_item)
       self.select { |item| item.parent_id == parent_item.id }
     end

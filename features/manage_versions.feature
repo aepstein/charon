@@ -57,7 +57,6 @@ Feature: Manage versions
       | 1       | travel event expense   |
       | 1       | speaker expense        |
 
-  @current
   Scenario: Add and update version (administrative_expense)
     And I am logged in as "admin" with password "secret"
     And I am on the new version page of the 1st item
