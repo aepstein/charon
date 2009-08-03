@@ -15,16 +15,12 @@
 </fieldset>
 
 <p>
-  <%= form.label :amount, form.object.stage + " Amount" %><br />
+  <%= form.label :amount, form.object.perspective + " Amount" %><br />
   $<%= form.text_field :amount %>
 </p>
 
 <p>
-  <%= form.label :comment, form.object.stage + " Comment" %><br />
+  <%= form.label :comment, form.object.perspective + " Comment" %><br />
   <%= form.text_field :comment %>
-</p>
-
-<p>
-  <%= hidden_field_tag :stage_pos, form.object.stage_id %>
 </p>
 

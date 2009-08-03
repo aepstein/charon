@@ -1,11 +1,9 @@
 <p>
-  <b>Item id:</b>
-  <%=h @version.item_id %>
+  <b>Item id:</b> <%=h @version.item_id %>
 </p>
 
 <p>
-  <b>Requestable id:</b>
-  <%=h @version.requestable.id %>
+  <b>Requestable id:</b> <%=h @version.requestable.id %>
 </p>
 
 <p>
@@ -13,8 +11,11 @@
 </p>
 
 <p>
-  <b>Stage:</b>
-  <%=h @version.stage %>
+  <strong>Request node:</strong> <%= @version.item.node %>
+</p>
+
+<p>
+  <b>Perspective:</b> <%=h @version.perspective %>
 </p>
 
 <p>
@@ -22,13 +23,15 @@
 </p>
 
 <p>
-  <b><%=h @version.stage %> amount:</b> <%=h number_to_currency(@version.amount) %>
+  <b><%=h @version.perspective.titleize %> amount:</b> <%=h number_to_currency(@version.amount) %>
 </p>
 
 <p>
-  <b><%=h @version.stage %> comment:</b> <%=h @version.comment %>
+  <b><%=h @version.perspective.titleize %> comment:</b> <%=h @version.comment %>
 </p>
 
+<p>
 <%= link_to 'Edit', edit_version_path(@version) %> |
 <%= link_to 'Back', request_items_path(@version.item.request) %>
+</p>
 

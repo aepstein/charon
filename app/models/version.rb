@@ -32,13 +32,13 @@ class Version < ActiveRecord::Base
     return nil if item.nil?
     self.send("#{item.node.requestable_type.underscore}",force_reload)
   end
-  def build_requestable
+  def build_requestable(attributes={})
     return nil if item.nil?
-    self.send("build_#{item.node.requestable_type.underscore}")
+    self.send("build_#{item.node.requestable_type.underscore}",attributes)
   end
-  def create_requestable
+  def create_requestable(attributes={})
     return nil if item.nil?
-    self.send("create_#{item.node.requestable_type.underscore}")
+    self.send("create_#{item.node.requestable_type.underscore}",attributes)
   end
   def requestable=(requestable)
     return nil if item.nil?
@@ -47,7 +47,7 @@ class Version < ActiveRecord::Base
 
   def may_create?(user)
     return request.may_allocate?(user) if perspective == 'reviewer'
-    false
+    request.may_update?(user) if perspective == 'requestor'
   end
 
   def may_update?(user)

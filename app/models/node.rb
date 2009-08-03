@@ -34,5 +34,9 @@ class Node < ActiveRecord::Base
     may_update? user
   end
 
+  def to_s
+    name
+  end
+
 end
 

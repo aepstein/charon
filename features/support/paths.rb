@@ -10,8 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
-    when /the new version page/
-      new_version_path
+
+    when /the new version page of the (\d+)(?:st|nd|rd|th) item/
+      new_item_version_path( Item.all[ $1.to_i - 1 ] )
 
     when /the new role page/
       new_role_path
