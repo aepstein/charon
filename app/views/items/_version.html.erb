@@ -2,11 +2,11 @@
       <td><%= version.perspective %></td>
       <% if version.new_record? then %>
       <td colspan="2" align="center"><em>None yet.</em></td>
-      <td><%= link_to "Add", new_item_version_path(version.item) %></td>
+      <td><%= link_to_if(version.may_create?(current_user), "Add", new_item_version_path(version.item) ) { "" } %></td>
       <% else %>
       <td><%=h number_to_currency(version.amount) %></td>
       <td><%=h version.comment %></td>
-      <td><%= link_to 'Edit', edit_version_path(version) %></td>
+      <td><%= link_to_if(version.may_update?(current_user), "Edit", edit_version_path(version) ) { "" } %></td>
       <% end %>
     </tr>
 

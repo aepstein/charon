@@ -3,7 +3,8 @@ class SpeakerExpense < ActiveRecord::Base
 	before_validation :calculate_total
 
   def calculate_total
-    self.tax_exempt_expenses = mileage_cost + car_rental + basic_lodging_cost + additional_lodging_cost + meals_cost
+    self.tax_exempt_expenses = engagement_fee + mileage_cost + car_rental + basic_lodging_cost +
+                               additional_lodging_cost + meals_cost
   end
 
   def mileage_cost

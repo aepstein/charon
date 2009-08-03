@@ -4,7 +4,7 @@
   </p>
   <p>
     <%= form.label :performance_date, 'Date of performance' %><br />
-    <%= form.date_select :performance_date %>
+    <%= form.calendar_date_select :performance_date, :time => false %>
   </p>
   <p>
     <%= form.label :mileage, 'Travel mileage' %><br />

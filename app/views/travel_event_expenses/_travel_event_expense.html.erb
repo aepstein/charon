@@ -1,0 +1,40 @@
+<p>
+  Date of Event: <%=h travel_event_expense.event_date %>
+</p>
+
+<p>
+  Title of Event: <%=h travel_event_expense.event_title %>
+</p>
+
+<p>
+  Location of Event: <%=h travel_event_expense.event_location %>
+</p>
+
+<p>
+  Purpose of Event: <%=h travel_event_expense.event_purpose %>
+</p>
+
+<p>
+  Number of members per group or team: <%=h travel_event_expense.members_per_group %>
+</p>
+
+<p>
+  Number of groups or teams participating: <%=h travel_event_expense.number_of_groups %>
+</p>
+
+<p>
+  Total travel mileage: <%=h travel_event_expense.mileage %>
+</p>
+
+<p>
+  Nights of lodging required: <%=h travel_event_expense.nights_of_lodging %>
+</p>
+
+<p>
+  Fees per person: <%= number_to_currency(travel_event_expense.per_person_fees) %>
+</p>
+
+<p>
+  Fees per group or team: <%= number_to_currency(travel_event_expense.per_group_fees) %>
+</p>
+
