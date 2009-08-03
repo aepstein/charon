@@ -1,44 +1,43 @@
   <p>
-    <%= form.label :date_of_event, "date of event" %><br />
-    <%= form.date_select :date_of_event %>
+    <%= form.label :date_of_event, "Date of Event" %><br />
+    <%= form.calendar_date_select :date_of_event, :time => false %>
   </p>
   <p>
-    <%= form.label :title_of_event, " Title of event" %><br />
+    <%= form.label :title_of_event, "Title of Event" %><br />
     <%= form.text_field :title_of_event %>
   </p>
 
   <p>
-    <%= form.label :location_of_event,"Location of Event" %><br />
+    <%= form.label :location_of_event, "Location of Event" %><br />
     <%= form.text_field :location_of_event %>
   </p>
 
   <p>
-    <%= form.label :purpose_of_event,"Purpose of Event" %><br />
+    <%= form.label :purpose_of_event, "Purpose of Event" %><br />
     <%= form.text_area :purpose_of_event, :size => "40x6" %>
   </p>
 
-<p>
-    <%= form.label :anticipated_no_of_attendees,"Anticipated No of Attendes" %><br />
+  <p>
+    <%= form.label :anticipated_no_of_attendees, "Anticipated Number of Attendees" %><br />
     <%= form.text_field :anticipated_no_of_attendees %>
   </p>
 
-<p>
-    <%= form.label :admission_charge_per_attendee,"admission charge per attendee" %><br />
+  <p>
+    <%= form.label :admission_charge_per_attendee, "Admission Charge Per Attendee" %><br />
     <%= form.text_field :admission_charge_per_attendee %>
   </p>
 
-<p>
+  <p>
     <%= form.label :number_of_publicity_copies, "Number of Publicity Copies" %><br />
     <%= form.text_field :number_of_publicity_copies %>
   </p>
 
-<p>
-    <%= form.label :rental_equipment_services, "Rental Equipment Services" %><br />
+  <p>
+    <%= form.label :rental_equipment_services, "Rental Equipment and Services" %><br />
     <%= form.text_field :rental_equipment_services %>
   </p>
 
-
-<p>
+  <p>
     <%= form.label :copyright_fees, "Copyright Fees" %><br />
     <%= form.text_field :copyright_fees %>
   </p>

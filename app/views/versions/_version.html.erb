@@ -1,10 +1,21 @@
 <p>
-<strong>Stage:</stage> <%=h version.stage_id %>
+  <b>Item id:</b> <%=h version.item_id %>
 </p>
 
 <p>
-  <b>Stage:</b>
-  <%=h version.stage %>
+  <b>Requestable id:</b> <%=h version.requestable.id %>
+</p>
+
+<p>
+  <b>Requestable type:</b> <%=h version.item.node.requestable_type %>
+</p>
+
+<p>
+  <b>Request node:</b> <%= version.item.node %>
+</p>
+
+<p>
+  <b>Perspective:</b> <%=h version.perspective %>
 </p>
 
 <p>
@@ -12,11 +23,11 @@
 </p>
 
 <p>
-  <b><%=h version.stage.titleize %> amount:</b> <%=h number_to_currency(version.amount) %>
+  <b><%=h version.perspective.titleize %> amount:</b> <%=h number_to_currency(version.amount) %>
 </p>
 
 <p>
-  <b><%=h version.stage.titleize %> comment:</b> <%=h version.comment %>
+  <b><%=h version.perspective.titleize %> comment:</b> <%=h version.comment %>
 </p>
 
 

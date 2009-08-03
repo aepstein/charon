@@ -1,4 +1,3 @@
-@organization
 Feature: Manage organizations
   In order to Manage requests for an organization
   As a member of an organization
