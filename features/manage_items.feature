@@ -112,25 +112,3 @@ Feature: Manage items
       | publication expense    | Destroy   |
       | requestor              | None yet. |
 
-  Scenario: Add version
-    Given the following items:
-      | request | node                   |
-      | 1       | administrative expense |
-      | 1       | durable good expense   |
-      | 1       | publication expense    |
-      | 1       | local event expense    |
-      | 1       | travel event expense   |
-    And I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 1st item
-    When I fill in "version_administrative_expense_attributes_copies" with "100"
-    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
-    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
-    And I fill in "version_amount" with "100"
-    And I fill in "version_comment" with "comment"
-    And I press "Create"
-    Then I should see "Requestable type: AdministrativeExpense"
-    And I should see "Request node: administrative expense"
-    And I should see "Maximum request: $128.00"
-    And I should see "Requestor amount: $100.00"
-    And I should see "Requestor comment: comment"
-

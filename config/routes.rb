@@ -10,12 +10,6 @@ ActionController::Routing::Routes.draw do |map|
     structure.resources :nodes
     structure.resources :bases
   end
-  map.resources :durable_good_expenses
-  map.resources :local_event_expenses
-  map.resources :speaker_expenses
-  map.resources :travel_event_expenses
-  map.resources :administrative_expenses
-  map.resources :publication_expenses
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
     organization.resources :memberships
     organization.resources :requests, :member => { :approve => :post } do |request|

@@ -17,6 +17,9 @@ class Item < ActiveRecord::Base
       version.attributes = attributes.merge( { :perspective => perspective } )
       version
     end
+    def existing
+      self.reject { |version| version.new_record? }
+    end
   end
   acts_as_tree
 

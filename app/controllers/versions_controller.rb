@@ -65,7 +65,6 @@ class VersionsController < ApplicationController
   def update
     @version = Version.find(params[:id])
     raise AuthorizationError unless @version.may_update?(current_user)
-    @prev_version = @version.item.versions.prev_version(@version.stage_id)
 
     respond_to do |format|
       if @version.update_attributes(params[:version])
