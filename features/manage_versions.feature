@@ -31,6 +31,7 @@ Feature: Manage versions
       | budget    | TravelEventExpense    | travel event expense   |
       | budget    | DurableGoodExpense    | durable good expense   |
       | budget    | PublicationExpense    | publication expense    |
+      | budget    | SpeakerExpense        | speaker expense        |
     And the following frameworks:
       | name      |
       | undergrad |
@@ -47,16 +48,17 @@ Feature: Manage versions
     And the following requests:
       | status   | organizations  | basis         |
       | started  | our club       | annual budget |
-
-  @current
-  Scenario: Add and update version (administrative_expense)
-    Given the following items:
+    And the following items:
       | request | node                   |
       | 1       | administrative expense |
       | 1       | durable good expense   |
       | 1       | publication expense    |
       | 1       | local event expense    |
       | 1       | travel event expense   |
+      | 1       | speaker expense        |
+
+  @current
+  Scenario: Add and update version (administrative_expense)
     And I am logged in as "admin" with password "secret"
     And I am on the new version page of the 1st item
     When I fill in "version_administrative_expense_attributes_copies" with "100"

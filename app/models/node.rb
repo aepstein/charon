@@ -14,7 +14,8 @@ class Node < ActiveRecord::Base
     'Durable Good' => 'DurableGoodExpense',
     'Local Event' => 'LocalEventExpense',
     'Publication' => 'PublicationExpense',
-    'Travel Event' => 'TravelEventExpense'
+    'Travel Event' => 'TravelEventExpense',
+    'Speaker' => 'SpeakerExpense'
   }
 
   has_many :items
