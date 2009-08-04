@@ -58,15 +58,20 @@ Feature: Manage documents
     And the following versions:
       | item | perspective |
       | 1    | requestor   |
-
-  Scenario: Create new document
+  @current
+  Scenario Outline: Create new document
     Given I am logged in as "admin" with password "secret"
     And I am on the new document page of the 1st version
     When I select "proof of venue reservation" from "Document type"
-    And I attach the file at "features/support/assets/small.png" to "File"
+    And I attach the file at "features/support/assets/<file>.png" to "File"
     And I press "Create"
-    Then I should see "Document was successfully created."
-    And I should see "Document type: proof of venue reservation"
+    Then I should <see> "Document was successfully created."
+    And I should <see> "Document type: proof of venue reservation"
+
+    Examples:
+      | file  | see     |
+      | small | see     |
+      | large | not see |
 
   @wip
   Scenario: Delete document

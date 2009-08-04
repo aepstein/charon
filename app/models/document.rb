@@ -1,7 +1,10 @@
 class Document < ActiveRecord::Base
   belongs_to :attachable, :polymorphic => true
   belongs_to :document_type
-  has_attached_file :attached
+
+  has_attached_file :attached,
+    :path => ':rails_root/db/uploads/:rails_env/:id_partition/:attachment/:style.:extension',
+    :url => '/documents/:id.:format'
 
   delegate :max_size, :to => :document_type
   delegate :max_size_string, :to => :document_type
