@@ -40,6 +40,11 @@ class UsersController < ApplicationController
     end
   end
 
+  def profile
+    @user = User.find(params[:id])
+    raise AuthorizationError unless @user.may_see?(current_user)
+  end
+
   def edit
     @user = User.find(params[:id])
     raise AuthorizationError unless @user.may_update?(current_user)

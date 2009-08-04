@@ -1,0 +1,5 @@
+<tr>
+  <td><%=h organization.name %></td>
+  <td><%=h current_user.roles.in([organization]).join(", ") %></td>
+</tr>
+
