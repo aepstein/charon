@@ -1,8 +1,8 @@
 Given /^the following permissions:$/ do |permissions|
   permissions.hashes.each do |permission|
     complex_attrs = Hash.new
-    complex_attrs['framework'] = Framework.find_by_name(permission['framework']) if permission.has_key?('framework')
-    complex_attrs['role'] = Role.find_by_name(permission['role']) if permission.has_key?('role')
+    complex_attrs['framework'] = Framework.find_by_name(permission['framework']) if permission['framework']
+    complex_attrs['role'] = Role.find_by_name(permission['role']) if permission['role']
     Factory(:permission, permission.merge(complex_attrs))
   end
 end

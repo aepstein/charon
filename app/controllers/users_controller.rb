@@ -41,8 +41,9 @@ class UsersController < ApplicationController
   end
 
   def profile
-    @user = User.find(params[:id])
-    raise AuthorizationError unless @user.may_see?(current_user)
+    @organizations = current_user.memberships.map { |m| m.organization }.uniq
+    @organizations = @organizations.reject { |o| o.nil? }
+    @unmatched_registrations = current_user.registrations.unmatched.uniq
   end
 
   def edit

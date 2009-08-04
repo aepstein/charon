@@ -1,19 +1,23 @@
-<h2>Welcome, <%=h @user.full_name %></h2>
+<h2>Welcome, <%=h current_user.full_name %> (<%=h current_user.net_id %>)</h2>
 
-<h3>Organizations You Are In:<h3>
+<% unless @organizations.empty? %>
+  <h3>Organizations You Are In:<h3>
 
-<table>
-  <tr>
-    <th>Organization</th>
-    <th>Your Role(s)</th>
-  </tr>
+  <table>
+    <tr>
+      <th>Organization</th>
+      <th>Your Role(s)</th>
+    </tr>
 
-  <%= render :partial => "organization",
-             :collection => @user.memberships.map { |m| m.organization } %>
-</table>
+    <%= render :partial => "organization",
+               :collection => @organizations %>
+  </table>
+<% end %>
 
-<h3>Unmatched Registrations:<h3>
+<% unless @unmatched_registrations.empty? %>
+  <h3>Unmatched Registrations:<h3>
 
-<%= render :partial => "registration",
-           :collection => @user.memberships.map { |m| m.registration }.unmatched %>
+  <%= render :partial => "registration",
+             :collection => @unmatched_registrations %>
+<% end %>
 

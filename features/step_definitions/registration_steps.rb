@@ -1,11 +1,11 @@
 Given /^the following registrations:$/ do |registrations|
-  Registration.create!(registrations.hashes)
+  #Registration.create!(registrations.hashes)
   registrations.hashes.each do |registration|
-    if registration.has_key?('organization')
-      registration[:organization_id] = Organization.find_by_last_name(registration['organization'])
-      registration.delete('organization')
+    complex_attributes = Hash.new
+    if registration['organization'] then
+      complex_attributes['organization'] = Organization.find_by_last_name(registration['organization'])
     end
-    Factory(:registrations, registration)
+    Factory(:registration, registration.merge( complex_attributes ) )
   end
 end
 

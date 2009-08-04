@@ -65,6 +65,12 @@ module NavigationHelpers
     when /the requests page/
       requests_path
 
+    when /^"the user profile page"$/
+      profile_path
+
+    when /^"(.+)'s user profile page"$/
+      profile_path
+
     when /^"(.+)'s organization profile page"$/
       profile_organization_path( Organization.find_by_last_name($1) )
 
