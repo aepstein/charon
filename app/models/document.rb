@@ -1,4 +1,6 @@
 class Document < ActiveRecord::Base
+  default_scope :include => :document_type, :order => 'document_types.name ASC'
+
   belongs_to :attachable, :polymorphic => true
   belongs_to :document_type
 
@@ -15,9 +17,9 @@ class Document < ActiveRecord::Base
   validates_attachment_presence :attached
   validates_presence_of :attachable
   validates_presence_of :document_type
-  validates_uniqueness_of :document_type_id, [ :attachable_id, :attachable_type ]
+  validates_uniqueness_of :document_type_id, :scope => [ :attachable_id, :attachable_type ]
   validate :attached_file_size_must_be_less_than_max,
-    :document_type_must_be_allowed_by_attachable
+           :document_type_must_be_allowed_by_attachable
 
   def attached_file_size_must_be_less_than_max
     return unless document_type && attached_file_size?

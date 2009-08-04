@@ -22,20 +22,23 @@ Feature: Manage documents
       | our club                 | president    | president    |
       | undergraduate commission | commissioner | commissioner |
     And the following document_types:
-      | name                       | max_size_quantity | max_size_unit |
-      | proof of travel distance   | 2                 | megabyte      |
-      | proof of venue reservation | 1                 | kilobyte      |
+      | name              | max_size_quantity | max_size_unit |
+      | venue reservation | 1                 | kilobyte      |
+      | travel quote      | 1                 | kilobyte      |
+      | intent letter     | 1                 | kilobyte      |
+      | ad copy           | 1                 | kilobyte      |
+      | lodging quote     | 1                 | kilobyte      |
     And the following structures:
       | name   |
       | budget |
     And the following nodes:
-      | structure | requestable_type      | name                   | document_types                                     |
+      | structure | requestable_type      | name                   | document_types                                       |
       | budget    | AdministrativeExpense | administrative expense |                                                      |
-      | budget    | LocalEventExpense     | local event expense    | proof of travel distance, proof of venue reservation |
+      | budget    | LocalEventExpense     | local event expense    | travel quote, venue reservation                      |
       | budget    | TravelEventExpense    | travel event expense   |                                                      |
       | budget    | DurableGoodExpense    | durable good expense   |                                                      |
       | budget    | PublicationExpense    | publication expense    |                                                      |
-      | budget    | SpeakerExpense        | speaker expense        |                                                      |
+      | budget    | SpeakerExpense        | speaker expense        | travel quote, intent letter, ad copy, lodging quote  |
     And the following frameworks:
       | name      |
       | undergrad |
@@ -55,18 +58,20 @@ Feature: Manage documents
     And the following items:
       | request | node                   |
       | 1       | local event expense    |
+      | 1       | speaker expense        |
     And the following versions:
       | item | perspective |
       | 1    | requestor   |
-  @current
+      | 2    | requestor   |
+
   Scenario Outline: Create new document
     Given I am logged in as "admin" with password "secret"
     And I am on the new document page of the 1st version
-    When I select "proof of venue reservation" from "Document type"
+    When I select "venue reservation" from "Document type"
     And I attach the file at "features/support/assets/<file>.png" to "File"
     And I press "Create"
     Then I should <see> "Document was successfully created."
-    And I should <see> "Document type: proof of venue reservation"
+    And I should <see> "Document type: venue reservation"
     And all documents should be deleted
 
     Examples:
@@ -74,18 +79,19 @@ Feature: Manage documents
       | small | see     |
       | large | not see |
 
-  @wip
   Scenario: Delete document
     Given the following documents:
-      |document_type|
-      |documentation|
-      |documentation|
-      |documentation|
-      |documentation|
-    When I delete the 3rd document
+      | attachable | document_type |
+      | 2          | intent letter |
+      | 2          | travel quote  |
+      | 2          | ad copy       |
+      | 2          | lodging quote |
+    And I am logged in as "admin" with password "secret"
+    When I delete the 3rd document of the 2nd version
     Then I should see the following documents:
-      |document_type|
-      |document_type 1|
-      |document_type 2|
-      |document_type 4|
+      | Type          |
+      | ad copy       |
+      | intent letter |
+      | travel quote  |
+    And all documents should be deleted
 

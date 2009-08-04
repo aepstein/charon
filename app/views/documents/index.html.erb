@@ -1,16 +1,12 @@
-<h1>Listing documents</h1>
+<h1>Listing documents for <%= @version %></h1>
 
 <table>
   <tr>
-    <th>Attachable</th>
-    <th>Attachable type</th>
-    <th>Document type</th>
+    <th>Type</th>
   </tr>
 
 <% @documents.each do |document| %>
   <tr>
-    <td><%=h document.attachable_id %></td>
-    <td><%=h document.attachable_type %></td>
     <td><%=h document.document_type %></td>
     <td><%= link_to 'Show', document %></td>
     <td><%= link_to 'Edit', edit_document_path(document) %></td>

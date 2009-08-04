@@ -1,7 +1,7 @@
 Factory.define :document do |f|
   f.attached { ActionController::TestUploadedFile.new('features/support/assets/small.png','image/png') }
   f.association :attachable, :factory => :attachable_version
-  f.document_type { |a| a.attachable.document_types.first }
+  f.document_type { |d| d.attachable.document_types.first }
 end
 
 Factory.define :document_type do |f|

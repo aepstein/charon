@@ -63,7 +63,7 @@ class Version < ActiveRecord::Base
   end
 
   def may_destroy?(user)
-    false
+    may_update? user
   end
 
   def may_see?(user)
@@ -71,6 +71,10 @@ class Version < ActiveRecord::Base
       return request.may_revise?(user) || request.may_review?(user)
     end
     request.may_see?(user)
+  end
+
+  def to_s
+    "#{perspective} version of #{item}"
   end
 end
 

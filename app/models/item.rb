@@ -55,5 +55,8 @@ class Item < ActiveRecord::Base
     request.may_see?(user)
   end
 
+  def to_s
+    "#{node} item of #{request}"
+  end
 end
 

@@ -1,11 +1,18 @@
 Given /^the following documents:$/ do |documents|
   documents.hashes.each do |document_attributes|
-    Factory(:document, document_attributes)
+    complex_attributes = Hash.new
+    if document_attributes['attachable'] then
+      complex_attributes['attachable'] = Version.all[ document_attributes['attachable'].to_i - 1 ]
+    end
+    if document_attributes['document_type'] then
+      complex_attributes['document_type'] = DocumentType.find_by_name(document_attributes['document_type'])
+    end
+    Factory(:document, document_attributes.merge( complex_attributes ) )
   end
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) document$/ do |pos|
-  visit documents_url
+When /^I delete the (\d+)(?:st|nd|rd|th) document of the (\d+)(?:st|nd|rd|th) version$/ do |pos,version|
+  visit version_documents_url( Version.all[ version.to_i - 1 ] )
   within("table > tr:nth-child(#{pos.to_i+1})") do
     click_link "Destroy"
   end
