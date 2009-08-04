@@ -1,0 +1,14 @@
+<p>
+  <strong>Name:</strong> <%=h @document_type.name %>
+</p>
+
+<p>
+  <b>Maximum size:</b> <%=h(
+    "#{@document_type.max_size_quantity} #{@document_type.max_size_unit.pluralize}" )%>
+</p>
+
+<p>
+<%= link_to 'Edit', edit_document_type_path(@document_type) %> |
+<%= link_to 'Back', document_types_path %>
+</p>
+

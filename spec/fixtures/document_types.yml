@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  name: MyString
+  max_size_quantity: 1
+  max_size_unit: MyString
+
+two:
+  name: MyString
+  max_size_quantity: 1
+  max_size_unit: MyString

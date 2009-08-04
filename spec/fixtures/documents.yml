@@ -1,0 +1,12 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  attachable_id: 1
+  attachable_type: MyString
+  document_type:
+
+two:
+  attachable_id: 1
+  attachable_type: MyString
+  document_type:
+

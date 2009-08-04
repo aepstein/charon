@@ -11,12 +11,17 @@ module NavigationHelpers
     when /the homepage/
       '/'
 
+    when /the new document page of the (\d+)(?:st|nd|rd|th) version/
+      new_version_document_path( Version.all[ $1.to_i - 1 ] )
+
+    when /the new document_type page/
+      new_document_type_path
+
     when /the new version page of the (\d+)(?:st|nd|rd|th) item/
       new_item_version_path( Item.all[ $1.to_i - 1 ] )
 
     when /the new role page/
       new_role_path
-
 
     when /the new framework page/
       new_framework_path

@@ -7,12 +7,14 @@ class Version < ActiveRecord::Base
   has_one :travel_event_expense
   has_one :durable_good_expense
   has_one :publication_expense
+  has_many :documents, :as => :attachable
   accepts_nested_attributes_for :administrative_expense
   accepts_nested_attributes_for :local_event_expense
   accepts_nested_attributes_for :speaker_expense
   accepts_nested_attributes_for :travel_event_expense
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
+  accepts_nested_attributes_for :documents
 
   validates_presence_of :item
   validates_inclusion_of :perspective, :in => PERSPECTIVES
@@ -20,6 +22,8 @@ class Version < ActiveRecord::Base
   validate :amount_must_be_less_than_requestable_max
 
   delegate :request, :to => :item
+  delegate :node, :to => :item
+  delegate :document_types, :to => :node
 
   def amount_must_be_less_than_requestable_max
     return if requestable.nil? || amount.nil?
@@ -49,12 +53,12 @@ class Version < ActiveRecord::Base
   end
 
   def may_create?(user)
-    return request.may_allocate?(user) if perspective == 'reviewer'
+    return request.may_revise?(user) if perspective == 'reviewer'
     request.may_update?(user) if perspective == 'requestor'
   end
 
   def may_update?(user)
-    return request.may_allocate?(user) if perspective == 'reviewer'
+    return request.may_revise?(user) if perspective == 'reviewer'
     request.may_update?(user)
   end
 
@@ -64,7 +68,7 @@ class Version < ActiveRecord::Base
 
   def may_see?(user)
     if perspective == 'reviewer'
-      return request.may_allocate?(user) || request.may_review?(user)
+      return request.may_revise?(user) || request.may_review?(user)
     end
     request.may_see?(user)
   end

@@ -14,6 +14,9 @@ Feature: Manage permissions
     And the following roles:
       | name      |
       | president |
+      | treasurer |
+      | advisor   |
+      | officer   |
 
   Scenario: Register new permission
     Given I am logged in as "admin" with password "secret"
@@ -41,12 +44,6 @@ Feature: Manage permissions
       | regular | Unauthorized   |
 
   Scenario: Delete permission
-    Given the following roles:
-      | name      |
-      | president |
-      | treasurer |
-      | advisor   |
-      | officer   |
     And the following permissions:
       | framework | status  | role      | action  | perspective |
       | safc      | started | president | approve | requestor   |
