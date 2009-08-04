@@ -12,7 +12,7 @@ class CreateAttachmentTypes < ActiveRecord::Migration
       t.references :node, :null => false
     end
     add_index :attachment_types_nodes,
-              [ :attachment_type_id, :nodecl_id ],
+              [ :attachment_type_id, :node_id ],
               :unique => true
   end
 

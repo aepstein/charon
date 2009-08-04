@@ -17,6 +17,7 @@ ActionController::Routing::Routes.draw do |map|
       request.resources :items do |item|
         item.resources :versions do |version|
           version.resources :attachments
+        end
       end
     end
   end

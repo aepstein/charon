@@ -53,12 +53,12 @@ class Version < ActiveRecord::Base
   end
 
   def may_create?(user)
-    return request.may_allocate?(user) if perspective == 'reviewer'
+    return request.may_revise?(user) if perspective == 'reviewer'
     request.may_update?(user) if perspective == 'requestor'
   end
 
   def may_update?(user)
-    return request.may_allocate?(user) if perspective == 'reviewer'
+    return request.may_revise?(user) if perspective == 'reviewer'
     request.may_update?(user)
   end
 
@@ -68,7 +68,7 @@ class Version < ActiveRecord::Base
 
   def may_see?(user)
     if perspective == 'reviewer'
-      return request.may_allocate?(user) || request.may_review?(user)
+      return request.may_revise?(user) || request.may_review?(user)
     end
     request.may_see?(user)
   end

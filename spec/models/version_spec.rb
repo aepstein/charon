@@ -38,27 +38,27 @@ describe Version do
     version.save.should == false
   end
 
-  it "should have may_create? which is true if request.may_allocate? and in review stage" do
-    @version.request.stub!(:may_allocate?).and_return(true)
+  it "should have may_create? which is true if request.may_revise? and in review stage" do
+    @version.request.stub!(:may_revise?).and_return(true)
     @version.perspective = 'reviewer'
     @version.may_create?(nil).should == true
     @version.perspective = 'requestor'
     @version.may_create?(nil).should == false
-    @version.request.stub!(:may_allocate?).and_return(false)
+    @version.request.stub!(:may_revise?).and_return(false)
     @version.may_create?(nil).should == false
   end
 
   it "should have may_update? which is true if request.may_update? and in request stage or
-  if request.may_allocate? and in review stage" do
+  if request.may_revise? and in review stage" do
     @version.perspective = 'requestor'
     @version.request.stub!(:may_update?).and_return(true)
     @version.may_update?(nil).should == true
     @version.request.stub!(:may_update?).and_return(false)
     @version.may_update?(nil).should == false
     @version.perspective = 'reviewer'
-    @version.request.stub!(:may_allocate?).and_return(true)
+    @version.request.stub!(:may_revise?).and_return(true)
     @version.may_update?(nil).should == true
-    @version.request.stub!(:may_allocate?).and_return(false)
+    @version.request.stub!(:may_revise?).and_return(false)
     @version.may_update?(nil).should == false
   end
 
@@ -70,21 +70,21 @@ describe Version do
   end
 
   it "should have may_see? which is true if request.may_see? and in request stage or
-  if (request.may_allocate? or request.may_review?) and in review stage" do
+  if (request.may_revise? or request.may_review?) and in review stage" do
     @version.perspective = 'requestor'
     @version.request.stub!(:may_see?).and_return(true)
     @version.may_see?(nil).should == true
     @version.request.stub!(:may_see?).and_return(false)
     @version.may_see?(nil).should == false
     @version.perspective = 'reviewer'
-    @version.request.stub!(:may_allocate?).and_return(false)
+    @version.request.stub!(:may_revise?).and_return(false)
     @version.request.stub!(:may_review?).and_return(false)
     @version.may_see?(nil).should == false
-    @version.request.stub!(:may_allocate?).and_return(true)
+    @version.request.stub!(:may_revise?).and_return(true)
     @version.may_see?(nil).should == true
     @version.request.stub!(:may_review?).and_return(true)
     @version.may_see?(nil).should == true
-    @version.request.stub!(:may_allocate?).and_return(false)
+    @version.request.stub!(:may_revise?).and_return(false)
     @version.may_see?(nil).should == true
   end
 

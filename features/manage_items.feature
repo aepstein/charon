@@ -86,7 +86,7 @@ Feature: Manage items
       | requestor              |
       | travel event expense   |
       | requestor              |
-
+  @current
   Scenario: Show correct add version links
     Given the following items:
       | request | node                   |
