@@ -8,7 +8,11 @@ class Document < ActiveRecord::Base
 
   delegate :max_size, :to => :document_type
   delegate :max_size_string, :to => :document_type
+  delegate :may_update?, :to => :attachable
+  delegate :may_see?, :to => :attachable
+  delegate :may_destroy?, :to => :attachable
 
+  validates_attachment_presence :attached
   validates_presence_of :attachable
   validates_presence_of :document_type
   validates_uniqueness_of :document_type_id, [ :attachable_id, :attachable_type ]
@@ -28,10 +32,6 @@ class Document < ActiveRecord::Base
       errors.add( :document_type, "is not a valid document type for #{attachable}." )
     end
   end
-
-  delegate :may_update?, :to => :attachable
-  delegate :may_see?, :to => :attachable
-  delegate :may_destroy?, :to => :attachable
 
   def may_create?(user)
     may_update? user

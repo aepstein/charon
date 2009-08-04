@@ -67,6 +67,7 @@ Feature: Manage documents
     And I press "Create"
     Then I should <see> "Document was successfully created."
     And I should <see> "Document type: proof of venue reservation"
+    And all documents should be deleted
 
     Examples:
       | file  | see     |
