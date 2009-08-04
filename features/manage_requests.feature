@@ -1,19 +1,16 @@
-@wip @request
+@wip @current
 Feature: Manage requests
   In order to prepare, review, and generate transactions
   As a requestor or reviewer
   I want to manage requests
 
   Background:
-    Given the following safc eligible organizations:
+    Given the following organizations:
       | last_name |
       | safc 1    |
       | safc 2    |
       | safc 3    |
-    And the following gpsafc eligible organizations:
-      | last_name |
       | gpsafc 1  |
-      | gpsafc 2  |
     And the following user records:
       | net_id    | password | admin  |
       | admin     | secret   | true   |
@@ -55,10 +52,8 @@ Feature: Manage requests
     And I am logged in as "requestor" with password "secret"
 
   Scenario: Register new request
-    Given I am on "safc 1's new request page"
-    Then I should see "Basis for request"
-    When I select "safc basis 2" from "Basis for request"
-    And I press "Create"
+    Given I am on "safc 1's organization profile page"
+    When I press "Create"
     Then I should see "Request was successfully created."
 
   Scenario: List requests for an organization with 1 request

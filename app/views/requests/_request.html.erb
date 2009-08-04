@@ -4,9 +4,9 @@
     <tr>
       <td><%=h request.basis.name %></td>
       <td>
-        <% form_tag organization_requests_path(request.organizations.first) do %>
-          <%= hidden_field_tag :basis_id, request.basis.id.to_s %>
-          <%= submit_tag 'Create' %>
+        <% form_for :request, request, :url => organization_requests_path(request.organizations.first) do |f| %>
+          <%= f.hidden_field :basis_id %>
+          <%= f.submit 'Create' %>
         <% end %>
       </td>
     </tr>

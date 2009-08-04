@@ -28,12 +28,13 @@ class RequestsController < ApplicationController
 
   # GET /organizations/:organization_id/requests/new
   # GET /organizations/:organization_id/requests/new.xml
+  # TODO -- should this action exist?
   def new
     @organization = Organization.find(params[:organization_id])
     @request = Request.new
     @request.organizations << @organization
     @request.basis = Basis.find(params[:basis_id]) if params.has_key?(:basis_id)
-    #raise AuthorizationError unless @request.may_create?(current_user)
+    raise AuthorizationError unless @request.may_create?(current_user)
 
     respond_to do |format|
       format.html # new.html.erb
@@ -45,7 +46,6 @@ class RequestsController < ApplicationController
   # POST /organizations/:organization_id/requests.xml
   def create
     @request = Request.new(params[:request])
-    @request.basis = Basis.find(params[:basis_id])
     @organization = Organization.find(params[:organization_id])
     @request.organizations << @organization
     raise AuthorizationError unless @request.may_create?(current_user)
