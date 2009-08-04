@@ -23,8 +23,8 @@ Feature: Manage documents
       | undergraduate commission | commissioner | commissioner |
     And the following document_types:
       | name                       | max_size_quantity | max_size_unit |
-      | proof of travel distance   | 1                 | megabyte      |
-      | proof of venue reservation | 10                | kilobyte      |
+      | proof of travel distance   | 2                 | megabyte      |
+      | proof of venue reservation | 1                 | kilobyte      |
     And the following structures:
       | name   |
       | budget |
@@ -59,15 +59,16 @@ Feature: Manage documents
       | item | perspective |
       | 1    | requestor   |
 
-  @current
   Scenario: Create new document
     Given I am logged in as "admin" with password "secret"
     And I am on the new document page of the 1st version
     When I select "proof of venue reservation" from "Document type"
+    And I attach the file at "features/support/assets/small.png" to "File"
     And I press "Create"
     Then I should see "Document was successfully created."
     And I should see "Document type: proof of venue reservation"
 
+  @wip
   Scenario: Delete document
     Given the following documents:
       |document_type|
