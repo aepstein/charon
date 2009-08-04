@@ -4,6 +4,10 @@ describe Document do
   before(:each) do
   end
 
+  after(:each) do
+    Document.all.each { |document| document.destroy }
+  end
+
   it "should create a new instance given valid attributes" do
     Factory(:document).id.should_not be_nil
   end

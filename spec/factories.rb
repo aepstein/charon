@@ -1,4 +1,5 @@
 Factory.define :document do |f|
+  f.attached { ActionController::TestUploadedFile.new('features/support/assets/small.png','image/png') }
   f.association :attachable, :factory => :attachable_version
   f.document_type { |a| a.attachable.document_types.first }
 end
@@ -6,7 +7,7 @@ end
 Factory.define :document_type do |f|
   f.sequence(:name) { |n| "Document Type #{n}" }
   f.max_size_quantity 1
-  f.max_size_unit DocumentType::UNITS.first
+  f.max_size_unit DocumentType::UNITS.last
 end
 
 Factory.define :organization do |f|
