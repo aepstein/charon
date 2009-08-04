@@ -18,7 +18,7 @@ class Node < ActiveRecord::Base
     'Speaker' => 'SpeakerExpense'
   }
 
-  has_and_belongs_to_many :attachment_types
+  has_and_belongs_to_many :document_types
   has_many :items
   belongs_to :structure
   acts_as_tree

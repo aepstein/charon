@@ -4,6 +4,12 @@ Given /^the following nodes:$/ do |nodes|
     if node_attributes['structure'] then
       complex_attributes['structure'] = Structure.find_by_name(node_attributes['structure'])
     end
+    if node_attributes['document_types'] then
+      complex_attributes['document_types'] = node_attributes['document_types'].split(', ').map { |at| DocumentType.find_by_name( at.strip ) }
+      complex_attributes['document_types'].each { |at| at.class.should == DocumentType }
+    else
+      complex_attributes['document_types'] = Array.new
+    end
     Factory(:node,node_attributes.merge(complex_attributes))
   end
 end

@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :attachment_types
+  map.resources :document_types
   map.resources :requests, :only => [ :index ]
   map.resources :frameworks, :shallow => true do |framework|
     framework.resources :permissions
@@ -16,7 +16,7 @@ ActionController::Routing::Routes.draw do |map|
     organization.resources :requests, :member => { :approve => :post } do |request|
       request.resources :items do |item|
         item.resources :versions do |version|
-          version.resources :attachments
+          version.resources :documents
         end
       end
     end

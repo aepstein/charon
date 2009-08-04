@@ -1,0 +1,17 @@
+<h1>Editing document type</h1>
+
+<% form_for(@document_type) do |f| %>
+  <%= f.error_messages %>
+
+  <%= render :partial => 'form', :object => f %>
+
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<p>
+<%= link_to 'Show', @document_type %> |
+<%= link_to 'Back', document_types_path %>
+</p>
+

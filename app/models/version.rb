@@ -7,14 +7,14 @@ class Version < ActiveRecord::Base
   has_one :travel_event_expense
   has_one :durable_good_expense
   has_one :publication_expense
-  has_many :attachments, :as => :attachable
+  has_many :documents, :as => :attachable
   accepts_nested_attributes_for :administrative_expense
   accepts_nested_attributes_for :local_event_expense
   accepts_nested_attributes_for :speaker_expense
   accepts_nested_attributes_for :travel_event_expense
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
-  accepts_nested_attributes_for :attachments
+  accepts_nested_attributes_for :documents
 
   validates_presence_of :item
   validates_inclusion_of :perspective, :in => PERSPECTIVES
@@ -23,7 +23,7 @@ class Version < ActiveRecord::Base
 
   delegate :request, :to => :item
   delegate :node, :to => :item
-  delegate :attachment_types, :to => :node
+  delegate :document_types, :to => :node
 
   def amount_must_be_less_than_requestable_max
     return if requestable.nil? || amount.nil?
