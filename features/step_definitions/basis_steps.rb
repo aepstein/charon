@@ -10,7 +10,7 @@ Given /^the following bases:$/ do |bases|
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) basis$/ do |pos|
-  visit structure_bases_url(Structure.find(:first))
+  visit organization_bases_url(Organization.find(:first))
   within("table > tr:nth-child(#{pos.to_i+1})") do
     click_link "Destroy"
   end

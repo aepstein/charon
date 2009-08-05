@@ -1,9 +1,9 @@
 class BasesController < ApplicationController
-  # GET /structures/:structure_id/bases
-  # GET /structures/:structure_id/bases.xml
+  # GET /organizations/:organization_id/bases
+  # GET /organizations/:organization_id/bases.xml
   def index
-    @structure = Structure.find(params[:structure_id])
-    @bases = @structure.bases
+    @organization = Organization.find(params[:organization_id])
+    @bases = @organization.bases
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,6 +15,7 @@ class BasesController < ApplicationController
   # GET /bases/1.xml
   def show
     @basis = Basis.find(params[:id])
+    raise AuthorizationError unless @basis.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -22,10 +23,11 @@ class BasesController < ApplicationController
     end
   end
 
-  # GET /structures/:structure_id/bases/new
-  # GET /structures/:structure_id/bases/new.xml
+  # GET /organizations/:organization_id/bases/new
+  # GET /organizations/:organization_id/bases/new.xml
   def new
-    @basis = Structure.find(params[:structure_id]).bases.build
+    @basis = Organization.find(params[:organization_id]).bases.build
+    raise AuthorizationError unless @basis.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -36,12 +38,14 @@ class BasesController < ApplicationController
   # GET /bases/1/edit
   def edit
     @basis = Basis.find(params[:id])
+    raise AuthorizationError unless @basis.may_update? current_user
   end
 
-  # POST /structures/:structure_id/bases
-  # POST /structures/:structure_id/bases.xml
+  # POST /organizations/:organization_id/bases
+  # POST /organizations/:organization_id/bases.xml
   def create
-    @basis = Structure.find(params[:structure_id]).bases.build(params[:basis])
+    @basis = Organization.find(params[:organization_id]).bases.build(params[:basis])
+    raise AuthorizationError unless @basis.may_create? current_user
 
     respond_to do |format|
       if @basis.save
@@ -59,6 +63,7 @@ class BasesController < ApplicationController
   # PUT /bases/1.xml
   def update
     @basis = Basis.find(params[:id])
+    raise AuthorizationError unless @basis.may_update? current_user
 
     respond_to do |format|
       if @basis.update_attributes(params[:basis])
@@ -76,11 +81,12 @@ class BasesController < ApplicationController
   # DELETE /bases/1.xml
   def destroy
     @basis = Basis.find(params[:id])
-    @structure = @basis.structure
+    raise AuthorizationError unless @basis.may_destroy? current_user
     @basis.destroy
 
     respond_to do |format|
-      format.html { redirect_to(structure_bases_url(@structure)) }
+      flash[:notice] = 'Basis was successfully destroyed.'
+      format.html { redirect_to(organization_bases_url(@basis.organization)) }
       format.xml  { head :ok }
     end
   end

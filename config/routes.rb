@@ -9,9 +9,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :stages
   map.resources :structures, :shallow => true do |structure|
     structure.resources :nodes
-    structure.resources :bases
   end
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
+    organization.resources :bases
     organization.resources :memberships
     organization.resources :requests, :member => { :approve => :post } do |request|
       request.resources :items do |item|

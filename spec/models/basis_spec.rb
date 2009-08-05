@@ -21,5 +21,8 @@ describe Basis do
     basis.save.should == false
   end
 
+  it "should include GlobalModelAuthorization module" do
+    Basis.included_modules.should include(GlobalModelAuthorization)
+  end
 end
 

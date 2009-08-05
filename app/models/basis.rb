@@ -1,4 +1,6 @@
 class Basis < ActiveRecord::Base
+  include GlobalModelAuthorization
+
   named_scope :closed, lambda {
     { :conditions => [ 'closed_at < ?', DateTime.now.utc ] }
   }

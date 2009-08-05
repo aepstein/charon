@@ -11,9 +11,9 @@
                                :name %>
   </p>
   <p>
-    <%= form.label :organization_id %><br />
-    <%= form.collection_select :organization_id,
-                               Organization.find(:all),
+    <%= form.label :framework_id %><br />
+    <%= form.collection_select :framework_id,
+                               Framework.find(:all),
                                :id,
                                :name %>
   </p>

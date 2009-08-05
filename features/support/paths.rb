@@ -50,11 +50,11 @@ module NavigationHelpers
     when /^"(.+)'s edit framework page"$/
       edit_framework_path( Framework.find_by_name($1) )
 
-    when /^"(.+)'s basis page"$/
-      structure_bases_path( Structure.find_by_name($1) )
+    when /^"(.+)'s bases page"$/
+      organization_bases_path( Organization.find_by_last_name($1) )
 
     when /^"(.+)'s new basis page"$/
-      new_structure_basis_path( Structure.find_by_name($1) )
+      new_organization_basis_path( Organization.find_by_last_name($1) )
 
     when /^"(.+)'s new request page"$/
       new_organization_request_path( Organization.find_by_last_name($1) )

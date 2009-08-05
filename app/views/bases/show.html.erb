@@ -1,8 +1,23 @@
-<h1>Showing basis for <%=h @basis.structure %> structure</h1>
+<h1>Showing basis</h1>
 
 <p>
   <b>Name:</b>
   <%=h @basis.name %>
+</p>
+
+<p>
+  <b>Framework:</b>
+  <%=h @basis.framework %>
+</p>
+
+<p>
+  <b>Structure:</b>
+  <%=h @basis.structure %>
+</p>
+
+<p>
+  <b>Organization:</b>
+  <%=h @basis.organization %>
 </p>
 
 <p>
@@ -15,7 +30,8 @@
   <%=h @basis.closed_at %>
 </p>
 
-
+<p>
 <%= link_to 'Edit', edit_basis_path(@basis) %> |
-<%= link_to 'Back', structure_bases_path( @basis.structure ) %>
+<%= link_to 'Back', organization_bases_path( @basis.organization ) %>
+</p>
 
