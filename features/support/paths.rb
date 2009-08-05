@@ -65,7 +65,7 @@ module NavigationHelpers
     when /the requests page/
       requests_path
 
-    when /^"the user profile page"$/
+    when /the profile page/
       profile_path
 
     when /^"(.+)'s user profile page"$/

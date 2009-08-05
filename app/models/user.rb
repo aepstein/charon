@@ -7,9 +7,7 @@ class User < ActiveRecord::Base
     c.login_field = 'net_id'
   end
 
-  has_many :memberships,
-           :include => [ :organization, :role ],
-           :dependent => :destroy
+  has_many :memberships,  :include => [ :organization, :role ], :dependent => :destroy
   has_many :roles, :through => :memberships do
     def in(organizations)
       proxy_owner.memberships.active.in(organizations.map { |o| o.id } ).map { |m| m.role }

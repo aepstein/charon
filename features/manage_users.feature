@@ -50,30 +50,33 @@ Feature: Manage users
       | owner   | not see "Admin" | "owner's edit user page" |
       | regular | not see "Admin" | the unauthorized page    |
 
-  @wip @current
   Scenario: Show organizations and unmatched registrations for the current user
     Given the following role records:
       | name      |
       | president |
       | allowed   |
     And the following organizations:
-      | last_name |
-      | org1      |
-      | org2      |
+      | last_name                      |
+      | matched organization           |
+      | unregistered organization      |
+      | irrelevant organization        |
     And the following registrations:
-      | name | organization |
-      | reg1 | org1         |
-      | reg2 |              |
+      | name                    | organization                 |
+      | matched organization    | matched organization         |
+      | unmatched organization  |                              |
+      | irrelevant registration |                              |
     And the following memberships:
-      | user  | organization | role      | registration | active |
-      | owner | org1         | allowed   | reg1         | true   |
-      | owner |              | allowed   | reg2         | true   |
+      | user  | role      | registration           | active | organization              |
+      | owner | allowed   | matched organization   |        |                           |
+      | owner | allowed   | unmatched organization |        |                           |
+      | owner | allowed   |                        | true   | unregistered organization |
     And I am logged in as "owner" with password "secret"
-    And I am on "owner's user profile page"
-    Then I should see "org1"
-    And I should see "allowed"
-    And I should see "reg2"
-    And I should not see "reg1"
+    And I am on the profile page
+    Then I should see "matched organization"
+    And I should see "unmatched organization"
+    And I should see "unregistered organization"
+    And I should not see "irrelevant organization"
+    And I should not see "irrelevant registration"
 
   Scenario: Delete user
     Given I am logged in as "admin" with password "secret"

@@ -1,4 +1,5 @@
 class Organization < ActiveRecord::Base
+  has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
   has_many :registrations do
     def current
       self.active.first
