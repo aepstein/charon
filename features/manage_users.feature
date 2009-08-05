@@ -50,6 +50,31 @@ Feature: Manage users
       | owner   | not see "Admin" | "owner's edit user page" |
       | regular | not see "Admin" | the unauthorized page    |
 
+  @wip
+  Scenario: Show organizations and unmatched registrations for the current user
+    Given the following role records:
+      | name      |
+      | president |
+      | allowed   |
+    And the following organizations:
+      | last_name |
+      | org1      |
+      | org2      |
+    And the following registrations:
+      | name | organization |
+      | reg1 | org1         |
+      | reg2 |              |
+    And the following memberships:
+      | user  | organization | role      | registration |
+      | owner | org1         | allowed   | reg1         |
+      | owner |              | allowed   | reg2         |
+    And I am logged in as "owner" with password "secret"
+    And I am on "owner's user profile page"
+    Then I should see "org1"
+    And I should see "allowed"
+    And I should see "reg2"
+    And I should not see "reg1"
+
   Scenario: Delete user
     Given I am logged in as "admin" with password "secret"
     When I delete the 2nd user

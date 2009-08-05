@@ -1,0 +1,23 @@
+<h2>Welcome, <%=h current_user.full_name %> (<%=h current_user.net_id %>)</h2>
+
+<% unless @organizations.empty? %>
+  <h3>Organizations You Are In:<h3>
+
+  <table>
+    <tr>
+      <th>Organization</th>
+      <th>Your Role(s)</th>
+    </tr>
+
+    <%= render :partial => "organization",
+               :collection => @organizations %>
+  </table>
+<% end %>
+
+<% unless @unmatched_registrations.empty? %>
+  <h3>Unmatched Registrations:<h3>
+
+  <%= render :partial => "registration",
+             :collection => @unmatched_registrations %>
+<% end %>
+

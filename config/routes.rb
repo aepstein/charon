@@ -26,6 +26,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :registrations
   map.login 'login', :controller => 'user_sessions', :action => 'new'
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
+  map.profile 'profile', :controller => 'users', :action => 'profile'
   map.unauthorized 'unauthorized', :controller => 'static', :action => 'unauthorized'
 
   # The priority is based upon order of creation: first created -> highest priority.

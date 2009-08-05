@@ -76,6 +76,7 @@ Factory.define :membership do |f|
   f.association :user
   f.association :role
   f.association :organization
+  f.association :registration
 end
 
 Factory.define :structure do |f|
