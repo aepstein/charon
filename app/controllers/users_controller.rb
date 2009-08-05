@@ -41,9 +41,7 @@ class UsersController < ApplicationController
   end
 
   def profile
-    @organizations = current_user.memberships.map { |m| m.organization }.uniq
-    @organizations = @organizations.reject { |o| o.nil? }
-    @unmatched_registrations = current_user.registrations.unmatched.uniq
+    # profile.html.erb
   end
 
   def edit

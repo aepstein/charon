@@ -10,6 +10,15 @@ describe User do
     Factory(:user).id.should_not be_nil
   end
 
+  it "should have a organizations method that returns organizations related by active memberships" do
+    user = Factory(:user)
+    active = user.memberships.create( :role => Factory(:role), :organization => Factory(:organization), :active => true )
+    inactive = user.memberships.create( :role => Factory(:role), :organization => Factory(:organization), :active => false )
+    user.organizations.size.should == 1
+    user.organizations.should include(active.organization)
+    user.organizations.should_not include(inactive.organization)
+  end
+
   it "should have a may_create? which only allows admin" do
     owner = Factory.build(:user)
     owner.may_create?(@admin).should == true

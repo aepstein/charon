@@ -42,9 +42,8 @@ class Organization < ActiveRecord::Base
     registations.current.eligible_for? framework
   end
 
-  # TODO is this sufficient?
   def may_see?(user)
-    user.admin || memberships.map { |m| m.user }.include?(user)
+    true
   end
 
   # TODO is this sufficient?

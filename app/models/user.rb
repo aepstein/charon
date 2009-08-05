@@ -15,6 +15,7 @@ class User < ActiveRecord::Base
       proxy_owner.memberships.active.in(organizations.map { |o| o.id } ).map { |m| m.role }
     end
   end
+  has_many :organizations, :through => :memberships, :conditions => [ 'memberships.active = ?', true ]
   has_many :registrations, :through => :memberships
   has_many :addresses, :as => :addressable, :dependent => :destroy do
     def by_label(label)

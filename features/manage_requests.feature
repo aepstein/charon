@@ -1,4 +1,3 @@
-@wip
 Feature: Manage requests
   In order to prepare, review, and generate transactions
   As a requestor or reviewer
@@ -73,7 +72,7 @@ Feature: Manage requests
     When I am on "safc 3's requests page"
     Then I should see the following requests:
       | Basis |
-
+  @wip
   Scenario: Approve request for existing organization
     When I am on "safc 1's requests page"
     And I follow "Approve"

@@ -50,7 +50,7 @@ Feature: Manage users
       | owner   | not see "Admin" | "owner's edit user page" |
       | regular | not see "Admin" | the unauthorized page    |
 
-  @wip
+  @wip @current
   Scenario: Show organizations and unmatched registrations for the current user
     Given the following role records:
       | name      |
@@ -65,9 +65,9 @@ Feature: Manage users
       | reg1 | org1         |
       | reg2 |              |
     And the following memberships:
-      | user  | organization | role      | registration |
-      | owner | org1         | allowed   | reg1         |
-      | owner |              | allowed   | reg2         |
+      | user  | organization | role      | registration | active |
+      | owner | org1         | allowed   | reg1         | true   |
+      | owner |              | allowed   | reg2         | true   |
     And I am logged in as "owner" with password "secret"
     And I am on "owner's user profile page"
     Then I should see "org1"

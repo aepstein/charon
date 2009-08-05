@@ -1,6 +1,6 @@
 <h2>Welcome, <%=h current_user.full_name %> (<%=h current_user.net_id %>)</h2>
 
-<% unless @organizations.empty? %>
+<% unless current_user.organizations.empty? %>
   <h3>Organizations You Are In:<h3>
 
   <table>
@@ -9,15 +9,13 @@
       <th>Your Role(s)</th>
     </tr>
 
-    <%= render :partial => "organization",
-               :collection => @organizations %>
+    <%= render :partial => "organization", :collection => current_user.organizations %>
   </table>
 <% end %>
 
-<% unless @unmatched_registrations.empty? %>
+<% unless current_user.registrations.active.unmatched.empty? %>
   <h3>Unmatched Registrations:<h3>
 
-  <%= render :partial => "registration",
-             :collection => @unmatched_registrations %>
+  <%= render :partial => "registration", :collection => current_user.registrations.active.unmatched %>
 <% end %>
 
