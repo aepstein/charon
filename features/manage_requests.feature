@@ -23,12 +23,13 @@ Feature: Manage requests
       | safc   |
       | gpsafc |
     And the following permissions:
-      | framework | role    | status  | action  | perspective |
-      | safc      | allowed | started | create  | requestor   |
-      | safc      | allowed | started | update  | requestor   |
-      | safc      | allowed | started | destroy | requestor   |
-      | safc      | allowed | started | see     | requestor   |
-      | safc      | allowed | started | approve | requestor   |
+      | framework | role    | status    | action  | perspective |
+      | safc      | allowed | started   | create  | requestor   |
+      | safc      | allowed | started   | update  | requestor   |
+      | safc      | allowed | started   | destroy | requestor   |
+      | safc      | allowed | started   | see     | requestor   |
+      | safc      | allowed | completed | see     | requestor   |
+      | safc      | allowed | started   | approve | requestor   |
     And the following memberships:
       | user      | organization | role    |
       | requestor | safc 1       | allowed |
@@ -72,9 +73,10 @@ Feature: Manage requests
     When I am on "safc 3's requests page"
     Then I should see the following requests:
       | Basis |
-  @wip
+
   Scenario: Approve request for existing organization
-    When I am on "safc 1's requests page"
-    And I follow "Approve"
+    Given I am on "safc 1's requests page"
+    When I follow "Approve"
+    And I press "Confirm Approval"
     Then I should see "Approval was successfully created"
 

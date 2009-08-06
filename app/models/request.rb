@@ -1,5 +1,5 @@
 class Request < ActiveRecord::Base
-  ACTIONS = %w( create update destroy see approve unapprove accept revise review release )
+  ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
   belongs_to :basis
   has_many :approvals, :dependent => :destroy, :as => :approvable
   has_many :items, :dependent => :destroy, :include => [ :node, :parent, :versions ] do

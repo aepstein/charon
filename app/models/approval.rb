@@ -4,6 +4,7 @@ class Approval < ActiveRecord::Base
 
   delegate :may_approve?, :to => :approvable
   delegate :may_unapprove?, :to => :approvable
+  delegate :may_unapprove_other?, :to => :approvable
   delegate :approve!, :to => :approvable
   delegate :unapprove!, :to => :approvable
 
@@ -19,7 +20,8 @@ class Approval < ActiveRecord::Base
   end
 
   def may_destroy?(user)
-    may_unapprove? user
+    return true if self.user == user && may_unapprove?( user )
+    may_unapprove_other? user
   end
 
   def to_s

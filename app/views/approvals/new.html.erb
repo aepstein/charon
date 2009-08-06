@@ -1,23 +1,13 @@
-<h1>New approval</h1>
+<h1>Approve <%=h @approval.approvable %></h1>
 
-<% form_for(@approval) do |f| %>
+<% form_for( :approval, @approval, :url => approvable_approvals_path(@approval.approvable) ) do |f| %>
   <%= f.error_messages %>
-
   <p>
-    <%= f.label :user_id %><br />
-    <%= f.text_field :user_id %>
-  </p>
-  <p>
-    <%= f.label :approvable_id %><br />
-    <%= f.text_field :approvable_id %>
-  </p>
-  <p>
-    <%= f.label :approvable_type %><br />
-    <%= f.text_field :approvable_type %>
-  </p>
-  <p>
-    <%= f.submit 'Create' %>
+    <%= f.submit 'Confirm Approval' %>
   </p>
 <% end %>
 
-<%= link_to 'Back', approvals_path %>
+<p>
+<%= link_to 'Back', @approval.approvable %>
+</p>
+

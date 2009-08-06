@@ -1,8 +1,12 @@
 class ApprovalsController < ApplicationController
-  # GET /approvals
-  # GET /approvals.xml
+
+  helper_method :approvable_approvals_path, :approvable_approvals_url
+
+  # GET /:approvable_class/:approvable_id/approvals
+  # GET /:approvable_class/:approvable_id/approvals.xml
   def index
-    @approvals = Approval.all
+    raise AuthorizationError unless approvable.may_see? current_user
+    @approvals = approvable.approvals
 
     respond_to do |format|
       format.html # index.html.erb
@@ -10,21 +14,12 @@ class ApprovalsController < ApplicationController
     end
   end
 
-  # GET /approvals/1
-  # GET /approvals/1.xml
-  def show
-    @approval = Approval.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @approval }
-    end
-  end
-
-  # GET /approvals/new
-  # GET /approvals/new.xml
+  # GET /:approvable_class/:approvable_id/approvals/new
+  # GET /:approvable_class/:approvable_id/approvals/new.xml
   def new
-    @approval = Approval.new
+    @approval = approvable.approvals.build
+    @approval.user = current_user
+    raise AuthorizationError unless @approval.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -32,40 +27,21 @@ class ApprovalsController < ApplicationController
     end
   end
 
-  # GET /approvals/1/edit
-  def edit
-    @approval = Approval.find(params[:id])
-  end
-
-  # POST /approvals
-  # POST /approvals.xml
+  # POST /:approvable_class/:approvable_id/approvals
+  # POST /:approvable_class/:approvable_id/approvals.xml
   def create
-    @approval = Approval.new(params[:approval])
+    @approval = approvable.approvals.build(params[:approval])
+    @approval.user = current_user
+    raise AuthorizationError unless @approval.may_create? current_user
 
     respond_to do |format|
       if @approval.save
         flash[:notice] = 'Approval was successfully created.'
-        format.html { redirect_to(@approval) }
+        format.html { redirect_to(@approval.approvable) }
         format.xml  { render :xml => @approval, :status => :created, :location => @approval }
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @approval.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # PUT /approvals/1
-  # PUT /approvals/1.xml
-  def update
-    @approval = Approval.find(params[:id])
-
-    respond_to do |format|
-      if @approval.update_attributes(params[:approval])
-        flash[:notice] = 'Approval was successfully updated.'
-        format.html { redirect_to(@approval) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
+        flash[:notice] = 'Approval failed to create.'
+        format.html { redirect_to(@approval.approvable) }
         format.xml  { render :xml => @approval.errors, :status => :unprocessable_entity }
       end
     end
@@ -75,6 +51,7 @@ class ApprovalsController < ApplicationController
   # DELETE /approvals/1.xml
   def destroy
     @approval = Approval.find(params[:id])
+    raise AuthorizationError unless @approval.may_destroy? current_user
     @approval.destroy
 
     respond_to do |format|
@@ -82,4 +59,21 @@ class ApprovalsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+private
+  def approvable_approvals_path(*args)
+    send("#{approvable.class.to_s.underscore}_approvals_path",args)
+  end
+
+  def approvable_approvals_url(*args)
+    send("#{approvable.class.to_s.underscore}_approvals_url",args)
+  end
+
+  def approvable
+    @approvable ||= case
+    when params[:request_id] then Request.find(params[:request_id])
+    when params[:agreement_id] then Agreement.find(params[:agreement_id])
+    end
+  end
 end
+

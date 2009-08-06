@@ -16,11 +16,12 @@ Feature: Manage organizations
       | name |
       | safc |
     And the following permissions:
-      | framework | role    | status  | action  | perspective |
-      | safc      | allowed | started | create  | requestor   |
-      | safc      | allowed | started | update  | requestor   |
-      | safc      | allowed | started | destroy | requestor   |
-      | safc      | allowed | started | see     | requestor   |
+      | framework | role    | status   | action  | perspective |
+      | safc      | allowed | started  | create  | requestor   |
+      | safc      | allowed | started  | update  | requestor   |
+      | safc      | allowed | started  | destroy | requestor   |
+      | safc      | allowed | started  | see     | requestor   |
+      | safc      | allowed | released | see     | requestor   |
     And the following organization records:
       | last_name |
       | org1      |

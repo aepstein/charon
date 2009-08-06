@@ -5,7 +5,7 @@ class CreateApprovals < ActiveRecord::Migration
       t.integer :approvable_id, :null => false
       t.string :approvable_type, :null => false
 
-      t.timestamps
+      t.datetime :created_at
     end
   end
 

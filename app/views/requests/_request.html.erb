@@ -18,7 +18,7 @@
         <%= link_to_if(request.may_see?(current_user), 'Show Items', request_items_path(request) ) { "" } %>
         <%= link_to_if(request.may_update?(current_user), 'Edit', edit_request_path(request)) { "" } %>
         <%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %>
-        <%= link_to_if(request.may_approve?(current_user), 'Approve', request) { "" } %>
+        <%= link_to_if(request.may_approve?(current_user), 'Approve', new_request_approval_path( request ) ) { "" } %>
       </td>
      </tr>
 

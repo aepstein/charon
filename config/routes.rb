@@ -4,7 +4,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :frameworks, :shallow => true do |framework|
     framework.resources :permissions
   end
-  map.resources :approvals, :only => [ :index, :destroy ]
   map.resources :addresses
   map.resources :stages
   map.resources :structures, :shallow => true do |structure|
@@ -13,7 +12,8 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
     organization.resources :bases
     organization.resources :memberships
-    organization.resources :requests, :member => { :approve => :post } do |request|
+    organization.resources :requests do |request|
+      request.resources :approvals, :only => [ :create, :destroy, :index, :new ]
       request.resources :items do |item|
         item.resources :versions do |version|
           version.resources :documents
