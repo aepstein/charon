@@ -1,4 +1,5 @@
 class Permission < ActiveRecord::Base
+  has_and_belongs_to_many :agreements
   belongs_to :framework
   belongs_to :role
 
@@ -19,6 +20,13 @@ class Permission < ActiveRecord::Base
   }
   named_scope :status, lambda { |statuses|
     { :conditions => { :status => statuses } }
+  }
+  named_scope :user_agrees, lambda { |user|
+    subquery = "SELECT approvable_id FROM approvals WHERE user_id = ? AND " +
+      "approvable_type = 'Agreement'"
+    { :conditions => ['0 = (SELECT COUNT(*) FROM agreements_permissions WHERE ' +
+        "permission_id = permissions.id AND agreement_id NOT IN (#{subquery}) )",
+        user.id ] }
   }
 
   delegate :may_update?, :to => :framework

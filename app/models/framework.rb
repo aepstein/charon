@@ -2,8 +2,8 @@ class Framework < ActiveRecord::Base
   include GlobalModelAuthorization
 
   has_many :permissions do
-    def allowed_actions(roles, perspective, status)
-      self.role(roles.map { |r| r.id } ).perspective(perspective).status(status).map { |p| p.action }.uniq
+    def allowed_actions(user, roles, perspective, status)
+      self.role(roles.map { |r| r.id } ).perspective(perspective).status(status).user_agrees(user).map { |p| p.action }.uniq
     end
   end
 

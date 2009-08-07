@@ -46,6 +46,9 @@ describe Framework do
   end
 
   it "should have a permissions.allowed_actions(roles,perspective,status) that returns allowed actions only" do
+    # Add test case to scenario for "disallowed user" -- has not agreed to the conditions of a permission
+    allowed_user = Factory(:user)
+    disallowed_user = Factory(:user)
     allowed_role = Factory(:role)
     disallowed_role = Factory(:role)
     allowed_role.should_not == disallowed_role
@@ -61,13 +64,13 @@ describe Framework do
     permission = @framework.permissions.create( :role => allowed_role,
       :perspective => allowed_perspective, :status => allowed_status, :action => allowed_action )
     permission.id.should_not be_nil
-    allowed_actions = @framework.permissions.allowed_actions([allowed_role], allowed_perspective, allowed_status)
+    allowed_actions = @framework.permissions.allowed_actions(allowed_user,[allowed_role], allowed_perspective, allowed_status)
     allowed_actions.size.should == 1
     allowed_actions.first.should == allowed_action
-    @framework.permissions.allowed_actions([disallowed_role], allowed_perspective, allowed_status).should be_empty
-    @framework.permissions.allowed_actions([allowed_role], disallowed_perspective, allowed_status).should be_empty
-    @framework.permissions.allowed_actions([allowed_role], allowed_perspective, disallowed_status).should be_empty
-    @framework.permissions.allowed_actions([], allowed_perspective, allowed_status).should be_empty
+    @framework.permissions.allowed_actions(allowed_user,[disallowed_role], allowed_perspective, allowed_status).should be_empty
+    @framework.permissions.allowed_actions(allowed_user,[allowed_role], disallowed_perspective, allowed_status).should be_empty
+    @framework.permissions.allowed_actions(allowed_user,[allowed_role], allowed_perspective, disallowed_status).should be_empty
+    @framework.permissions.allowed_actions(allowed_user,[], allowed_perspective, allowed_status).should be_empty
   end
 
   it "should include the GlobalModelAuthorization module" do

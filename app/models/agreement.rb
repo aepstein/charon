@@ -1,6 +1,7 @@
 class Agreement < ActiveRecord::Base
   include GlobalModelAuthorization
 
+  has_and_belongs_to_many :permissions
   has_many :approvals, :as => :approvable
   has_many :users, :through => :approvals
 

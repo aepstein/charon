@@ -84,7 +84,8 @@ class Request < ActiveRecord::Base
     return Array.new if user.nil?
     return ACTIONS if user.admin?
     Version::PERSPECTIVES.each do |perspective|
-      actions = permissions.allowed_actions( user.roles.in( send(perspective.pluralize) ),
+      actions = permissions.allowed_actions( user,
+                                             user.roles.in( send(perspective.pluralize) ),
                                              perspective,
                                              status.to_s )
       return actions if actions.first
