@@ -9,6 +9,13 @@ When /^I delete the (\d+)(?:st|nd|rd|th) agreement$/ do |pos|
   end
 end
 
-Then /^I should see the following agreements:$/ do |expected_agreements_table|
-  expected_agreements_table.diff!(table_at('table').to_a)
+Then /^I should see the following agreements:$/ do |agreements|
+  agreements.rows.each_with_index do |row, i|
+    row.each_with_index do |cell, j|
+      response.should have_selector("table > tr:nth-child(#{i+2}) > td:nth-child(#{j+1})") { |td|
+        td.inner_text.should == cell
+      }
+    end
+  end
 end
+

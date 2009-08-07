@@ -1,4 +1,3 @@
-@current
 Feature: Manage agreements
   In order to keep and track binding agreements
   As a contract-bound organization
@@ -36,7 +35,8 @@ Feature: Manage agreements
       | regular | Unauthorized  |
 
   Scenario: Delete agreement
-    Given the following agreements:
+    Given I am logged in as "admin" with password "secret"
+    And the following agreements:
       |name  |content  |
       |name 1|content 1|
       |name 2|content 2|
@@ -44,8 +44,8 @@ Feature: Manage agreements
       |name 4|content 4|
     When I delete the 3rd agreement
     Then I should see the following agreements:
-      |Name  |Content  |
-      |name 1|content 1|
-      |name 2|content 2|
-      |name 4|content 4|
+      |Name  |
+      |name 1|
+      |name 2|
+      |name 4|
 
