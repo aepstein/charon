@@ -1,0 +1,16 @@
+<h1>Editing agreement</h1>
+
+<% form_for(@agreement) do |f| %>
+  <%= f.error_messages %>
+
+  <%= render :partial => 'form', :object => f %>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<p>
+<%= link_to 'Show', @agreement %> |
+<%= link_to 'Back', agreements_path %>
+</p>
+

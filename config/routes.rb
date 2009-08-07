@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :agreements
   map.resources :document_types
   map.resources :requests, :only => [ :index ]
   map.resources :frameworks, :shallow => true do |framework|

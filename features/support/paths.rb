@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new agreement page/
+      new_agreement_path
+
 
     when /the new document page of the (\d+)(?:st|nd|rd|th) version/
       new_version_document_path( Version.all[ $1.to_i - 1 ] )

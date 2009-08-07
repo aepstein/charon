@@ -1,0 +1,15 @@
+<h1>Listing agreements</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+  </tr>
+<%= render :partial => 'agreement', :collection => @agreements %>
+</table>
+
+<br />
+
+<p>
+<%= link_to 'New agreement', new_agreement_path %>
+</p>
+

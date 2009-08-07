@@ -1,3 +1,8 @@
+Factory.define :agreement do |f|
+  f.sequence(:name) { |n| "Agreement #{n}" }
+  f.content "Text of an agreement"
+end
+
 Factory.define :approval do |f|
   f.association :user
   f.association :approvable, :factory => :request
@@ -65,6 +70,7 @@ Factory.define :user do |f|
   f.password "pjlmiok"
   f.password_confirmation { |u| u.password }
   f.status "undergrad"
+  f.ldap_entry false
 end
 
 Factory.define :role do |f|

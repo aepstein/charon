@@ -63,6 +63,10 @@ protected
     self.email = "#{self.net_id}@cornell.edu"
   end
 
+  def ldap_entry=(ldap_entry)
+    @ldap_entry = ldap_entry
+  end
+
   def ldap_entry
     return nil if @ldap_entry == false
     begin
