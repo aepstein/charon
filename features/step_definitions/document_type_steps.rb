@@ -1,6 +1,10 @@
 Given /^the following document_types:$/ do |document_types|
   document_types.hashes.each do |document_type_attributes|
-    Factory(:document_type, document_type_attributes)
+    complex_attributes = Hash.new
+    if document_type_attributes['nodes'] then
+      complex_attributes['nodes'] = document_type_attributes['nodes'].split(',').map { |n| Node.find_by_name(n.strip) }
+    end
+    Factory(:document_type, document_type_attributes.merge(complex_attributes))
   end
 end
 

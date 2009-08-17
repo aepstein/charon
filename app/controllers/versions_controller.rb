@@ -29,6 +29,7 @@ class VersionsController < ApplicationController
   def new
     @version = Item.find(params[:item_id]).versions.next
     raise AuthorizationError unless @version.may_create?(current_user)
+    @version.documents.populate
 
     respond_to do |format|
       format.html # new.html.erb
@@ -54,6 +55,7 @@ class VersionsController < ApplicationController
         format.html { redirect_to(@version) }
         format.xml  { render :xml => @version, :status => :created, :location => @version }
       else
+        @version.documents.populate
         format.html { render :action => "new" }
         format.xml  { render :xml => @version.errors, :status => :unprocessable_entity }
       end

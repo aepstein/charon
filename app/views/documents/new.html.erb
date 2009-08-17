@@ -1,14 +1,14 @@
-<h1>New document for <%= @document.attachable %></h1>
+<h1>New document for <%= @document.version %></h1>
 
 <% form_for( :document,
              @document,
-             :url => version_documents_path(@document.attachable),
+             :url => version_documents_path(@document.version),
              :html => { :multipart => true } ) do |f| %>
   <%= f.error_messages %>
 
   <p>
     <%= f.label :document_type_id, "Document type:" %>
-    <%= f.collection_select :document_type_id, @document.attachable.document_types, :id, :name %>
+    <%= f.collection_select :document_type_id, @document.version.document_types, :id, :name %>
   </p>
 
   <%= render :partial => 'form', :object => f %>
@@ -19,6 +19,6 @@
 <% end %>
 
 <p>
-<%= link_to 'Back', version_documents_path( @document.attachable ) %>
+<%= link_to 'Back', version_documents_path( @document.version ) %>
 </p>
 

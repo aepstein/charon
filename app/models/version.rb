@@ -7,14 +7,20 @@ class Version < ActiveRecord::Base
   has_one :travel_event_expense
   has_one :durable_good_expense
   has_one :publication_expense
-  has_many :documents, :as => :attachable
+  has_many :documents do
+    def populate
+      proxy_owner.node.document_types.each do |document_type|
+        self.build(:document_type => document_type) if self.select { |d| d.document_type == document_type }.empty?
+      end
+    end
+  end
   accepts_nested_attributes_for :administrative_expense
   accepts_nested_attributes_for :local_event_expense
   accepts_nested_attributes_for :speaker_expense
   accepts_nested_attributes_for :travel_event_expense
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
-  accepts_nested_attributes_for :documents
+  accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['attached'].nil? || attributes['attached'].original_filename.blank? }
 
   validates_presence_of :item
   validates_inclusion_of :perspective, :in => PERSPECTIVES

@@ -14,6 +14,20 @@
 
 </fieldset>
 
+<% unless form.object.documents.empty? %>
+<fieldset>
+
+  <legend><b>Attached documentation</b></legend>
+  <% form.fields_for :documents do |document_form| %>
+  <%= document_form.hidden_field :document_type_id %>
+  <p>
+  <%= document_form.label :attached, document_form.object.document_type.name %>
+  <%= document_form.file_field :attached %>
+  </p>
+  <% end %>
+</fieldset>
+<% end %>
+
 <p>
   <%= form.label :amount, form.object.perspective + " Amount" %><br />
   $<%= form.text_field :amount %>

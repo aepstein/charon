@@ -1,8 +1,8 @@
 Given /^the following documents:$/ do |documents|
   documents.hashes.each do |document_attributes|
     complex_attributes = Hash.new
-    if document_attributes['attachable'] then
-      complex_attributes['attachable'] = Version.all[ document_attributes['attachable'].to_i - 1 ]
+    if document_attributes['version'] then
+      complex_attributes['version'] = Version.all[ document_attributes['version'].to_i - 1 ]
     end
     if document_attributes['document_type'] then
       complex_attributes['document_type'] = DocumentType.find_by_name(document_attributes['document_type'])

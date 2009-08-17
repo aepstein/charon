@@ -86,7 +86,7 @@ class DocumentsController < ApplicationController
     @document.destroy
 
     respond_to do |format|
-      format.html { redirect_to( version_documents_url(@document.attachable) ) }
+      format.html { redirect_to( version_documents_url(@document.version) ) }
       format.xml  { head :ok }
     end
   end

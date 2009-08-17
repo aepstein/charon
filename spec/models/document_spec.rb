@@ -12,9 +12,9 @@ describe Document do
     Factory(:document).id.should_not be_nil
   end
 
-  it "should not save without an attachable" do
+  it "should not save without an version" do
     document = Factory(:document)
-    document.attachable = nil
+    document.version = nil
     document.save.should == false
   end
 
@@ -24,35 +24,35 @@ describe Document do
     document.save.should == false
   end
 
-  it "should not create if it conflicts with an existing document type for an attachable" do
+  it "should not create if it conflicts with an existing document type for an version" do
     document = Factory(:document)
     duplicate = document.clone
     duplicate.save.should == false
   end
 
-  it "should have may_create? and may_update? that return attachable.may_update?" do
+  it "should have may_create? and may_update? that return version.may_update?" do
     document = Factory.build(:document)
-    document.attachable.stub!(:may_update?).and_return(true)
+    document.version.stub!(:may_update?).and_return(true)
     document.may_create?(nil).should == true
     document.may_update?(nil).should == true
-    document.attachable.stub!(:may_update?).and_return(false)
+    document.version.stub!(:may_update?).and_return(false)
     document.may_create?(nil).should == false
     document.may_update?(nil).should == false
   end
 
-  it "should have may_destroy? that returns attachable.may_destroy?" do
+  it "should have may_destroy? that returns version.may_destroy?" do
     document = Factory(:document)
-    document.attachable.stub!(:may_destroy?).and_return(true)
+    document.version.stub!(:may_destroy?).and_return(true)
     document.may_destroy?(nil) == true
-    document.attachable.stub!(:may_destroy?).and_return(false)
+    document.version.stub!(:may_destroy?).and_return(false)
     document.may_destroy?(nil) == true
   end
 
-  it "should have may_see? that returns attachable.may_see?" do
+  it "should have may_see? that returns version.may_see?" do
     document = Factory(:document)
-    document.attachable.stub!(:may_see?).and_return(true)
+    document.version.stub!(:may_see?).and_return(true)
     document.may_see?(nil) == true
-    document.attachable.stub!(:may_see?).and_return(false)
+    document.version.stub!(:may_see?).and_return(false)
     document.may_see?(nil) == true
   end
 end

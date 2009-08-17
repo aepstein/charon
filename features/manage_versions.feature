@@ -96,6 +96,52 @@ Feature: Manage versions
     And I press "Update"
     Then I should not see "Version was successfully updated."
 
+  @current
+  Scenario: Add and update version with documentation (administrative_expense)
+    Given the following document_types:
+      | name        | nodes                  |
+      | price quote | administrative expense |
+    And I am logged in as "admin" with password "secret"
+    And I am on the new version page of the 1st item
+    When I fill in "version_administrative_expense_attributes_copies" with "100"
+    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
+    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
+    And I fill in "version_amount" with "100"
+    And I fill in "version_comment" with "comment"
+    And I attach the file at "features/support/assets/small.png" to "price quote"
+    And I press "Create"
+    Then I should see "Version was successfully created."
+    And I should see "Requestable type: AdministrativeExpense"
+    And I should see "Request node: administrative expense"
+    And I should see "Maximum request: $128.00"
+    And I should see "Requestor amount: $100.00"
+    And I should see "Requestor comment: comment"
+    And I should see "Number of copies: 100"
+    And I should see "Repairs and Restocking: $100.00"
+    And I should see "Mailbox at Willard Straight Hall: $25.00"
+    And I should see "price quote: available"
+    When I follow "Edit"
+    And I fill in "version_administrative_expense_attributes_copies" with "101"
+    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "99"
+    And I choose "version_administrative_expense_attributes_mailbox_wsh_40"
+    And I fill in "version_amount" with "120"
+    And I fill in "version_comment" with "changed comment"
+    And I press "Update"
+    Then I should see "Version was successfully updated."
+    And I should see "Requestable type: AdministrativeExpense"
+    And I should see "Request node: administrative expense"
+    And I should see "Maximum request: $142.03"
+    And I should see "Requestor amount: $120.00"
+    And I should see "Requestor comment: changed comment"
+    And I should see "Number of copies: 101"
+    And I should see "Repairs and Restocking: $99.00"
+    And I should see "Mailbox at Willard Straight Hall: $40.00"
+    And I should see "price quote: available"
+    When I follow "Edit"
+    And I fill in "version_amount" with "150"
+    And I press "Update"
+    Then I should not see "Version was successfully updated."
+
   Scenario: Add and update version (durable_good_expense)
     Given I am logged in as "admin" with password "secret"
     And I am on the new version page of the 2nd item

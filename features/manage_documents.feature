@@ -81,7 +81,7 @@ Feature: Manage documents
 
   Scenario: Delete document
     Given the following documents:
-      | attachable | document_type |
+      | version    | document_type |
       | 2          | intent letter |
       | 2          | travel quote  |
       | 2          | ad copy       |
