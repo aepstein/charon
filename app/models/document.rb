@@ -15,7 +15,7 @@ class Document < ActiveRecord::Base
   delegate :may_destroy?, :to => :version
 
   validates_attachment_presence :attached
-#  validates_presence_of :version
+  validates_presence_of :version
   validates_presence_of :document_type
   validates_uniqueness_of :document_type_id, :scope => [ :version_id ]
   validate :attached_file_size_must_be_less_than_max,

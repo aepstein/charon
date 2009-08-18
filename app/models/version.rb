@@ -31,6 +31,12 @@ class Version < ActiveRecord::Base
   delegate :node, :to => :item
   delegate :document_types, :to => :node
 
+  before_validation_on_create :initialize_documents
+
+  def initialize_documents
+    documents.each { |document| document.version = self }
+  end
+
   def amount_must_be_less_than_requestable_max
     return if requestable.nil? || amount.nil?
     if amount > requestable.max_request then
