@@ -1,0 +1,6 @@
+  <tr>
+    <td><%=h document.document_type %></td>
+    <td><%= link_to_if document.may_see?(current_user), 'Show', document %></td>
+    <td><%= link_to_if document.may_destroy?(current_user), 'Destroy', document, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+

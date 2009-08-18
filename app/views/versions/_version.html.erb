@@ -31,7 +31,19 @@
 </p>
 
 
-<%= render :partial => "#{version.requestable.class.to_s.tableize}/" +
-                       "#{version.requestable.class.to_s.underscore}",
+<%= render :partial => "#{version.requestable.class.to_s.tableize}/#{version.requestable.class.to_s.underscore}",
            :object => version.requestable %>
+
+<% unless @version.documents.empty? %>
+<h2>Attached Documents</h2>
+
+<table>
+  <tr>
+    <th>Type</th>
+  </tr>
+
+<%= render :partial => 'documents/document', :collection => @version.documents %>
+
+</table>
+<% end %>
 

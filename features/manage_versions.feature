@@ -96,7 +96,6 @@ Feature: Manage versions
     And I press "Update"
     Then I should not see "Version was successfully updated."
 
-  @current
   Scenario: Add and update version with documentation (administrative_expense)
     Given the following document_types:
       | name        | nodes                  |
@@ -119,7 +118,9 @@ Feature: Manage versions
     And I should see "Number of copies: 100"
     And I should see "Repairs and Restocking: $100.00"
     And I should see "Mailbox at Willard Straight Hall: $25.00"
-    And I should see "price quote: available"
+    And I should see the following documents:
+      | Type        |
+      | price quote |
     When I follow "Edit"
     And I fill in "version_administrative_expense_attributes_copies" with "101"
     And I fill in "version_administrative_expense_attributes_repairs_restocking" with "99"
@@ -136,7 +137,9 @@ Feature: Manage versions
     And I should see "Number of copies: 101"
     And I should see "Repairs and Restocking: $99.00"
     And I should see "Mailbox at Willard Straight Hall: $40.00"
-    And I should see "price quote: available"
+    And I should see the following documents:
+      | Type        |
+      | price quote |
     When I follow "Edit"
     And I fill in "version_amount" with "150"
     And I press "Update"

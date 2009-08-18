@@ -19,6 +19,7 @@
 
   <legend><b>Attached documentation</b></legend>
   <% form.fields_for :documents do |document_form| %>
+  <%= document_form.hidden_field :id unless document_form.object.new_record? %>
   <%= document_form.hidden_field :document_type_id %>
   <p>
   <%= document_form.label :attached, document_form.object.document_type.name %>

@@ -5,14 +5,8 @@
     <th>Type</th>
   </tr>
 
-<% @documents.each do |document| %>
-  <tr>
-    <td><%=h document.document_type %></td>
-    <td><%= link_to 'Show', document %></td>
-    <td><%= link_to 'Edit', edit_document_path(document) %></td>
-    <td><%= link_to 'Destroy', document, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+<%= render :partial => 'document', :collection => @documents %>
+
 </table>
 
 <br />
