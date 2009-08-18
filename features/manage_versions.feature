@@ -96,7 +96,6 @@ Feature: Manage versions
     And I press "Update"
     Then I should not see "Version was successfully updated."
 
-  @current
   Scenario: Add and update version with documentation (administrative_expense)
     Given the following document_types:
       | name        | nodes                  |
