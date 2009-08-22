@@ -8,6 +8,9 @@ class CreateItems < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :items, :request_id
+    add_index :items, [ :request_id, :node_id ]
+    add_index :items, :parent_id
   end
 
   def self.down

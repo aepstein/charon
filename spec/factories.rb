@@ -91,7 +91,7 @@ end
 
 Factory.define :node do |f|
   f.requestable_type "AdministrativeExpense"
-  f.name "administrative expense"
+  f.sequence(:name) { |n| "administrative expense #{n}" }
   f.item_quantity_limit 1
   f.association :structure
 end

@@ -11,9 +11,8 @@ class CreateDocumentTypes < ActiveRecord::Migration
       t.references :document_type, :null => false
       t.references :node, :null => false
     end
-    add_index :document_types_nodes,
-              [ :document_type_id, :node_id ],
-              :unique => true
+    add_index :document_types, :name, :unique => true
+    add_index :document_types_nodes,[ :document_type_id, :node_id ], :unique => true
   end
 
   def self.down

@@ -10,6 +10,7 @@ class CreateRequests < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :requests, [:basis_id, :status]
   end
 
   def self.down

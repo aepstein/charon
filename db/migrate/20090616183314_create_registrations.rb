@@ -40,6 +40,9 @@ class CreateRegistrations < ActiveRecord::Migration
       t.string :officer_net_id
       t.timestamps
     end
+    add_index :registrations, :parent_id
+    add_index :registrations, :organization_id
+    add_index :registrations, :name
   end
 
   def self.down

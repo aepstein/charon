@@ -8,6 +8,7 @@ class CreateVersions < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :versions, [ :item_id, :perspective ], :unique => true
   end
 
   def self.down

@@ -11,6 +11,7 @@ class CreateAgreements < ActiveRecord::Migration
       t.references :agreement, :null => false
       t.references :permission, :null => false
     end
+    add_index :agreements_permissions, [ :agreement_id, :permission_id ], :unique => true
   end
 
   def self.down

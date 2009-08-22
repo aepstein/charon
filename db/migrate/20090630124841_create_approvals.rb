@@ -7,6 +7,7 @@ class CreateApprovals < ActiveRecord::Migration
 
       t.datetime :created_at
     end
+    add_index :approvals, [ :approvable_id, :approvable_type, :user_id ], :unique => true
   end
 
   def self.down

@@ -16,6 +16,7 @@ class CreateTravelEventExpenses < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :travel_event_expenses, :version_id
   end
 
   def self.down

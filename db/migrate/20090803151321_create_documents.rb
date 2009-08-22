@@ -6,6 +6,7 @@ class CreateDocuments < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :documents, [:version_id, :document_type_id], :unique => true
   end
 
   def self.down

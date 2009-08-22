@@ -8,6 +8,7 @@ class CreateFrameworks < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :frameworks, :name, :unique => true
   end
 
   def self.down

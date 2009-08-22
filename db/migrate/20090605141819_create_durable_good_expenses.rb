@@ -9,6 +9,7 @@ class CreateDurableGoodExpenses < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :durable_good_expenses, :version_id
   end
 
   def self.down

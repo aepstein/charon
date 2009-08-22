@@ -10,7 +10,7 @@ class CreateAdministrativeExpenses < ActiveRecord::Migration
 
       t.timestamps
     end
-
+    add_index :administrative_expenses, :version_id
   end
 
   def self.down

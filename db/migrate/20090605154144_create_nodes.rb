@@ -10,6 +10,8 @@ class CreateNodes < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :nodes, [ :structure_id, :name ], :unique => true
+    add_index :nodes, [ :structure_id, :parent_id ]
   end
 
   def self.down

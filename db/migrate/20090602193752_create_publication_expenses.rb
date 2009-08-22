@@ -12,6 +12,7 @@ class CreatePublicationExpenses < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :publication_expenses, :version_id
   end
 
   def self.down

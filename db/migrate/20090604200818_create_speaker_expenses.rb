@@ -13,6 +13,7 @@ class CreateSpeakerExpenses < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :speaker_expenses, :version_id
   end
 
   def self.down

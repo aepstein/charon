@@ -18,6 +18,7 @@ class CreateLocalEventExpenses < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :local_event_expenses, :version_id
   end
 
   def self.down

@@ -6,6 +6,7 @@ class CreateOrganizations < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :organizations, [ :last_name, :first_name ], :unique => true
   end
 
   def self.down

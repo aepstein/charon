@@ -4,9 +4,7 @@ class CreateOrganizationsRequests < ActiveRecord::Migration
       t.integer :organization_id, :null => false
       t.integer :request_id, :null => false
     end
-    add_index :organizations_requests,
-              [ :organization_id, :request_id ],
-              :unique => true
+    add_index :organizations_requests, [ :organization_id, :request_id ], :unique => true
   end
 
   def self.down
