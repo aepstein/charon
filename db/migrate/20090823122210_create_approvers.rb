@@ -8,6 +8,7 @@ class CreateApprovers < ActiveRecord::Migration
 
       t.timestamps
     end
+    add_index :approvers, [:framework_id, :status, :perspective, :role_id], :unique => true
   end
 
   def self.down

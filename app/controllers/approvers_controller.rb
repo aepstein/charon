@@ -3,6 +3,7 @@ class ApproversController < ApplicationController
   # GET /framework/:framework_id/approvers.xml
   def index
     @framework = Framework.find(params[:framework_id])
+    raise AuthorizationError unless @framework.may_see? current_user
     @approvers = @framework.approvers
 
     respond_to do |format|
@@ -15,6 +16,7 @@ class ApproversController < ApplicationController
   # GET /approvers/1.xml
   def show
     @approver = Approver.find(params[:id])
+    raise AuthorizationError unless @approver.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -26,6 +28,7 @@ class ApproversController < ApplicationController
   # GET /framework/:framework_id/approvers/new.xml
   def new
     @approver = Framework.find(params[:framework_id]).approvers.build
+    raise AuthorizationError unless @approver.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -36,12 +39,14 @@ class ApproversController < ApplicationController
   # GET /approvers/1/edit
   def edit
     @approver = Approver.find(params[:id])
+    raise AuthorizationError unless @approver.may_update? current_user
   end
 
   # POST /framework/:framework_id/approvers
   # POST /framework/:framework_id/approvers.xml
   def create
     @approver = Framework.find(params[:framework_id]).approvers.build(params[:approver])
+    raise AuthorizationError unless @approver.may_create? current_user
 
     respond_to do |format|
       if @approver.save
@@ -59,6 +64,7 @@ class ApproversController < ApplicationController
   # PUT /approvers/1.xml
   def update
     @approver = Approver.find(params[:id])
+    raise AuthorizationError unless @approver.may_update? current_user
 
     respond_to do |format|
       if @approver.update_attributes(params[:approver])
@@ -76,6 +82,7 @@ class ApproversController < ApplicationController
   # DELETE /approvers/1.xml
   def destroy
     @approver = Approver.find(params[:id])
+    raise AuthorizationError unless @approver.may_destroy? current_user
     @approver.destroy
 
     respond_to do |format|

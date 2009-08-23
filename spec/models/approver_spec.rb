@@ -33,5 +33,35 @@ describe Approver do
     Version::PERSPECTIVES.should_not include(approver.perspective)
     approver.save.should == false
   end
+
+  it "should not save duplicate approvers" do
+    original = Factory(:approver)
+    second = original.clone
+    second.save.should == false
+  end
+
+  it "should have may_create? that returns framework.may_update?" do
+    approver = Factory.build(:approver)
+    approver.framework.stub!(:may_update?).and_return('may_update')
+    approver.may_create?(nil).should == 'may_update'
+  end
+
+  it "should have may_update? that returns framework.may_update?" do
+    approver = Factory(:approver)
+    approver.framework.stub!(:may_update?).and_return('may_update')
+    approver.may_update?(nil).should == 'may_update'
+  end
+
+  it "should have may_destroy? that returns framework.may_update?" do
+    approver = Factory(:approver)
+    approver.framework.stub!(:may_update?).and_return('may_update')
+    approver.may_destroy?(nil).should == 'may_update'
+  end
+
+  it "should have a may_see? that returns framework.may_see?" do
+    approver = Factory(:approver)
+    approver.framework.stub!(:may_see?).and_return('may_see')
+    approver.may_see?(nil).should == 'may_see'
+  end
 end
 

@@ -16,6 +16,8 @@ module NavigationHelpers
     when /the new agreement page/
       new_agreement_path
 
+    when /^"(.+)'s new approver page"$/
+      new_framework_approver_path( Framework.find_by_name($1) )
 
     when /the new document page of the (\d+)(?:st|nd|rd|th) version/
       new_version_document_path( Version.all[ $1.to_i - 1 ] )
