@@ -27,3 +27,6 @@ external_registrations:
   username: root
   host: localhost
 
+
+cucumber:
+  <<: *TEST

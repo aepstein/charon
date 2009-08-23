@@ -86,7 +86,7 @@ class ApproversController < ApplicationController
     @approver.destroy
 
     respond_to do |format|
-      format.html { redirect_to(approvers_url) }
+      format.html { redirect_to( framework_approvers_url(@approver.framework) ) }
       format.xml  { head :ok }
     end
   end

@@ -11,4 +11,5 @@ require 'webrat'
 require 'cucumber/rails/rspec'
 require 'webrat/core/matchers'
 require "#{Rails.root}/spec/factories"
+require 'cucumber/webrat/element_locator' # Lets you do table.diff!(element_at('#my_table_or_dl_or_ul_or_ol').to_table)
 

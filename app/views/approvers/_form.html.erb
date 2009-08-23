@@ -1,13 +1,13 @@
   <p>
-    <%= f.label :perspective %>
-    <%= f.select :perspective, Version::PERSPECTIVES %>
+    <%= form.label :perspective %>
+    <%= form.select :perspective, Version::PERSPECTIVES %>
   </p>
   <p>
-    <%= f.label :role_id %><br />
-    <%= f.collection_select :role_id, Role.all, :id, :name %>
+    <%= form.label :role_id %><br />
+    <%= form.collection_select :role_id, Role.all, :id, :name %>
   </p>
   <p>
-    <%= f.label :status %><br />
-    <%= f.select :status, Request.aasm_state_names %>
+    <%= form.label :status %><br />
+    <%= form.select :status, Request.aasm_state_names %>
   </p>
 

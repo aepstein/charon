@@ -1,4 +1,3 @@
-@wip
 Feature: Manage approvers
   In order to allow applications to advance only after necessary approvals are received
   As a security-minded organization
@@ -42,12 +41,13 @@ Feature: Manage approvers
 
   Scenario: Delete approver
     Given the following approvers:
-      | perspective | role           | status    |
-      | requestor   | president      | completed |
-      | requestor   | treasurer      | completed |
-      | requestor   | advisor        | completed |
-      | requestor   | vice-president | completed |
-    When I delete the 3rd approver
+      | framework | perspective | role           | status    |
+      | safc      | requestor   | president      | completed |
+      | safc      | requestor   | treasurer      | completed |
+      | safc      | requestor   | advisor        | completed |
+      | safc      | requestor   | vice-president | completed |
+    And I am logged in as "admin" with password "secret"
+    When I delete "safc's" 3rd approver
     Then I should see the following approvers:
       | Perspective | Role           | Status    |
       | requestor   | advisor        | completed |

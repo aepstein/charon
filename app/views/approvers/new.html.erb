@@ -1,6 +1,6 @@
-<h1>New approver for <%= @approve.framework %></h1>
+<h1>New approver for <%= @approver.framework %></h1>
 
-<% form_for(@approver) do |f| %>
+<% form_for(:approver, @approver, :url => framework_approvers_path(@approver.framework) ) do |f| %>
   <%= f.error_messages %>
 
   <%= render :partial => 'form', :object => f %>
