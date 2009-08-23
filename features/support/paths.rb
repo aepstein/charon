@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new approver page/
+      new_approver_path
+
     when /the new agreement page/
       new_agreement_path
 

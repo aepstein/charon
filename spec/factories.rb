@@ -8,6 +8,13 @@ Factory.define :approval do |f|
   f.association :approvable, :factory => :request
 end
 
+Factory.define :approver do |f|
+  f.association :framework
+  f.association :role
+  f.status 'submitted'
+  f.perspective 'requestor'
+end
+
 Factory.define :document do |f|
   f.attached { ActionController::TestUploadedFile.new('features/support/assets/small.png','image/png') }
   f.association :version, :factory => :attachable_version

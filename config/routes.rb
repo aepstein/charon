@@ -4,6 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :requests, :only => [ :index ]
   map.resources :frameworks, :shallow => true do |framework|
     framework.resources :permissions
+    framework.resources :approvers
   end
   map.resources :addresses
   map.resources :stages

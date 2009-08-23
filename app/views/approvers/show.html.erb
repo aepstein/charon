@@ -1,0 +1,27 @@
+<p>
+  <b>Framework:</b>
+  <%=h @approver.framework %>
+</p>
+
+<p>
+  <b>Perspective:</b>
+  <%=h @approver.perspective %>
+</p>
+
+<p>
+  <b>Role:</b>
+  <%=h @approver.role %>
+</p>
+
+<p>
+  <b>Status:</b>
+  <%=h @approver.status %>
+</p>
+
+
+
+<p>
+<%= link_to 'Edit', edit_approver_path(@approver) %> |
+<%= link_to 'Back', framework_approvers_path( @approver.framework ) %>
+</p>
+
