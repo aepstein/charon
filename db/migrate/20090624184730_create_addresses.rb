@@ -12,7 +12,7 @@ class CreateAddresses < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :addresses, [ :addressable_id, :addressable_type ]
+    add_index :addresses, [ :addressable_id, :addressable_type, :label ], :unique => true
   end
 
   def self.down
