@@ -92,10 +92,19 @@ describe Request do
     must_and_did = Factory(:user)
     must_and_did_not = Factory(:user)
     did_but_not_must = Factory(:user)
-
     request = Factory(:request)
-    request.approvals.create(:user => must_and_did)
-    request.approvals.create(:user => did_but_not_must)
+    role = Factory(:role)
+    [ must_and_did, must_and_did_not ].each do |user|
+      request.organizations.first.memberships.create(
+        :role => role,
+        :user => user,
+        :active => true
+      )
+    end
+    request.framework.approvers.create( :perspective => 'requestor', :status => 'started', :role => role )
+    [ must_and_did, did_but_not_must ].each do |user|
+      approval = request.approvals.create(:user => user)
+    end
     request.approvers.stub!(:required_for).and_return( [ must_and_did, must_and_did_not ] )
     unfulfilled = request.approvers.unfulfilled_for(nil)
     unfulfilled.should_not include(must_and_did)

@@ -46,5 +46,14 @@ describe Approval do
     approval.approvable.stub!(:may_unapprove_other?).and_return(false)
     approval.may_destroy?(other).should == false
   end
+
+  it "should have agreeements named scope that returns only agreements" do
+    request_approval = Factory(:approval, {:approvable => Factory(:request)})
+    agreement_approval = Factory(:approval, {:approvable => Factory(:agreement)})
+    approvals = Approval.agreements
+    approvals.should include( agreement_approval )
+    approvals.should_not include( request_approval )
+    approvals.size.should == 1
+  end
 end
 

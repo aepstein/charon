@@ -7,6 +7,7 @@ end
 class ApplicationController < ActionController::Base
   helper :all
   helper_method :current_user_session, :current_user
+  helper_method :approvable_approval_path, :new_approvable_approval_path
   filter_parameter_logging :password, :password_confirmation
 
 protected
@@ -58,6 +59,28 @@ protected
   def redirect_back_or_default(default)
     redirect_to(session[:return_to] || default)
     session[:return_to] = nil
+  end
+
+  def approvable_approval_path(approvable)
+    case approvable.class.to_s
+    when "Agreement"
+      agreement_approval_path(approvable)
+    when "Request"
+      request_approval_path(approvable)
+    else
+      raise "Class #{approvable.class} not supported."
+    end
+  end
+
+  def new_approvable_approval_path(approvable)
+    case approvable.class.to_s
+    when "Agreement"
+      new_agreement_approval_path(approvable)
+    when "Request"
+      new_request_approval_path(approvable)
+    else
+      raise "Class #{approvable.class} not supported."
+    end
   end
 end
 

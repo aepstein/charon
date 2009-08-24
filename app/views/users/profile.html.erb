@@ -16,6 +16,20 @@
 <% unless current_user.registrations.active.unmatched.empty? %>
   <h3>Unmatched Registrations:<h3>
 
+  <ul>
   <%= render :partial => "registration", :collection => current_user.registrations.active.unmatched %>
+  </ul>
+<% end %>
+
+<% unless current_user.approvals.agreements.empty? %>
+  <h3>Agreements you have accepted</h3>
+
+  <%= render :partial => 'approvals', :object => current_user.approvals.agreements, :locals => { :id => 'accepted_agreements' } %>
+<% end %>
+
+<% unless current_user.approvals.unfulfilled.empty? %>
+  <h3>Agreements awaiting your approval</h3>
+
+  <%= render :partial => 'approvals', :object => current_user.approvals.unfulfilled, :locals => { :id => 'unfulfilled_agreements' } %>
 <% end %>
 

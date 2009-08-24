@@ -1,9 +1,10 @@
 Given /^the following permissions:$/ do |permissions|
   permissions.hashes.each do |permission|
-    complex_attrs = Hash.new
-    complex_attrs['framework'] = Framework.find_by_name(permission['framework']) if permission['framework']
-    complex_attrs['role'] = Role.find_by_name(permission['role']) if permission['role']
-    Factory(:permission, permission.merge(complex_attrs))
+    complex = Hash.new
+    complex['framework'] = Framework.find_by_name(permission['framework']) if permission['framework']
+    complex['role'] = Role.find_by_name(permission['role']) if permission['role']
+    complex['agreements'] = permission['agreements'].split(',').map { |a| Agreement.find_by_name(a.strip) } if permission['agreements']
+    Factory(:permission, permission.merge(complex))
   end
 end
 

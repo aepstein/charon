@@ -7,7 +7,21 @@ class User < ActiveRecord::Base
     c.login_field = 'net_id'
   end
 
-  has_many :approvals
+  has_many :approvals do
+    def unfulfilled
+      unfulfilled_agreements.map { |a| self.build( :approvable => a ) }
+    end
+    def unfulfilled_agreements
+      required_agreements.reject { |a| agreement_ids.include?( a.id ) }
+    end
+  protected
+    def required_agreements
+      Agreement.roles( proxy_owner.roles( :conditions => ['memberships.active = ?', true] ) )
+    end
+    def agreement_ids
+      self.agreements.map { |a| a.id }
+    end
+  end
   has_many :memberships,  :include => [ :organization, :role ], :dependent => :destroy
   has_many :roles, :through => :memberships do
     def in(organizations)

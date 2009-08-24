@@ -10,3 +10,7 @@ Given /^([0-9]+) (.+) records?$/ do |number, factory|
   end
 end
 
+Then /^I should see the following entries in "(.+)":$/ do |table_id, expected_approvals_table|
+  expected_approvals_table.diff!(table_at("##{table_id}").to_a)
+end
+

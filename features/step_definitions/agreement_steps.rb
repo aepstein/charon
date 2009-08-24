@@ -1,5 +1,7 @@
 Given /^the following agreements:$/ do |agreements|
-  Agreement.create!(agreements.hashes)
+  agreements.hashes.each do |attributes|
+    Factory(:agreement,attributes)
+  end
 end
 
 When /^I delete the (\d+)(?:st|nd|rd|th) agreement$/ do |pos|

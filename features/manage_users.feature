@@ -70,6 +70,16 @@ Feature: Manage users
       | owner | allowed   | matched organization   |        |                           |
       | owner | allowed   | unmatched organization |        |                           |
       | owner | allowed   |                        | true   | unregistered organization |
+    And the following agreements:
+      | name   |
+      | safc   |
+      | gpsafc |
+    And the following permissions:
+      | role    | agreements   |
+      | allowed | safc, gpsafc |
+    And the following approvals:
+      | agreement | user  |
+      | safc      | owner |
     And I am logged in as "owner" with password "secret"
     And I am on the profile page
     Then I should see "matched organization"
@@ -77,6 +87,12 @@ Feature: Manage users
     And I should see "unregistered organization"
     And I should not see "irrelevant organization"
     And I should not see "irrelevant registration"
+    And I should see the following entries in "accepted_agreements":
+      | Approvable |
+      | safc       |
+    And I should see the following entries in "unfulfilled_agreements":
+      | Approvable |
+      | gpsafc     |
 
   Scenario: Delete user
     Given I am logged in as "admin" with password "secret"

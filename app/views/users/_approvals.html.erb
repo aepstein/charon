@@ -1,0 +1,10 @@
+<table id="<%= id %>">
+  <tr>
+    <th>Approvable</th>
+    <th>Created</th>
+  </tr>
+
+<%= render :partial => 'approvals/approval', :collection => approvals, :locals => { :user => false, :approvable => true } %>
+
+</table>
+

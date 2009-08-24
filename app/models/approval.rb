@@ -5,15 +5,26 @@ class Approval < ActiveRecord::Base
   delegate :may_approve?, :to => :approvable
   delegate :may_unapprove?, :to => :approvable
   delegate :may_unapprove_other?, :to => :approvable
-  delegate :approve!, :to => :approvable
-  delegate :unapprove!, :to => :approvable
+  delegate :approvals_fulfilled?, :to => :approvable
 
-  validates_uniqueness_of :approvable_id, [ :approvable_type, :user_id ]
+  named_scope :agreements, :conditions => { :approvable_type => 'Agreement' }
+  named_scope :requests, :conditions => { :approvable_type => 'Request' }
+
+  validates_uniqueness_of :approvable_id, :scope => [ :approvable_type, :user_id ]
   validates_presence_of :approvable
   validates_presence_of :user
 
-  after_create :approve!
-  after_destroy :unapprove!
+  after_create :approve_approvable
+  after_destroy :unapprove_approvable
+
+  def approve_approvable
+    approvable.approve! if approvals_fulfilled?
+  end
+
+  # TODO must be more robust
+  def unapprove_approvable
+    approvable.unapprove!
+  end
 
   def may_create?(user)
     may_approve? user

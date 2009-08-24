@@ -4,21 +4,17 @@
   <tr>
     <th>User</th>
     <th>Approvable</th>
-    <th>Approvable type</th>
+    <th>Created</th>
   </tr>
 
-<% @approvals.each do |approval| %>
-  <tr>
-    <td><%=h approval.user_id %></td>
-    <td><%=h approval.approvable_id %></td>
-    <td><%=h approval.approvable_type %></td>
-    <td><%= link_to 'Show', approval %></td>
-    <td><%= link_to 'Edit', edit_approval_path(approval) %></td>
-    <td><%= link_to 'Destroy', approval, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+<%= render :partial => 'approval', :collection => @approvals,
+           :locals => { :user => true, :approvable => true } %>
+
 </table>
 
 <br />
 
+<p>
 <%= link_to 'New approval', new_approval_path %>
+</p>
+

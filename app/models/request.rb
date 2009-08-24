@@ -62,11 +62,11 @@ class Request < ActiveRecord::Base
   aasm_column :status
   aasm_initial_state :started
   aasm_state :started
-  aasm_state :completed
+  aasm_state :completed, :guard => :approvals_fulfilled?
   aasm_state :submitted
   aasm_state :accepted
   aasm_state :reviewed
-  aasm_state :certified
+  aasm_state :certified, :guard => :approvals_fulfilled?
   aasm_state :released
 
   aasm_event :accept do
@@ -121,6 +121,10 @@ class Request < ActiveRecord::Base
       return true if may(user).include?(action)
       false
     end
+  end
+
+  def approvals_fulfilled?
+    approvers.unfulfilled_for( status ).empty?
   end
 
   def self.aasm_state_names
