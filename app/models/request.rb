@@ -1,6 +1,25 @@
 class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
   belongs_to :basis
+  has_many :approvers, :through => :approvals, :source => :user do
+    def required_for( status )
+      requestor = "organization_id IN (SELECT organization_id FROM organizations_requests WHERE request_id = :request_id) " +
+                  "AND role_id IN (SELECT role_id FROM approvers WHERE perspective = 'requestor' AND " +
+                  "status = :status AND framework_id = :framework_id)"
+      reviewer = "organization_id = :organization_id AND role_id IN " +
+                 "(SELECT role_id FROM approvers WHERE perspective = 'reviewer' AND " +
+                 "status = :status AND framework_id = :framework_id)"
+      conditions = [
+        "users.id IN (SELECT user_id FROM memberships WHERE active = :true AND ( (#{requestor}) OR (#{reviewer}) ) )",
+        { :request_id => proxy_owner.id, :status => status, :framework_id => proxy_owner.framework.id,
+          :organization_id => proxy_owner.basis.organization.id, :true => true }
+      ]
+      User.find( :all, :conditions => conditions )
+    end
+    def unfulfilled_for( status )
+      self.required_for( status ) - self
+    end
+  end
   has_many :approvals, :dependent => :destroy, :as => :approvable
   has_many :items, :dependent => :destroy, :include => [ :node, :parent, :versions ] do
     def children_of(parent_item)
