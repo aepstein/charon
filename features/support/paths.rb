@@ -11,6 +11,9 @@ module NavigationHelpers
     when /the homepage/
       '/'
 
+    when /the new organization page/
+      new_organization_path
+
     when /"(.+)'s" new address page/
       new_user_address_path( User.find_by_net_id($1) )
 
@@ -26,7 +29,7 @@ module NavigationHelpers
     when /the new document page of the (\d+)(?:st|nd|rd|th) version/
       new_version_document_path( Version.all[ $1.to_i - 1 ] )
 
-    when /the new document_type page/
+  when /the new document_type page/
       new_document_type_path
 
     when /the new version page of the (\d+)(?:st|nd|rd|th) item/

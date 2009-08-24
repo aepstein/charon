@@ -1,13 +1,17 @@
 <p>
-  <b>First name:</b>
-  <%=h @organization.first_name %>
+  <b>First name:</b> <%=h @organization.first_name %>
 </p>
 
 <p>
-  <b>Last name:</b>
-  <%=h @organization.last_name %>
+  <b>Last name:</b> <%=h @organization.last_name %>
 </p>
 
+<p>
+  <b>Club sport:</b> <%= @organization.club_sport? ? 'Yes' : 'No' %>
+</p>
 
+<p>
 <%= link_to 'Edit', edit_organization_path(@organization) %> |
 <%= link_to 'Back', organizations_path %>
+</p>
+

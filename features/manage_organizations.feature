@@ -50,6 +50,18 @@ Feature: Manage organizations
       | allowed_user | see              | see            | see             |
       | global       | not see          | not see        | not see         |
 
+  @wip
+  Scenario: Register a new organization
+    Given I am logged in as "admin" with password "secret"
+    And I am on the new organization page
+    When I fill in "First name" with "Cornell"
+    And I fill in "Last name" with "Club"
+    And I check "Club sport"
+    And I press "Create"
+    Then I should see "First name: Cornell"
+    And I should see "Last name: Club"
+    And I should see "Club sport: Yes"
+
   Scenario Outline: Show or hide Create, Edit, Destroy, and Show request links
     Given the following requests:
       | status   | organizations | basis   |

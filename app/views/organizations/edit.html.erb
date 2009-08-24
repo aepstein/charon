@@ -3,18 +3,15 @@
 <% form_for(@organization) do |f| %>
   <%= f.error_messages %>
 
-  <p>
-    <%= f.label :first_name %><br />
-    <%= f.text_field :first_name %>
-  </p>
-  <p>
-    <%= f.label :last_name %><br />
-    <%= f.text_field :last_name %>
-  </p>
+  <%= render :partial => 'form', :object => f %>
+
   <p>
     <%= f.submit 'Update' %>
   </p>
 <% end %>
 
+<p>
 <%= link_to 'Show', @organization %> |
 <%= link_to 'Back', organizations_path %>
+</p>
+
