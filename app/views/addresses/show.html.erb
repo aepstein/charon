@@ -1,43 +1,31 @@
+<h1>Address for <%= @address.addressable %></h1>
+
 <p>
-  <b>Addressable:</b>
-  <%=h @address.addressable_id %>
+  <b>Label:</b> <%=h @address.label %>
 </p>
 
 <p>
-  <b>Addressable type:</b>
-  <%=h @address.addressable_type %>
+  <b>Street:</b> <%=h @address.street %>
 </p>
 
 <p>
-  <b>Label:</b>
-  <%=h @address.label %>
+  <b>City:</b> <%=h @address.city %>
 </p>
 
 <p>
-  <b>Street:</b>
-  <%=h @address.street %>
+  <b>State:</b> <%=h @address.state %>
 </p>
 
 <p>
-  <b>City:</b>
-  <%=h @address.city %>
+  <b>Zip:</b> <%=h @address.zip %>
 </p>
 
 <p>
-  <b>State:</b>
-  <%=h @address.state %>
+  <b>On campus:</b> <%= @address.on_campus? ? 'Yes' : 'No' %>
 </p>
 
 <p>
-  <b>Zip:</b>
-  <%=h @address.zip %>
-</p>
-
-<p>
-  <b>On campus:</b>
-  <%=h @address.on_campus %>
-</p>
-
-
 <%= link_to 'Edit', edit_address_path(@address) %> |
-<%= link_to 'Back', addresses_path %>
+<%= link_to 'Back', addressable_addresses_path(@address.addressable) %>
+</p>
+

@@ -1,0 +1,12 @@
+  <tr>
+    <td><%=h address.label %></td>
+    <td><%=h address.street %></td>
+    <td><%=h address.city %></td>
+    <td><%=h address.state %></td>
+    <td><%=h address.zip %></td>
+    <td><%=h address.on_campus %></td>
+    <td><%= link_to 'Show', address %></td>
+    <td><%= link_to 'Edit', edit_address_path(address) %></td>
+    <td><%= link_to 'Destroy', address, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+

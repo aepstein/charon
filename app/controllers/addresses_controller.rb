@@ -1,8 +1,9 @@
 class AddressesController < ApplicationController
-  # GET /addresses
-  # GET /addresses.xml
+  # GET /user/:user_id/addresses
+  # GET /user/:user_id/addresses.xml
   def index
-    @addresses = Address.all
+    raise AuthorizationError unless addressable.may_see? current_user
+    @addresses = addressable.addresses
 
     respond_to do |format|
       format.html # index.html.erb
@@ -14,6 +15,7 @@ class AddressesController < ApplicationController
   # GET /addresses/1.xml
   def show
     @address = Address.find(params[:id])
+    raise AuthorizationError unless @address.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -21,10 +23,11 @@ class AddressesController < ApplicationController
     end
   end
 
-  # GET /addresses/new
-  # GET /addresses/new.xml
+  # GET /user/:user_id/addresses/new
+  # GET /user/:user_id/addresses/new.xml
   def new
-    @address = Address.new
+    @address = addressable.addresses.build
+    raise AuthorizationError unless @address.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -35,12 +38,14 @@ class AddressesController < ApplicationController
   # GET /addresses/1/edit
   def edit
     @address = Address.find(params[:id])
+    raise AuthorizationError unless @address.may_update? current_user
   end
 
-  # POST /addresses
-  # POST /addresses.xml
+  # POST /user/:user_id/addresses
+  # POST /user/:user_id/addresses.xml
   def create
-    @address = Address.new(params[:address])
+    @address = addressable.addresses.build(params[:address])
+    raise AuthorizationError unless @address.may_create? current_user
 
     respond_to do |format|
       if @address.save
@@ -58,6 +63,7 @@ class AddressesController < ApplicationController
   # PUT /addresses/1.xml
   def update
     @address = Address.find(params[:id])
+    raise AuthorizationError unless @address.may_update? current_user
 
     respond_to do |format|
       if @address.update_attributes(params[:address])
@@ -75,11 +81,28 @@ class AddressesController < ApplicationController
   # DELETE /addresses/1.xml
   def destroy
     @address = Address.find(params[:id])
+    raise AuthorizationError unless @address.may_destroy? current_user
     @address.destroy
 
     respond_to do |format|
-      format.html { redirect_to(addresses_url) }
+      format.html { redirect_to( addressable_addresses_url(@address.addressable) ) }
       format.xml  { head :ok }
     end
   end
+
+private
+
+  def addressable_addresses_url(addressable)
+    case addressable.class.to_s
+    when "User"
+      user_addresses_url(addressable)
+    else
+      raise "Class #{addressable.class} not supported"
+    end
+  end
+
+  def addressable
+    @addressable ||= User.find(params[:user_id])
+  end
 end
+

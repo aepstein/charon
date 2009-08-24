@@ -1,9 +1,7 @@
-<h1>Listing addresses</h1>
+<h1>Listing addresses for <%= @addressable %></h1>
 
 <table>
   <tr>
-    <th>Addressable</th>
-    <th>Addressable type</th>
     <th>Label</th>
     <th>Street</th>
     <th>City</th>
@@ -12,23 +10,13 @@
     <th>On campus</th>
   </tr>
 
-<% @addresses.each do |address| %>
-  <tr>
-    <td><%=h address.addressable_id %></td>
-    <td><%=h address.addressable_type %></td>
-    <td><%=h address.label %></td>
-    <td><%=h address.street %></td>
-    <td><%=h address.city %></td>
-    <td><%=h address.state %></td>
-    <td><%=h address.zip %></td>
-    <td><%=h address.on_campus %></td>
-    <td><%= link_to 'Show', address %></td>
-    <td><%= link_to 'Edit', edit_address_path(address) %></td>
-    <td><%= link_to 'Destroy', address, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
+  <%= render :partial => 'address', :collection => @addresses %>
+
 </table>
 
 <br />
 
-<%= link_to 'New address', new_address_path %>
+<p>
+<%= link_to 'New address', new_addressable_address_path(@addressable) %>
+</p>
+

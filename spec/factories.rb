@@ -1,3 +1,8 @@
+Factory.define :address do |f|
+  f.association :addressable, :factory => :user
+  f.sequence(:label) { |n| "Address #{n}" }
+end
+
 Factory.define :agreement do |f|
   f.sequence(:name) { |n| "Agreement #{n}" }
   f.content "Text of an agreement"

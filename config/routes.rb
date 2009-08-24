@@ -1,4 +1,7 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :users, :shallow => true do |user|
+    user.resources :addresses
+  end
   map.resources :agreements
   map.resources :document_types
   map.resources :requests, :only => [ :index ]
@@ -6,8 +9,6 @@ ActionController::Routing::Routes.draw do |map|
     framework.resources :permissions
     framework.resources :approvers
   end
-  map.resources :addresses
-  map.resources :stages
   map.resources :structures, :shallow => true do |structure|
     structure.resources :nodes
   end
@@ -24,7 +25,6 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   map.resources :roles
-  map.resources :users
   map.resources :registrations
   map.login 'login', :controller => 'user_sessions', :action => 'new'
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'

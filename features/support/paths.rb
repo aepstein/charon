@@ -10,6 +10,10 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+
+    when /"(.+)'s" new address page/
+      new_user_address_path( User.find_by_net_id($1) )
+
     when /the new approver page/
       new_approver_path
 

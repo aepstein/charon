@@ -20,6 +20,7 @@ class User < ActiveRecord::Base
     def by_label(label)
       self.select { |a| a.label == label}[0]
     end
+
     def create_or_update_from_attributes(attributes)
       return false unless attributes[:label]
       return self.create(attributes) if old = self.by_label(attributes[:label]).nil?
