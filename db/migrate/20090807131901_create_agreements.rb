@@ -2,6 +2,8 @@ class CreateAgreements < ActiveRecord::Migration
   def self.up
     create_table :agreements do |t|
       t.string :name, :null => false
+      t.string :contact_name, :null => false
+      t.string :contact_email, :null => false
       t.text :purpose
       t.text :content, :null => false
 

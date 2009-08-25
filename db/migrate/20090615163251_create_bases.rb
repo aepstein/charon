@@ -5,6 +5,8 @@ class CreateBases < ActiveRecord::Migration
       t.references :framework, :null => false
       t.references :organization, :null => false
       t.references :structure, :null => false
+      t.string :contact_name, :null => false
+      t.string :contact_email, :null => false
       t.datetime :open_at, :null => false
       t.datetime :closed_at, :null => false
 

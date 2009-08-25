@@ -20,6 +20,8 @@ class Agreement < ActiveRecord::Base
   validates_uniqueness_of :name
   validates_presence_of :name
   validates_presence_of :content
+  validates_presence_of :contact_name
+  validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
 
   def approve!
   end

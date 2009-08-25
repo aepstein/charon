@@ -1,0 +1,7 @@
+<p>
+<%=h approval.approvable %> is now awaiting your approval.  To approve, go to
+<a href="<%= new_approvable_approval_url(approval.approvable) %>"><%= new_approvable_approval_url(approval.approvable) %></a>.
+If you have any questions, please contact <%=h approval.approvable.contact_name %>
+&gt;<a href="mailto:<%= approval.approvable.contact_email%>"><%= approval.approvable.contact_email %></a>&lt;.
+</p>
+

@@ -18,6 +18,14 @@
                                :name %>
   </p>
   <p>
+    <%= form.label :contact_name %>
+    <%= form.text_field :contact_name %>
+  </p>
+  <p>
+    <%= form.label :contact_email %>
+    <%= form.text_field :contact_email %>
+  </p>
+  <p>
     <%= form.label :open_at %><br />
     <%= form.calendar_date_select :open_at %>
   </p>

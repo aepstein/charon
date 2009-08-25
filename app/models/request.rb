@@ -39,6 +39,8 @@ class Request < ActiveRecord::Base
   delegate :framework, :to => :basis
   delegate :nodes, :to => :structure
   delegate :permissions, :to => :framework
+  delegate :contact_name, :to => :basis
+  delegate :contact_email, :to => :basis
 
   validate :must_have_open_basis, :must_have_eligible_organizations
 

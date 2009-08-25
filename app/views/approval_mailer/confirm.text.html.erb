@@ -1,0 +1,7 @@
+<p>
+This is email is a confirmation that you approved <%=h approval.approvable %> on
+<%=h approval.created_at %>.  If you have any questions, please contact
+<%=h approval.approvable.contact_name %>
+&gt;<a href="mailto:<%= approval.approvable.contact_email%>"><%= approval.approvable.contact_email %></a>&lt;.
+</p>
+

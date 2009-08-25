@@ -37,7 +37,8 @@ class User < ActiveRecord::Base
 
     def create_or_update_from_attributes(attributes)
       return false unless attributes[:label]
-      return self.create(attributes) if old = self.by_label(attributes[:label]).nil?
+      old = self.by_label(attributes[:label])
+      return self.create(attributes) if old.nil?
       old.update_attributes(attributes)
       old
     end

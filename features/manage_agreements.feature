@@ -8,21 +8,29 @@ Feature: Manage agreements
       | net_id  | password | admin |
       | admin   | secret   | true  |
       | regular | secret   | false |
-
+  @current
   Scenario: Register new agreement
     Given I am logged in as "admin" with password "secret"
     And I am on the new agreement page
     When I fill in "Name" with "Ethical Conduct Agreement"
     And I fill in "Content" with "I agree to behave ethically."
+    And I fill in "Contact name" with "Office of the Assemblies"
+    And I fill in "Contact email" with "office@example.com"
     And I press "Create"
-    Then I should see "Ethical Conduct Agreement"
+    Then I should see "Name: Ethical Conduct Agreement"
     And I should see "I agree to behave ethically."
+    And I should see "Contact name: Office of the Assemblies"
+    And I should see "Contact email: office@example.com"
     When I follow "Edit"
     And I fill in "Name" with "Modified Ethical Conduct Agreement"
     And I fill in "Content" with "I agree to try to behave ethically."
+    And I fill in "Contact name" with "New Office of the Assemblies"
+    And I fill in "Contact email" with "new_office@example.com"
     And I press "Update"
     Then I should see "Modified Ethical Conduct Agreement"
     And I should see "I agree to try to behave ethically."
+    And I should see "Contact name: New Office of the Assemblies"
+    And I should see "Contact email: new_office@example.com"
 
   Scenario Outline: Properly restrict access to new agreement
     Given I am logged in as "<user>" with password "secret"

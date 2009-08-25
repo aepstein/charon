@@ -24,10 +24,17 @@ Feature: Manage bases
     When I fill in "Name" with "Basis 1"
     And I select "test" from "Structure"
     And I select "a framework" from "Framework"
+    And I fill in "Contact name" with "Office of the Assemblies"
+    And I fill in "Contact email" with "office@example.com"
     And I fill in "Open at" with "2009-10-15 12:00:00"
     And I fill in "Closed at" with "2009-10-20 12:00:00"
     And I press "Create"
     Then I should see "Basis was successfully created."
+    And I should see "Name: Basis 1"
+    And I should see "Structure: test"
+    And I should see "Framework: a framework"
+    And I should see "Contact name: Office of the Assemblies"
+    And I should see "Contact email: office@example.com"
 
   Scenario: Edit basis
     Given the following bases:
