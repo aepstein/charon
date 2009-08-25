@@ -2,9 +2,16 @@
 
 <%= render :partial => "search" %>
 
+<table>
+<tr>
+<th>Name</th>
+</tr>
 <ul>
-<% @registrations.each do |reg| %>
-  <li><%= link_to h(reg.name), registration_path(reg) %></li>
-<% end -%>
+<% @registrations.each do |registration| %>
+  <tr>
+  <td><%=h registration %></td>
+  <td><%= link_to 'Show', registration_path(registration) %></td>
+  <td><%= link_to 'Create Organization', registration_organization_path( registration, :html => { :method => :post }) %>
+<% end %>
 </ul>
 

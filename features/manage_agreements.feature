@@ -8,7 +8,7 @@ Feature: Manage agreements
       | net_id  | password | admin |
       | admin   | secret   | true  |
       | regular | secret   | false |
-  @current
+
   Scenario: Register new agreement
     Given I am logged in as "admin" with password "secret"
     And I am on the new agreement page

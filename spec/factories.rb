@@ -6,6 +6,8 @@ end
 Factory.define :agreement do |f|
   f.sequence(:name) { |n| "Agreement #{n}" }
   f.content "Text of an agreement"
+  f.contact_name "a contact"
+  f.contact_email "contact@example.com"
 end
 
 Factory.define :approval do |f|
@@ -119,6 +121,8 @@ Factory.define :basis do |f|
   f.association :structure
   f.open_at DateTime.now - 1.days
   f.closed_at DateTime.now + 10.days
+  f.contact_name "a contact"
+  f.contact_email "contact@example.com"
 end
 
 Factory.define :request do |f|

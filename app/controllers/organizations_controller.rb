@@ -51,8 +51,14 @@ class OrganizationsController < ApplicationController
 
   # POST /organizations
   # POST /organizations.xml
+  # POST /registrations/:registration_id/organization
+  # POST /registrations/:registration_id/organization.xml
   def create
-    @organization = Organization.new(params[:organization])
+    if params[:registration_id]
+      @organization = Organization.find_or_build_by_registration(Registration.find(params[:registration_id]))
+    else
+      @organization = Organization.new(params[:organization])
+    end
 
     respond_to do |format|
       if @organization.save

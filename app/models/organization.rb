@@ -23,8 +23,14 @@ class Organization < ActiveRecord::Base
   end
 
   def self.find_or_create_by_registration(registration)
+    organization = Organization.find_or_build_by_registration( registration )
+    organization.save
+    organization
+  end
+
+  def self.find_or_build_by_registration(registration)
     return registration.organization unless registration.organization.nil?
-    organization = Organization.create(registration.attributes_for_organization)
+    organization = Organization.build(registration.attributes_for_organization)
     organization.registrations << registration
     organization
   end
