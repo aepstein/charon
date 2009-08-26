@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
   validates_uniqueness_of   :net_id
   before_validation_on_create :extract_email
   validates_inclusion_of    :status, :in => STATUSES
-  before_save :import_simple_ldap_attributes
+  before_validation :import_simple_ldap_attributes
   after_save :import_complex_ldap_attributes
 
   def full_name
