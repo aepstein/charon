@@ -50,6 +50,8 @@ Rails::Initializer.run do |config|
   config.gem 'validates_timeliness'
   config.gem 'prawn'
   config.gem 'searchlogic'
+  config.gem 'chronic', :lib => false
+  config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
 end
 
 CalendarDateSelect.format = :hyphen_ampm

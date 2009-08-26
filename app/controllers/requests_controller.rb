@@ -26,6 +26,16 @@ class RequestsController < ApplicationController
     end
   end
 
+  # GET /requests/1/supporting_documents
+  def supporting_documents
+    @request = Request.find(params[:id])
+    raise AuthorizationError unless @request.may_see? current_user
+
+    respond_to do |format|
+      format.html # supporting_documents.html.erb
+    end
+  end
+
   # GET /organizations/:organization_id/requests/new
   # GET /organizations/:organization_id/requests/new.xml
   # TODO -- should this action exist?

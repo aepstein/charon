@@ -31,6 +31,11 @@ namespace :deploy do
   task :assets do
     #system "rsync -vr --exclude='.DS_Store' public/assets #{user}@#{application}:#{shared_path}/"
   end
+
+  desc "Update the crontab file"
+  task :update_crontab, :roles => :db do
+    run "cd #{release_path} && whenever --update-crontab #{application}"
+  end
 end
 
 after 'deploy:update_code', 'deploy:symlink_shared'

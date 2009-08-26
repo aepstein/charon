@@ -8,6 +8,9 @@ class Version < ActiveRecord::Base
   has_one :durable_good_expense
   has_one :publication_expense
   has_many :documents do
+    def for_type?( document_type )
+      self.map { |d| d.document_type }.include?( document_type )
+    end
     def populate
       proxy_owner.node.document_types.each do |document_type|
         self.build(:document_type => document_type) if self.select { |d| d.document_type == document_type }.empty?

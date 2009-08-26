@@ -2,6 +2,12 @@ class Item < ActiveRecord::Base
   belongs_to :node
   belongs_to :request
   has_many :versions, :autosave => true do
+    def for_perspective( perspective )
+      self.each do |v|
+        return v if v.perspective == perspective
+      end
+      nil
+    end
     def perspectives
       self.map { |v| v.perspective }
     end
