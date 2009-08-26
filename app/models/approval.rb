@@ -6,9 +6,13 @@ class Approval < ActiveRecord::Base
   delegate :may_unapprove?, :to => :approvable
   delegate :may_unapprove_other?, :to => :approvable
   delegate :approvals_fulfilled?, :to => :approvable
+  delegate :approvals_unfulfilled?, :to => :approvable
 
   named_scope :agreements, :conditions => { :approvable_type => 'Agreement' }
   named_scope :requests, :conditions => { :approvable_type => 'Request' }
+  named_scope :at_or_after, lambda { |time|
+    { :conditions => [ 'approvals.created_at >= ?', time.utc ] }
+  }
 
   validates_uniqueness_of :approvable_id, :scope => [ :approvable_type, :user_id ]
   validates_presence_of :approvable
@@ -23,7 +27,7 @@ class Approval < ActiveRecord::Base
 
   # TODO must be more robust
   def unapprove_approvable
-    approvable.unapprove!
+    approvable.unapprove! if approvals_unfulfilled?
   end
 
   def may_create?(user)

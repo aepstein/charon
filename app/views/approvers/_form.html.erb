@@ -10,4 +10,8 @@
     <%= form.label :status %><br />
     <%= form.select :status, Request.aasm_state_names %>
   </p>
+  <p>
+    <%= form.label :quantity %><br />
+    <%= form.text_field :quantity %>
+  </p>
 

@@ -9,6 +9,7 @@ class Approver < ActiveRecord::Base
   validates_uniqueness_of :role_id, :scope => [ :framework_id, :status, :perspective ]
 
   default_scope :include => [:role], :order => 'status ASC, perspective ASC, roles.name ASC'
+  named_scope :status, lambda { |status| { :conditions => { :status => status } } }
 
   delegate :may_update?, :to => :framework
   delegate :may_see?, :to => :framework

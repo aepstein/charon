@@ -5,6 +5,7 @@ class CreateApprovers < ActiveRecord::Migration
       t.references :role, :null => false
       t.string :status, :null => false
       t.string :perspective, :null => false
+      t.integer :quantity
 
       t.timestamps
     end

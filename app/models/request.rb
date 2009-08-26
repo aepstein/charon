@@ -2,22 +2,46 @@ class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
   belongs_to :basis
   has_many :approvers, :through => :approvals, :source => :user do
-    def required_for( status )
-      requestor = "organization_id IN (SELECT organization_id FROM organizations_requests WHERE request_id = :request_id) " +
-                  "AND role_id IN (SELECT role_id FROM approvers WHERE perspective = 'requestor' AND " +
-                  "status = :status AND framework_id = :framework_id)"
-      reviewer = "organization_id = :organization_id AND role_id IN " +
-                 "(SELECT role_id FROM approvers WHERE perspective = 'reviewer' AND " +
-                 "status = :status AND framework_id = :framework_id)"
+    def empty_for_status?( status )
+      proxy_owner.framework.approvers.status(status).map { |a| actual_for(a) }.flatten.empty?
+    end
+    def fulfill_status?( status )
+      proxy_owner.framework.approvers.status(status).each do |approver|
+        return false unless fulfill?( approver )
+      end
+      true
+    end
+    def required_for_status( status )
+      approvers = proxy_owner.framework.approvers.status(status).select { |a| a.quantity.nil? }
+      approvers.map { |a| potential_for(a) }.flatten.uniq
+    end
+    def unfulfilled_for_status( status )
+      required_for_status( status ) - self
+    end
+    def fulfill?( approver )
+      if approver.quantity
+        actual_for(approver).size >= quantity
+      else
+        ( potential_for( approver ) - actual_for( approver )  ).empty?
+      end
+    end
+    def actual_for( approver )
+      potential_for( approver ) & self
+    end
+    def potential_for( approver )
+      sql = case approver.perspective
+      when 'requestor'
+        "organization_id IN (SELECT organization_id FROM organizations_requests WHERE request_id = :request_id) " +
+        "AND role_id = :role_id"
+      when 'reviewer'
+        "organization_id = :organization_id AND role_id = :role_id"
+      end
       conditions = [
-        "users.id IN (SELECT user_id FROM memberships WHERE active = :true AND ( (#{requestor}) OR (#{reviewer}) ) )",
-        { :request_id => proxy_owner.id, :status => status, :framework_id => proxy_owner.framework.id,
-          :organization_id => proxy_owner.basis.organization.id, :true => true }
+        "users.id IN (SELECT user_id FROM memberships WHERE active = :true AND ( #{sql} ) )",
+        { :request_id => proxy_owner.id, :role_id => approver.role_id, :true => true,
+          :organization_id => proxy_owner.basis.organization_id }
       ]
       User.find( :all, :conditions => conditions )
-    end
-    def unfulfilled_for( status )
-      self.required_for( status ) - self
     end
   end
   has_many :approvals, :dependent => :destroy, :as => :approvable
@@ -126,7 +150,11 @@ class Request < ActiveRecord::Base
   end
 
   def approvals_fulfilled?
-    approvers.unfulfilled_for( status ).empty?
+    approvers.fulfill_status?( status )
+  end
+
+  def approvals_unfulfilled?
+    approvers.empty_for_status?( status )
   end
 
   def self.aasm_state_names

@@ -60,7 +60,7 @@ describe Request do
     Factory(:request).may(admin).should == Request::ACTIONS
   end
 
-  it "should have an approvers.required_for which returns users required to approve" do
+  it "should have an approvers.required_for_status which returns users required to approve" do
     request = Factory(:request)
     %w( president treasurer ).each { |role_name| create_approver_for_request(request, role_name) }
     %w( commissioner staff ).each { |role_name| create_approver_for_request(request, role_name, 'reviewer') }
@@ -78,7 +78,7 @@ describe Request do
     reviewer.memberships.create( :active => true, :user => wrong_president, :role => Role.find_by_name('president') )
     reviewer.memberships.create( :active => true, :user => commissioner, :role => Role.find_by_name('commissioner') )
     reviewer.memberships.create( :active => false, :user => inactive_member, :role => Role.find_by_name('commissioner') )
-    approvers = request.approvers.required_for('completed')
+    approvers = request.approvers.required_for_status('completed')
     approvers.should include(president_one)
     approvers.should include(president_two)
     approvers.should include(treasurer)
@@ -88,7 +88,7 @@ describe Request do
     approvers.size.should == 4
   end
 
-  it "should have an approvers.unfulfilled method which returns required approvers without corresponding approvals" do
+  it "should have an approvers.unfulfilled_for_status method which returns required approvers without corresponding approvals" do
     must_and_did = Factory(:user)
     must_and_did_not = Factory(:user)
     did_but_not_must = Factory(:user)
@@ -105,8 +105,8 @@ describe Request do
     [ must_and_did, did_but_not_must ].each do |user|
       approval = request.approvals.create(:user => user)
     end
-    request.approvers.stub!(:required_for).and_return( [ must_and_did, must_and_did_not ] )
-    unfulfilled = request.approvers.unfulfilled_for(nil)
+    request.approvers.stub!(:required_for_status).and_return( [ must_and_did, must_and_did_not ] )
+    unfulfilled = request.approvers.unfulfilled_for_status(nil)
     unfulfilled.should_not include(must_and_did)
     unfulfilled.should include(must_and_did_not)
     unfulfilled.should_not include(did_but_not_must)
