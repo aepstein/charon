@@ -14,6 +14,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations/1.xml
   def show
     @organization = Organization.find(params[:id])
+    raise AuthorizationError unless @organization.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -37,6 +38,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations/new.xml
   def new
     @organization = Organization.new
+    raise AuthorizationError unless @organization.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -47,6 +49,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations/1/edit
   def edit
     @organization = Organization.find(params[:id])
+    raise AuthorizationError unless @organization.may_update? current_user
   end
 
   # POST /organizations
@@ -59,6 +62,7 @@ class OrganizationsController < ApplicationController
     else
       @organization = Organization.new(params[:organization])
     end
+    raise AuthorizationErrror unless @organization.may_create? current_user
 
     respond_to do |format|
       if @organization.save
@@ -76,6 +80,7 @@ class OrganizationsController < ApplicationController
   # PUT /organizations/1.xml
   def update
     @organization = Organization.find(params[:id])
+    raise AuthorizationError unless @organization.may_update? current_user
 
     respond_to do |format|
       if @organization.update_attributes(params[:organization])
@@ -93,6 +98,7 @@ class OrganizationsController < ApplicationController
   # DELETE /organizations/1.xml
   def destroy
     @organization = Organization.find(params[:id])
+    raise AuthorizationError unless @organization.may_destroy? current_user
     @organization.destroy
 
     respond_to do |format|

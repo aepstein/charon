@@ -14,6 +14,7 @@ class StructuresController < ApplicationController
   # GET /structures/1.xml
   def show
     @structure = Structure.find(params[:id])
+    raise AuthorizationError unless @structure.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -25,6 +26,7 @@ class StructuresController < ApplicationController
   # GET /structures/new.xml
   def new
     @structure = Structure.new
+    raise AuthorizationError unless @structure.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -35,12 +37,14 @@ class StructuresController < ApplicationController
   # GET /structures/1/edit
   def edit
     @structure = Structure.find(params[:id])
+    raise AuthorizationError unless @structure.may_update? current_user
   end
 
   # POST /structures
   # POST /structures.xml
   def create
     @structure = Structure.new(params[:structure])
+    raise AuthorizationError unless @structure.may_create? current_user
 
     respond_to do |format|
       if @structure.save
@@ -58,6 +62,7 @@ class StructuresController < ApplicationController
   # PUT /structures/1.xml
   def update
     @structure = Structure.find(params[:id])
+    raise AuthorizationError unless @structure.may_update? current_user
 
     respond_to do |format|
       if @structure.update_attributes(params[:structure])
@@ -75,6 +80,7 @@ class StructuresController < ApplicationController
   # DELETE /structures/1.xml
   def destroy
     @structure = Structure.find(params[:id])
+    raise AuthorizationError unless @structure.may_destroy? current_user
     @structure.destroy
 
     respond_to do |format|

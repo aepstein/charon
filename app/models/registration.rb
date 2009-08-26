@@ -157,5 +157,9 @@ class Registration < ActiveRecord::Base
     name
   end
 
+  def may_see?(user)
+    user.admin?
+  end
+
 end
 

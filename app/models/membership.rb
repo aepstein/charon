@@ -26,5 +26,21 @@ class Membership < ActiveRecord::Base
     errors.add_to_base( 'Must have a registration or organization.'
     ) unless registration || organization
   end
+
+  def may_see?( user )
+    user.admin? || self.user == user
+  end
+
+  def may_update?( user )
+    user.admin?
+  end
+
+  def may_create?( user )
+    user.admin?
+  end
+
+  def may_destroy?( user )
+    user.admin?
+  end
 end
 

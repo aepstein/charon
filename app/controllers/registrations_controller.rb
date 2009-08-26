@@ -7,11 +7,8 @@ class RegistrationsController < ApplicationController
   end
 
   def show
-    begin
-      @registration = Registration.find( params[:id], :include => :organization )
-    rescue ActiveRecord::RecordNotFound
-      redirect_to registrations_path
-    end
+    @registration = Registration.find( params[:id], :include => :organization )
+    raise AuthorizationError unless @registration.may_see? current_user
   end
 end
 
