@@ -13,6 +13,8 @@ module NavigationHelpers
     when /the new approval page/
       new_approval_path
 
+    when /the organizations page/
+      organizations_path
 
     when /the new organization page/
       new_organization_path

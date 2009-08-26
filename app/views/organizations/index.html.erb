@@ -1,15 +1,23 @@
 <h1>Listing organizations</h1>
 
+<% form_for :search, :url => organizations_path, :html => { :method => :get } do |f| %>
+  <p>
+    <%= f.label :q, 'Search' %>
+    <%= f.text_field :q %>
+    <%= f.submit 'Go' %>
+  </p>
+<% end %>
+
+<%= will_paginate @organizations %>
+
 <table>
   <tr>
-    <th>First name</th>
-    <th>Last name</th>
+    <th>Name</th>
   </tr>
 
 <% @organizations.each do |organization| %>
   <tr>
-    <td><%=h organization.first_name %></td>
-    <td><%=h organization.last_name %></td>
+    <td><%=h organization.name %></td>
     <td><%= link_to 'Show', organization %></td>
     <td><%= link_to 'Edit', edit_organization_path(organization) %></td>
     <td><%= link_to 'Destroy', organization, :confirm => 'Are you sure?', :method => :delete %></td>
@@ -19,4 +27,9 @@
 
 <br />
 
+<%= will_paginate @organizations %>
+
+<p>
 <%= link_to 'New organization', new_organization_path %>
+</p>
+

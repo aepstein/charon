@@ -16,6 +16,8 @@ class Organization < ActiveRecord::Base
 
   before_validation :format_name
 
+  default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC'
+
   validates_uniqueness_of :last_name, :scope => :first_name
 
   def name

@@ -2,7 +2,12 @@ class OrganizationsController < ApplicationController
   # GET /organizations
   # GET /organizations.xml
   def index
-    @organizations = Organization.all
+    page = params[:page] ? params[:page] : 1
+    if params[:search]
+      @organizations = Organization.first_name_or_last_name_like("%#{params[:search][:q]}%").paginate(:page => page)
+    else
+      @organizations = Organization.paginate(:page => page)
+    end
 
     respond_to do |format|
       format.html # index.html.erb
