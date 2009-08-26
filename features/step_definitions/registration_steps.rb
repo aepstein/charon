@@ -1,5 +1,4 @@
 Given /^the following registrations:$/ do |registrations|
-  #Registration.create!(registrations.hashes)
   registrations.hashes.each do |registration|
     complex_attributes = Hash.new
     if registration['organization'] then
@@ -16,13 +15,7 @@ When /^I delete the (\d+)(?:st|nd|rd|th) registration$/ do |pos|
   end
 end
 
-Then /^I should see the following registrations:$/ do |registrations|
-  registrations.rows.each_with_index do |row, i|
-    row.each_with_index do |cell, j|
-      response.should have_selector("table > tr:nth-child(#{i+2}) > td:nth-child(#{j+1})") { |td|
-        td.inner_text.should == cell
-      }
-    end
-  end
+Then /^I should see the following registrations:$/ do |expected_registrations_table|
+  expected_registrations_table.diff!(table_at('table').to_a)
 end
 

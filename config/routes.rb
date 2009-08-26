@@ -28,7 +28,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :roles
   map.resources :registrations, :shallow => true do |registration|
-    registration.resource :organization, :only => [ :create ]
+    registration.resource :organization, :only => [ :new, :create ]
   end
   map.login 'login', :controller => 'user_sessions', :action => 'new'
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'

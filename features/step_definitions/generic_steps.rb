@@ -1,3 +1,7 @@
+Given /^there are no (.+)s$/ do |type|
+  type.classify.constantize.delete_all
+end
+
 Given /^the following (.+) records?:$/ do |factory, table|
   table.hashes.each do |record|
     Factory(factory, record)

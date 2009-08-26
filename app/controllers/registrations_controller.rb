@@ -1,9 +1,17 @@
 class RegistrationsController < ApplicationController
 
   def index
-    @registrations = Registration.search( params[:query] )
-    flash[:message] = "There were no registrations matching <em>#{params[:query]}</em>. " if @registrations.empty?
-    redirect_to registration_path(@registrations.first) if @registrations.size == 1
+    page = params[:page] ? params[:page] : 1
+    if params[:search]
+      @registrations = Registration.name_like("%#{params[:search][:q]}%").paginate(:page => page)
+    else
+      @registrations = Registration.paginate(:page => page)
+    end
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @registrations }
+    end
   end
 
   def show

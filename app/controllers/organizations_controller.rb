@@ -41,9 +41,16 @@ class OrganizationsController < ApplicationController
 
   # GET /organizations/new
   # GET /organizations/new.xml
+  # GET /registrations/:registration_id/organizations/new
+  # GET /registrations/:registration_id/organizations/new.xml
   def new
-    @organization = Organization.new
-    raise AuthorizationError unless @organization.may_create? current_user
+    if params[:registration_id]
+      @registration = Registration.find(params[:registration_id])
+      @organization = @registration.find_or_build_organization
+    else
+      @organization = Organization.new
+    end
+    raise AuthorizationErrror unless @organization.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -63,7 +70,8 @@ class OrganizationsController < ApplicationController
   # POST /registrations/:registration_id/organization.xml
   def create
     if params[:registration_id]
-      @organization = Organization.find_or_build_by_registration(Registration.find(params[:registration_id]))
+      @registration = Registration.find(params[:registration_id])
+      @organization = @registration.find_or_build_organization(params[:organization])
     else
       @organization = Organization.new(params[:organization])
     end

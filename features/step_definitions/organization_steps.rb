@@ -1,7 +1,3 @@
-Given /^there are no organizations$/ do
-  Organization.delete_all
-end
-
 Given /^the following organizations:$/ do |organizations|
   organizations.hashes.each do |organization_attributes|
     Factory(:organization, organization_attributes)

@@ -1,6 +1,6 @@
 class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
-  default_scope :order => "registrations.name, registrations.parent_id DESC"
+  default_scope :order => "registrations.name ASC, registrations.parent_id DESC"
   named_scope :active,
               :conditions => 'registrations.id NOT IN ' +
                              '(SELECT r.parent_id FROM registrations AS r)'
@@ -139,6 +139,19 @@ class Registration < ActiveRecord::Base
       percent_members_of_type(framework.member_percentage_type) >= framework.member_percentage
     end
     true
+  end
+
+  def find_or_create_organization( params=nil )
+    find_or_build_organization( params ).save if organization.nil? || organization.new_record?
+    organization
+  end
+
+  def find_or_build_organization( params=nil )
+    return organization unless organization.nil?
+    params = Hash.new if params.nil?
+    self.organization = build_organization( params.merge( attributes_for_organization ) )
+    organization.registrations << self
+    organization
   end
 
   def active?

@@ -1,6 +1,7 @@
 <h1>New organization</h1>
 
-<% form_for(@organization) do |f| %>
+<% form_for( :organization, @organization,
+             :url => (@registration ? registration_organization_url(@registration) : organizations_url ) ) do |f| %>
   <%= f.error_messages %>
 
   <%= render :partial => 'form', :object => f %>
@@ -10,5 +11,7 @@
   </p>
 <% end %>
 
+<p>
 <%= link_to 'Back', organizations_path %>
+</p>
 

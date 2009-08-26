@@ -24,19 +24,6 @@ class Organization < ActiveRecord::Base
     ( first_name.nil? || first_name.empty? ) ? last_name : "#{first_name} #{last_name}"
   end
 
-  def self.find_or_create_by_registration(registration)
-    organization = Organization.find_or_build_by_registration( registration )
-    organization.save
-    organization
-  end
-
-  def self.find_or_build_by_registration(registration)
-    return registration.organization unless registration.organization.nil?
-    organization = Organization.build(registration.attributes_for_organization)
-    organization.registrations << registration
-    organization
-  end
-
   def format_name
     self.first_name = "" unless first_name.class == String
     while match = last_name.match(/\A(Cornell|The|An|A)\s+(.*)\Z/) do
@@ -61,7 +48,7 @@ class Organization < ActiveRecord::Base
   end
 
   def may_create?(user)
-    user.admin?
+    user.admin? && new_record?
   end
 
   def may_destroy?(user)

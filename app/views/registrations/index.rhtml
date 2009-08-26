@@ -1,17 +1,30 @@
-<h2>All Registrations</h2>
+<h2>Registrations</h2>
 
-<%= render :partial => "search" %>
+<% form_for :search, :url => registrations_path, :html => { :method => :get } do |f| %>
+  <p>
+    <%= f.label :q, 'Search' %>
+    <%= f.text_field :q %>
+    <%= f.submit 'Go' %>
+  </p>
+<% end %>
+
+<%= will_paginate @registrations %>
 
 <table>
-<tr>
-<th>Name</th>
-</tr>
-<ul>
+  <tr>
+    <th>Name</th>
+  </tr>
+
 <% @registrations.each do |registration| %>
   <tr>
   <td><%=h registration %></td>
   <td><%= link_to 'Show', registration_path(registration) %></td>
-  <td><%= link_to 'Create Organization', registration_organization_path( registration, :html => { :method => :post }) %>
+  <% if registration.find_or_build_organization.may_create?(current_user) %>
+  <td><%= link_to 'New Organization', new_registration_organization_path( registration ) %></td>
+  <% end %>
 <% end %>
-</ul>
+
+</table>
+
+<%= will_paginate @registrations %>
 
