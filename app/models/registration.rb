@@ -149,9 +149,7 @@ class Registration < ActiveRecord::Base
   def find_or_build_organization( params=nil )
     return organization unless organization.nil?
     params = Hash.new if params.nil?
-    self.organization = build_organization( params.merge( attributes_for_organization ) )
-    organization.registrations << self
-    organization
+    build_organization( params.merge( attributes_for_organization ) )
   end
 
   def active?

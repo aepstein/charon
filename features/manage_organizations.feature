@@ -50,7 +50,6 @@ Feature: Manage organizations
       | allowed_user | see              | see            | see             |
       | global       | not see          | not see        | not see         |
 
-
   Scenario: Register a new organization
     Given I am logged in as "admin" with password "secret"
     And I am on the new organization page

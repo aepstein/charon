@@ -72,6 +72,7 @@ class OrganizationsController < ApplicationController
     if params[:registration_id]
       @registration = Registration.find(params[:registration_id])
       @organization = @registration.find_or_build_organization(params[:organization])
+      raise 'Cannot create an organization for a registration that is matched to an existing organization' unless @organization.new_record?
     else
       @organization = Organization.new(params[:organization])
     end
@@ -79,6 +80,7 @@ class OrganizationsController < ApplicationController
 
     respond_to do |format|
       if @organization.save
+        @organization.registrations << @registration if @registration
         flash[:notice] = 'Organization was successfully created.'
         format.html { redirect_to(@organization) }
         format.xml  { render :xml => @organization, :status => :created, :location => @organization }

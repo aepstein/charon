@@ -14,5 +14,14 @@ describe Registration do
     factory.percent_members_of_type(:undergrads).should == 100.0
   end
 
+  it "should be able to create an organization from the registration" do
+    registration = Factory(:registration)
+    organization = registration.find_or_create_organization
+    organization.id.should_not be_nil
+    organization.registrations << registration
+    registration.organization_id.should == organization.id
+    registration.find_or_create_organization.should == organization
+  end
+
 end
 
