@@ -136,9 +136,10 @@ class Registration < ActiveRecord::Base
   def eligible_for?(framework)
     return false unless registered?
     if framework.member_percentage
-      percent_members_of_type(framework.member_percentage_type) >= framework.member_percentage
+      return percent_members_of_type(framework.member_percentage_type) >= framework.member_percentage
+    else
+      true
     end
-    true
   end
 
   def find_or_create_organization( params=nil )

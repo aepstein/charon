@@ -35,7 +35,7 @@ class Organization < ActiveRecord::Base
   def eligible_for?(framework)
     return true unless framework.must_register?
     return false unless registrations.current
-    registations.current.eligible_for? framework
+    registrations.current.eligible_for? framework
   end
 
   def may_see?(user)
