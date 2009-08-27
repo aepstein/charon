@@ -14,21 +14,19 @@ Feature: Manage nodes
   Scenario: Create new node
     Given I am logged in as "admin" with password "secret"
     And I am on "test's new node page"
-    When I fill in "node_name" with "test node"
-    And I fill in "node_requestable_type" with "AdministrativeExpense"
-    And I fill in "node_item_amount_limit" with "1000.0"
-    And I fill in "node_item_quantity_limit" with "4"
+    When I fill in "Name" with "test node"
+    And I select "Administrative" from "node_requestable_type"
+    And I fill in "Item amount limit" with "1000"
+    And I fill in "Item quantity limit" with "4"
     And I press "Create"
     Then I should see "Node was successfully created."
-
-  Scenario: Edit node
-    Given I am logged in as "admin" with password "secret"
-    And the following nodes:
-      | structure_id | requestable_type      |
-      | 1            | AdministrativeExpense |
-    And I am on "test's node page"
+    And I should see "Name: test node"
+    And I should see "Requestable type: Administrative"
+    And I should see "Item amount limit: $1,000.00"
+    And I should see "Item quantity limit: 4"
     When I follow "Edit"
-    And I fill in "node_name" with "antinode"
+    And I fill in "Name" with "antinode"
     And I press "Update"
     Then I should see "Node was successfully updated."
+    And I should see "Name: antinode"
 

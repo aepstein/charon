@@ -1,6 +1,12 @@
 <p>
   <b>Name:</b> <%=h @structure.name %>
 </p>
+<p>
+  <b>Minimum requestors:</b> <%=h @structure.minimum_requestors %>
+</p>
+<p>
+  <b>Maximum requestors:</b> <%=h @structure.maximum_requestors %>
+</p>
 
 <p>
 <%= link_to 'Edit', edit_structure_path(@structure) %> |

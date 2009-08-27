@@ -14,7 +14,7 @@
 
   <p>
     <%= form.label :requestable_type, "Type of request calculation form" %><br />
-    <%= form.text_field :requestable_type %>
+    <%= form.select :requestable_type, Node::ALLOWED_TYPES, { :include_blank => false } %>
   </p>
 
   <p>

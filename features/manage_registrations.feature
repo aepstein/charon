@@ -32,7 +32,7 @@ Feature: Manage registrations
     Then I should see the following registrations:
       | Name                     |
       | Ski Racing Organization  |
-  @current
+
   Scenario: Create organization from registration
     Given the following registrations:
       | name                     |

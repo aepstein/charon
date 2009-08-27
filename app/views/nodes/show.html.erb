@@ -1,34 +1,29 @@
 <p>
-  <b>Name:</b>
-  <%=h @node.name %>
+  <b>Name:</b> <%=h @node.name %>
 </p>
 
 <p>
-  <b>Request calculation form type:</b>
-  <%=h @node.requestable_type %>
+  <b>Requestable type:</b> <%=h Node::ALLOWED_TYPES.index( @node.requestable_type ) %>
 </p>
 
 <p>
-  <b>Item amount limit:</b>
-  <%=h @node.item_amount_limit %>
+  <b>Item amount limit:</b> <%= number_to_currency( @node.item_amount_limit ) %>
 </p>
 
 <p>
-  <b>Item quantity limit:</b>
-  <%=h @node.item_quantity_limit %>
+  <b>Item quantity limit:</b> <%=h @node.item_quantity_limit %>
 </p>
 
 <p>
-  <b>Request structure:</b>
-  <%=h @node.structure_id %>
+  <b>Request structure:</b> <%=h @node.structure %>
 </p>
 
 <p>
-  <b>Parent:</b>
-  <%=h @node.parent_id %>
+  <b>Parent:</b> <%=h @node.parent %>
 </p>
 
-
+<p>
 <%= link_to 'Edit', edit_node_path(@node) %> |
 <%= link_to 'Back', structure_nodes_path( @node.structure ) %>
+</p>
 

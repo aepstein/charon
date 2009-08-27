@@ -1,5 +1,14 @@
 <h2>Welcome, <%=h current_user.full_name %> (<%=h current_user.net_id %>)</h2>
 
+<% if current_user.admin? %>
+<h3>Administration</h3>
+<p>
+<%= %w( agreements document_types frameworks organizations registrations roles structures users ).map { |option|
+  link_to option, send(option + '_path')
+}.join(' | ') %>
+</p>
+<% end %>
+
 <% unless current_user.organizations.empty? %>
   <h3>Organizations You Are In:<h3>
 

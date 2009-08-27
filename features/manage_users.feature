@@ -50,6 +50,16 @@ Feature: Manage users
       | owner   | not see "Admin" | "owner's edit user page" |
       | regular | not see "Admin" | the unauthorized page    |
 
+  Scenario Outline: Display administrative options for admin on profile page
+    Given I am logged in as "<user>" with password "secret"
+    And I am on the profile page
+    Then I <see> see "Administration"
+
+    Examples:
+      | user  | see        |
+      | admin | should     |
+      | owner | should not |
+
   Scenario: Show organizations and unmatched registrations for the current user
     Given the following role records:
       | name      |

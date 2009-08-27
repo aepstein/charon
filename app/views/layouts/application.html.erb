@@ -13,6 +13,14 @@
 
 <p style="color: green"><%= flash[:notice] %></p>
 
+<p>
+<% if current_user %>
+<%= link_to 'my profile', profile_path %> | <%= link_to 'logout', logout_path %>
+<% else %>
+<%= link_to 'login', login_path %>
+<% end %>
+</p>
+
 <%= yield %>
 
 </body>
