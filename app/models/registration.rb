@@ -2,8 +2,8 @@ class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   default_scope :order => "registrations.name ASC, registrations.parent_id DESC"
   named_scope :active,
-              :conditions => 'registrations.id NOT IN ' +
-                             '(SELECT r.parent_id FROM registrations AS r)'
+              :joins => 'LEFT JOIN registrations AS r ON registrations.id = r.parent_id',
+              :conditions => 'r.id IS NULL'
   named_scope :unmatched,
               :conditions => { :organization_id => nil }
   named_scope :named,
