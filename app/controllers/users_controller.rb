@@ -1,7 +1,17 @@
 class UsersController < ApplicationController
 
   def index
-    @users = User.all
+    page = params[:page] ? params[:page] : 1
+    if params[:search]
+      @users = User.first_name_or_middle_name_or_last_name_or_net_id_like("%#{params[:search][:q]}%").paginate(:page => page)
+    else
+      @users = User.paginate(:page => page)
+    end
+
+    respond_to do |format|
+      format.html # index.html.erb
+      format.xml  { render :xml => @users }
+    end
   end
 
   def new

@@ -26,6 +26,29 @@ Feature: Manage users
     Given I am on "net_id's show user page"
     Then I should see "Admin: Yes"
 
+  Scenario: List and search users
+    Given there are no users
+    And the following users:
+      | last_name | net_id  | admin | password |
+      | Adminirov | fake    | false | secret   |
+      | Doe 1     | admin   | true  | secret   |
+      | Doe 2     | owner   | false | secret   |
+      | Doe 3     | regular | false | secret   |
+    And I am logged in as "admin" with password "secret"
+    And I am on the users page
+    Then I should see the following users:
+      | Name           | Net Id  |
+      | John Adminirov | fake    |
+      | John Doe 1     | admin   |
+      | John Doe 2     | owner   |
+      | John Doe 3     | regular |
+    When I fill in "Search" with "admin"
+    And I press "Go"
+    Then I should see the following users:
+      | Name           | Net Id |
+      | John Adminirov | fake   |
+      | John Doe 1     | admin  |
+
   Scenario Outline: New user form
     Given I am logged in as "<user>" with password "secret"
     And I am on the new user page

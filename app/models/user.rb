@@ -3,6 +3,8 @@ class User < ActiveRecord::Base
 
   attr_protected :admin
 
+  default_scope :order => 'users.last_name ASC, users.first_name ASC, users.middle_name ASC, users.net_id ASC'
+
   acts_as_authentic do |c|
     c.login_field = 'net_id'
   end
@@ -52,11 +54,11 @@ class User < ActiveRecord::Base
   after_save :import_complex_ldap_attributes
 
   def full_name
-    name = ""
-    name << first_name + " " unless first_name.nil?
-    name << middle_name + " " unless middle_name.nil?
-    name << last_name unless last_name.nil?
-    name
+    "#{first_name} #{middle_name} #{last_name}".squeeze
+  end
+
+  def name
+    "#{first_name} #{last_name}".squeeze
   end
 
   def may_create?(user)
