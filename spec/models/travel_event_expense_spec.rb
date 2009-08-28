@@ -15,31 +15,31 @@ describe TravelEventExpense do
   end
 
   it "should not save with an invalid date" do
-    @expense.event_date = nil
+    @expense.date = nil
     @expense.save.should == false
-    @expense.event_date = 'blah'
+    @expense.date = 'blah'
     @expense.save.should == false
   end
 
   it "should not save without a title" do
-    @expense.event_title = ''
+    @expense.title = ''
     @expense.save.should == false
   end
 
   it "should not save without a location" do
-    @expense.event_location = ''
+    @expense.location = ''
     @expense.save.should == false
   end
 
   it "should not save without a purpose" do
-    @expense.event_purpose = ''
+    @expense.purpose = ''
     @expense.save.should == false
   end
 
   it "should not save with invalid members per group" do
-    @expense.members_per_group = nil
+    @expense.travelers_per_group = nil
     @expense.save.should == false
-    @expense.members_per_group = 0
+    @expense.travelers_per_group = 0
     @expense.save.should == false
   end
 
@@ -51,9 +51,9 @@ describe TravelEventExpense do
   end
 
   it "should not save with invalid mileage" do
-    @expense.mileage = nil
+    @expense.distance = nil
     @expense.save.should == false
-    @expense.mileage = -1
+    @expense.distance = -1
     @expense.save.should == false
   end
 

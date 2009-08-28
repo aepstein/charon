@@ -191,13 +191,13 @@ end
 
 Factory.define :travel_event_expense do |f|
   f.association :version
-  f.event_date Date.today + 2.months
-  f.event_title "A tournament"
-  f.event_location 'Los Angeles, CA'
-  f.event_purpose 'To compete'
-  f.members_per_group 5
+  f.date Date.today + 2.months
+  f.title "A tournament"
+  f.location 'Los Angeles, CA'
+  f.purpose 'To compete'
+  f.travelers_per_group 5
   f.number_of_groups 2
-  f.mileage 6388
+  f.distance 6388
   f.nights_of_lodging 3
   f.per_person_fees 25.00
   f.per_group_fees 125.00
