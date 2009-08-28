@@ -1,16 +1,14 @@
 class CreateAdministrativeExpenses < ActiveRecord::Migration
   def self.up
     create_table :administrative_expenses do |t|
-      t.integer :copies
-      t.decimal :copies_expense
-      t.decimal :repairs_restocking
-      t.integer :mailbox_wsh
-      t.decimal :total
-      t.integer :version_id
+      t.integer :copies, { :null => false, :default => 0 }
+      t.decimal :repairs_restocking, { :null => false, :default => 0 }
+      t.integer :mailbox_wsh, { :null => false, :default => 0 }
+      t.integer :version_id, :null => false
 
       t.timestamps
     end
-    add_index :administrative_expenses, :version_id
+    add_index :administrative_expenses, :version_id, :unique => true
   end
 
   def self.down

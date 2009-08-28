@@ -1,4 +1,3 @@
-@current
 Feature: Manage versions
   In order to calculate and track transaction requests
   As a requestor or reviewer
