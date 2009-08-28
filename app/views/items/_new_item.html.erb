@@ -1,4 +1,6 @@
 <% if new_item.allowed_nodes.size > 0 && new_item.may_create?(current_user) %>
+<tr>
+  <td colspan="3">
   <% form_for( :item,
                new_item,
                :url => request_items_path( new_item.request ) ) do |f| %>
@@ -14,5 +16,7 @@
   </p>
 
   <% end %>
+  </td>
+</tr>
 <% end %>
 

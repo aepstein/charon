@@ -10,44 +10,44 @@ describe LocalEventExpense do
   end
 
   it "should not save with an invalid or blank date" do
-    @expense.date_of_event = nil
+    @expense.date = nil
     @expense.save.should == false
-    @expense.date_of_event = 'blah'
+    @expense.date = 'blah'
     @expense.save.should == false
   end
 
   it "should not save without a title" do
-    @expense.title_of_event = ''
+    @expense.title = ''
     @expense.save.should == false
   end
 
   it "should not save without a location" do
-    @expense.location_of_event = ''
+    @expense.location = ''
     @expense.save.should == false
   end
 
   it "should not save without a purpose" do
-    @expense.purpose_of_event = ''
+    @expense.purpose = ''
     @expense.save.should == false
   end
 
   it "should not save without anticipated attendees" do
-    @expense.anticipated_no_of_attendees = nil
+    @expense.number_of_attendees = ''
     @expense.save.should == false
   end
 
   it "should not save without admission charge" do
-    @expense.admission_charge_per_attendee = nil
+    @expense.price_per_attendee = ''
     @expense.save.should == false
   end
 
   it "should not save without copies" do
-    @expense.number_of_publicity_copies = nil
+    @expense.copies_quantity = ''
     @expense.save.should == false
   end
 
   it "should not save without services" do
-    @expense.rental_equipment_services = nil
+    @expense.services_cost = ''
     @expense.save.should == false
   end
 

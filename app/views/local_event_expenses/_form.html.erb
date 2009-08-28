@@ -1,44 +1,40 @@
   <p>
-    <%= form.label :date_of_event, "Date of Event" %><br />
-    <%= form.calendar_date_select :date_of_event, :time => false %>
-  </p>
-  <p>
-    <%= form.label :title_of_event, "Title of Event" %><br />
-    <%= form.text_field :title_of_event %>
+    <%= form.label :date %><br />
+    <%= form.calendar_date_select :date, :time => false %>
   </p>
 
   <p>
-    <%= form.label :location_of_event, "Location of Event" %><br />
-    <%= form.text_field :location_of_event %>
+    <%= form.label :title %><br />
+    <%= form.text_field :title %>
   </p>
 
   <p>
-    <%= form.label :purpose_of_event, "Purpose of Event" %><br />
-    <%= form.text_area :purpose_of_event, :size => "40x6" %>
+    <%= form.label :location %><br />
+    <%= form.text_field :location %>
   </p>
 
   <p>
-    <%= form.label :anticipated_no_of_attendees, "Anticipated Number of Attendees" %><br />
-    <%= form.text_field :anticipated_no_of_attendees %>
+    <%= form.label :purpose %><br />
+    <%= form.text_area :purpose, :size => "40x6" %>
   </p>
 
   <p>
-    <%= form.label :admission_charge_per_attendee, "Admission Charge Per Attendee" %><br />
-    <%= form.text_field :admission_charge_per_attendee %>
+    <%= form.label :number_of_attendees, "Anticipated Number of Attendees" %><br />
+    <%= form.text_field :number_of_attendees %>
   </p>
 
   <p>
-    <%= form.label :number_of_publicity_copies, "Number of Publicity Copies" %><br />
-    <%= form.text_field :number_of_publicity_copies %>
+    <%= form.label :price_per_attendee, "Admission Charge Per Attendee" %><br />
+    <%= form.text_field :price_per_attendee %>
   </p>
 
   <p>
-    <%= form.label :rental_equipment_services, "Rental Equipment and Services" %><br />
-    <%= form.text_field :rental_equipment_services %>
+    <%= form.label :copies_quantity, "Number of Publicity Copies" %><br />
+    <%= form.text_field :copies_quantity %>
   </p>
 
   <p>
-    <%= form.label :copyright_fees, "Copyright Fees" %><br />
-    <%= form.text_field :copyright_fees %>
+    <%= form.label :services_cost, "Rental Equipment, Services, and Intellectual Property Use Fees" %><br />
+    <%= form.text_field :services_cost %>
   </p>
 

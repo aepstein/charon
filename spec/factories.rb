@@ -170,14 +170,14 @@ end
 
 Factory.define :local_event_expense do |f|
   f.association :version
-  f.date_of_event Date.today + 2.months
-  f.title_of_event 'An Event'
-  f.location_of_event 'Willard Straight Hall'
-  f.purpose_of_event 'To do something fun'
-  f.anticipated_no_of_attendees 50
-  f.admission_charge_per_attendee 5.50
-  f.number_of_publicity_copies 500
-  f.rental_equipment_services 1102
+  f.date Date.today + 2.months
+  f.title 'An Event'
+  f.location 'Willard Straight Hall'
+  f.purpose 'To do something fun'
+  f.number_of_attendees 50
+  f.price_per_attendee 5.50
+  f.copies_quantity 500
+  f.services_cost 1102
 end
 
 Factory.define :publication_expense do |f|

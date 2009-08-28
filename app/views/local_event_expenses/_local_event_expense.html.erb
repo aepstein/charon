@@ -1,36 +1,32 @@
   <p>
-    Date of Event: <%= local_event_expense.date_of_event %>
+    Date: <%= local_event_expense.date %>
   </p>
 
   <p>
-    Title of Event: <%= local_event_expense.title_of_event %>
+    Title: <%= local_event_expense.title %>
   </p>
 
   <p>
-    Location of Event: <%= local_event_expense.location_of_event %>
+    Location: <%= local_event_expense.location %>
   </p>
 
   <p>
-    Purpose of Event: <%= local_event_expense.purpose_of_event %>
+    Purpose: <%= local_event_expense.purpose %>
   </p>
 
   <p>
-    Anticipated Number of Attendees: <%= local_event_expense.anticipated_no_of_attendees %>
+    Anticipated Number of Attendees: <%= local_event_expense.number_of_attendees %>
   </p>
 
   <p>
-    Admission Charge Per Attendee: <%= number_to_currency(local_event_expense.admission_charge_per_attendee) %>
+    Admission Charge Per Attendee: <%= number_to_currency(local_event_expense.price_per_attendee) %>
   </p>
 
   <p>
-    Number of Publicity Copies: <%= local_event_expense.number_of_publicity_copies %>
+    Number of Publicity Copies: <%= local_event_expense.copies_quantity %>
   </p>
 
   <p>
-    Rental Equipment and Services: <%= number_to_currency(local_event_expense.rental_equipment_services) %>
-  </p>
-
-  <p>
-    Copyright Fees: <%= number_to_currency(local_event_expense.copyright_fees) %>
+    Rental Equipment, Services, and Intellectual Property Use Fees: <%= number_to_currency(local_event_expense.services_cost) %>
   </p>
 
