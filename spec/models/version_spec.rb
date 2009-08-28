@@ -49,7 +49,7 @@ describe Version do
   end
 
   it "should have may_update? which is true if request.may_update? and in request stage or
-  if request.may_revise? and in review stage" do
+      if request.may_revise? and in review stage" do
     @version.perspective = 'requestor'
     @version.request.stub!(:may_update?).and_return(true)
     @version.may_update?(nil).should == true
@@ -70,7 +70,7 @@ describe Version do
   end
 
   it "should have may_see? which is true if request.may_see? and in request stage or
-  if (request.may_revise? or request.may_review?) and in review stage" do
+      if (request.may_revise? or request.may_review?) and in review stage" do
     @version.perspective = 'requestor'
     @version.request.stub!(:may_see?).and_return(true)
     @version.may_see?(nil).should == true
@@ -88,5 +88,10 @@ describe Version do
     @version.may_see?(nil).should == true
   end
 
+  it "should item.touch on save" do
+    @version.item.request.should_receive(:touch)
+    @version.item.should_receive(:touch)
+    @version.save
+  end
 end
 

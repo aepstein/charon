@@ -1,6 +1,6 @@
 class Item < ActiveRecord::Base
   belongs_to :node
-  belongs_to :request
+  belongs_to :request, :touch => true, :autosave => true
   has_many :versions, :autosave => true do
     def for_perspective( perspective )
       self.each do |v|
@@ -33,7 +33,8 @@ class Item < ActiveRecord::Base
 
   validates_presence_of :node
   validates_presence_of :request
-  validate :node_must_be_allowed
+  validate_on_create :node_must_be_allowed
+  validate_on_update :node_must_not_change
 
   def allowed_nodes
     Node.allowed_for_children_of( request, parent )
@@ -41,8 +42,11 @@ class Item < ActiveRecord::Base
 
   def node_must_be_allowed
     return if node.nil?
-    errors.add( :node_id, "must be an allowed node."
-    ) unless allowed_nodes.include?( node )
+    errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
+  end
+
+  def node_must_not_change
+    errors.add( :node_id, "must not change." ) if node_id_changed?
   end
 
   def may_create?(user)
