@@ -9,31 +9,36 @@ describe PublicationExpense do
     @expense.id.should_not be_nil
   end
 
-  it "should not save with invalid number of issues" do
-    @expense.no_of_issues = nil
+  it "should not save without a title" do
+    @expense.title = ''
     @expense.save.should == false
-    @expense.no_of_issues = -1
+  end
+
+  it "should not save with invalid number of issues" do
+    @expense.number_of_issues = nil
+    @expense.save.should == false
+    @expense.number_of_issues = -1
     @expense.save.should == false
   end
 
   it "should not save with invalid number of copies per issue" do
-    @expense.no_of_copies_per_issue = nil
+    @expense.copies_per_issue = nil
     @expense.save.should == false
-    @expense.no_of_copies_per_issue = -1
+    @expense.copies_per_issue = -1
     @expense.save.should == false
   end
 
   it "should not save with invalid purchase price" do
-    @expense.purchase_price = nil
+    @expense.price_per_copy = nil
     @expense.save.should == false
-    @expense.purchase_price = -1.01
+    @expense.price_per_copy = -1.01
     @expense.save.should == false
   end
 
   it "should not save without cost publication" do
-    @expense.cost_publication = nil
+    @expense.cost_per_issue = nil
     @expense.save.should == false
-    @expense.cost_publication = -1.00
+    @expense.cost_per_issue = -1.00
     @expense.save.should == false
   end
 

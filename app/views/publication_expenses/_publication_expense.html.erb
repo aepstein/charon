@@ -1,15 +1,24 @@
   <p>
-    Number of issues: <%= publication_expense.no_of_issues %>
-  </p>
-  <p>
-    Number of copies per issue: <%= publication_expense.no_of_copies_per_issue %>
+    Title: <%=h publication_expense.title %>
   </p>
 
   <p>
-    Purchase price: <%= number_to_currency(publication_expense.purchase_price) %>
+    Number of issues: <%= publication_expense.number_of_issues %>
   </p>
 
   <p>
-    Cost of publication: <%= number_to_currency(publication_expense.cost_publication) %>
+    Number of copies per issue: <%= publication_expense.copies_per_issue %>
+  </p>
+
+  <p>
+    Purchase price per copy: <%= number_to_currency(publication_expense.price_per_copy) %>
+  </p>
+
+  <p>
+    Cost of publication per issue: <%= number_to_currency(publication_expense.cost_per_issue) %>
+  </p>
+
+  <p>
+    Revenue: <%= number_to_currency(publication_expense.revenue) %>
   </p>
 

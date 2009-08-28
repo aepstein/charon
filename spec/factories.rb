@@ -182,10 +182,11 @@ end
 
 Factory.define :publication_expense do |f|
   f.association :version
-  f.no_of_issues 3
-  f.no_of_copies_per_issue 500
-  f.purchase_price 4.00
-  f.cost_publication 1.82
+  f.title 'Publication'
+  f.number_of_issues 3
+  f.copies_per_issue 500
+  f.price_per_copy 4.00
+  f.cost_per_issue 2809.09
 end
 
 Factory.define :travel_event_expense do |f|
