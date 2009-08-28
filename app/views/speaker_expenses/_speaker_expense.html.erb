@@ -1,28 +1,24 @@
 <p>
-  Name of Speaker, Performer, or Group: <%=h speaker_expense.speaker_name %>
+  Name of Speaker, Performer, or Group: <%=h speaker_expense.title %>
 </p>
 
 <p>
-  Date of performance: <%=h speaker_expense.performance_date %>
+  Travel distance: <%= speaker_expense.distance %> miles round trip
 </p>
 
 <p>
-  Travel mileage: <%=h speaker_expense.mileage %>
+  Number of travelers: <%= speaker_expense.number_of_travelers %>
 </p>
 
 <p>
-  Number of speakers or performers traveling: <%=h speaker_expense.number_of_speakers %>
+  Nights of lodging: <%= speaker_expense.nights_of_lodging %>
 </p>
 
 <p>
-  Nights of lodging required: <%=h speaker_expense.nights_of_lodging %>
+  Engagement fee: <%= number_to_currency(speaker_expense.engagement_fee) %>
 </p>
 
 <p>
-  Engagement fee for speakers or performers: <%= number_to_currency(speaker_expense.engagement_fee) %>
-</p>
-
-<p>
-  Car rental: <%=h number_to_currency(speaker_expense.car_rental) %>
+  Dignitary: <%= speaker_expense.dignitary? ? 'Yes' : 'No' %>
 </p>
 

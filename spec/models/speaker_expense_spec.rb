@@ -14,29 +14,22 @@ describe SpeakerExpense do
     @expense.save.should == false
   end
 
-  it "should not save without a speaker name" do
-    @expense.speaker_name = ''
+  it "should not save without a title" do
+    @expense.title = ''
     @expense.save.should == false
   end
 
-  it "should not save without a performance date" do
-    @expense.performance_date = nil
+  it "should not save with invalid distance" do
+    @expense.distance = nil
     @expense.save.should == false
-    @expense.performance_date = 'blah'
-    @expense.save.should == false
-  end
-
-  it "should not save with invalid mileage" do
-    @expense.mileage = nil
-    @expense.save.should == false
-    @expense.mileage = -13
+    @expense.distance = -13
     @expense.save.should == false
   end
 
   it "should not save with invalid number of speakers" do
-    @expense.number_of_speakers = nil
+    @expense.number_of_travelers = nil
     @expense.save.should == false
-    @expense.number_of_speakers = -1
+    @expense.number_of_travelers = -1
     @expense.save.should == false
   end
 
@@ -51,13 +44,6 @@ describe SpeakerExpense do
     @expense.engagement_fee = nil
     @expense.save.should == false
     @expense.engagement_fee = -1.01
-    @expense.save.should == false
-  end
-
-  it "should not save with invalid car rental" do
-    @expense.car_rental = nil
-    @expense.save.should == false
-    @expense.car_rental = -10.01
     @expense.save.should == false
   end
 
