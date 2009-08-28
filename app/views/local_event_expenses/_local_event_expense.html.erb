@@ -30,3 +30,7 @@
     Rental Equipment, Services, and Intellectual Property Use Fees: <%= number_to_currency(local_event_expense.services_cost) %>
   </p>
 
+  <p>
+    Use of University Property Form required: <%= local_event_expense.uup_required ? 'Yes' : 'No' %>
+  </p>
+

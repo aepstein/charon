@@ -9,6 +9,7 @@ class CreateLocalEventExpenses < ActiveRecord::Migration
       t.decimal :price_per_attendee, { :null => false, :default => 0 }
       t.integer :copies_quantity, { :null => false, :default => 0 }
       t.decimal :services_cost, { :null => false, :default => 0 }
+      t.boolean :uup_required, { :null => false, :default => false }
       t.integer :version_id, :null => false
 
       t.timestamps

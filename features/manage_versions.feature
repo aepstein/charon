@@ -242,6 +242,7 @@ Feature: Manage versions
     And I fill in "Admission Charge Per Attendee" with "5"
     And I fill in "Number of Publicity Copies" with "100"
     And I fill in "Rental Equipment, Services, and Intellectual Property Use Fees" with "550"
+    And I check "Check if a Use of University Property Form will be filed for this event"
     And I fill in "version_amount" with "50"
     And I fill in "version_comment" with "comment"
     And I press "Create"
@@ -259,6 +260,7 @@ Feature: Manage versions
     And I should see "Admission Charge Per Attendee: $5.00"
     And I should see "Number of Publicity Copies: 100"
     And I should see "Rental Equipment, Services, and Intellectual Property Use Fees: $550.00"
+    And I should see "Use of University Property Form required: Yes"
     When I follow "Edit"
     And I fill in "Date" with "2009-08-19"
     And I fill in "Title" with "Cow Tipping"
@@ -268,6 +270,7 @@ Feature: Manage versions
     And I fill in "Admission Charge Per Attendee" with "2"
     And I fill in "Number of Publicity Copies" with "10"
     And I fill in "Rental Equipment, Services, and Intellectual Property Use Fees" with "51"
+    And I uncheck "Check if a Use of University Property Form will be filed for this event"
     And I fill in "version_amount" with "20"
     And I fill in "version_comment" with "changed comment"
     And I press "Update"
@@ -285,6 +288,7 @@ Feature: Manage versions
     And I should see "Admission Charge Per Attendee: $2.00"
     And I should see "Number of Publicity Copies: 10"
     And I should see "Rental Equipment, Services, and Intellectual Property Use Fees: $51.00"
+    And I should see "Use of University Property Form required: No"
     When I follow "Edit"
     And I fill in "version_amount" with "150"
     And I press "Update"
@@ -356,7 +360,7 @@ Feature: Manage versions
     And I fill in "version_amount" with "1500"
     And I press "Update"
     Then I should not see "Version was successfully updated."
-  @current
+
   Scenario: Add and update version (speaker_expense)
     Given I am logged in as "admin" with password "secret"
     And I am on the new version page of the 6th item
