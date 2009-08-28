@@ -202,3 +202,14 @@ Factory.define :travel_event_expense do |f|
   f.per_group_fees 125.00
 end
 
+Factory.define :speaker_expense do |f|
+  f.association :version
+  f.speaker_name 'An Important Person'
+  f.performance_date Date.today + 2.months
+  f.mileage 204
+  f.number_of_speakers 1
+  f.nights_of_lodging 10
+  f.engagement_fee 1000
+  f.car_rental 100
+end
+
