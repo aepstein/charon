@@ -184,7 +184,6 @@ Feature: Manage versions
     And I press "Update"
     Then I should not see "Version was successfully updated."
 
-  @current
   Scenario: Add and update version (publication_expense)
     Given I am logged in as "admin" with password "secret"
     And I am on the new version page of the 3rd item
