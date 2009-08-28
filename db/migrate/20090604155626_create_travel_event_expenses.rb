@@ -1,18 +1,18 @@
 class CreateTravelEventExpenses < ActiveRecord::Migration
   def self.up
     create_table :travel_event_expenses do |t|
-      t.date :event_date
-      t.string :event_title
-      t.string :event_location
-      t.string :event_purpose
-      t.integer :members_per_group
-      t.integer :number_of_groups
-      t.decimal :mileage
-      t.integer :nights_of_lodging
-      t.decimal :per_person_fees
-      t.decimal :per_group_fees
-      t.decimal :total_eligible_expenses
-      t.integer :version_id
+      t.date :event_date, :null => false
+      t.string :event_title, :null => false
+      t.string :event_location, :null => false
+      t.string :event_purpose, :null => false
+      t.integer :members_per_group, :null => false
+      t.integer :number_of_groups, { :null => false, :default => 1 }
+      t.decimal :mileage, { :null => false, :default => 0 }
+      t.integer :nights_of_lodging, { :null => false, :default => 0 }
+      t.decimal :per_person_fees, { :null => false, :default => 0 }
+      t.decimal :per_group_fees, { :null => false, :default => 0 }
+      t.decimal :total_eligible_expenses, { :null => false, :default => 0 }
+      t.integer :version_id, :null => false
 
       t.timestamps
     end

@@ -1,6 +1,6 @@
 class Version < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
-  belongs_to :item
+  belongs_to :item, :touch => true, :autosave => true
   has_one :administrative_expense
   has_one :local_event_expense
   has_one :speaker_expense
@@ -35,9 +35,14 @@ class Version < ActiveRecord::Base
   delegate :document_types, :to => :node
 
   before_validation_on_create :initialize_documents
+  before_validation_on_create :initialize_requestable
 
   def initialize_documents
     documents.each { |document| document.version = self }
+  end
+
+  def initialize_requestable
+    requestable.version = self if requestable
   end
 
   def amount_must_be_less_than_requestable_max

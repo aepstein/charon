@@ -1,14 +1,14 @@
 class CreatePublicationExpenses < ActiveRecord::Migration
   def self.up
     create_table :publication_expenses do |t|
-      t.integer :no_of_issues
-      t.integer :no_of_copies_per_issue
-      t.integer :total_copies
-      t.decimal :purchase_price
-      t.decimal :revenue
-      t.decimal :cost_publication
-      t.decimal :total_cost_publication
-      t.integer :version_id
+      t.integer :no_of_issues, :null => false
+      t.integer :no_of_copies_per_issue, :null => false
+      t.integer :total_copies, { :null => false, :default => 0 }
+      t.decimal :purchase_price, { :null => false, :default => 0 }
+      t.decimal :revenue, { :null => false, :default => 0 }
+      t.decimal :cost_publication, { :null => false, :default => 0 }
+      t.decimal :total_cost_publication, { :null => false, :default => 0 }
+      t.integer :version_id, :null => false
 
       t.timestamps
     end

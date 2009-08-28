@@ -161,3 +161,44 @@ Factory.define :administrative_expense do |f|
   f.mailbox_wsh 25
 end
 
+Factory.define :durable_good_expense do |f|
+  f.association :version
+  f.description 'a durable good'
+  f.quantity 1.5
+  f.price 1.5
+end
+
+Factory.define :local_event_expense do |f|
+  f.association :version
+  f.date_of_event Date.today + 2.months
+  f.title_of_event 'An Event'
+  f.location_of_event 'Willard Straight Hall'
+  f.purpose_of_event 'To do something fun'
+  f.anticipated_no_of_attendees 50
+  f.admission_charge_per_attendee 5.50
+  f.number_of_publicity_copies 500
+  f.rental_equipment_services 1102
+end
+
+Factory.define :publication_expense do |f|
+  f.association :version
+  f.no_of_issues 3
+  f.no_of_copies_per_issue 500
+  f.purchase_price 4.00
+  f.cost_publication 1.82
+end
+
+Factory.define :travel_event_expense do |f|
+  f.association :version
+  f.event_date Date.today + 2.months
+  f.event_title "A tournament"
+  f.event_location 'Los Angeles, CA'
+  f.event_purpose 'To compete'
+  f.members_per_group 5
+  f.number_of_groups 2
+  f.mileage 6388
+  f.nights_of_lodging 3
+  f.per_person_fees 25.00
+  f.per_group_fees 125.00
+end
+

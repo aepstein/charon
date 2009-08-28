@@ -62,5 +62,10 @@ describe Item do
     @item.request.stub!(:may_see?).and_return(false)
     @item.may_see?(nil).should == false
   end
+
+  it "should call request.touch on save" do
+    @item.request.should_receive(:touch)
+    @item.save
+  end
 end
 
