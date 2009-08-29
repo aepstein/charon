@@ -54,11 +54,11 @@ class User < ActiveRecord::Base
   after_save :import_complex_ldap_attributes
 
   def full_name
-    "#{first_name} #{middle_name} #{last_name}".squeeze
+    "#{first_name} #{middle_name} #{last_name}".squeeze ' '
   end
 
   def name
-    "#{first_name} #{last_name}".squeeze
+    "#{first_name} #{last_name}".squeeze ' '
   end
 
   def may_create?(user)

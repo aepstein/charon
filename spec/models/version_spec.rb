@@ -38,6 +38,17 @@ describe Version do
     version.save.should == false
   end
 
+  it "should not save with an amount higher than original version amount" do
+    detail = Factory(:administrative_expense)
+    original = detail.version
+    review = original.item.versions.next( :administrative_expense_attributes => Factory.attributes_for(:administrative_expense),
+      :amount => (original.amount + 1.0) )
+    review.perspective.should == 'reviewer'
+    review.amount.should > original.amount
+    review.save.should == false
+    review.errors.first.to_s.should == 'amount is greater than original request amount.'
+  end
+
   it "should have may_create? which is true if request.may_revise? and in review stage" do
     @version.request.stub!(:may_revise?).and_return(true)
     @version.perspective = 'reviewer'
