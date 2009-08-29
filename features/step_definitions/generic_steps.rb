@@ -14,6 +14,11 @@ Given /^([0-9]+) (.+) records?$/ do |number, factory|
   end
 end
 
+Given /^the (.+) records are updated ([0-9]+) seconds later$/ do |type, seconds|
+  sleep seconds.to_i
+  type.constantize.all.each { |o| o.touch }
+end
+
 Then /^I should see the following entries in "(.+)":$/ do |table_id, expected_approvals_table|
   expected_approvals_table.diff!(table_at("##{table_id}").to_a)
 end

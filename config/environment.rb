@@ -52,6 +52,7 @@ Rails::Initializer.run do |config|
   config.gem 'searchlogic'
   config.gem 'chronic', :lib => false
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
+  config.gem 'RedCloth', :lib => "redcloth"
 end
 
 CalendarDateSelect.format = :hyphen_ampm

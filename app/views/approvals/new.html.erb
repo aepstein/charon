@@ -2,6 +2,14 @@
 
 <% form_for( :approval, @approval, :url => approvable_approvals_path(@approval.approvable) ) do |f| %>
   <%= f.error_messages %>
+  <%= f.hidden_field :as_of %>
+
+<p>
+Please review the document below and click "Confirm Approval" at the bottom if you approve.
+</p>
+
+<%= render_approvable @approval.approvable %>
+
   <p>
     <%= f.submit 'Confirm Approval' %>
   </p>

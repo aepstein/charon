@@ -13,6 +13,7 @@ end
 Factory.define :approval do |f|
   f.association :user
   f.association :approvable, :factory => :request
+  f.as_of { |approval| approval.approvable.updated_at + 1.seconds }
 end
 
 Factory.define :approver do |f|

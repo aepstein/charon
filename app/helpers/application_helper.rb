@@ -26,5 +26,9 @@ module ApplicationHelper
       raise "Class #{addressable.class} not supported"
     end
   end
+
+  def redcloth(source)
+    RedCloth::new(source).to_html
+  end
 end
 

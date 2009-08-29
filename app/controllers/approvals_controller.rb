@@ -18,6 +18,7 @@ class ApprovalsController < ApplicationController
   # GET /:approvable_class/:approvable_id/approvals/new.xml
   def new
     @approval = approvable.approvals.build
+    @approval.as_of = approvable.updated_at
     @approval.user = current_user
     raise AuthorizationError unless @approval.may_create? current_user
 
@@ -40,8 +41,8 @@ class ApprovalsController < ApplicationController
         format.html { redirect_to(@approval.approvable) }
         format.xml  { render :xml => @approval, :status => :created, :location => @approval }
       else
-        flash[:notice] = 'Approval failed to create.'
-        format.html { redirect_to(@approval.approvable) }
+        @approval.as_of = approvable.updated_at
+        format.html { render :action => 'new' }
         format.xml  { render :xml => @approval.errors, :status => :unprocessable_entity }
       end
     end

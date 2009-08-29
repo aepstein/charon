@@ -17,9 +17,26 @@ class Approval < ActiveRecord::Base
   validates_uniqueness_of :approvable_id, :scope => [ :approvable_type, :user_id ]
   validates_presence_of :approvable
   validates_presence_of :user
+  validate :approvable_must_not_change
 
   after_create :approve_approvable
   after_destroy :unapprove_approvable
+
+  def approvable_must_not_change
+    return unless approvable && as_of
+    if approvable.updated_at.to_s.to_datetime > as_of
+      errors.add_to_base( "#{approvable} has changed you saw it.  Please review again and confirm approval." )
+    end
+  end
+
+  def as_of=(datetime)
+    @as_of=datetime.to_s
+  end
+
+  def as_of
+    return nil unless @as_of
+    @as_of.to_datetime
+  end
 
   def approve_approvable
     approvable.approve! if approvals_fulfilled?

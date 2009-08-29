@@ -1,18 +1,4 @@
-<p>
-  <b>Name:</b> <%=h @agreement.name %>
-</p>
-
-<p>
-  <b>Contact name:</b> <%=h @agreement.contact_name %>
-</p>
-
-<p>
-  <b>Contact email:</b> <%=h @agreement.contact_email %>
-</p>
-
-<p>
-  <b>Content:</b> <%=h @agreement.content %>
-</p>
+<%= render :partial => 'agreement_detail', :object => @agreement %>
 
 <p>
 <%= link_to 'Edit', edit_agreement_path(@agreement) %> |

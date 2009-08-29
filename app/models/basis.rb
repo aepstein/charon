@@ -48,5 +48,9 @@ class Basis < ActiveRecord::Base
   def eligible_to_request?(organization)
     framework.organization_eligible?(organization)
   end
+
+  def to_s
+    name
+  end
 end
 
