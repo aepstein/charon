@@ -104,5 +104,16 @@ describe Version do
     @version.item.should_receive(:touch)
     @version.save
   end
+
+  it "should have a title method that returns the requestable title if defined, nil otherwise" do
+    title = 'a title'
+    version = Factory(:administrative_expense).version
+    version.requestable(true).should_not be_nil
+    version.title.should be_nil
+    version.administrative_expense.stub!(:title).and_return(nil)
+    version.title.should be_nil
+    version.administrative_expense.stub!(:title).and_return(title)
+    version.title.should == title
+  end
 end
 

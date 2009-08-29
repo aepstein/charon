@@ -1,10 +1,11 @@
 class CreateItems < ActiveRecord::Migration
   def self.up
     create_table :items do |t|
-      t.integer :request_id
-      t.integer :node_id
+      t.integer :request_id, :null => false
+      t.integer :node_id, :null => false
       t.integer :parent_id
       t.integer :position
+      t.string :title, :null => false
 
       t.timestamps
     end

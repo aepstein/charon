@@ -31,10 +31,17 @@ class Item < ActiveRecord::Base
 
   accepts_nested_attributes_for :versions
 
+  validates_presence_of :title
   validates_presence_of :node
   validates_presence_of :request
   validate_on_create :node_must_be_allowed
   validate_on_update :node_must_not_change
+
+  before_validation_on_create :set_title
+
+  def set_title
+    self.title = node.name
+  end
 
   def allowed_nodes
     Node.allowed_for_children_of( request, parent )

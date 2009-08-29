@@ -79,6 +79,11 @@ class Version < ActiveRecord::Base
     self.send("#{item.node.requestable_type.underscore}=",requestable)
   end
 
+  def title
+    return nil unless requestable && defined?( requestable.title )
+    requestable.title
+  end
+
   def may_create?(user)
     return request.may_revise?(user) if perspective == 'reviewer'
     request.may_update?(user) if perspective == 'requestor'

@@ -63,6 +63,11 @@ describe Item do
     @item.may_see?(nil).should == false
   end
 
+  it "should set its title from the node" do
+    item = Factory(:item)
+    item.title.should == item.node.name
+  end
+
   it "should call request.touch on save" do
     @item.request.should_receive(:touch)
     @item.save
