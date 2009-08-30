@@ -14,8 +14,11 @@ Given /^([0-9]+) (.+) records?$/ do |number, factory|
   end
 end
 
-Given /^the (.+) records are updated ([0-9]+) seconds later$/ do |type, seconds|
+Given /^([0-9])+ seconds? elapses?$/ do |seconds|
   sleep seconds.to_i
+end
+
+Given /^the (.+) records? changes?$/ do |type|
   type.constantize.all.each { |o| o.touch }
 end
 

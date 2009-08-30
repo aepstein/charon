@@ -28,7 +28,8 @@ Feature: Manage approvals
     And I am logged in as "president" with password "secret"
     When I follow "Approve"
     Then I should see "Name: safc"
-    Given the Agreement records are updated 2 seconds later
+    Given 1 second elapses
+    And the Agreement records change
     When I press "Confirm Approval"
     Then I should not see "Approval was successfully created."
     When I press "Confirm Approval"
