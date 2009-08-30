@@ -36,6 +36,11 @@ class Version < ActiveRecord::Base
 
   before_validation_on_create :initialize_documents
   before_validation_on_create :initialize_requestable
+  after_save :set_item_title
+
+  def set_item_title
+    item.title = title unless title.nil?
+  end
 
   def initialize_documents
     documents.each { |document| document.version = self }

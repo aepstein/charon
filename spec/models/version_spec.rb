@@ -115,5 +115,14 @@ describe Version do
     version.administrative_expense.stub!(:title).and_return(title)
     version.title.should == title
   end
+
+  it "should set its item's title to its own title if it has one on save" do
+    title = 'a title'
+    version = Factory(:version)
+    version.stub!(:title).and_return(title)
+    version.title.should_not == version.item.title
+    version.save
+    version.item.title.should == title
+  end
 end
 
