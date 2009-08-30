@@ -2,10 +2,12 @@ class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
   belongs_to :basis
   has_many :approvers, :through => :approvals, :source => :user do
-    def empty_for_status?( status )
+    def empty_for_status?( status=nil )
+      status ||= proxy_owner.status
       proxy_owner.framework.approvers.status(status).map { |a| actual_for(a) }.flatten.empty?
     end
-    def fulfill_status?( status )
+    def fulfill_status?( status=nil )
+      status ||= proxy_owner.status
       proxy_owner.framework.approvers.status(status).each do |approver|
         return false unless fulfill?( approver )
       end
@@ -159,11 +161,11 @@ class Request < ActiveRecord::Base
   end
 
   def approvals_fulfilled?
-    approvers.fulfill_status?( status )
+    approvers.fulfill_status?
   end
 
   def approvals_unfulfilled?
-    approvers.empty_for_status?( status )
+    approvers.empty_for_status?
   end
 
   def set_approval_checkpoint(datetime=nil)

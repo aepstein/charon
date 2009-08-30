@@ -39,7 +39,7 @@ describe Request do
     first_approval = @request.approvals.create( :user => Factory(:user), :as_of => @request.updated_at )
     @request.reload
     @request.status.should == 'completed'
-    sleep 2
+    sleep 1
     last = @request.approvals.create( :user => Factory(:user), :as_of => @request.updated_at )
     @request.reload
     initial.should_not == last.created_at
@@ -132,6 +132,67 @@ describe Request do
     unfulfilled.should include(must_and_did_not)
     unfulfilled.should_not include(did_but_not_must)
     unfulfilled.size.should == 1
+  end
+
+  it "should have approvers.potential_for?(approver) that returns users that count toward a particular approver requirement" do
+    setup_approvers
+    a1 = @request.approvers.potential_for(@c1)
+    a1.should include(@p)
+    a1.size.should == 1
+    a2 = @request.approvers.potential_for(@c2)
+    a2.should be_empty
+    a3 = @request.approvers.potential_for(@c3)
+    a3.should include(@c)
+    a3.size.should == 1
+  end
+
+  it "should have approvers.actual_for?(approver)" do
+    setup_approvers
+    @request.organizations.first.memberships.create(:active => true, :user => @t, :role => @treasurer)
+    @c4 = @request.framework.approvers.create( :perspective => 'reviewer', :status => 'reviewed', :role => @officer )
+    sleep 1
+    @request.approvals.create(:as_of => @request.updated_at, :user => @p)
+    @request.reload
+    @request.approvers.actual_for(@c1).should include(@p)
+    @request.approvers.actual_for(@c1).size.should == 1
+    @request.approvers.actual_for(@c2).should be_empty
+    @request.reload
+    @request.status.should == 'completed'
+    @request.approvals.create(:as_of => @request.updated_at, :user => @o).id.should_not be_nil
+    @request.reload
+    @request.status.should == 'completed'
+    @request.approvals.create(:as_of => @request.updated_at, :user => @t)
+    @request.reload
+    @request.status.should == 'submitted'
+    sleep 1
+    @request.accept.should == true
+    @request.save.should == true
+    @request.status.should == 'accepted'
+    @request.save.should == true
+    @request.approvals.create(:as_of => @request.updated_at, :user => @c).id.should_not be_nil
+    @request.reload
+    @request.status.should == 'reviewed'
+    @request.approvers.actual_for(@c3).should include(@c)
+    @request.approvers.actual_for(@c3).size.should == 1
+    @request.approvers.actual_for(@c4).should be_empty
+  end
+
+  def setup_approvers
+    @request.save.should == true
+    @president = Role.create(:name => 'president')
+    @treasurer = Role.create(:name => 'treasurer')
+    @advisor = Role.create(:name => 'advisor')
+    @commissioner = Role.create(:name => 'commissioner')
+    @officer = Role.create(:name => 'officer')
+    @p = Factory(:user); @a = Factory(:user); @t = Factory(:user); @c = Factory(:user); @o = Factory(:user);
+    @c1 = @request.framework.approvers.create( :perspective => 'requestor', :status => 'completed', :role => @president )
+    @c2 = @request.framework.approvers.create( :perspective => 'requestor', :status => 'completed', :role => @treasurer )
+    @c3 = @request.framework.approvers.create( :perspective => 'reviewer', :status => 'reviewed', :role => @commissioner )
+    @request.organizations.first.memberships.create(:active => true, :user => @p, :role => @president)
+    @request.organizations.first.memberships.create(:active => true, :user => @a, :role => @advisor)
+    @request.basis.organization.memberships.create(:active => true, :user => @t, :role => @treasurer)
+    @request.basis.organization.memberships.create(:active => true, :user => @c, :role => @commissioner)
+    @request.basis.organization.memberships.create(:active => true, :user => @o, :role => @officer )
   end
 
   def create_approver_for_request(request, role_name, perspective = 'requestor', status = 'completed')
