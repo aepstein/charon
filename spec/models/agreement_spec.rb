@@ -31,8 +31,8 @@ describe Agreement do
     agreement.may_approve?(nil).should == true
     agreement.may_unapprove?(nil).should == false
     agreement.may_unapprove_other?(nil).should == false
-    agreement.approve!.should be_nil
-    agreement.unapprove!.should be_nil
+    agreement.approve.should be_true
+    agreement.unapprove.should be_false
   end
 
   it "should include the GlobalModelAuthorization module" do

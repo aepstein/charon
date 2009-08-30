@@ -23,10 +23,12 @@ class Agreement < ActiveRecord::Base
   validates_presence_of :contact_name
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
 
-  def approve!
+  def approve
+    true
   end
 
-  def unapprove!
+  def unapprove
+    false
   end
 
   def approvals_fulfilled?

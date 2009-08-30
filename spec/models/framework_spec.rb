@@ -48,7 +48,7 @@ describe Framework do
   it "should have a permissions.allowed_actions(roles,perspective,status) that returns allowed actions only" do
     agreement = Factory(:agreement)
     allowed_user = Factory(:user)
-    allowed_user.approvals.create(:approvable => agreement)
+    allowed_user.approvals.create(:approvable => agreement, :as_of => agreement.updated_at)
     disallowed_user = Factory(:user)
     allowed_role = Factory(:role)
     disallowed_role = Factory(:role)

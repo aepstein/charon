@@ -26,7 +26,7 @@ class Request < ActiveRecord::Base
       end
     end
     def actual_for( approver )
-      potential_for( approver ) & self
+      potential_for( approver ) & self.find(:all, :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint.utc ] )
     end
     def potential_for( approver )
       sql = case approver.perspective
@@ -44,7 +44,11 @@ class Request < ActiveRecord::Base
       User.find( :all, :conditions => conditions )
     end
   end
-  has_many :approvals, :dependent => :destroy, :as => :approvable
+  has_many :approvals, :dependent => :destroy, :as => :approvable do
+    def existing
+      self.reject { |approval| approval.new_record? }
+    end
+  end
   has_many :items, :dependent => :destroy, :include => [ :node, :parent, :versions ] do
     def children_of(parent_item)
       self.select { |item| item.parent_id == parent_item.id }
@@ -66,7 +70,10 @@ class Request < ActiveRecord::Base
   delegate :contact_name, :to => :basis
   delegate :contact_email, :to => :basis
 
+  before_validation_on_create :set_approval_checkpoint
+
   validate :must_have_open_basis, :must_have_eligible_organizations
+  validates_datetime :approval_checkpoint
 
   def must_have_open_basis
     errors.add( :basis_id, 'must be an open basis.' ) unless basis.open?
@@ -88,11 +95,11 @@ class Request < ActiveRecord::Base
   aasm_column :status
   aasm_initial_state :started
   aasm_state :started
-  aasm_state :completed, :guard => :approvals_fulfilled?
-  aasm_state :submitted
+  aasm_state :completed
+  aasm_state :submitted, :enter => :reset_approval_checkpoint
   aasm_state :accepted
   aasm_state :reviewed
-  aasm_state :certified, :guard => :approvals_fulfilled?
+  aasm_state :certified, :enter => :reset_approval_checkpoint
   aasm_state :released
 
   aasm_event :accept do
@@ -104,13 +111,15 @@ class Request < ActiveRecord::Base
   end
   aasm_event :approve do
     transitions :to => :completed, :from => :started
+    transitions :to => :submitted, :from => :completed, :guard => :approvals_fulfilled?
     transitions :to => :reviewed, :from => :accepted
+    transitions :to => :certified, :from => :reviewed, :guard => :approvals_fulfilled?
 #    draft_approved_at = DateTime.now unless draft_approved_at?
 #    review_approved_at = DateTime.now unless review_approved_at?
   end
   aasm_event :unapprove do
-    transitions :to => :started, :from => :completed
-    transitions :to => :accepted, :from => :reviewed
+    transitions :to => :started, :from => :completed, :guard => :approvals_unfulfilled?
+    transitions :to => :accepted, :from => :reviewed, :guard => :approvals_unfulfilled?
   end
   aasm_event :release do
     transitions :to => :released, :from => :certified
@@ -155,6 +164,15 @@ class Request < ActiveRecord::Base
 
   def approvals_unfulfilled?
     approvers.empty_for_status?( status )
+  end
+
+  def set_approval_checkpoint(datetime=nil)
+    self.approval_checkpoint = ( datetime.nil? ? DateTime.now : datetime )
+  end
+
+  def reset_approval_checkpoint
+    return if approvals.existing.last.nil?
+    self.approval_checkpoint = approvals.existing.last.created_at
   end
 
   def self.aasm_state_names

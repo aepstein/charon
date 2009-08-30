@@ -26,6 +26,27 @@ describe Request do
     @request.save.should == false
   end
 
+  it "should not save with an invalid approval_checkpoint" do
+    @request.save
+    @request.approval_checkpoint = nil
+    @request.save.should == false
+  end
+
+  it "should reset approval checkpoint on transition to submitted" do
+    @request.save
+    initial = @request.approval_checkpoint
+    @request.reload
+    first_approval = @request.approvals.create( :user => Factory(:user), :as_of => @request.updated_at )
+    @request.reload
+    @request.status.should == 'completed'
+    sleep 2
+    last = @request.approvals.create( :user => Factory(:user), :as_of => @request.updated_at )
+    @request.reload
+    initial.should_not == last.created_at
+    @request.status.should == 'submitted'
+    @request.approval_checkpoint.should > initial
+  end
+
   it "should have a may method for retrieving a user's permissions in framework" do
     allowed_role = Factory(:role, :name => 'allowed')
     disallowed_role = Factory(:role, :name => 'disallowed')
@@ -103,7 +124,7 @@ describe Request do
     end
     request.framework.approvers.create( :perspective => 'requestor', :status => 'started', :role => role )
     [ must_and_did, did_but_not_must ].each do |user|
-      approval = request.approvals.create(:user => user)
+      approval = request.approvals.create(:user => user, :as_of => request.updated_at)
     end
     request.approvers.stub!(:required_for_status).and_return( [ must_and_did, must_and_did_not ] )
     unfulfilled = request.approvers.unfulfilled_for_status(nil)

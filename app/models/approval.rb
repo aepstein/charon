@@ -5,8 +5,6 @@ class Approval < ActiveRecord::Base
   delegate :may_approve?, :to => :approvable
   delegate :may_unapprove?, :to => :approvable
   delegate :may_unapprove_other?, :to => :approvable
-  delegate :approvals_fulfilled?, :to => :approvable
-  delegate :approvals_unfulfilled?, :to => :approvable
 
   named_scope :agreements, :conditions => { :approvable_type => 'Agreement' }
   named_scope :requests, :conditions => { :approvable_type => 'Request' }
@@ -14,6 +12,7 @@ class Approval < ActiveRecord::Base
     { :conditions => [ 'approvals.created_at >= ?', time.utc ] }
   }
 
+  validates_datetime :as_of
   validates_uniqueness_of :approvable_id, :scope => [ :approvable_type, :user_id ]
   validates_presence_of :approvable
   validates_presence_of :user
@@ -25,7 +24,7 @@ class Approval < ActiveRecord::Base
   def approvable_must_not_change
     return unless approvable && as_of
     if approvable.updated_at.to_s.to_datetime > as_of
-      errors.add_to_base( "#{approvable} has changed you saw it.  Please review again and confirm approval." )
+      errors.add_to_base( "#{approvable} has changed since you saw it.  Please review again and confirm approval." )
     end
   end
 
@@ -39,12 +38,14 @@ class Approval < ActiveRecord::Base
   end
 
   def approve_approvable
-    approvable.approve! if approvals_fulfilled?
+    approvable.approve
+    approvable.save if approvable.changed?
   end
 
   # TODO must be more robust
   def unapprove_approvable
-    approvable.unapprove! if approvals_unfulfilled?
+    approvable.unapprove
+    approvable.save if approvable.changed?
   end
 
   def may_create?(user)
