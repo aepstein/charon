@@ -9,7 +9,7 @@ class CreatePermissions < ActiveRecord::Migration
 
       t.timestamps
     end
-    add_index :permissions, [ :framework_id, :role_id, :status, :perspective, :action ], :unique => true
+    add_index :permissions, [ :framework_id, :role_id, :status, :perspective, :action ], :unique => true, :name => 'permissions_unique_constraint'
   end
 
   def self.down
