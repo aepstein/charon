@@ -70,15 +70,19 @@ module RegistrationImporter
 
     # Returns number of records imported
     def self.import
-      count = 0
+      count, destroy_count = 0, 0
       Registration.transaction do
         ExternalRegistration.importable.each do |external|
           registration = Registration.find_or_initialize_by_id( external.org_id )
           registration.attributes = external.attributes_for_local
           registration.save && count += 1 if registration.new_record? || registration.changed?
         end
+        current_ids = ExternalRegistration.all.map { |r| r.org_id }
+        Registration.find( :all, :conditions => [ 'registrations.id NOT IN (?)', current_ids ] ).each do |registration|
+          registration.destroy && destroy_count += 1
+        end
       end
-      count
+      [count, destroy_count]
     end
 
   end
