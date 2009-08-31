@@ -73,9 +73,26 @@ Feature: Manage requests
     When I am on "safc 3's requests page"
     Then I should see the following requests:
       | Basis |
-
+  @current
   Scenario: Approve request for existing organization
-    Given I am on "safc 1's requests page"
+    Given the following nodes:
+      | structure | requestable_type      | name                   |
+      | budget    | AdministrativeExpense | administrative expense |
+      | budget    | LocalEventExpense     | local event expense    |
+      | budget    | TravelEventExpense    | travel event expense   |
+      | budget    | DurableGoodExpense    | durable good expense   |
+      | budget    | PublicationExpense    | publication expense    |
+    And the following items:
+      | request | node                   |
+      | 1       | administrative expense |
+      | 1       | durable good expense   |
+      | 1       | publication expense    |
+    And the following versions:
+      | item | perspective |
+      | 1    | requestor   |
+      | 1    | reviewer    |
+      | 2    | requestor   |
+    And I am on "safc 1's requests page"
     When I follow "Approve"
     And I press "Confirm Approval"
     Then I should see "Approval was successfully created"
