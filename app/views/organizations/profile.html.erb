@@ -16,7 +16,7 @@
 <% end %>
 
 <% unless @organization.requests.submitted.select { |r| r.may_see? current_user }.empty? %>
-<h2>Requests you've completed, but are still awaiting approvals</h2>
+<h2>Requests you've completed and submitted</h2>
 <%= render :partial => 'requests/request', :collection => @organization.requests.submitted %>
 <% end %>
 
