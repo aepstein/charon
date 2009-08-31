@@ -11,13 +11,9 @@ class AdministrativeExpense < ActiveRecord::Base
     0.03 * copies
   end
 
-	def total
+	def max_request
 	  return 0.0 unless repairs_restocking && mailbox_wsh
 		copies_expense + repairs_restocking + mailbox_wsh
-	end
-
-	def max_request
-	  total
   end
 
 end

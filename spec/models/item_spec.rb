@@ -94,5 +94,23 @@ describe Item do
     second.position.should == 3
     third.position.should == 2
   end
+
+  it "should have an initialize_next_version that initialize the next version in each child and in self" do
+    first = @item
+    first.save
+    request = @item.request
+    node = @item.node
+    node.item_quantity_limit = 2
+    node.save
+    child_node = node.structure.nodes.create( Factory.attributes_for(:node).merge(:parent_id => node.id) )
+    second = @item.request.items.create(:node => node)
+    child = @item.request.items.create(:node => child_node, :parent => first)
+    first.id.should_not be_nil
+    second.id.should_not be_nil
+    child.id.should_not be_nil
+    first.initialize_next_version
+    first.versions.first.class.should == Version
+    first.children.first.versions.first.class.should == Version
+  end
 end
 

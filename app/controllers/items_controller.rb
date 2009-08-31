@@ -3,9 +3,10 @@ class ItemsController < ApplicationController
   # GET /requests/:request_id/items.xml
   def index
     @request = Request.find(params[:request_id])
-    @items = @request.items
     raise AuthorizationError unless @request.may_see?(current_user)
-    @items.each { |item| item.versions.next }
+    @request.items.initialize_next_version
+    @items = @request.items.root
+
 
     respond_to do |format|
       format.html # index.html.erb

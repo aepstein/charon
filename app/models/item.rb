@@ -42,6 +42,11 @@ class Item < ActiveRecord::Base
 
   before_validation_on_create :set_title
 
+  def initialize_next_version
+    children.each { |item| item.initialize_next_version }
+    versions.next
+  end
+
   def set_title
     self.title = node.name
   end

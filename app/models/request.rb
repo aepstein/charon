@@ -58,6 +58,9 @@ class Request < ActiveRecord::Base
     def root
       self.select { |item| item.parent_id.nil? }
     end
+    def initialize_next_version
+      root.each { |item| item.initialize_next_version }
+    end
   end
   has_and_belongs_to_many :organizations do
     def allowed?(organization)

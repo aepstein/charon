@@ -25,6 +25,13 @@
 <% unless current_user.registrations.active.unmatched.empty? %>
   <h3>Unmatched Registrations:<h3>
 
+  <p>
+  These are registrations that you have started with the Student Acitvities
+  Office, but have not yet matched to year-to-year record in the Office of the Assemblies.
+  You should <a href="mailto:assembly@cornell.edu">email</a> the office or pick up your
+  budget folder to get a matching year-to-year record set up.
+  </p>
+
   <ul>
   <%= render :partial => "registration", :collection => current_user.registrations.active.unmatched %>
   </ul>
