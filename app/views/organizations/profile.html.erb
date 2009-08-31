@@ -10,6 +10,16 @@
 <%= render :partial => 'requests/request', :collection => @organization.requests.started %>
 <% end %>
 
+<% unless @organization.requests.completed.select { |r| r.may_see? current_user }.empty? %>
+<h2>Requests you've completed, but are still awaiting approvals</h2>
+<%= render :partial => 'requests/request', :collection => @organization.requests.completed %>
+<% end %>
+
+<% unless @organization.requests.submitted.select { |r| r.may_see? current_user }.empty? %>
+<h2>Requests you've completed, but are still awaiting approvals</h2>
+<%= render :partial => 'requests/request', :collection => @organization.requests.submitted %>
+<% end %>
+
 <% unless @organization.requests.released.select { |r| r.may_see? current_user }.empty? %>
 <h2>Requests that have been released</h2>
 <%= render :partial => 'requests/request', :collection => @organization.requests.released %>
