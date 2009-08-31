@@ -5,7 +5,7 @@ module ItemsHelper
     else
       items = parent.items
     end
-    options_for_select( items.map { |i| [ i.title, i.id ] }, item.position )
+    options_for_select( items.map { |i| [ i.title, i.position ] }, item.position )
   end
 end
 

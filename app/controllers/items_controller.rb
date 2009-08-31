@@ -74,7 +74,7 @@ class ItemsController < ApplicationController
     raise AuthorizationError unless @item.may_update? current_user
 
     respond_to do |format|
-      if @item.insert_at(params[:new_position])
+      if @item.insert_at(params[:new_position].to_i)
         flash[:notice] = 'Item was successfully moved.'
         format.html { redirect_to( request_items_url(@item.request) ) }
       else
