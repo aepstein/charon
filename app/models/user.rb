@@ -21,7 +21,7 @@ class User < ActiveRecord::Base
       Agreement.roles( proxy_owner.roles( :conditions => ['memberships.active = ?', true] ) )
     end
     def agreement_ids
-      self.agreements.map { |a| a.id }
+      self.agreements.map { |a| a.approvable_id }
     end
   end
   has_many :memberships,  :include => [ :organization, :role ], :dependent => :destroy
