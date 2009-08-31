@@ -56,7 +56,7 @@ class ApprovalsController < ApplicationController
     @approval.destroy
 
     respond_to do |format|
-      format.html { redirect_to(approvable) }
+      format.html { redirect_to(@approval.approvable) }
       format.xml  { head :ok }
     end
   end
