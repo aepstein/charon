@@ -1,1 +1,12 @@
+<table>
+  <tr>
+    <th>Perspective</th>
+    <th>Amount</th>
+    <th>Comment</th>
+  </tr>
+
+<%= render :partial => 'item', :collection => request_detail.items.root,
+      :locals => { :read_only => true, :show_detail => true } %>
+
+</table>
 

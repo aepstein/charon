@@ -1,11 +1,17 @@
+<% if item.may_see?(current_user) %>
   <tr>
     <td colspan="3"><%=h item.title %></td>
+    <% unless read_only %>
     <td><%= link_to_if item.may_update?(current_user), 'Move', move_item_path(item) %> <%= link_to_if item.may_destroy?(current_user), 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
+    <% end %>
   </tr>
 
-  <%= render :partial => 'version', :collection => item.versions %>
+  <%= render :partial => 'version', :collection => item.versions, :locals => { :read_only => read_only, :show_detail => show_detail } %>
 
-  <%= render :partial => 'item', :collection => item.request.items.children_of(item) %>
+  <%= render :partial => 'item', :collection => item.request.items.children_of(item), :locals => { :read_only => read_only, :show_detail => show_detail } %>
 
+  <% unless read_only %>
   <%= render :partial => 'new_item', :object => item.request.items.build( :parent => item ) %>
+  <% end %>
+<% end %>
 

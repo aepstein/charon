@@ -9,10 +9,10 @@ table td { padding: 4px; }
     <th>Perspective</th>
     <th>Amount</th>
     <th>Comment</th>
-    <th>Available commands</th>
   </tr>
 
-<%= render :partial => 'item', :collection => @request.items.root %>
+<%= render :partial => 'item', :collection => @request.items.root,
+      :locals => { :read_only => false, :show_detail => false } %>
 
 </table>
 
