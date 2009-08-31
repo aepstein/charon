@@ -40,6 +40,7 @@ class Version < ActiveRecord::Base
 
   def set_item_title
     item.title = title unless title.nil?
+    item.save
   end
 
   def initialize_documents

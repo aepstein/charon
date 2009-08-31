@@ -4,7 +4,6 @@ class ItemsController < ApplicationController
   def index
     @request = Request.find(params[:request_id])
     raise AuthorizationError unless @request.may_see?(current_user)
-    @request.items.initialize_next_version
     @items = @request.items.root
 
 

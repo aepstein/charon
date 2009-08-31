@@ -106,8 +106,8 @@ describe Version do
   end
 
   it "should item.touch on save" do
-    @version.item.request.should_receive(:touch)
-    @version.item.should_receive(:touch)
+    @version.item.request.should_receive(:touch).at_least(:once)
+    @version.item.should_receive(:touch).at_least(:once)
     @version.save
   end
 

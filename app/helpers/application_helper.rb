@@ -32,7 +32,7 @@ module ApplicationHelper
   end
 
   def render_requestable_detail(requestable)
-    render :partial => "#{requestable.class.to_s.underscore.pluralize}/#{requestable.class.to_s.underscore}_detail",
+    render :partial => "#{requestable.class.to_s.underscore.pluralize}/#{requestable.class.to_s.underscore}",
            :object => requestable
   end
 end
