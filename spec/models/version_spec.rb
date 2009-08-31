@@ -28,6 +28,12 @@ describe Version do
     duplicate_version.save.should == false
   end
 
+  it "should not save with an amount higher than item.node.item_amount_limit" do
+    @version.amount = @version.item.node.item_amount_limit + 1
+    @version.save.should == false
+    @version.errors.first.to_s.should == "amount is greater than maximum for #{@version.item.node}."
+  end
+
   it "should not save with an amount higher than requestable.max_request" do
     detail = Factory(:administrative_expense)
     detail.id.should_not be_nil

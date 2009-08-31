@@ -28,7 +28,7 @@ class Version < ActiveRecord::Base
   validates_presence_of :item
   validates_inclusion_of :perspective, :in => PERSPECTIVES
   validates_uniqueness_of :perspective, :scope => :item_id
-  validate :amount_must_be_within_requestable_max, :amount_must_be_within_original_version
+  validate :amount_must_be_within_requestable_max, :amount_must_be_within_original_version, :amount_must_be_within_node_limit
 
   delegate :request, :to => :item
   delegate :node, :to => :item
@@ -50,10 +50,17 @@ class Version < ActiveRecord::Base
     requestable.version = self if requestable
   end
 
+  def amount_must_be_within_node_limit
+    return if item.nil?
+    if amount > item.node.item_amount_limit
+      errors.add(:amount, " is greater than maximum for #{node}.")
+    end
+  end
+
   def amount_must_be_within_requestable_max
     return if requestable.nil? || amount.nil?
     if amount > requestable.max_request then
-      errors.add(:amount, "is greater than the maximum request.")
+      errors.add(:amount, " is greater than the maximum request.")
     end
   end
 
