@@ -2,19 +2,16 @@
 
 <% unless @organization.requests.creatable.select { |r| r.may_see? current_user }.empty? %>
 <h2>Bases for you to make requests</h2>
-<%= render :partial => 'requests/request',
-           :collection => @organization.requests.creatable %>
+<%= render :partial => 'requests/request', :collection => @organization.requests.creatable %>
 <% end %>
 
 <% unless @organization.requests.started.select { |r| r.may_see? current_user }.empty? %>
 <h2>Requests you've started</h2>
-<%= render :partial => 'requests/request',
-           :collection => @organization.requests.started %>
+<%= render :partial => 'requests/request', :collection => @organization.requests.started %>
 <% end %>
 
 <% unless @organization.requests.released.select { |r| r.may_see? current_user }.empty? %>
 <h2>Requests that have been released</h2>
-<%= render :partial => 'requests/request',
-           :collection => @organization.requests.released %>
+<%= render :partial => 'requests/request', :collection => @organization.requests.released %>
 <% end %>
 
