@@ -12,6 +12,10 @@
 <% unless current_user.organizations.empty? %>
   <h3>Organizations You Are In:<h3>
 
+  <p>
+  Choose a specific organization to get options particular to that organization.
+  </p>
+
   <table>
     <tr>
       <th>Organization</th>
@@ -40,11 +44,20 @@
 <% unless current_user.approvals.agreements.empty? %>
   <h3>Agreements you have accepted</h3>
 
+  <p>
+  You have agreed to abide by these agreements.
+  </p>
+
   <%= render :partial => 'approvals', :object => current_user.approvals.agreements, :locals => { :id => 'accepted_agreements' } %>
 <% end %>
 
 <% unless current_user.approvals.unfulfilled.empty? %>
   <h3>Agreements awaiting your approval</h3>
+
+  <p>
+  These are agreements you must approve before you will have full access to use
+  the application system.
+  </p>
 
   <%= render :partial => 'approvals', :object => current_user.approvals.unfulfilled, :locals => { :id => 'unfulfilled_agreements' } %>
 <% end %>
