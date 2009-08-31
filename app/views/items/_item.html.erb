@@ -1,6 +1,6 @@
 <% if item.may_see?(current_user) %>
   <tr>
-    <td colspan="3"><%=h item.title %></td>
+    <td colspan="3"><%=h item.title %><% if item.title != item.node.name %> (<%=h item.node.name %>)<% end %></td>
     <% unless read_only %>
     <td><%= link_to_if item.may_update?(current_user), 'Move', move_item_path(item) %> <%= link_to_if item.may_destroy?(current_user), 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
     <% end %>
