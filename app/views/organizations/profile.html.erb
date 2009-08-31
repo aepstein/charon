@@ -2,26 +2,41 @@
 
 <% unless @organization.requests.creatable.select { |r| r.may_see? current_user }.empty? %>
 <h2>Bases for you to make requests</h2>
+
+<p>Choose a new request you would like to create and get started on:</p>
+
 <%= render :partial => 'requests/request', :collection => @organization.requests.creatable %>
 <% end %>
 
 <% unless @organization.requests.started.select { |r| r.may_see? current_user }.empty? %>
 <h2>Requests you've started</h2>
+
+<p>Choose a request below to examine and modify its items:</p>
+
 <%= render :partial => 'requests/request', :collection => @organization.requests.started %>
 <% end %>
 
 <% unless @organization.requests.completed.select { |r| r.may_see? current_user }.empty? %>
 <h2>Requests you've completed, but are still awaiting approvals</h2>
+
+<p>If you need to make changes, each person who has approved the request must unapprove it.</p>
+
 <%= render :partial => 'requests/request', :collection => @organization.requests.completed %>
 <% end %>
 
 <% unless @organization.requests.submitted.select { |r| r.may_see? current_user }.empty? %>
 <h2>Requests you've completed and submitted</h2>
+
+<p>You may view details of any of the following requests, although reviews have not yet been released:</p>
+
 <%= render :partial => 'requests/request', :collection => @organization.requests.submitted %>
 <% end %>
 
 <% unless @organization.requests.released.select { |r| r.may_see? current_user }.empty? %>
 <h2>Requests that have been released</h2>
+
+<p>Results are available for the following requests:</p>
+
 <%= render :partial => 'requests/request', :collection => @organization.requests.released %>
 <% end %>
 
