@@ -48,6 +48,11 @@ class Version < ActiveRecord::Base
     end
   end
 
+  def title
+    return nil unless requestable
+    requestable.title
+  end
+
   def initialize_documents
     documents.each { |document| document.version = self }
   end
@@ -95,11 +100,6 @@ class Version < ActiveRecord::Base
   def requestable=(requestable)
     return nil if item.nil?
     self.send("#{item.node.requestable_type.underscore}=",requestable)
-  end
-
-  def title
-    return nil unless requestable && defined?( requestable.title )
-    requestable.title
   end
 
   def may_create?(user)

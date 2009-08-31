@@ -16,5 +16,9 @@ class AdministrativeExpense < ActiveRecord::Base
 		copies_expense + repairs_restocking + mailbox_wsh
   end
 
+  def title
+    nil
+  end
+
 end
 
