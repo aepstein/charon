@@ -35,5 +35,13 @@ module ApplicationHelper
     render :partial => "#{requestable.class.to_s.underscore.pluralize}/#{requestable.class.to_s.underscore}",
            :object => requestable
   end
+
+  def link_to_unapprove_request(request)
+    approval = request.approvals.user_id_equals(current_user.id).first
+    if approval && approval.may_destroy?(current_user)
+      return link_to 'Unapprove', approval, :confirm => 'Are you sure?', :method => :delete
+    end
+    ''
+  end
 end
 
