@@ -1,0 +1,18 @@
+<h1>Move <%= @item.title %> to different priority</h1>
+
+<%= form_tag do_move_item_path(@item), :method => :put %>
+<p>
+<%= label_tag :new_position, 'Move to priority of' %>
+<%= select_tag( :new_position, options_for_position(@item) ) %>
+</p>
+
+<p>
+<%= submit_tag 'Move' %>
+</p>
+
+</form>
+
+<p>
+<%= link_to 'Back', request_items_path(@item.request) %>
+</p>
+

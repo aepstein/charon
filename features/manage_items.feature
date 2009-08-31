@@ -68,6 +68,31 @@ Feature: Manage items
       | president    | see "Add New Item"     |
       | commissioner | not see "Add New Item" |
 
+  Scenario: Move an item
+    Given the following items:
+      | request    | node                   |
+      | 1          | administrative expense |
+      | 1          | durable good expense   |
+      | 1          | publication expense    |
+      | 1          | travel event expense   |
+    And I am logged in as "president" with password "secret"
+    And I am on "our club's requests page"
+    And I follow "Show Items"
+    When I follow "Move"
+    And I select "publication expense" from "Move to priority of"
+    And I press "Move"
+    Then I should see "Item was successfully moved."
+    And I should see the following items:
+      | Perspective            |
+      | durable good expense   |
+      | requestor              |
+      | publication expense    |
+      | requestor              |
+      | administrative expense |
+      | requestor              |
+      | travel event expense   |
+      | requestor              |
+
   Scenario: Delete an item
     Given the following items:
       | request    | node                   |
@@ -102,13 +127,13 @@ Feature: Manage items
     When I am on "our club's requests page"
     And I follow "Show Items"
     Then I should see the following items:
-      | Perspective            | Amount    |
-      | administrative expense | Destroy   |
-      | requestor              | $0.00     |
-      | reviewer               | $0.00     |
-      | durable good expense   | Destroy   |
-      | requestor              | $0.00     |
-      | reviewer               | None yet. |
-      | publication expense    | Destroy   |
-      | requestor              | None yet. |
+      | Perspective            | Amount         |
+      | administrative expense | Move Destroy   |
+      | requestor              | $0.00          |
+      | reviewer               | $0.00          |
+      | durable good expense   | Move Destroy   |
+      | requestor              | $0.00          |
+      | reviewer               | None yet.      |
+      | publication expense    | Move Destroy   |
+      | requestor              | None yet.      |
 

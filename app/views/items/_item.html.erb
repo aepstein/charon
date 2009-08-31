@@ -1,6 +1,6 @@
   <tr>
-    <td colspan="3"><%=h item.node.name %></td>
-    <td><%= link_to_if item.may_destroy?(current_user), 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td colspan="3"><%=h item.title %></td>
+    <td><%= link_to_if item.may_update?(current_user), 'Move', move_item_path(item) %> <%= link_to_if item.may_destroy?(current_user), 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
   </tr>
 
   <%= render :partial => 'version', :collection => item.versions %>

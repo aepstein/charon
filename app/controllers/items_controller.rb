@@ -59,7 +59,28 @@ class ItemsController < ApplicationController
   # GET /items/1/edit
   def edit
     @item = Item.find(params[:id])
-    raise AuthorizationError unless @item.may_update?(current_user)
+    raise AuthorizationError unless @item.may_update? current_user
+  end
+
+  # GET /items/1/move
+  def move
+    @item = Item.find(params[:id])
+    raise AuthorizationError unless @item.may_update? current_user
+  end
+
+  # PUT /items/1/do_move
+  def do_move
+    @item = Item.find(params[:id])
+    raise AuthorizationError unless @item.may_update? current_user
+
+    respond_to do |format|
+      if @item.insert_at(params[:new_position])
+        flash[:notice] = 'Item was successfully moved.'
+        format.html { redirect_to( request_items_url(@item.request) ) }
+      else
+        format.html { render :action => 'move' }
+      end
+    end
   end
 
   # PUT /items/1
@@ -74,7 +95,7 @@ class ItemsController < ApplicationController
         format.html { redirect_to(@item) }
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
+        format.html { render :action => 'edit' }
         format.xml  { render :xml => @item.errors, :status => :unprocessable_entity }
       end
     end

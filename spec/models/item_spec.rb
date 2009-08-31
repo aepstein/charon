@@ -72,5 +72,27 @@ describe Item do
     @item.request.should_receive(:touch)
     @item.save
   end
+
+  it "should save to the end of the list by default and act as list" do
+    first = @item
+    first.save
+    request = @item.request
+    node = @item.node
+    node.item_quantity_limit = 3
+    node.save
+    second = @item.request.items.create(:node => node)
+    second.id.should_not be_nil
+    third = @item.request.items.create(:node => node)
+    third.id.should_not be_nil
+    first.position.should == 1
+    second.position.should == 2
+    third.position.should == 3
+    third.insert_at(second.position)
+    first.reload
+    second.reload
+    first.position.should == 1
+    second.position.should == 3
+    third.position.should == 2
+  end
 end
 

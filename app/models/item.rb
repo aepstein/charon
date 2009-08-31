@@ -1,4 +1,6 @@
 class Item < ActiveRecord::Base
+  default_scope :order => 'items.position ASC'
+
   belongs_to :node
   belongs_to :request, :touch => true, :autosave => true
   has_many :versions, :autosave => true do
@@ -27,6 +29,7 @@ class Item < ActiveRecord::Base
       self.reject { |version| version.new_record? }
     end
   end
+  acts_as_list :scope => :parent_id
   acts_as_tree
 
   accepts_nested_attributes_for :versions
@@ -73,7 +76,7 @@ class Item < ActiveRecord::Base
   end
 
   def to_s
-    "#{node} item of #{request}"
+    title
   end
 end
 

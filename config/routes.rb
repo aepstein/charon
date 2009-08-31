@@ -19,7 +19,7 @@ ActionController::Routing::Routes.draw do |map|
     organization.resources :memberships
     organization.resources :requests, :member => { :supporting_documents => :get } do |request|
       request.resources :approvals, :only => [ :create, :destroy, :index, :new ]
-      request.resources :items do |item|
+      request.resources :items, { :member => { :move => :get, :do_move => :put } } do |item|
         item.resources :versions do |version|
           version.resources :documents
         end
