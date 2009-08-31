@@ -1,3 +1,4 @@
+<% if version.may_see? current_user %>
     <tr>
       <td><%= version.perspective %></td>
       <% if version.new_record? then %>
@@ -20,4 +21,5 @@
     </td>
     </tr>
     <% end %>
+<% end %>
 

@@ -78,7 +78,7 @@ Feature: Manage documents
       | file  | see     |
       | small | see     |
       | large | not see |
-  @current
+
   Scenario: Delete document
     Given the following documents:
       | version    | document_type |

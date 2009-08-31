@@ -47,6 +47,7 @@ class PermissionsController < ApplicationController
   def create
     @permission = Framework.find(params[:framework_id]).permissions.build(params[:permission])
     raise AuthorizationError unless @permission.may_create? current_user
+    params[:permission][:agreement_ids] ||= []
 
     respond_to do |format|
       if @permission.save
@@ -65,6 +66,7 @@ class PermissionsController < ApplicationController
   def update
     @permission = Permission.find(params[:id])
     raise AuthorizationError unless @permission.may_update? current_user
+    params[:permission][:agreement_ids] ||= []
 
     respond_to do |format|
       if @permission.update_attributes(params[:permission])

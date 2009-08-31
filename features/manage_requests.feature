@@ -73,15 +73,15 @@ Feature: Manage requests
     When I am on "safc 3's requests page"
     Then I should see the following requests:
       | Basis |
-  @current
+
   Scenario: Approve request for existing organization
     Given the following nodes:
-      | structure | requestable_type      | name                   |
-      | budget    | AdministrativeExpense | administrative expense |
-      | budget    | LocalEventExpense     | local event expense    |
-      | budget    | TravelEventExpense    | travel event expense   |
-      | budget    | DurableGoodExpense    | durable good expense   |
-      | budget    | PublicationExpense    | publication expense    |
+      | structure      | requestable_type      | name                   |
+      | safc structure | AdministrativeExpense | administrative expense |
+      | safc structure | LocalEventExpense     | local event expense    |
+      | safc structure | TravelEventExpense    | travel event expense   |
+      | safc structure | DurableGoodExpense    | durable good expense   |
+      | safc structure | PublicationExpense    | publication expense    |
     And the following items:
       | request | node                   |
       | 1       | administrative expense |
@@ -94,6 +94,13 @@ Feature: Manage requests
       | 2    | requestor   |
     And I am on "safc 1's requests page"
     When I follow "Approve"
-    And I press "Confirm Approval"
+    Then I should see the following items:
+      | Perspective            |
+      | administrative expense |
+      | requestor              |
+      | durable good expense   |
+      | requestor              |
+      | publication expense    |
+    When I press "Confirm Approval"
     Then I should see "Approval was successfully created"
 

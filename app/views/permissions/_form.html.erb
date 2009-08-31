@@ -15,3 +15,12 @@
     <%= form.select :perspective, Version::PERSPECTIVES %>
   </p>
 
+  <p>
+    Identify the agreements a user must approve to have this permission:
+    <ul>
+    <% Agreement.all.each do |agreement| %>
+    <li><%= check_box_tag 'permission[agreement_ids][]', agreement.id, form.object.agreements.include?(agreement.id) %></li>
+    <% end %>
+    </ul>
+  </p>
+
