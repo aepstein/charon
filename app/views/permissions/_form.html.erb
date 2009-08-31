@@ -19,7 +19,7 @@
     Identify the agreements a user must approve to have this permission:
     <% Agreement.all.each do |agreement| %>
       <br/>
-      <%= check_box_tag 'permission[agreement_ids][]', agreement.id, form.object.agreements.include?(agreement.id) %>
+      <%= check_box_tag 'permission[agreement_ids][]', agreement.id, form.object.agreements.include?(agreement) %>
       <%= agreement %>
     <% end %>
   </p>
