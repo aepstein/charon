@@ -1,6 +1,6 @@
 class Version < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
-  belongs_to :item, :touch => true, :autosave => true
+  belongs_to :item
   has_one :administrative_expense
   has_one :local_event_expense
   has_one :speaker_expense
@@ -39,8 +39,13 @@ class Version < ActiveRecord::Base
   after_save :set_item_title
 
   def set_item_title
-    item.title = title unless title.nil?
-    item.save
+    if title.nil?
+      item.touch
+      item.request.touch
+    else
+      item.title = title
+      item.save
+    end
   end
 
   def initialize_documents

@@ -128,7 +128,7 @@ describe Version do
     version.stub!(:title).and_return(title)
     version.title.should_not == version.item.title
     version.save
-    version.item.title.should == title
+    Item.find(version.item.id).title.should == title
   end
 end
 
