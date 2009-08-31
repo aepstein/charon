@@ -48,7 +48,7 @@ class Item < ActiveRecord::Base
   end
 
   def set_title
-    self.title = node.name
+    self.title = node.name if title.nil?
   end
 
   def allowed_nodes
