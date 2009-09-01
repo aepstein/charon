@@ -21,6 +21,20 @@ describe AdministrativeExpense do
     @expense.save.should == false
   end
 
+  it "should not save with invalid chalk" do
+    @expense.chalk = nil
+    @expense.save.should == false
+    @expense.chalk = -1
+    @expense.save.should == false
+  end
+
+  it "should not save with invalid sun_ads" do
+    @expense.sun_ads = nil
+    @expense.save.should == false
+    @expense.sun_ads = -12.4
+    @expense.save.should == false
+  end
+
   it "should not save with invalid repairs_restocking" do
     @expense.repairs_restocking = nil
     @expense.save.should == false
