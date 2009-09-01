@@ -10,6 +10,18 @@ class UserSessionsController < ApplicationController
     end
   end
 
+  # GET /user_sessions/sso
+  def sso
+    if request.env['HTTP_REMOTE_USER'] && ( user = User.find_by_net_id( request.env['HTTP_REMOTE_USER'] ) )
+      @user_session = UserSession.create( user, true )
+      flash[:notice] = "Login successful!"
+      redirect_back_or_default profile_url
+    else
+      @user_session = UserSession.new
+      render :action => :new
+    end
+  end
+
   def create
     @user_session = UserSession.new(params[:user_session])
     if @user_session.save

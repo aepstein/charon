@@ -30,6 +30,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :registrations, :shallow => true do |registration|
     registration.resource :organization, :only => [ :new, :create ]
   end
+  map.sso_login 'sso_login', :controller => 'user_sessions', :action => 'sso'
   map.login 'login', :controller => 'user_sessions', :action => 'new'
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
   map.profile 'profile', :controller => 'users', :action => 'profile'
@@ -77,7 +78,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect ':controller/:action/:id'
   map.connect ':controller/:action/:id.:format'
   map.resource :user_session
-  map.root :controller => "users", :action => "profile" # optional, this just sets the root route
+  map.root :controller => "user_sessions", :action => "new" # optional, this just sets the root route
 
 end
 

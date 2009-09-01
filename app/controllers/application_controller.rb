@@ -27,13 +27,6 @@ protected
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find
-    if @current_user_session.nil? && request.env['HTTP_REMOTE_USER']
-      sso_user = User.find_by_net_id( request.env['HTTP_REMOTE_USER'] )
-      unless sso_user.nil?
-        UserSession.create( sso_user, true )
-        redirect_to profile_url
-      end
-    end
   end
 
   def current_user

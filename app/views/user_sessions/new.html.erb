@@ -1,5 +1,11 @@
 <h1>Login</h1>
 
+<h2>Sign in with Kerberos</h2>
+
+<%= link_to 'Click here to log in with kerberos', sso_login_path %>
+
+<h2>Or Provide a Local Username and Password</h2>
+
 <% form_for @user_session, :url => user_session_path do |f| %>
   <%= f.error_messages %>
 
