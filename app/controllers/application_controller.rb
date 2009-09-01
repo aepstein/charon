@@ -27,14 +27,12 @@ protected
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find
-    if request.env['HTTP_REMOTE_USER']
+    if @current_user_session.nil? && request.env['HTTP_REMOTE_USER']
       sso_user = User.find_by_net_id( request.env['HTTP_REMOTE_USER'] )
-      unless @current_user_session.record == sso_user
-        @current_user_session.record = sso_user
-        @current_user_session.save
+      unless sso_user.nil?
+        @current_user_session = UserSession.create(sso_user,true)
       end
     end
-    @current_user_session
  #   net_id = request.env['HTTP_REMOTE_USER']
  #   if net_id && @current_user_session.record.nil?
  #     @current_user_session = UserSession.create( User.find_by_net_id( net_id ), true )
