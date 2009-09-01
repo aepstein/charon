@@ -30,11 +30,9 @@ protected
     if @current_user_session.nil? && request.env['HTTP_REMOTE_USER']
       sso_user = User.find_by_net_id( request.env['HTTP_REMOTE_USER'] )
       unless sso_user.nil?
-        UserSession.create(sso_user,true)
-        @current_user_session = UserSession.find
+        UserSession.create( sso_user, true )
+        redirect_to profile_url
       end
-    else
-      nil
     end
   end
 

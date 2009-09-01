@@ -4,7 +4,7 @@ class UserSessionsController < ApplicationController
 
   def new
     @user_session = UserSession.new
-         respond_to do |format|
+    respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user_session }
     end
