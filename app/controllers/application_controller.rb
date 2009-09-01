@@ -29,9 +29,12 @@ protected
     @current_user_session = UserSession.find
     if request.env['HTTP_REMOTE_USER']
       sso_user = User.find_by_net_id( request.env['HTTP_REMOTE_USER'] )
-      @current_user_session.record = sso_user unless sso_user.nil?
-      @current_user_session.save
+      unless @current_user_session.record == sso_user
+        @current_user_session.record = sso_user
+        @current_user_session.save
+      end
     end
+    @current_user_session
  #   net_id = request.env['HTTP_REMOTE_USER']
  #   if net_id && @current_user_session.record.nil?
  #     @current_user_session = UserSession.create( User.find_by_net_id( net_id ), true )
