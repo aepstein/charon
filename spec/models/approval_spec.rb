@@ -58,5 +58,17 @@ describe Approval do
     approvals.should_not include( request_approval )
     approvals.size.should == 1
   end
+
+  it "should call deliver_approval_notice on create" do
+    approval = Factory.build(:approval)
+    approval.should_receive(:deliver_approval_notice)
+    approval.save
+  end
+
+  it "should call deliver_unapproval_notice on destroy" do
+    approval = Factory(:approval)
+    approval.should_receive(:deliver_unapproval_notice)
+    approval.destroy
+  end
 end
 

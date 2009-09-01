@@ -100,7 +100,7 @@ class Request < ActiveRecord::Base
   aasm_column :status
   aasm_initial_state :started
   aasm_state :started
-  aasm_state :completed
+  aasm_state :completed, :after_enter => :deliver_required_approval_notice
   aasm_state :submitted, :enter => :reset_approval_checkpoint
   aasm_state :accepted
   aasm_state :reviewed
@@ -132,6 +132,13 @@ class Request < ActiveRecord::Base
   end
 
   alias :requestors :organizations
+
+  def deliver_required_approval_notice
+    approvals = approvers.required_for_status(status).map { |a| Approval.new( :user => a, :approvable => self ) }
+    approvals.each do |approval|
+      ApprovalMailer.deliver_request_notice(approval)
+    end
+  end
 
   def reviewers
     return Array.new unless basis.organization

@@ -9,9 +9,8 @@
             request_items_path( @request.id ) %>
 </p>
 
-<%= link_to 'Edit', edit_request_path(@request) %>
-<% @request.organizations.each do |organization| %>
- | <%= link_to "Back to #{organization.name} requests",
-             organization_requests_path(organization) %>
-<% end %>
+<p>
+<%= link_to 'Edit', edit_request_path(@request) %> |
+<%= link_to_request_organization_profiles @request %>
+</p>
 

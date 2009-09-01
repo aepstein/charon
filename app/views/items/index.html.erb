@@ -14,7 +14,11 @@ table td { padding: 4px; }
 <%= render :partial => 'item', :collection => @request.items.root,
       :locals => { :read_only => false, :show_detail => false } %>
 
+<%= render :partial => 'new_item', :object => @request.items.build %>
+
 </table>
 
-<%= render :partial => 'new_item', :object => @request.items.build %>
+<p>
+<%= link_to_request_organization_profiles @request %>
+</p>
 

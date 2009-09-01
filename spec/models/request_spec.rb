@@ -177,6 +177,13 @@ describe Request do
     @request.approvers.actual_for(@c4).should be_empty
   end
 
+  it "should call deliver_required_approval_notice on entering completed state" do
+    @request.save
+    @request.should_receive(:deliver_required_approval_notice)
+    @request.approve.should == true
+    @request.status.should == 'completed'
+  end
+
   def setup_approvers
     @request.save.should == true
     @president = Role.create(:name => 'president')

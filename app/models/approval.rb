@@ -18,14 +18,22 @@ class Approval < ActiveRecord::Base
   validates_presence_of :user
   validate :approvable_must_not_change
 
-  after_create :approve_approvable
-  after_destroy :unapprove_approvable
+  after_create :approve_approvable, :deliver_approval_notice
+  after_destroy :unapprove_approvable, :deliver_unapproval_notice
 
   def approvable_must_not_change
     return unless approvable && as_of
     if approvable.updated_at.to_s.to_datetime > as_of
       errors.add_to_base( "#{approvable} has changed since you saw it.  Please review again and confirm approval." )
     end
+  end
+
+  def deliver_approval_notice
+    ApprovalMailer.deliver_approval_notice(self)
+  end
+
+  def deliver_unapproval_notice
+    ApprovalMailer.deliver_unapproval_notice(self)
   end
 
   def as_of=(datetime)

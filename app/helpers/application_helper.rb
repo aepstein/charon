@@ -43,5 +43,9 @@ module ApplicationHelper
     end
     ''
   end
+
+  def link_to_request_organization_profiles(request)
+    request.organizations.map { |o| link_to "#{o} profile", profile_organization_path(o) }.join " | "
+  end
 end
 

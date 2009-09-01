@@ -1,0 +1,4 @@
+<%=h @approval.approvable %> is now awaiting your approval.  To approve, go to <<%= new_request_approval_url(@approval.approvable) %>>.
+
+If you have any questions, please contact <%=h @approval.approvable.contact_name %> <<%= @approval.approvable.contact_email %>>.
+
