@@ -33,6 +33,7 @@ protected
         @current_user_session = UserSession.create(sso_user,true)
       end
     end
+    @current_user_session
  #   net_id = request.env['HTTP_REMOTE_USER']
  #   if net_id && @current_user_session.record.nil?
  #     @current_user_session = UserSession.create( User.find_by_net_id( net_id ), true )
