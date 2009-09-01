@@ -1,7 +1,7 @@
 module RegistrationImporter
 
   ATTR_MAP = {  # old column names        # new column names
-                :org_id =>                    :id,
+                :org_id =>                    :external_id,
                 :org_name =>                  :name,
                 :org_purpose =>               :purpose,
                 :org_univ =>                  :independent,
@@ -43,10 +43,10 @@ module RegistrationImporter
     set_primary_key "org_id"
     default_scope :select => RegistrationImporter::ATTR_MAP.keys.join(', ')
     named_scope :importable, lambda {
-      if Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission]) then
+      if Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission], :conditions => 'external_id IS NOT NULL') then
       { :conditions => [
           "updaters_date_submission > ?",
-          Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission]) ] }
+          Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission], :conditions => 'external_id IS NOT NULL') ] }
       else
       { }
       end.merge( { :order => :updaters_date_submission } )
@@ -73,12 +73,13 @@ module RegistrationImporter
       count, destroy_count = 0, 0
       Registration.transaction do
         ExternalRegistration.importable.each do |external|
-          registration = Registration.find_or_initialize_by_id( external.org_id )
+          registration = Registration.find_or_initialize_by_external_id( external.org_id )
           registration.attributes = external.attributes_for_local
           registration.save && count += 1 if registration.new_record? || registration.changed?
         end
         current_ids = ExternalRegistration.all.map { |r| r.org_id }
-        Registration.find( :all, :conditions => [ 'registrations.id NOT IN (?)', current_ids ] ).each do |registration|
+        Registration.find( :all,
+          :conditions => [ 'registrations.external_id IS NOT NULL AND registrations.external_id NOT IN (?)', current_ids ] ).each do |registration|
           registration.destroy && destroy_count += 1
         end
       end
