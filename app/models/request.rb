@@ -134,8 +134,7 @@ class Request < ActiveRecord::Base
   alias :requestors :organizations
 
   def deliver_required_approval_notice
-    recipients = approvers.required_for_status(status) - approvers.actual_for(status)
-    approvals = recipients.map { |a| Approval.new( :user => a, :approvable => self ) }
+    approvals = approvers.unfulfilled_for_status(status).map { |a| Approval.new( :user => a, :approvable => self ) }
     approvals.each do |approval|
       ApprovalMailer.deliver_request_notice(approval)
     end
