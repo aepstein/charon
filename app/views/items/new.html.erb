@@ -9,11 +9,6 @@
   <%= f.hidden_field :parent_id %>
   <%= f.hidden_field :node_id %>
 
-  <% fields_for @item.versions.first do |version_form| %>
-  <%= render :partial => 'versions/form',
-             :object => version_form %>
-  <% end %>
-
   <p>
     <%= f.submit 'Create' %>
   </p>
