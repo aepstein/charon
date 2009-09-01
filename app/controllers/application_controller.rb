@@ -27,6 +27,10 @@ protected
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find
+    net_id = request.env['HTTP_REMOTE_USER']
+    if net_id && current_user.nil?
+      @current_user_session = UserSession.create User.find_by_net_id net_id
+    end
   end
 
   def current_user
