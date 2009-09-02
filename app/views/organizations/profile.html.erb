@@ -1,5 +1,28 @@
 <h1><%=h @organization %> Profile</h1>
 
+<h2>Are you not finding what you were expecting?</h2>
+<p>
+You will only see requests you are allowed to create, modify, approve, or view on this page.
+If you do not find what you were looking for, please verify:
+</p>
+
+<ul>
+<% if @organization.registrations.current && @organization.registrations.current.registered.false? %>
+<li>
+Your organization has registered with the Student Activities Office <em>and</em> the registration
+was approved by that office (status is "Approved", not "Pending").  You may view
+your registration <a href="http://sao.cornell.edu/SO/search.php?igroup=<%= @organization.registrations.current.external_id %>" target="_blank">here</a>.
+</li>
+<% end %>
+<li>
+Your organization meets membership composition requirements for SAFC and this is reflected in your registration.
+</li>
+<li>
+You have not approved all agreements awaiting your approval.  These should be displayed in
+your user profile.
+</li>
+</ul>
+
 <% unless @organization.requests.creatable.select { |r| r.may_see? current_user }.empty? %>
 <h2>Bases for you to make requests</h2>
 
