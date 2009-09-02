@@ -7,7 +7,7 @@ If you do not find what you were looking for, please verify:
 </p>
 
 <ul>
-<% if @organization.registrations.current && @organization.registrations.current.registered.false? %>
+<% if @organization.registrations.current && (!@organization.registrations.current.registered) %>
 <li>
 Your organization has registered with the Student Activities Office <em>and</em> the registration
 was approved by that office (status is "Approved", not "Pending").  You may view
