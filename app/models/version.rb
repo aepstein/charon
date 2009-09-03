@@ -26,6 +26,7 @@ class Version < ActiveRecord::Base
   accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['attached'].nil? || attributes['attached'].original_filename.blank? }
 
   validates_presence_of :item
+  validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validates_inclusion_of :perspective, :in => PERSPECTIVES
   validates_uniqueness_of :perspective, :scope => :item_id
   validate :amount_must_be_within_requestable_max, :amount_must_be_within_original_version, :amount_must_be_within_node_limit
@@ -62,7 +63,7 @@ class Version < ActiveRecord::Base
   end
 
   def amount_must_be_within_node_limit
-    return if item.nil?
+    return if item.nil? || amount.nil?
     if amount > item.node.item_amount_limit
       errors.add(:amount, " is greater than maximum for #{node}.")
     end

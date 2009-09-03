@@ -28,6 +28,14 @@ describe Version do
     duplicate_version.save.should == false
   end
 
+  it "should not save without an invalid amount" do
+    version = Factory(:version)
+    version.amount = nil
+    version.save.should == false
+    version.amount = -1.02
+    version.save.should == false
+  end
+
   it "should not save with an amount higher than item.node.item_amount_limit" do
     @version.amount = @version.item.node.item_amount_limit + 1
     @version.save.should == false
