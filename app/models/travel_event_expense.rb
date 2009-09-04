@@ -35,7 +35,7 @@ class TravelEventExpense < ActiveRecord::Base
 
   def lodging_cost
     return 0.0 unless nights_of_lodging
-    10 * participants * nights_of_lodging
+    15.0 * participants * nights_of_lodging
   end
 
   def max_request
