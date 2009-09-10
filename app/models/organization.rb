@@ -38,6 +38,11 @@ class Organization < ActiveRecord::Base
     registrations.current.eligible_for? framework
   end
 
+  def registered?
+    return false if registrations.current.nil?
+    registrations.current.registered?
+  end
+
   def may_see?(user)
     true
   end

@@ -52,5 +52,10 @@ describe Organization do
       organization.first_name = "" && organization.last_name == ""
     end
   end
+
+  it "should have a registered? method that checks whether the current registration is approved" do
+    @registered_organization.registered?.should == true
+    Factory(:organization).registered?.should == false
+  end
 end
 
