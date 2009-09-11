@@ -14,6 +14,6 @@ error, please contact the website administrator.
   the following agreements.  Please approve them and try what you originally meant to do again.
   </p>
 
-  <%= render :partial => 'approvals', :object => current_user.approvals.unfulfilled, :locals => { :id => 'unfulfilled_agreements' } %>
+  <%= render :partial => 'user/approvals', :object => current_user.approvals.unfulfilled, :locals => { :id => 'unfulfilled_agreements' } %>
 <% end %>
 
