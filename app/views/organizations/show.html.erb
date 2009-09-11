@@ -14,6 +14,16 @@
   <b>Registered?</b> <%= @organization.registered? ? 'Yes' : 'No' %>
 </p>
 
+<% if @organization.registrations.current %>
+<p>
+  <b>Percent Undergrad:</b> <%= @organization.registrations.current.percent_members_of_type 'undergrads' %>%
+</p>
+
+<p>
+  <b>Percent Grad:</b> <%= @organization.registrations.current.percent_members_of_type 'grads' %>%
+</p>
+<% end %>
+
 <p>
 <%= link_to 'Edit', edit_organization_path(@organization) %> |
 <%= link_to 'Back', organizations_path %>
