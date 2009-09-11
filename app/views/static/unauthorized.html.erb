@@ -6,3 +6,14 @@ are not permitted to access.  If you believe you are receiving this message in
 error, please contact the website administrator.
 </p>
 
+<% unless current_user.nil? || current_user.approvals.unfulfilled.empty? %>
+  <h3>Maybe you have not signed a required agreement</h3>
+
+  <p>
+  According to our records, there are certain things you can only do if you approve
+  the following agreements.  Please approve them and try what you originally meant to do again.
+  </p>
+
+  <%= render :partial => 'approvals', :object => current_user.approvals.unfulfilled, :locals => { :id => 'unfulfilled_agreements' } %>
+<% end %>
+

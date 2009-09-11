@@ -1,4 +1,6 @@
 class StructuresController < ApplicationController
+  before_filter :require_user
+
   # GET /structures
   # GET /structures.xml
   def index

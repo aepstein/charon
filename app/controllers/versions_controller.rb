@@ -1,4 +1,6 @@
 class VersionsController < ApplicationController
+  before_filter :require_user
+
   # GET /items/:item_id/versions
   # GET /items/:item_id/versions.xml
   def index

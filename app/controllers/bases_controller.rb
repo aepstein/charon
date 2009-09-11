@@ -1,4 +1,6 @@
 class BasesController < ApplicationController
+  before_filter :require_user
+
   # GET /organizations/:organization_id/bases
   # GET /organizations/:organization_id/bases.xml
   def index

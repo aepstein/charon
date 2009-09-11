@@ -1,5 +1,7 @@
 class ApprovalsController < ApplicationController
 
+  before_filter :require_user
+
   helper_method :approvable_approvals_path, :approvable_approvals_url
 
   # GET /:approvable_class/:approvable_id/approvals

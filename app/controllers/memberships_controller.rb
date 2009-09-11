@@ -1,4 +1,6 @@
 class MembershipsController < ApplicationController
+  before_filter :require_user
+
   # GET /organizations/:organization_id/memberships
   # GET /organizations/:organization_id/memberships.xml
   def index

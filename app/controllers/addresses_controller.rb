@@ -1,4 +1,6 @@
 class AddressesController < ApplicationController
+  before_filter :require_user
+
   # GET /user/:user_id/addresses
   # GET /user/:user_id/addresses.xml
   def index

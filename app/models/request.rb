@@ -62,6 +62,7 @@ class Request < ActiveRecord::Base
       root.each { |item| item.initialize_next_version }
     end
   end
+  has_many :versions, :through => :items
   has_and_belongs_to_many :organizations do
     def allowed?(organization)
       organization.eligible_for?(proxy_owner.framework)

@@ -1,4 +1,6 @@
 class DocumentsController < ApplicationController
+  before_filter :require_user
+
   # GET /versions/:version_id/documents
   # GET /versions/:version_id/documents.xml
   def index

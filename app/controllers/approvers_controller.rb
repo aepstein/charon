@@ -1,4 +1,6 @@
 class ApproversController < ApplicationController
+  before_filter :require_user
+
   # GET /framework/:framework_id/approvers
   # GET /framework/:framework_id/approvers.xml
   def index

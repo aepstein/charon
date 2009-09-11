@@ -1,4 +1,6 @@
 class PermissionsController < ApplicationController
+  before_filter :require_user
+
   # GET /framework/:framework_id/permissions
   # GET /framework/:framework_id/permissions.xml
   def index

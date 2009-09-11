@@ -1,16 +1,78 @@
 <h1>Showing request</h1>
+
+<p>Status: <%=h @request.status %></p>
+<p>Total requested: <%= number_to_currency @request.versions.perspective_equals('requestor').sum('versions.amount') %></p>
+
+<% if @request.status == 'started' %>
 <p>
-  <b>Request structure:</b>
-  <%=h @request.basis.structure.name %>
+Below is a listing of items in your request.  You may add, move (re-prioritize),
+and delete items.  For each item, you should also add requestor version specifiying
+details about that item, including the amount you are requesting.
 </p>
 
 <p>
-<%= link_to 'See request items',
-            request_items_path( @request.id ) %>
+When you are finished, instruct the appropriate officers of your organization to
+approve this request.  After the request is approved, you cannot change it.
 </p>
+<% end %>
+<% if @request.status == 'completed' %>
+<p>
+This request is now frozen because it has been approved by one or more authorized officers.
+Its status will advance to <em>submitted</em> once all required approvals are
+registered.
+</p>
+<% end %>
+<% if @request.status == 'submitted' %>
+<p>
+This request is now submitted for review.
+</p>
+<% end %>
+
+<h2>Items</h2>
+
+<table border="1px">
+  <tr>
+    <th>Perspective</th>
+    <th>Amount</th>
+    <th>Comment</th>
+  </tr>
+
+<%= render :partial => 'items/item', :collection => @request.items.root,
+      :locals => { :read_only => false, :show_detail => true } %>
+
+<%= render :partial => 'items/new_item', :object => @request.items.build %>
+
+</table>
+
+<% unless @request.approvers.unfulfilled_for_status(@request.status).empty? %>
+<h2>Who must approve</h2>
+
+<ul>
+  <% @request.approvers.unfulfilled_for_status(@request.status).each do |user| %>
+  <li><%= user.name %></li>
+  <% end %>
+</ul>
+<% end %>
+
+<h2>Who has approved</h2>
+
+<% if @request.approvals.empty? %>
+<p>No users have approved this request yet.</p>
+<% else %>
+<table border="1px">
+  <tr>
+    <th>User</th>
+    <th>Created</th>
+  </tr>
+
+<%= render :partial => 'approvals/approval', :collection => @request.approvals,
+           :locals => { :user => true, :approvable => false } %>
+
+</table>
+<% end %>
 
 <p>
-<%= link_to 'Edit', edit_request_path(@request) %> |
+<%= link_to_if @request.may_update?(current_user), 'Edit', edit_request_path(@request) %> |
 <%= link_to_request_organization_profiles @request %>
 </p>
 

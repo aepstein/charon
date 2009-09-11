@@ -1,4 +1,6 @@
 class ItemsController < ApplicationController
+  before_filter :require_user
+
   # GET /requests/:request_id/items
   # GET /requests/:request_id/items.xml
   def index

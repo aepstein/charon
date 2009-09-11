@@ -73,7 +73,7 @@ Feature: Manage requests
     When I am on "safc 3's requests page"
     Then I should see the following requests:
       | Basis |
-
+  @current
   Scenario: Approve request for existing organization
     Given the following nodes:
       | structure      | requestable_type      | name                   |

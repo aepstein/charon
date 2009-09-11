@@ -1,4 +1,6 @@
 class FrameworksController < ApplicationController
+  before_filter :require_user
+
   # GET /frameworks
   # GET /frameworks.xml
   def index

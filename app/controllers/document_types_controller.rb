@@ -1,4 +1,6 @@
 class DocumentTypesController < ApplicationController
+  before_filter :require_user
+
   # GET /document_types
   # GET /document_types.xml
   def index

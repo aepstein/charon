@@ -1,4 +1,6 @@
 class NodesController < ApplicationController
+  before_filter :require_user
+
   # GET /structures/:structure_id/nodes
   # GET /structures/:structure_id/nodes.xml
   def index

@@ -1,4 +1,6 @@
 class AgreementsController < ApplicationController
+  before_filter :require_user
+
   # GET /agreements
   # GET /agreements.xml
   def index

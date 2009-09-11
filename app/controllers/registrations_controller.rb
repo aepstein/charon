@@ -1,5 +1,7 @@
 class RegistrationsController < ApplicationController
 
+  before_filter :require_user
+
   def index
     page = params[:page] ? params[:page] : 1
     if params[:search]
