@@ -63,7 +63,7 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(params[:id])
-    raise AuthorizationError unless current_user.may_update?(@user)
+    raise AuthorizationError unless @user.may_update?(current_user)
     @user.admin = params[:user][:admin] if current_user.admin? && params[:user][:admin]
 
     respond_to do |format|
