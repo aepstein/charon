@@ -77,6 +77,10 @@ class User < ActiveRecord::Base
     user.admin? || user == self
   end
 
+  def to_s
+    name
+  end
+
 protected
   def extract_email
     self.email = "#{self.net_id}@cornell.edu"
