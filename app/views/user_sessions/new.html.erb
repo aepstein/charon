@@ -4,6 +4,7 @@
 
 <%= link_to 'Click here to log in with kerberos', sso_login_path %>
 
+<% if request.env['HTTP_REMOTE_USER'].nil? || request.env['HTTP_REMOTE_USER'].blank? %>
 <h2>Or Provide a Local Username and Password</h2>
 
 <% form_for @user_session, :url => user_session_path do |f| %>
@@ -26,6 +27,8 @@
   <p>
   <%= f.submit "Login" %>
   </p>
+
+<% end %>
 
 <% end %>
 
