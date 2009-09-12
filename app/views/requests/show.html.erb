@@ -46,7 +46,7 @@ This request is now submitted for review.
 
 <% unless @request.approvers.unfulfilled_for_status(@request.status).empty? %>
 <h2>Who must approve</h2>
-<p>The following users must approve before applications may be considered submitted.</p>
+<p>The following users must approve before the request may be considered submitted.</p>
 <ul>
   <% @request.approvers.unfulfilled_for_status(@request.status).each do |user| %>
   <li><%=h user %></li>
