@@ -67,6 +67,9 @@ class Request < ActiveRecord::Base
     def allowed?(organization)
       organization.eligible_for?(proxy_owner.framework)
     end
+    def to_s
+      self.join ', '
+    end
   end
 
   delegate :structure, :to => :basis

@@ -1,5 +1,7 @@
 <h1>Listing requests</h1>
 
+<%= will_paginate @requests %>
+
 <table>
   <tr>
     <td>Name</td>
@@ -8,4 +10,6 @@
 
   <%= render :partial => 'request', :collection => @requests %>
 </table>
+
+<%= will_paginate @requests %>
 

@@ -12,7 +12,7 @@
     </tr>
   <% else %>
     <tr>
-      <td><%=h request.basis.name %></td>
+      <td><% if @basis %><%=h request.organizations %><% else %><%=h request.basis.name %><% end %></td>
       <td>
         <%= link_to_if(request.may_see?(current_user), 'Show', request) %> |
         <%= link_to_if(request.may_see?(current_user), 'Show Items', request_items_path(request) ) %> |

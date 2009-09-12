@@ -4,11 +4,12 @@ class RequestsController < ApplicationController
   # GET /organizations/:organization_id/requests
   # GET /organizations/:organization_id/requests.xml
   def index
+    page = params[:page] ? params[:page] : 1
     @organization = Organization.find(params[:organization_id]) if params[:organization_id]
     @basis = Basis.find(params[:basis_id]) if params[:basis_id]
-    @requests ||= @organization.requests if @organization
-    @requests ||= @basis.requests if @basis
-    @requests = Request.all
+    @requests = @organization.requests.paginate(:page => page) if @organization
+    @requests = @basis.requests.paginate(:page => page) if @basis
+    @requests ||= Request.paginate(:page => page)
 
     respond_to do |format|
       format.html # index.html.erb
