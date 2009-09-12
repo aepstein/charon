@@ -33,13 +33,13 @@ class Request < ActiveRecord::Base
     def potential_for( approver )
       sql = case approver.perspective
       when 'requestor'
-        "organization_id IN (SELECT organization_id FROM organizations_requests WHERE request_id = :request_id) " +
-        "AND role_id = :role_id"
+        "memberships INNER JOIN organizations_requests WHERE memberships.organization_id = " +
+        "organizations_requests.organization_id AND request_id = :request_id"
       when 'reviewer'
-        "organization_id = :organization_id AND role_id = :role_id"
+        "memberships WHERE organization_id = :organization_id"
       end
       conditions = [
-        "users.id IN (SELECT user_id FROM memberships WHERE active = :true AND ( #{sql} ) )",
+        "users.id IN (SELECT user_id FROM #{sql} AND active = :true AND role_id = :role_id)",
         { :request_id => proxy_owner.id, :role_id => approver.role_id, :true => true,
           :organization_id => proxy_owner.basis.organization_id }
       ]
