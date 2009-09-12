@@ -32,8 +32,27 @@
   <b>Closed at:</b> <%=h @basis.closed_at %>
 </p>
 
+<h2>Requests overview</h2>
+<table>
+<tr>
+<th>Status</th>
+<th>Quantity</th>
+<th>Requestor Amount</th>
+<th>Reviewer Amount</th>
+</tr>
+<% %w( started completed submitted ).each do |status| %>
+<tr>
+<td><%=h status %></td>
+<td><%= @basis.requests.send(status).size %></td>
+<td><%= number_to_currency( @basis.requests.amount_for_perspective('requestor') ) %></td>
+<td><%= number_to_currency( @basis.requests.amount_for_perspective('reviewer') ) %></td>
+</tr>
+<% end %>
+</table>
+
 <p>
 <%= link_to 'Edit', edit_basis_path(@basis) %> |
+<%= link_to 'List requests', basis_requests_path(@basis) %> |
 <%= link_to 'Back', organization_bases_path( @basis.organization ) %>
 </p>
 

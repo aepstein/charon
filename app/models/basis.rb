@@ -28,7 +28,13 @@ class Basis < ActiveRecord::Base
       r.organizations << organization
       r
     end
+    def amount_for_perspective(perspective)
+      sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
+            "AND basis_id = ?"
+      Version.perspective_equals(perspective).sum( 'amount', :conditions => [ "item_id IN (#{sub})", proxy_owner.id ] )
+    end
   end
+  has_many :versions
 
   validates_uniqueness_of :name
   validates_presence_of :name

@@ -1,4 +1,4 @@
-<h1>Showing request</h1>
+<h1>Showing <%=h @request %></h1>
 
 <p>Status: <%=h @request.status %></p>
 <p>Total requested: <%= number_to_currency @request.versions.perspective_equals('requestor').sum('versions.amount') %></p>
@@ -38,9 +38,7 @@ This request is now submitted for review.
   </tr>
 
 <%= render :partial => 'items/item', :collection => @request.items.root,
-      :locals => { :read_only => false, :show_detail => true } %>
-
-<%= render :partial => 'items/new_item', :object => @request.items.build %>
+      :locals => { :read_only => true, :show_detail => true } %>
 
 </table>
 
@@ -72,7 +70,6 @@ This request is now submitted for review.
 <% end %>
 
 <p>
-<%= link_to_if @request.may_update?(current_user), 'Edit', edit_request_path(@request) %> |
 <%= link_to_request_organization_profiles @request %>
 </p>
 

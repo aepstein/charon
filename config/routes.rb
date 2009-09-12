@@ -15,7 +15,9 @@ ActionController::Routing::Routes.draw do |map|
     structure.resources :nodes
   end
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
-    organization.resources :bases
+    organization.resources :bases do |basis|
+      basis.resources :requests
+    end
     organization.resources :memberships
     organization.resources :requests, :member => { :supporting_documents => :get } do |request|
       request.resources :approvals, :only => [ :create, :destroy, :index, :new ]
