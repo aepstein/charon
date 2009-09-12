@@ -44,8 +44,8 @@
 <tr>
 <td><%=h status %></td>
 <td><%= @basis.requests.send(status).size %></td>
-<td><%= number_to_currency( @basis.requests.amount_for_perspective('requestor') ) %></td>
-<td><%= number_to_currency( @basis.requests.amount_for_perspective('reviewer') ) %></td>
+<td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('requestor',status) ) %></td>
+<td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
 </tr>
 <% end %>
 </table>
