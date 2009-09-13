@@ -8,7 +8,8 @@ class RequestsController < ApplicationController
     @organization = Organization.find(params[:organization_id]) if params[:organization_id]
     @basis = Basis.find(params[:basis_id]) if params[:basis_id]
     @requests = @organization.requests.paginate(:page => page) if @organization
-    @requests = @basis.requests.paginate(:page => page) if @basis
+    @requests = @basis.requests.paginate(:page => page, :include => :organizations,
+      :order => 'organizations.last_name ASC, organizations.first_name ASC') if @basis
     @requests ||= Request.paginate(:page => page)
 
     respond_to do |format|
