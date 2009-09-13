@@ -174,6 +174,24 @@ class Request < ActiveRecord::Base
     end
   end
 
+  def may_create?(user)
+    return false if user.nil?
+    return true if user.admin? || ( may(user).include?('create') && basis.open? )
+    false
+  end
+
+  def may_destroy?(user)
+    return false if user.nil?
+    return true if user.admin? || ( may(user).include?('destroy') && basis.open? )
+    false
+  end
+
+  def may_update?(user)
+    return false if user.nil?
+    return true if user.admin? || ( may(user).include?('update') && basis.open? )
+    false
+  end
+
   def approvals_fulfilled?
     approvers.fulfill_status?
   end

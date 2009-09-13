@@ -65,6 +65,40 @@ describe Request do
     @request.may(disallowed_user).should be_empty
   end
 
+  it "should have may_create? return false if basis is closed" do
+    may_create = Factory(:permission, :action => 'create')
+    basis = Factory(:basis, :framework => may_create.framework)
+    request = Factory.build(:request, :basis => basis)
+    user = Factory(:user)
+    request.organizations.first.memberships.create( :user => user, :active => true, :role => may_create.role )
+    request.basis.stub!(:open?).and_return(false)
+    request.may_create?(user).should == false
+    request.basis.stub!(:open?).and_return(true)
+    request.may_create?(user).should == true
+  end
+
+  it "should have may_update? and may_destroy? return false if basis is closed" do
+    admin = Factory(:user, :admin => true)
+    may_update = Factory(:permission, :action => 'update')
+    may_destroy = may_update.clone
+    may_destroy.action = 'destroy'
+    may_destroy.save
+    basis = Factory(:basis, :framework => may_destroy.framework)
+    request = Factory(:request, :basis => basis)
+    user = Factory(:user)
+    request.organizations.first.memberships.create( :user => user, :active => true, :role => may_update.role )
+    request.basis.stub!(:open?).and_return(false)
+    request.may_update?(user).should == false
+    request.may_destroy?(user).should == false
+    request.may_update?(admin).should == true
+    request.may_destroy?(admin).should == true
+    request.basis.stub!(:open?).and_return(true)
+    request.may_update?(user).should == true
+    request.may_destroy?(user).should == true
+    request.may_update?(admin).should == true
+    request.may_destroy?(admin).should == true
+  end
+
   it "should have a retriever method for each perspective" do
     request = Factory(:request)
     Version::PERSPECTIVES.each do |perspective|
