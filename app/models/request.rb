@@ -81,7 +81,7 @@ class Request < ActiveRecord::Base
 
   before_validation_on_create :set_approval_checkpoint
 
-  validate :must_have_open_basis, :must_have_eligible_organizations
+  validate :must_have_eligible_organizations
   validates_datetime :approval_checkpoint
 
   def must_have_open_basis
