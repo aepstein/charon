@@ -46,7 +46,7 @@ class Request < ActiveRecord::Base
       User.find( :all, :conditions => conditions )
     end
   end
-  has_many :approvals, :dependent => :destroy, :as => :approvable do
+  has_many :approvals, :dependent => :delete_all, :as => :approvable do
     def existing
       self.reject { |approval| approval.new_record? }
     end
