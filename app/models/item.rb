@@ -18,7 +18,7 @@ class Item < ActiveRecord::Base
         return last if last.new_record?
         return nil if last.perspective == Version::PERSPECTIVES.last
         perspective = Version::PERSPECTIVES[ Version::PERSPECTIVES.index(last.perspective) + 1 ]
-        attributes = attributes.merge(last.attributes)
+        attributes = last.attributes.merge( attributes )
         previous_requestable_attributes = last.requestable.attributes if last.requestable
       end
       perspective ||= Version::PERSPECTIVES.first

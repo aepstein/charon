@@ -1,3 +1,4 @@
+@current
 Feature: Manage organizations
   In order to Manage requests for an organization
   As a member of an organization
@@ -97,15 +98,14 @@ Feature: Manage organizations
     And I am logged in as "<user>" with password "secret"
     And I am on "Org1's organization profile page"
     Then I should <create_action>
-    And I should <edit_action>
     And I should <destroy_action>
     And I should <see_action>
 
     Examples:
-      | user         | create_action     | edit_action    | destroy_action    | see_action     |
-      | admin        | see "basis 1"     | see "Edit"     | see "Destroy"     | see "Show"     |
-      | allowed_user | see "basis 1"     | see "Edit"     | see "Destroy"     | see "Show"     |
-      | global       | not see "basis 1" | not see "Edit" | not see "Destroy" | not see "Show" |
+      | user         | create_action     | destroy_action    | see_action     |
+      | admin        | see "basis 1"     | see "Destroy"     | see "Show"     |
+      | allowed_user | see "basis 1"     | see "Destroy"     | see "Show"     |
+      | global       | not see "basis 1" | not see "Destroy" | not see "Show" |
 
   Scenario: Create a new request
     Given I am logged in as "allowed_user" with password "secret"
