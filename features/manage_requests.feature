@@ -49,20 +49,22 @@ Feature: Manage requests
       | safc 1, safc 2  | safc basis 1   |
       | safc 2          | safc basis 2   |
       | gpsafc 1        | gpsafc basis 1 |
-    And I am logged in as "requestor" with password "secret"
 
   Scenario: Register new request
     Given I am on "safc 1's organization profile page"
+    And I am logged in as "requestor" with password "secret"
     When I press "Create"
     Then I should see "Request was successfully created."
 
   Scenario: List requests for an organization with 1 request
+    Given I am logged in as "requestor" with password "secret"
     When I am on "safc 1's requests page"
     Then I should see the following requests:
       | Basis        |
       | safc basis 1 |
 
   Scenario: List requests for an organization with 2 requests
+    Given I am logged in as "requestor" with password "secret"
     When I am on "safc 2's requests page"
     Then I should see the following requests:
       | Basis        |
@@ -70,9 +72,47 @@ Feature: Manage requests
       | safc basis 2 |
 
   Scenario: List requests for an organization with no requests
+    Given I am logged in as "requestor" with password "secret"
     When I am on "safc 3's requests page"
     Then I should see the following requests:
       | Basis |
+
+  Scenario: List requests for a basis
+    Given the following bases:
+      | name            |
+      | fall semester   |
+      | spring semester |
+    And the following organizations:
+      | last_name        |
+      | Abc Club    |
+      | 14 Society  |
+      | Zxy Club    |
+    And the following requests:
+      | basis           | organizations | status   |
+      | fall semester   | Zxy Club      | accepted |
+      | spring semester | Abc Club      | accepted |
+      | fall semester   | Abc Club      | reviewed |
+      | fall semester   | 14 Society    | accepted |
+    And I am logged in as "admin" with password "secret"
+    And I am on the "fall semester" basis requests page
+    Then I should see the following requests:
+      | Organization |
+      | 14 Society   |
+      | Abc Club     |
+      | Zxy Club     |
+    When I fill in "Search" with "club"
+    And I press "Go"
+    Then I should see the following requests:
+      | Organization |
+      | Abc Club     |
+      | Zxy Club     |
+    When I select "accepted" from "Status"
+    And I press "Go"
+    Then I should see the following requests:
+      | Organization |
+      | 14 Society   |
+      | Zxy Club     |
+
 
   Scenario: Approve request for existing organization
     Given the following nodes:
@@ -92,6 +132,7 @@ Feature: Manage requests
       | 1    | requestor   |
       | 1    | reviewer    |
       | 2    | requestor   |
+    And I am logged in as "requestor" with password "secret"
     And I am on "safc 1's requests page"
     When I follow "Approve"
     Then I should see the following items:

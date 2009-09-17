@@ -92,6 +92,9 @@ module NavigationHelpers
     when /^"(.+)'s requests page"$/
       organization_requests_path( Organization.find_by_last_name($1) )
 
+    when /^the "(.+)" basis requests page$/
+      basis_requests_path( Basis.find_by_name($1) )
+
     when /the requests page/
       requests_path
 

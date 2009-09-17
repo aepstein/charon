@@ -1,7 +1,10 @@
 <h1>Showing <%=h @request %></h1>
 
 <p>Status: <%=h @request.status %></p>
-<p>Total requested: <%= number_to_currency @request.versions.perspective_equals('requestor').sum('versions.amount') %></p>
+<p>Requestor total: <%= number_to_currency @request.versions.perspective_equals('requestor').sum('versions.amount') %></p>
+<% if @request.may_review? current_user %>
+<p>Reviewer total: <%= number_to_currency @request.versions.perspective_equals('reviewer').sum('versions.amount') %></p>
+<% end %>
 
 <% if @request.status == 'started' %>
 <p>
@@ -14,18 +17,24 @@ details about that item, including the amount you are requesting.
 When you are finished, instruct the appropriate officers of your organization to
 approve this request.  After the request is approved, you cannot change it.
 </p>
-<% end %>
-<% if @request.status == 'completed' %>
+<% elsif @request.status == 'completed' %>
 <p>
 This request is now frozen because it has been approved by one or more authorized officers.
 Its status will advance to <em>submitted</em> once all required approvals are
 registered.
 </p>
+<% else %>
+<% if @request.may_review? current_user %>
+<% if @request.status == 'accepted' %>
+<p>
+This request is accepted for review by the commission.
+</p>
 <% end %>
-<% if @request.status == 'submitted' %>
+<% else %>
 <p>
 This request is now submitted for review.
 </p>
+<% end %>
 <% end %>
 
 <h2>Items</h2>

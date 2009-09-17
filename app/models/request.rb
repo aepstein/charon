@@ -72,6 +72,15 @@ class Request < ActiveRecord::Base
     end
   end
 
+  named_scope :organization_like, lambda { |name|
+    { :include => :organizations,
+      :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ],
+      :order => 'organizations.last_name ASC, organizations.first_name ASC' }
+  }
+  named_scope :basis_like, lambda { |name|
+    { :include => :basis, :order => 'bases.name ASC', :conditions => ['bases.name LIKE ?', "%#{name}%"] }
+  }
+
   delegate :structure, :to => :basis
   delegate :framework, :to => :basis
   delegate :nodes, :to => :structure

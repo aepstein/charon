@@ -7,9 +7,19 @@ class RequestsController < ApplicationController
     page = params[:page] ? params[:page] : 1
     @organization = Organization.find(params[:organization_id]) if params[:organization_id]
     @basis = Basis.find(params[:basis_id]) if params[:basis_id]
-    @requests = @organization.requests.paginate(:page => page) if @organization
-    @requests = @basis.requests.paginate(:page => page, :include => :organizations,
-      :order => 'organizations.last_name ASC, organizations.first_name ASC') if @basis
+    if params[:search]
+      q = params[:search][:q]
+      status = params[:search][:status]
+    else
+      q = ''
+      status = ''
+    end
+    if @organization
+      @requests = @organization.requests.status_like(status).basis_like(q).paginate(:page => page)
+    end
+    if @basis
+      @requests = @basis.requests.status_like(status).organization_like(q).paginate(:page => page)
+    end
     @requests ||= Request.paginate(:page => page)
 
     respond_to do |format|

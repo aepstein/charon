@@ -113,7 +113,7 @@ Feature: Manage organizations
     And I press "Create"
     Then I should be on the items page
     And I should see "Request was successfully created."
-
+  @wip
   Scenario: Edit a request
     Given the following requests:
       | status   | organizations | basis   |

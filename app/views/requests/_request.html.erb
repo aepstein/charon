@@ -3,6 +3,7 @@
   <% if request.new_record? %>
     <tr>
       <td><%=h request.basis.name %></td>
+      <td><em>Not applicable</em></td>
       <td>
         <% form_for :request, request, :url => organization_requests_path(request.organizations.first) do |f| %>
           <%= f.hidden_field :basis_id %>
@@ -13,10 +14,10 @@
   <% else %>
     <tr>
       <td><% if @basis %><%=h request.organizations %><% else %><%=h request.basis.name %><% end %></td>
+      <td><%=h request.status %></td>
       <td>
         <%= link_to_if(request.may_see?(current_user), 'Show', request) %> |
         <%= link_to_if(request.may_see?(current_user), 'Show Items', request_items_path(request) ) %> |
-        <%= link_to_if(request.may_update?(current_user), 'Edit', edit_request_path(request)) %> |
         <%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %> |
         <%= link_to_if(request.may_approve?(current_user) && request.approvals.user_id_equals(current_user.id).empty?, 'Approve', new_request_approval_path( request ) ) { "" } %> |
         <%= link_to_unapprove_request(request) %>
