@@ -40,7 +40,7 @@
 <th>Requestor Amount</th>
 <th>Reviewer Amount</th>
 </tr>
-<% %w( started completed submitted ).each do |status| %>
+<% Request.aasm_state_names.each do |status| %>
 <tr>
 <td><%=h status %></td>
 <td><%= @basis.requests.send(status).size %></td>
