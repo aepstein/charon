@@ -13,7 +13,7 @@ class UserSessionsController < ApplicationController
   # GET /user_sessions/sso
   def sso
     if request.env['HTTP_REMOTE_USER'] && ( user = User.find_by_net_id( request.env['HTTP_REMOTE_USER'] ) )
-      @user_session = UserSession.create( user, false )
+      @user_session = UserSession.create( user )
       flash[:notice] = "Login successful!"
       redirect_back_or_default profile_url
     else

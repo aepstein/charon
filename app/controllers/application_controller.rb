@@ -35,18 +35,24 @@ protected
   end
 
   def require_user
-    unless current_user
-      store_location
-      flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url
-      return false
+    if current_user && request.env['HTTP_REMOTE_USER'] && (current_user.net_id != request.env['HTTP_REMOTE_USER'])
+      current_user_session.destroy
+      return redirect_to_login
     end
+    unless current_user
+      return redirect_to_login
+    end
+  end
+
+  def redirect_to_login
+    store_location
+    flash[:notice] = "You must be logged in to access this page"
+    redirect_to login_url
+    return false
   end
 
   def require_no_user
     if current_user
-      store_location
-      flash[:notice] = "You must be logged out to access this page"
       redirect_to profile_url
       return false
     end
