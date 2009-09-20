@@ -31,17 +31,16 @@ protected
 
   def current_user
     return @current_user if defined?(@current_user)
-    @current_user = current_user_session.record if current_user_session && current_user_session.record
+    if request.env['HTTP_REMOTE_USER']
+      @current_user = current_user_session.record if current_user_session && current_user_session.record &&
+        ( current_user_session.record.net_id == request.env['HTTP_REMOTE_USER']  )
+    else
+      @current_user = current_user_session.record if current_user_session && current_user_session.record
+    end
   end
 
   def require_user
-    if current_user && request.env['HTTP_REMOTE_USER'] && (current_user.net_id != request.env['HTTP_REMOTE_USER'])
-      current_user_session.destroy
-      return redirect_to_login
-    end
-    unless current_user
-      return redirect_to_login
-    end
+    redirect_to_login unless current_user
   end
 
   def redirect_to_login
