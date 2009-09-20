@@ -52,8 +52,12 @@ protected
 
   def redirect_to_login
     store_location
-    flash[:notice] = "You must be logged in to access this page"
-    redirect_to login_url
+    if sso_net_id
+      redirect_to sso_login_url
+    else
+      flash[:notice] = "You must be logged in to access this page"
+      redirect_to login_url
+    end
     return false
   end
 
