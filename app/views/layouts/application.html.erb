@@ -23,12 +23,6 @@
 
 <%= yield %>
 
-<% request.env.each do |k, v| %>
-<p>
-<%=h "#{k}: #{v}" %>
-</p>
-<% end %>
-
 </body>
 </html>
 

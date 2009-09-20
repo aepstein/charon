@@ -1,10 +1,12 @@
 <h1>Login</h1>
 
+<% if sso_net_id %>
 <h2>Sign in with Kerberos</h2>
 
 <%= link_to 'Click here to log in with kerberos', sso_login_path %>
 
-<% if request.env['HTTP_REMOTE_USER'].nil? || request.env['HTTP_REMOTE_USER'].blank? %>
+
+<% else %>
 <h2>Or Provide a Local Username and Password</h2>
 
 <% form_for @user_session, :url => user_session_path do |f| %>

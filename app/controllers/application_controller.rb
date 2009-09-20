@@ -6,7 +6,7 @@ end
 
 class ApplicationController < ActionController::Base
   helper :all
-  helper_method :current_user_session, :current_user
+  helper_method :current_user_session, :current_user, :sso_net_id
   helper_method :approvable_approval_path, :new_approvable_approval_path
   filter_parameter_logging :password, :password_confirmation
 
@@ -24,6 +24,11 @@ protected
     end
   end
 
+  def sso_net_id
+    return false unless request.env['REMOTE_USER'] && !request.env['REMOTE_USER'].blank?
+    request.env['REMOTE_USER']
+  end
+
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find
@@ -31,9 +36,9 @@ protected
 
   def current_user
     return @current_user if defined?(@current_user)
-    if request.env['REMOTE_USER']
-      return @current_user = current_user_session.record if current_user_session && current_user_session.record &&
-        ( current_user_session.record.net_id == request.env['REMOTE_USER']  )
+    if sso_net_id
+      return @current_user = current_user_session.record if current_user_session &&
+        current_user_session.record && ( current_user_session.record.net_id == sso_net_id  )
       current_user_session.destroy if current_user_session
       @current_user = false
     else
