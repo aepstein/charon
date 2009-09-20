@@ -23,6 +23,12 @@
 
 <%= yield %>
 
+<% if request.env['HTTP_REMOTE_USER'] %>
+<p>
+Authenticated net id is: "<%= request.env['HTTP_REMOTE_USER'] %>"
+</p>
+<% end %>
+
 </body>
 </html>
 
