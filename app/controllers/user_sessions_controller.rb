@@ -12,7 +12,7 @@ class UserSessionsController < ApplicationController
 
   # GET /user_sessions/sso
   def sso
-    if request.env['HTTP_REMOTE_USER'] && ( user = User.find_by_net_id( request.env['HTTP_REMOTE_USER'] ) )
+    if request.env['REMOTE_USER'] && ( user = User.find_by_net_id( request.env['REMOTE_USER'] ) )
       @user_session = UserSession.create( user )
       flash[:notice] = "Login successful!"
       redirect_back_or_default profile_url
@@ -24,7 +24,7 @@ class UserSessionsController < ApplicationController
 
   def create
     @user_session = UserSession.new(params[:user_session])
-    if ( request.env['HTTP_REMOTE_USER'] ? false : @user_session.save )
+    if ( request.env['REMOTE_USER'] ? false : @user_session.save )
       flash[:notice] = "Login successful!"
       redirect_back_or_default profile_url
     else
