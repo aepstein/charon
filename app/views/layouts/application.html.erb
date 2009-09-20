@@ -23,7 +23,7 @@
 
 <%= yield %>
 
-<% for request.env.each do |k, v| %>
+<% request.env.each do |k, v| %>
 <p>
 <%=h "#{k}: #{v}" %>
 </p>
