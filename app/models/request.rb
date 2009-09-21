@@ -22,7 +22,7 @@ class Request < ActiveRecord::Base
     end
     def fulfill?( approver )
       if approver.quantity
-        actual_for(approver).size >= quantity
+        actual_for(approver).size >= approver.quantity
       else
         ( potential_for( approver ) - actual_for( approver )  ).empty?
       end
