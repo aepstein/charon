@@ -137,7 +137,7 @@ class Request < ActiveRecord::Base
   end
   aasm_event :unapprove do
     transitions :to => :started, :from => :completed, :guard => :approvals_unfulfilled?
-    transitions :to => :submitted, :from => :accepted
+    transitions :to => :completed, :from => :submitted
     transitions :to => :accepted, :from => :reviewed, :guard => :approvals_unfulfilled?
     transitions :to => :reviewed, :from => :certified
   end
