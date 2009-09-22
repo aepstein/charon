@@ -26,11 +26,12 @@ class RequestsController < ApplicationController
       format.html { @requests = @requests.paginate(:page => page) } # index.html.erb
       format.csv do
         csv_string = FasterCSV.generate do |csv|
-          csv << ['organizations','club sport?','request','review']
+          csv << ['organizations','club sport?','status','request','review']
           @requests.each do |request|
             next unless request.may_review? current_user
             csv << [ request.organizations.map { |o| o.name }.join(', '),
                      request.organizations.map { |o| o.club_sport? ? 'Y' : 'N' }.join(', '),
+                     request.status,
                      "$#{request.versions.perspective_equals('requestor').sum('amount')}",
                      "$#{request.versions.perspective_equals('reviewer').sum('amount')}" ]
           end
