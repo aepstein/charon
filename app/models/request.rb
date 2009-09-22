@@ -22,7 +22,7 @@ class Request < ActiveRecord::Base
     end
     def fulfill?( approver )
       if approver.quantity
-        actual_for(approver).size >= quantity
+        actual_for(approver).size >= approver.quantity
       else
         ( potential_for( approver ) - actual_for( approver )  ).empty?
       end
@@ -137,7 +137,9 @@ class Request < ActiveRecord::Base
   end
   aasm_event :unapprove do
     transitions :to => :started, :from => :completed, :guard => :approvals_unfulfilled?
+    transitions :to => :completed, :from => :submitted
     transitions :to => :accepted, :from => :reviewed, :guard => :approvals_unfulfilled?
+    transitions :to => :reviewed, :from => :certified
   end
   aasm_event :release do
     transitions :to => :released, :from => :certified
