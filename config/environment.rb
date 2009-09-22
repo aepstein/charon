@@ -53,6 +53,7 @@ Rails::Initializer.run do |config|
   config.gem 'chronic', :lib => false
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
   config.gem 'RedCloth', :lib => "redcloth"
+  config.gem 'fastercsv'
 
   config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
 end

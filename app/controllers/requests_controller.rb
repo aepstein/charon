@@ -15,15 +15,28 @@ class RequestsController < ApplicationController
       status = ''
     end
     if @organization
-      @requests = @organization.requests.status_like(status).basis_like(q).paginate(:page => page)
+      @requests = @organization.requests.status_like(status).basis_like(q)
     end
     if @basis
-      @requests = @basis.requests.status_like(status).organization_like(q).paginate(:page => page)
+      @requests = @basis.requests.status_like(status).organization_like(q)
     end
-    @requests ||= Request.paginate(:page => page)
+    @requests ||= Request.all
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { @requests = @requests.paginate(:page => page) } # index.html.erb
+      format.csv do
+        csv_string = FasterCSV.generate do |csv|
+          csv << ['organizations','club sport?','request','review']
+          @requests.each do |request|
+            next unless request.may_review? current_user
+            csv << [ request.organizations.map { |o| o.name }.join(', '),
+                     request.organizations.map { |o| o.club_sport? ? 'Y' : 'N' }.join(', '),
+                     request.versions.perspective_equals('requestor').sum('amount'),
+                     request.versions.perspective_equals('reviewer').sum('amount') ]
+          end
+        end
+        send_data csv_string, :disposition => "attachment; filename=requests.csv"
+      end
       format.xml  { render :xml => @requests }
     end
   end
