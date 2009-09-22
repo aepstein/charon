@@ -31,8 +31,8 @@ class RequestsController < ApplicationController
             next unless request.may_review? current_user
             csv << [ request.organizations.map { |o| o.name }.join(', '),
                      request.organizations.map { |o| o.club_sport? ? 'Y' : 'N' }.join(', '),
-                     request.versions.perspective_equals('requestor').sum('amount'),
-                     request.versions.perspective_equals('reviewer').sum('amount') ]
+                     "$#{request.versions.perspective_equals('requestor').sum('amount')}",
+                     "$#{request.versions.perspective_equals('reviewer').sum('amount')}" ]
           end
         end
         send_data csv_string, :disposition => "attachment; filename=requests.csv"
