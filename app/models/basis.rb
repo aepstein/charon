@@ -24,7 +24,7 @@ class Basis < ActiveRecord::Base
   belongs_to :framework
   has_many :requests, :dependent => :destroy do
     def allocate_with_caps(status, club_sport, other)
-      self.status_equals(status).(:include => [ :organizations, { :items => :versions } ] ).each do |r|
+      self.status_equals(status, :include => [ :organizations, { :items => :versions } ] ).each do |r|
         if r.organizations.first.club_sport?
           r.items.allocate club_sport
         else
