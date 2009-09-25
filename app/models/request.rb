@@ -64,8 +64,8 @@ class Request < ActiveRecord::Base
     def allocate(cap = nil)
       total = 0.0
       self.find(:all, :include => :versions ).each do |item|
-        max = item.versions.for_perspective('reviewer').amount
-        max = 0.0 if max.nil?
+        version = item.versions.for_perspective('reviewer')
+        max = (version) ? version.amount : 0.0
         if cap
           min = cap - total
           item.amount = ( max > min ) ? min : max
