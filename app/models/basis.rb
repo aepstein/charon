@@ -33,6 +33,11 @@ class Basis < ActiveRecord::Base
             "AND basis_id = ? AND requests.status = ?"
       Version.perspective_equals(perspective).sum( 'amount', :conditions => [ "item_id IN (#{sub})", proxy_owner.id, status ] )
     end
+    def item_amount_for_status(status)
+      sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
+            "AND basis_id = ? AND requests.status = ?"
+      Item.sum('amount', :conditions => ["id IN (#{sub})", proxy_owner.id, status] )
+    end
   end
   has_many :versions
 

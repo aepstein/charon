@@ -39,6 +39,7 @@
 <th>Quantity</th>
 <th>Requestor Amount</th>
 <th>Reviewer Amount</th>
+<th>Allocation Amount</th>
 </tr>
 <% Request.aasm_state_names.each do |status| %>
 <tr>
@@ -46,6 +47,7 @@
 <td><%= @basis.requests.send(status).size %></td>
 <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('requestor',status) ) %></td>
 <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
+<td><%= number_to_currency( @basis.requests.item_amount_for_status(status) ) %></td>
 </tr>
 <% end %>
 </table>

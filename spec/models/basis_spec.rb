@@ -15,6 +15,11 @@ describe Basis do
     basis.save.should == false
   end
 
+  it "should have a requests.item_amount_for_status method" do
+    item = Factory(:item, :amount => 54.3)
+    item.request.basis.requests.item_amount_for_status(item.request.status).should == item.amount
+  end
+
   it "should not save without a structure" do
     basis = Factory(:basis)
     basis.structure = nil
