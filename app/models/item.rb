@@ -41,6 +41,7 @@ class Item < ActiveRecord::Base
   validates_presence_of :title
   validates_presence_of :node
   validates_presence_of :request
+  validates_numericality_of :amount, :greater_than_or_equal_to => 0.0
   validate_on_create :node_must_be_allowed
   validate_on_update :node_must_not_change
 

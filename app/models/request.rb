@@ -61,6 +61,21 @@ class Request < ActiveRecord::Base
     def initialize_next_version
       root.each { |item| item.initialize_next_version }
     end
+    def allocate(cap = nil)
+      total = 0.0
+      self.find(:all, :include => :versions ).each do |item|
+        max = item.versions.for_perspective('reviewer').amount
+        max = 0.0 if max.nil?
+        if cap
+          min = cap - total
+          item.amount = ( max > min ) ? min : max
+        else
+          item.amount = max
+        end
+        item.save if item.amount_changed?
+        total += item.amount
+      end
+    end
   end
   has_many :versions, :through => :items
   has_and_belongs_to_many :organizations do

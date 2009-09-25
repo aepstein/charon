@@ -210,6 +210,32 @@ describe Request do
     @request.status.should == 'completed'
   end
 
+  it "should have items.allocate which enforces caps" do
+    first_expense = Factory(:administrative_expense)
+    first_version = first_expense.version
+    first_version.amount = 100.0
+    first_version.save
+    first_item = first_version.item
+    first_item.node.item_quantity_limit = 3
+    first_item.node.save
+    second_item = first_item.clone
+    second_item.position = nil
+    second_item.save
+    second_item.versions.create( Factory.attributes_for(:version, :amount => 100.0, :administrative_expense_attributes => Factory.attributes_for(:administrative_expense) ) )
+    first_item.versions.next.save.should == true
+    second_item.versions.next.save.should == true
+    request = first_item.request
+    request.items.allocate(150.0)
+    request.items.first.amount.should == 100.0
+    request.items.last.amount.should == 50.0
+    request.items.allocate(nil)
+    request.items.first.amount.should == 100.0
+    request.items.last.amount.should == 100.0
+    request.items.allocate(0.0)
+    request.items.first.amount.should == 0.0
+    request.items.last.amount.should == 0.0
+  end
+
   def setup_approvers
     @request.save.should == true
     @president = Role.create(:name => 'president')
