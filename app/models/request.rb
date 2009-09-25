@@ -51,7 +51,7 @@ class Request < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
-  has_many :items, :dependent => :destroy, :include => [ :node, :parent, :versions ] do
+  has_many :items, :dependent => :destroy, :include => [ :node, :parent, :versions ], :order => 'items.position ASC' do
     def children_of(parent_item)
       self.select { |item| item.parent_id == parent_item.id }
     end
@@ -62,19 +62,23 @@ class Request < ActiveRecord::Base
       root.each { |item| item.initialize_next_version }
     end
     def allocate(cap = nil)
-      total = 0.0
-      self.find(:all, :include => :versions ).each do |item|
-        version = item.versions.for_perspective('reviewer')
-        max = (version) ? version.amount : 0.0
-        if cap
-          min = cap - total
-          item.amount = ( max > min ) ? min : max
-        else
-          item.amount = max
-        end
-        item.save if item.amount_changed?
-        total += item.amount
+      root.each do |item|
+        cap = allocate_item(item, cap)
       end
+    end
+    def allocate_item(item, cap = nil)
+      version = item.versions.for_perspective('reviewer')
+      max = (version) ? version.amount : 0.0
+      if cap
+        min = cap > 0.0 ? cap : 0.0
+        item.amount = ( max > min ) ? min : max
+      else
+        item.amount = max
+      end
+      item.save if item.changed?
+      children_of(item).each { allocate_item(c,cap) }
+      return nil unless cap
+      cap - item.amount
     end
   end
   has_many :versions, :through => :items
