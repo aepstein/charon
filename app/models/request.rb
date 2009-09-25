@@ -68,17 +68,18 @@ class Request < ActiveRecord::Base
     end
     def allocate_item(item, cap = nil)
       version = item.versions.for_perspective('reviewer')
-      max = (version) ? version.amount : 0.0
+      max = ( (version) ? version.amount : 0.0 )
       if cap
-        min = cap > 0.0 ? cap : 0.0
-        item.amount = ( max > min ) ? min : max
+        min = (cap > 0.0) ? cap : 0.0
+        item.amount = ( ( max > min ) ? min : max )
+        cap -= item.amount
       else
         item.amount = max
       end
       item.save if item.changed?
-      children_of(item).each { |c| allocate_item(c,cap) }
+      children_of(item).each { |c| cap = allocate_item(c, cap) }
       return nil unless cap
-      cap - item.amount
+      cap
     end
   end
   has_many :versions, :through => :items
