@@ -51,7 +51,7 @@ class Request < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
-  has_many :items, :dependent => :destroy, :include => [ :node, :parent, :versions ], :order => 'items.position ASC' do
+  has_many :items, :dependent => :destroy, :order => 'items.position ASC' do
     def children_of(parent_item)
       self.select { |item| item.parent_id == parent_item.id }
     end

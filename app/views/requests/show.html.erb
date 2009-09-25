@@ -4,7 +4,7 @@
 <p>Requestor total: <%= number_to_currency @request.versions.perspective_equals('requestor').sum('versions.amount') %></p>
 <% if @request.may_review? current_user %>
 <p>Reviewer total: <%= number_to_currency @request.versions.perspective_equals('reviewer').sum('versions.amount') %></p>
-<p>Allocation amount: <%= number_to_currency @request.items.sum('DISTINCT items.amount') %></p>
+<p>Allocation amount: <%= number_to_currency @request.items.sum('items.amount') %></p>
 <% end %>
 
 <% if @request.status == 'started' %>

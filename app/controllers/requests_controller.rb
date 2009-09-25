@@ -34,7 +34,7 @@ class RequestsController < ApplicationController
                      request.status,
                      "$#{request.versions.perspective_equals('requestor').sum('amount')}",
                      "$#{request.versions.perspective_equals('reviewer').sum('amount')}",
-                     "$#{request.items.sum('DISTINCT items.amount')}" ]
+                     "$#{request.items.sum('items.amount')}" ]
           end
         end
         send_data csv_string, :disposition => "attachment; filename=requests.csv"
