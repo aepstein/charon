@@ -76,7 +76,7 @@ class Request < ActiveRecord::Base
         item.amount = max
       end
       item.save if item.changed?
-      children_of(item).each { allocate_item(c,cap) }
+      children_of(item).each { |c| allocate_item(c,cap) }
       return nil unless cap
       cap - item.amount
     end
