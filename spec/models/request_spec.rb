@@ -210,6 +210,24 @@ describe Request do
     @request.status.should == 'completed'
   end
 
+  it "should call deliver_release_notice and set released_at on entering the completed state" do
+    @request.status = 'certified'
+    @request.save
+    @request.should_receive(:deliver_release_notice)
+    @request.released_at.should be_nil
+    @request.release.should == true
+    @request.released_at.should_not be_nil
+    @request.status.should == 'released'
+  end
+
+  it "should set accepted_at on entering accepted state" do
+    @request.status = 'submitted'
+    @request.save
+    @request.accepted_at.should be_nil
+    @request.accept.should == true
+    @request.accepted_at.should_not be_nil
+  end
+
   it "should have items.allocate which enforces caps" do
     first_expense = Factory(:administrative_expense)
     first_version = first_expense.version

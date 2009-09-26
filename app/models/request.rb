@@ -87,6 +87,9 @@ class Request < ActiveRecord::Base
     def allowed?(organization)
       organization.eligible_for?(proxy_owner.framework)
     end
+    def may(action)
+      self.map { |o| o.users }.flatten.select { |u| proxy_owner.send("may_#{action}?", u) }.uniq
+    end
     def to_s
       self.join ', '
     end
@@ -135,14 +138,13 @@ class Request < ActiveRecord::Base
   aasm_state :started
   aasm_state :completed, :after_enter => :deliver_required_approval_notice
   aasm_state :submitted, :enter => :reset_approval_checkpoint
-  aasm_state :accepted
+  aasm_state :accepted, :after_enter => :set_accepted_at
   aasm_state :reviewed
   aasm_state :certified, :enter => :reset_approval_checkpoint
-  aasm_state :released
+  aasm_state :released, :after_enter => [:deliver_release_notice, :set_released_at]
 
   aasm_event :accept do
     transitions :to => :accepted, :from => :submitted
-#    accepted_at = DateTime.now
   end
   aasm_event :submit do
     transitions :to => :submitted, :from => :completed
@@ -152,8 +154,6 @@ class Request < ActiveRecord::Base
     transitions :to => :submitted, :from => :completed, :guard => :approvals_fulfilled?
     transitions :to => :reviewed, :from => :accepted
     transitions :to => :certified, :from => :reviewed, :guard => :approvals_fulfilled?
-#    draft_approved_at = DateTime.now unless draft_approved_at?
-#    review_approved_at = DateTime.now unless review_approved_at?
   end
   aasm_event :unapprove do
     transitions :to => :started, :from => :completed, :guard => :approvals_unfulfilled?
@@ -163,7 +163,6 @@ class Request < ActiveRecord::Base
   end
   aasm_event :release do
     transitions :to => :released, :from => :certified
-#    released_at = DateTime.now
   end
 
   alias :requestors :organizations
@@ -173,6 +172,18 @@ class Request < ActiveRecord::Base
     approvals.each do |approval|
       ApprovalMailer.deliver_request_notice(approval)
     end
+  end
+
+  def deliver_release_notice
+    RequestMailer.deliver_release_notice(self)
+  end
+
+  def set_accepted_at
+    self.accepted_at = DateTime.now
+  end
+
+  def set_released_at
+    self.released_at = DateTime.now
   end
 
   def reviewers
