@@ -29,4 +29,5 @@ config.action_view.cache_template_loading            = true
 
 # Enable sendmail for mail sending
 config.action_mailer.delivery_method = :sendmail
+config.action_controller.relative_url_root = '/charon'
 
