@@ -3,5 +3,5 @@ This email is to inform you that your <%=h @request %> has been processed and
 released for you to review.  To see it, please go to: <%= link_to request_url(@request), request_url(@request) %>.
 </p>
 
-<%= redcloth(@request.basis.release_message) %>
+<%= textilize(@request.basis.release_message) %>
 
