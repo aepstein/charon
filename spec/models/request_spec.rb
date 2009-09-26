@@ -210,12 +210,17 @@ describe Request do
     @request.status.should == 'completed'
   end
 
-  it "should call deliver_release_notice and set released_at on entering the completed state" do
+  it "should call deliver_release_notice and set released_at on entering the released state" do
     @request.status = 'certified'
     @request.save
+    m = Factory(:membership, :registration => nil, :organization => @request.organizations.first)
+    p = @request.framework.permissions.create( :role => m.role, :status => 'released',
+      :action => 'review', :perspective => 'requestor')
+    p.id.should_not be_nil
     @request.should_receive(:deliver_release_notice)
     @request.released_at.should be_nil
     @request.release.should == true
+    @request.requestors.may('review').should include(m.user)
     @request.released_at.should_not be_nil
     @request.status.should == 'released'
   end
