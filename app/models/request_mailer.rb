@@ -1,7 +1,7 @@
 class RequestMailer < ActionMailer::Base
 
 
-  def request_notice(request)
+  def release_notice(request)
     recipients  request.requestors.may('review')
     from        "#{request.contact_name} <#{request.contact_email}>"
     subject     "You may now review #{request}"
