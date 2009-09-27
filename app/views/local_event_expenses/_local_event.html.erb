@@ -4,7 +4,7 @@
     <td><%=h local_event.location %></td>
     <td><%= local_event.uup_required? ? 'Yes' : 'No' %></td>
     <td><%=h local_event.purpose %></td>
-    <td><%=h local_event.requestors.map { |r| link_to_external_registration(r) }.join(", ") %></td>
+    <td><%= local_event.requestors.map { |r| link_to_external_registration(r) }.join(", ") %></td>
     <td><%= local_event.requestors.map { |r| r.users }.flatten.uniq.map { |u| link_to_directory(u) }.join(", ") %></td>
   </tr>
 
