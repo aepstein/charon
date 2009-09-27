@@ -2,7 +2,9 @@
     <td><%=h local_event.date %></td>
     <td><%=h local_event.title %></td>
     <td><%=h local_event.location %></td>
+    <td><%= local_event.uup_required? ? 'Yes' : 'No' %></td>
     <td><%=h local_event.purpose %></td>
     <td><%=h local_event.requestors.map { |r| r.name }.join(", ") %></td>
+    <td><%= local_event.requestors.map { |r| r.users }.flatten.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") %></td>
   </tr>
 
