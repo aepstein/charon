@@ -18,7 +18,7 @@ class RequestsController < ApplicationController
       @requests = @organization.requests.status_like(status).basis_like(q)
     end
     if @basis
-      @requests = @basis.requests.status_like(status, :include => [ { :items => :node } ] ).organization_like(q)
+      @requests = @basis.requests.status_like(status).organization_like(q)
     end
     @requests ||= Request.all
 
