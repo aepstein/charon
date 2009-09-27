@@ -4,7 +4,7 @@ class Category < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  default_scope :name, :order => "categories.name ASC"
+  default_scope :order => "categories.name ASC"
 
   include GlobalModelAuthorization
 
