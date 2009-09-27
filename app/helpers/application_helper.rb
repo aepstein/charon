@@ -36,6 +36,16 @@ module ApplicationHelper
            :object => requestable
   end
 
+  def link_to_external_registration(organization)
+    return organization.name unless organization.registrations.current && organization.registrations.current.external_id
+    link_to organization.name, "http://sao.cornell.edu/SO/search.php?igroup=#{organization.registrations.current.external_id}"
+  end
+
+  def link_to_directory(user)
+    return user.name unless user.net_id
+    link_to user.name, "http://www.cornell.edu/search/index.cfm?tab=people&netid=#{user.net_id}"
+  end
+
   def link_to_unapprove_request(request)
     approval = request.approvals.user_id_equals(current_user.id).first
     if approval && approval.may_destroy?(current_user)
