@@ -1,5 +1,4 @@
 class LocalEventExpensesController < ApplicationController
-  before_filter :require_user
 
   def index
     @events = LocalEventExpense.find( :all, :include => { :version => { :item => { :request => { :organizations => :users } } } },
@@ -12,13 +11,13 @@ class LocalEventExpensesController < ApplicationController
         csv_string = FasterCSV.generate do |csv|
           csv << %w( date title location uup purpose organizers contacts )
           @events.each do |event|
-            csv << ( [ local_event.date,
-                       local_event.title,
-                       local_event.location,
-                       local_event.uup_required? ? 'Y' : 'N',
-                       local_event.purpose,
-                       local_event.requestors.map { |r| r.name }.join(", "),
-                       local_event.requestors.map { |r| r.users }.flatten.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
+            csv << ( [ event.date,
+                       event.title,
+                       event.location,
+                       event.uup_required? ? 'Y' : 'N',
+                       event.purpose,
+                       event.requestors.map { |r| r.name }.join(", "),
+                       event.requestors.map { |r| r.users }.flatten.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
           end
         end
         send_data csv_string, :disposition => "attachment; filename=local_events.csv"
