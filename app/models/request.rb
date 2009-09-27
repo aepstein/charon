@@ -59,7 +59,7 @@ class Request < ActiveRecord::Base
       self.select { |item| item.parent_id.nil? }
     end
     def for_category(category)
-      select { |item| item.category_id == category.id }
+      self.select { |item| item.category_id == category.id }
     end
     def allocation_for_category(category)
       total = 0.0
