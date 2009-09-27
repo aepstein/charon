@@ -58,6 +58,14 @@ class Request < ActiveRecord::Base
     def root
       self.select { |item| item.parent_id.nil? }
     end
+    def for_category(category)
+      select { |item| item.category_id == category.id }
+    end
+    def allocation_for_category(category)
+      total = 0.0
+      for_category(category).each { |i| total += i.amount }
+      total
+    end
     def initialize_next_version
       root.each { |item| item.initialize_next_version }
     end
