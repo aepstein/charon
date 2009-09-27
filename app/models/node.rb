@@ -21,9 +21,11 @@ class Node < ActiveRecord::Base
   has_and_belongs_to_many :document_types
   has_many :items
   belongs_to :structure
+  belongs_to :category
   acts_as_tree
 
   validates_inclusion_of :requestable_type, :in => Node::ALLOWED_TYPES.values
+  validates_presence_of :category
 
   delegate :may_update?, :to => :structure
   delegate :may_see?, :to => :structure

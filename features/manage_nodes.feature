@@ -10,18 +10,23 @@ Feature: Manage nodes
     And the following structures:
       | name |
       | test |
+    And the following categories:
+      | name    |
+      | general |
 
   Scenario: Create new node
     Given I am logged in as "admin" with password "secret"
     And I am on "test's new node page"
     When I fill in "Name" with "test node"
     And I select "Administrative" from "node_requestable_type"
+    And I select "general" from "Category"
     And I fill in "Item amount limit" with "1000"
     And I fill in "Item quantity limit" with "4"
     And I press "Create"
     Then I should see "Node was successfully created."
     And I should see "Name: test node"
     And I should see "Requestable type: Administrative"
+    And I should see "Category: general"
     And I should see "Item amount limit: $1,000.00"
     And I should see "Item quantity limit: 4"
     When I follow "Edit"

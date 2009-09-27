@@ -3,7 +3,7 @@
 <% if current_user.admin? %>
 <h3>Administration</h3>
 <p>
-<%= %w( agreements document_types frameworks organizations registrations roles structures users ).map { |option|
+<%= %w( agreements categories document_types frameworks organizations registrations roles structures users ).map { |option|
   link_to option, send(option + '_path')
 }.join(' | ') %>
 </p>

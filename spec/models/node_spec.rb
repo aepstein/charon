@@ -15,6 +15,12 @@ describe Node do
     node.valid?.should == false
   end
 
+  it "should not save without a valid category" do
+    node = Factory(:node)
+    node.category = nil
+    node.save.should == false
+  end
+
   it "should have may_create? that returns structure.may_update?" do
     node = Factory.build(:node)
     node.structure.stub!(:may_update?).and_return('may_update')

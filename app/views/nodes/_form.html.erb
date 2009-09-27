@@ -18,6 +18,11 @@
   </p>
 
   <p>
+    <%= form.label :category_id, "Category" %>
+    <%= form.collection_select :category_id, Category.all, :id, :name, { :include_blank => false } %>
+  </p>
+
+  <p>
     <%= form.label :item_amount_limit,"Item amount limit" %><br />
     <%= form.text_field :item_amount_limit %>
   </p>

@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Item do
   before(:each) do
     basis = Factory(:basis)
-    basis.structure.nodes.create(Factory.attributes_for(:node))
+    basis.structure.nodes.create(Factory.attributes_for(:node).merge( :category => Factory(:category) ) )
     request = Factory(:request, :basis => basis)
     @item = request.items.build(:node => basis.structure.nodes.first)
   end

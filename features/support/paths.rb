@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new category page/
+      new_category_path
+
     when /the new membership page/
       new_membership_path
 

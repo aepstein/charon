@@ -23,6 +23,10 @@ Factory.define :approver do |f|
   f.perspective 'requestor'
 end
 
+Factory.define :category do |f|
+  f.sequence(:name) { |n| "Category #{n}" }
+end
+
 Factory.define :document do |f|
   f.attached { ActionController::TestUploadedFile.new('features/support/assets/small.png','image/png') }
   f.association :version, :factory => :attachable_version
@@ -109,6 +113,7 @@ Factory.define :node do |f|
   f.sequence(:name) { |n| "administrative expense #{n}" }
   f.item_quantity_limit 1
   f.association :structure
+  f.association :category
 end
 
 Factory.define :attachable_node, :parent => :node do |f|

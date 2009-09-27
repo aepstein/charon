@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :categories
+
   map.resources :users, :shallow => true do |user|
     user.resources :addresses
   end
