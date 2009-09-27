@@ -1,0 +1,19 @@
+<h1>Listing local events</h1>
+
+<%= will_paginate @events %>
+
+<table>
+  <tr>
+    <td>Date</td>
+    <td>Title</td>
+    <td>Location</td>
+    <td>Purpose</td>
+    <td>Organizations</td>
+    <td>Contacts</td>
+  </tr>
+
+  <%= render :partial => 'local_event', :collection => @events %>
+</table>
+
+<%= will_paginate @events %>
+

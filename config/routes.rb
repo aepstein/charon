@@ -1,6 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :categories
-
   map.resources :users, :shallow => true do |user|
     user.resources :addresses
   end
@@ -16,6 +15,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :structures, :shallow => true do |structure|
     structure.resources :nodes
   end
+  map.resources :local_event_expenses, :only => [ :index ]
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
     organization.resources :bases do |basis|
       basis.resources :requests

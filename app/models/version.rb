@@ -34,6 +34,7 @@ class Version < ActiveRecord::Base
   delegate :request, :to => :item
   delegate :node, :to => :item
   delegate :document_types, :to => :node
+  delegate :requestors, :to => :request
 
   before_validation_on_create :initialize_documents
   before_validation_on_create :initialize_requestable

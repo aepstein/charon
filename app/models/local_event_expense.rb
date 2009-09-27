@@ -11,6 +11,9 @@ class LocalEventExpense < ActiveRecord::Base
   validates_numericality_of :copies_quantity, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :services_cost, :greater_than_or_equal_to => 0
 
+  delegate :requestors, :to => :request
+  delegate :request, :to => :version
+
   def copies_cost
     return 0.0 unless copies_quantity
     0.03 * copies_quantity

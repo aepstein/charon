@@ -1,20 +1,13 @@
-Given /^the following local_event_expenses:$/ do |local_event_expenses|
-  LocalEventExpense.create!(local_event_expenses.hashes)
-end
-
-When /^I delete the (\d+)(?:st|nd|rd|th) local_event_expense$/ do |pos|
-  visit local_event_expenses_url
-  within("table > tr:nth-child(#{pos.to_i+1})") do
-    click_link "Destroy"
-  end
-end
-
-Then /^I should see the following local_event_expenses:$/ do |local_event_expenses|
-  local_event_expenses.rows.each_with_index do |row, i|
-    row.each_with_index do |cell, j|
-      response.should have_selector("table > tr:nth-child(#{i+2}) > td:nth-child(#{j+1})") { |td|
-        td.inner_text.should == cell
-      }
+Given /^the following( reviewed)? local_event_expenses:$/ do |reviewed, local_event_expenses|
+  local_event_expenses.hashes.each do |attributes|
+    expense = Factory(:local_event_expense, attributes)
+    if reviewed then
+      expense.version.item.versions.next( expense.version.attributes.merge( :local_event_expense_attributes => expense.attributes ) ).save!
     end
   end
 end
+
+Then /^I should see the following local_event_expenses:$/ do |local_event_expenses_table|
+  local_event_expenses_table.diff!(table_at('table').to_a)
+end
+

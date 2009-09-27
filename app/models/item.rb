@@ -38,6 +38,8 @@ class Item < ActiveRecord::Base
 
   accepts_nested_attributes_for :versions
 
+  delegate :requestors, :to => :request
+
   validates_presence_of :title
   validates_presence_of :node
   validates_presence_of :request
