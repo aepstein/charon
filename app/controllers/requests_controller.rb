@@ -26,8 +26,7 @@ class RequestsController < ApplicationController
       format.html { @requests = @requests.paginate(:page => page) } # index.html.erb
       format.csv do
         csv_string = FasterCSV.generate do |csv|
-          csv << ( ['organizations','club sport?','status','request','review','allocation']
-                    + Category.all.map { |c| "#{c.name} allocation" } )
+          csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
           @requests.each do |request|
             next unless request.may_review? current_user
             csv << ( [ request.organizations.map { |o| o.name }.join(', '),
@@ -35,8 +34,7 @@ class RequestsController < ApplicationController
                      request.status,
                      "$#{request.versions.perspective_equals('requestor').sum('amount')}",
                      "$#{request.versions.perspective_equals('reviewer').sum('amount')}",
-                     "$#{request.items.sum('items.amount')}" ] +
-                     Category.all.map { |c| "$#{request.items.allocation_for_category(c)}" } )
+                     "$#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "$#{request.items.allocation_for_category(c)}" } )
           end
         end
         send_data csv_string, :disposition => "attachment; filename=requests.csv"
