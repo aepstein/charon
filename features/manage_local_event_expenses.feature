@@ -1,4 +1,3 @@
-@current
 Feature: Manage local_event_expenses
   In order to review planned events
   As a university official

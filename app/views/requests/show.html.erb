@@ -4,7 +4,21 @@
 <p>Requestor total: <%= number_to_currency @request.versions.perspective_equals('requestor').sum('versions.amount') %></p>
 <% if @request.may_review? current_user %>
 <p>Reviewer total: <%= number_to_currency @request.versions.perspective_equals('reviewer').sum('versions.amount') %></p>
-<p>Allocation amount: <%= number_to_currency @request.items.sum('items.amount') %></p>
+<p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
+<table>
+  <tr>
+    <th>Category</th>
+    <th>Allocation (after caps)</th>
+  </tr>
+  <% Category.all.each do |category| %>
+  <tr>
+    <td><%=h category.name %></td>
+    <td><%= number_to_currency @request.items.allocation_for_category(category) %></td>
+  </tr>
+  <% end %>
+</table>
+
+<p>Note: Higher priority items are allocated before lower priorities until the allocation cap is reached.</p>
 <% end %>
 
 <% if @request.status == 'started' %>
