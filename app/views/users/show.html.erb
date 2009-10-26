@@ -19,6 +19,14 @@
   Admin: <%= @user.admin? ? 'Yes' : 'No' %>
 </p>
 
+<h3>Agreements approved by user</h3>
+
+<ul>
+<%= Agreement.find( @user.approvals.agreements.map { |a| a.approvable_id } ).each do |agreement| %>
+<li><%= agreement %></li>
+<% end %>
+</ul>
+
 <p>
 <%= link_to 'Edit', edit_user_path(@user) %>
 </p>
