@@ -29,8 +29,8 @@ end
 
 Factory.define :document do |f|
   f.attached { ActionController::TestUploadedFile.new('features/support/assets/small.png','image/png') }
-  f.association :version, :factory => :attachable_version
-  f.document_type { |d| d.version.document_types.first }
+  f.association :edition, :factory => :attachable_edition
+  f.document_type { |d| d.edition.document_types.first }
 end
 
 Factory.define :document_type do |f|
@@ -51,7 +51,7 @@ end
 Factory.define :permission do |f|
   f.association :role
   f.association :framework
-  f.perspective Version::PERSPECTIVES.first
+  f.perspective Edition::PERSPECTIVES.first
   f.status Request.aasm_states.first.name.to_s
   f.action Request::ACTIONS.first
 end
@@ -146,13 +146,13 @@ Factory.define :attachable_item, :parent => :item do |f|
   f.node { |item| item.association(:attachable_node, :structure => item.request.structure) }
 end
 
-Factory.define :version do |f|
+Factory.define :edition do |f|
   f.amount 0.0
   f.perspective 'requestor'
   f.association :item
 end
 
-Factory.define :attachable_version, :parent => :version do |f|
+Factory.define :attachable_edition, :parent => :edition do |f|
   f.association :item, :factory => :attachable_item
 end
 
@@ -161,21 +161,21 @@ Factory.define :stage do |f|
 end
 
 Factory.define :administrative_expense do |f|
-  f.association :version
+  f.association :edition
   f.copies 100
   f.repairs_restocking 100
   f.mailbox_wsh 25
 end
 
 Factory.define :durable_good_expense do |f|
-  f.association :version
+  f.association :edition
   f.description 'a durable good'
   f.quantity 1.5
   f.price 1.5
 end
 
 Factory.define :local_event_expense do |f|
-  f.association :version
+  f.association :edition
   f.date Date.today + 2.months
   f.title 'An Event'
   f.location 'Willard Straight Hall'
@@ -187,7 +187,7 @@ Factory.define :local_event_expense do |f|
 end
 
 Factory.define :publication_expense do |f|
-  f.association :version
+  f.association :edition
   f.title 'Publication'
   f.number_of_issues 3
   f.copies_per_issue 500
@@ -196,7 +196,7 @@ Factory.define :publication_expense do |f|
 end
 
 Factory.define :travel_event_expense do |f|
-  f.association :version
+  f.association :edition
   f.date Date.today + 2.months
   f.title "A tournament"
   f.location 'Los Angeles, CA'
@@ -210,7 +210,7 @@ Factory.define :travel_event_expense do |f|
 end
 
 Factory.define :speaker_expense do |f|
-  f.association :version
+  f.association :edition
   f.title 'An Important Person'
   f.distance 204
   f.number_of_travelers 1

@@ -1,4 +1,4 @@
-<% fields_for :version do |version_form| %>
+<% fields_for :edition do |edition_form| %>
 
   <% fields_for :requestable do |requestable_form| %>
     <%= render :partial => "#{form.object.node.requestable_type.tableize}/form",
@@ -6,13 +6,13 @@
   <% end %>
 
   <p>
-    <%= version_form.label :amount,"Requested Amount" %><br />
-    <%= version_form.text_field :amount %>
+    <%= edition_form.label :amount,"Requested Amount" %><br />
+    <%= edition_form.text_field :amount %>
   </p>
 
   <p>
-    <%= version_form.label :comment,"Requestor Comment" %><br />
-    <%= version_form.text_field :comment %>
+    <%= edition_form.label :comment,"Requestor Comment" %><br />
+    <%= edition_form.text_field :comment %>
   </p>
 
 <% end %>

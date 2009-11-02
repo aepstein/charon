@@ -1,7 +1,7 @@
-Feature: Manage versions
+Feature: Manage editions
   In order to calculate and track transaction requests
   As a requestor or reviewer
-  I want to create, update, and show versions
+  I want to create, update, and show editions
 
   Background:
     Given the following organizations:
@@ -57,18 +57,18 @@ Feature: Manage versions
       | 1       | travel event expense   |
       | 1       | speaker expense        |
 
-  Scenario: Add and update version (administrative_expense)
+  Scenario: Add and update edition (administrative_expense)
     Given I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 1st item
-    When I fill in "version_administrative_expense_attributes_copies" with "100"
+    And I am on the new edition page of the 1st item
+    When I fill in "edition_administrative_expense_attributes_copies" with "100"
     And I fill in "Number of buckets of chalk" with "2"
     And I fill in "Amount for Daily Sun Ads" with "20"
-    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
-    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
-    And I fill in "version_amount" with "100"
-    And I fill in "version_comment" with "comment"
+    And I fill in "edition_administrative_expense_attributes_repairs_restocking" with "100"
+    And I choose "edition_administrative_expense_attributes_mailbox_wsh_25"
+    And I fill in "edition_amount" with "100"
+    And I fill in "edition_comment" with "comment"
     And I press "Create"
-    Then I should see "Version was successfully created."
+    Then I should see "Edition was successfully created."
     And I should see "Requestable type: AdministrativeExpense"
     And I should see "Request node: administrative expense"
     And I should see "Maximum request: $164.00"
@@ -80,15 +80,15 @@ Feature: Manage versions
     And I should see "Repairs and Restocking: $100.00"
     And I should see "Mailbox at Willard Straight Hall: $25.00"
     When I follow "Edit"
-    And I fill in "version_administrative_expense_attributes_copies" with "101"
+    And I fill in "edition_administrative_expense_attributes_copies" with "101"
     And I fill in "Number of buckets of chalk" with "1"
     And I fill in "Amount for Daily Sun Ads" with "10"
-    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "99"
-    And I choose "version_administrative_expense_attributes_mailbox_wsh_40"
-    And I fill in "version_amount" with "120"
-    And I fill in "version_comment" with "changed comment"
+    And I fill in "edition_administrative_expense_attributes_repairs_restocking" with "99"
+    And I choose "edition_administrative_expense_attributes_mailbox_wsh_40"
+    And I fill in "edition_amount" with "120"
+    And I fill in "edition_comment" with "changed comment"
     And I press "Update"
-    Then I should see "Version was successfully updated."
+    Then I should see "Edition was successfully updated."
     And I should see "Requestable type: AdministrativeExpense"
     And I should see "Request node: administrative expense"
     And I should see "Maximum request: $160.03"
@@ -100,24 +100,24 @@ Feature: Manage versions
     And I should see "Repairs and Restocking: $99.00"
     And I should see "Mailbox at Willard Straight Hall: $40.00"
     When I follow "Edit"
-    And I fill in "version_amount" with "170"
+    And I fill in "edition_amount" with "170"
     And I press "Update"
-    Then I should not see "Version was successfully updated."
+    Then I should not see "Edition was successfully updated."
 
-  Scenario: Add and update version with documentation (administrative_expense)
+  Scenario: Add and update edition with documentation (administrative_expense)
     Given the following document_types:
       | name        | nodes                  |
       | price quote | administrative expense |
     And I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 1st item
-    When I fill in "version_administrative_expense_attributes_copies" with "100"
-    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "100"
-    And I choose "version_administrative_expense_attributes_mailbox_wsh_25"
-    And I fill in "version_amount" with "100"
-    And I fill in "version_comment" with "comment"
+    And I am on the new edition page of the 1st item
+    When I fill in "edition_administrative_expense_attributes_copies" with "100"
+    And I fill in "edition_administrative_expense_attributes_repairs_restocking" with "100"
+    And I choose "edition_administrative_expense_attributes_mailbox_wsh_25"
+    And I fill in "edition_amount" with "100"
+    And I fill in "edition_comment" with "comment"
     And I attach the file at "features/support/assets/small.png" to "price quote"
     And I press "Create"
-    Then I should see "Version was successfully created."
+    Then I should see "Edition was successfully created."
     And I should see "Requestable type: AdministrativeExpense"
     And I should see "Request node: administrative expense"
     And I should see "Maximum request: $128.00"
@@ -130,13 +130,13 @@ Feature: Manage versions
       | Type        |
       | price quote |
     When I follow "Edit"
-    And I fill in "version_administrative_expense_attributes_copies" with "101"
-    And I fill in "version_administrative_expense_attributes_repairs_restocking" with "99"
-    And I choose "version_administrative_expense_attributes_mailbox_wsh_40"
-    And I fill in "version_amount" with "120"
-    And I fill in "version_comment" with "changed comment"
+    And I fill in "edition_administrative_expense_attributes_copies" with "101"
+    And I fill in "edition_administrative_expense_attributes_repairs_restocking" with "99"
+    And I choose "edition_administrative_expense_attributes_mailbox_wsh_40"
+    And I fill in "edition_amount" with "120"
+    And I fill in "edition_comment" with "changed comment"
     And I press "Update"
-    Then I should see "Version was successfully updated."
+    Then I should see "Edition was successfully updated."
     And I should see "Requestable type: AdministrativeExpense"
     And I should see "Request node: administrative expense"
     And I should see "Maximum request: $142.03"
@@ -149,20 +149,20 @@ Feature: Manage versions
       | Type        |
       | price quote |
     When I follow "Edit"
-    And I fill in "version_amount" with "150"
+    And I fill in "edition_amount" with "150"
     And I press "Update"
-    Then I should not see "Version was successfully updated."
+    Then I should not see "Edition was successfully updated."
 
-  Scenario: Add and update version (durable_good_expense)
+  Scenario: Add and update edition (durable_good_expense)
     Given I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 2nd item
-    When I fill in "version_durable_good_expense_attributes_description" with "The goods"
-    And I fill in "version_durable_good_expense_attributes_quantity" with "50"
-    And I fill in "version_durable_good_expense_attributes_price" with "5"
-    And I fill in "version_amount" with "100"
-    And I fill in "version_comment" with "comment"
+    And I am on the new edition page of the 2nd item
+    When I fill in "edition_durable_good_expense_attributes_description" with "The goods"
+    And I fill in "edition_durable_good_expense_attributes_quantity" with "50"
+    And I fill in "edition_durable_good_expense_attributes_price" with "5"
+    And I fill in "edition_amount" with "100"
+    And I fill in "edition_comment" with "comment"
     And I press "Create"
-    Then I should see "Version was successfully created."
+    Then I should see "Edition was successfully created."
     And I should see "Requestable type: DurableGoodExpense"
     And I should see "Request node: durable good expense"
     And I should see "Maximum request: $250.00"
@@ -172,13 +172,13 @@ Feature: Manage versions
     And I should see "Quantity: 50"
     And I should see "Price: $5.00"
     When I follow "Edit"
-    And I fill in "version_durable_good_expense_attributes_description" with "Other goods"
-    And I fill in "version_durable_good_expense_attributes_quantity" with "70"
-    And I fill in "version_durable_good_expense_attributes_price" with "4"
-    And I fill in "version_amount" with "120"
-    And I fill in "version_comment" with "changed comment"
+    And I fill in "edition_durable_good_expense_attributes_description" with "Other goods"
+    And I fill in "edition_durable_good_expense_attributes_quantity" with "70"
+    And I fill in "edition_durable_good_expense_attributes_price" with "4"
+    And I fill in "edition_amount" with "120"
+    And I fill in "edition_comment" with "changed comment"
     And I press "Update"
-    Then I should see "Version was successfully updated."
+    Then I should see "Edition was successfully updated."
     And I should see "Requestable type: DurableGoodExpense"
     And I should see "Request node: durable good expense"
     And I should see "Maximum request: $280.00"
@@ -188,22 +188,22 @@ Feature: Manage versions
     And I should see "Quantity: 70"
     And I should see "Price: $4.00"
     When I follow "Edit"
-    And I fill in "version_amount" with "350"
+    And I fill in "edition_amount" with "350"
     And I press "Update"
-    Then I should not see "Version was successfully updated."
+    Then I should not see "Edition was successfully updated."
 
-  Scenario: Add and update version (publication_expense)
+  Scenario: Add and update edition (publication_expense)
     Given I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 3rd item
+    And I am on the new edition page of the 3rd item
     When I fill in "Number of Issues" with "20"
     And I fill in "Title" with "Geek newsletter"
     And I fill in "Number of Copies Per Issue" with "10"
     And I fill in "Purchase Price Per Copy of Each Issue" with "5"
     And I fill in "Cost of Publication Per Issue" with "8"
-    And I fill in "version_amount" with "100"
-    And I fill in "version_comment" with "comment"
+    And I fill in "edition_amount" with "100"
+    And I fill in "edition_comment" with "comment"
     And I press "Create"
-    Then I should see "Version was successfully created."
+    Then I should see "Edition was successfully created."
     And I should see "Requestable type: PublicationExpense"
     And I should see "Request node: publication expense"
     And I should see "Maximum request: $160.00"
@@ -220,10 +220,10 @@ Feature: Manage versions
     And I fill in "Number of Copies Per Issue" with "20"
     And I fill in "Purchase Price Per Copy of Each Issue" with "4"
     And I fill in "Cost of Publication Per Issue" with "5"
-    And I fill in "version_amount" with "50"
-    And I fill in "version_comment" with "changed comment"
+    And I fill in "edition_amount" with "50"
+    And I fill in "edition_comment" with "changed comment"
     And I press "Update"
-    Then I should see "Version was successfully updated."
+    Then I should see "Edition was successfully updated."
     And I should see "Requestable type: PublicationExpense"
     And I should see "Request node: publication expense"
     And I should see "Maximum request: $50.00"
@@ -235,13 +235,13 @@ Feature: Manage versions
     And I should see "Purchase price per copy: $4.00"
     And I should see "Cost of publication per issue: $5.00"
     When I follow "Edit"
-    And I fill in "version_amount" with "150"
+    And I fill in "edition_amount" with "150"
     And I press "Update"
-    Then I should not see "Version was successfully updated."
+    Then I should not see "Edition was successfully updated."
 
-  Scenario: Add and update version (local_event_expense)
+  Scenario: Add and update edition (local_event_expense)
     Given I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 4th item
+    And I am on the new edition page of the 4th item
     When I fill in "Date" with "2009-08-18"
     And I fill in "Title" with "Chicken BBQ"
     And I fill in "Location" with "outside"
@@ -251,10 +251,10 @@ Feature: Manage versions
     And I fill in "Number of Publicity Copies" with "100"
     And I fill in "Rental Equipment, Services, and Intellectual Property Use Fees" with "550"
     And I check "Check if a Use of University Property Form will be filed for this event"
-    And I fill in "version_amount" with "50"
-    And I fill in "version_comment" with "comment"
+    And I fill in "edition_amount" with "50"
+    And I fill in "edition_comment" with "comment"
     And I press "Create"
-    Then I should see "Version was successfully created."
+    Then I should see "Edition was successfully created."
     And I should see "Requestable type: LocalEventExpense"
     And I should see "Request node: local event expense"
     And I should see "Maximum request: $553.00"
@@ -279,10 +279,10 @@ Feature: Manage versions
     And I fill in "Number of Publicity Copies" with "10"
     And I fill in "Rental Equipment, Services, and Intellectual Property Use Fees" with "51"
     And I uncheck "Check if a Use of University Property Form will be filed for this event"
-    And I fill in "version_amount" with "20"
-    And I fill in "version_comment" with "changed comment"
+    And I fill in "edition_amount" with "20"
+    And I fill in "edition_comment" with "changed comment"
     And I press "Update"
-    Then I should see "Version was successfully updated."
+    Then I should see "Edition was successfully updated."
     And I should see "Requestable type: LocalEventExpense"
     And I should see "Request node: local event expense"
     And I should see "Maximum request: $51.30"
@@ -298,13 +298,13 @@ Feature: Manage versions
     And I should see "Rental Equipment, Services, and Intellectual Property Use Fees: $51.00"
     And I should see "Use of University Property Form required: No"
     When I follow "Edit"
-    And I fill in "version_amount" with "150"
+    And I fill in "edition_amount" with "150"
     And I press "Update"
-    Then I should not see "Version was successfully updated."
+    Then I should not see "Edition was successfully updated."
 
-  Scenario: Add and update version (travel_event_expense)
+  Scenario: Add and update edition (travel_event_expense)
     Given I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 5th item
+    And I am on the new edition page of the 5th item
     When I fill in "Event Date" with "2009-08-18"
     And I fill in "Event Title" with "road trip"
     And I fill in "Event Location" with "Wisconsin"
@@ -315,10 +315,10 @@ Feature: Manage versions
     And I fill in "Nights of lodging" with "5"
     And I fill in "Fees per person" with "25"
     And I fill in "Fees per group or team" with "50"
-    And I fill in "version_amount" with "2300"
-    And I fill in "version_comment" with "comment"
+    And I fill in "edition_amount" with "2300"
+    And I fill in "edition_comment" with "comment"
     And I press "Create"
-    Then I should see "Version was successfully created."
+    Then I should see "Edition was successfully created."
     And I should see "Requestable type: TravelEventExpense"
     And I should see "Request node: travel event expense"
     And I should see "Maximum request: $3,264.00"
@@ -345,10 +345,10 @@ Feature: Manage versions
     And I fill in "Nights of lodging" with "2"
     And I fill in "Fees per person" with "30"
     And I fill in "Fees per group or team" with "40"
-    And I fill in "version_amount" with "1200"
-    And I fill in "version_comment" with "changed comment"
+    And I fill in "edition_amount" with "1200"
+    And I fill in "edition_comment" with "changed comment"
     And I press "Update"
-    Then I should see "Version was successfully updated."
+    Then I should see "Edition was successfully updated."
     And I should see "Requestable type: TravelEventExpense"
     And I should see "Request node: travel event expense"
     And I should see "Maximum request: $1,692.00"
@@ -365,23 +365,23 @@ Feature: Manage versions
     And I should see "Fees per person: $30.00"
     And I should see "Fees per group or team: $40.00"
     When I follow "Edit"
-    And I fill in "version_amount" with "1700"
+    And I fill in "edition_amount" with "1700"
     And I press "Update"
-    Then I should not see "Version was successfully updated."
+    Then I should not see "Edition was successfully updated."
 
-  Scenario: Add and update version (speaker_expense)
+  Scenario: Add and update edition (speaker_expense)
     Given I am logged in as "admin" with password "secret"
-    And I am on the new version page of the 6th item
+    And I am on the new edition page of the 6th item
     When I fill in "Name of Speaker, Performer, or Group" with "Bob"
     And I fill in "Travel distance" with "300"
     And I fill in "Number of travelers" with "1"
     And I fill in "Nights of lodging" with "2"
     And I fill in "Engagement fee" with "100"
     And I check "Check here if visitor is a dignitary"
-    And I fill in "version_amount" with "400"
-    And I fill in "version_comment" with "comment"
+    And I fill in "edition_amount" with "400"
+    And I fill in "edition_comment" with "comment"
     And I press "Create"
-    Then I should see "Version was successfully created."
+    Then I should see "Edition was successfully created."
     And I should see "Requestable type: SpeakerExpense"
     And I should see "Request node: speaker expense"
     And I should see "Maximum request: $485.50"
@@ -399,11 +399,11 @@ Feature: Manage versions
     And I fill in "Number of travelers" with "3"
     And I fill in "Nights of lodging" with "1"
     And I fill in "Engagement fee" with "200"
-    And I fill in "version_amount" with "500"
-    And I fill in "version_comment" with "changed comment"
+    And I fill in "edition_amount" with "500"
+    And I fill in "edition_comment" with "changed comment"
     And I uncheck "Check here if visitor is a dignitary"
     And I press "Update"
-    Then I should see "Version was successfully updated."
+    Then I should see "Edition was successfully updated."
     And I should see "Requestable type: SpeakerExpense"
     And I should see "Request node: speaker expense"
     And I should see "Maximum request: $690.50"
@@ -416,7 +416,7 @@ Feature: Manage versions
     And I should see "Engagement fee: $200.00"
     And I should see "Dignitary: No"
     When I follow "Edit"
-    And I fill in "version_amount" with "1500"
+    And I fill in "edition_amount" with "1500"
     And I press "Update"
-    Then I should not see "Version was successfully updated."
+    Then I should not see "Edition was successfully updated."
 

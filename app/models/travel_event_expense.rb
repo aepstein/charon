@@ -1,7 +1,7 @@
 class TravelEventExpense < ActiveRecord::Base
-  belongs_to :version
+  belongs_to :edition
 
-  validates_presence_of :version
+  validates_presence_of :edition
   validates_date :date
   validates_presence_of :title
   validates_presence_of :location

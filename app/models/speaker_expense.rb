@@ -1,7 +1,7 @@
 class SpeakerExpense < ActiveRecord::Base
-  belongs_to :version
+  belongs_to :edition
 
-  validates_presence_of :version
+  validates_presence_of :edition
   validates_presence_of :title
   validates_numericality_of :distance, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :number_of_travelers, :only_integer => true, :greater_than => 0

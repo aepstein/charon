@@ -24,7 +24,7 @@ class Basis < ActiveRecord::Base
   belongs_to :framework
   has_many :requests, :dependent => :destroy do
     def allocate_with_caps(status, club_sport, other)
-      self.status_equals(status, :include => [ :organizations, { :items => :versions } ] ).each do |r|
+      self.status_equals(status, :include => [ :organizations, { :items => :editions } ] ).each do |r|
         if r.organizations.first.club_sport?
           r.items.allocate club_sport
         else
@@ -40,7 +40,7 @@ class Basis < ActiveRecord::Base
     def amount_for_perspective_and_status(perspective, status)
       sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
             "AND basis_id = ? AND requests.status = ?"
-      Version.perspective_equals(perspective).sum( 'amount', :conditions => [ "item_id IN (#{sub})", proxy_owner.id, status ] )
+      Edition.perspective_equals(perspective).sum( 'amount', :conditions => [ "item_id IN (#{sub})", proxy_owner.id, status ] )
     end
     def item_amount_for_status(status)
       sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
@@ -48,7 +48,7 @@ class Basis < ActiveRecord::Base
       Item.sum('amount', :conditions => ["id IN (#{sub})", proxy_owner.id, status] )
     end
   end
-  has_many :versions
+  has_many :editions
 
   validates_uniqueness_of :name
   validates_presence_of :name

@@ -1,0 +1,7 @@
+<%= render :partial => "edition", :object => @edition %>
+
+<p>
+<%= link_to 'Edit', edit_edition_path(@edition) %> |
+<%= link_to 'Back', request_items_path(@edition.item.request) %>
+</p>
+

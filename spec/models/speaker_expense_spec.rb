@@ -9,8 +9,8 @@ describe SpeakerExpense do
     @expense.id.should_not be_nil
   end
 
-  it "should not save without a version" do
-    @expense.version = nil
+  it "should not save without a edition" do
+    @expense.edition = nil
     @expense.save.should == false
   end
 

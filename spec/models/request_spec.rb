@@ -45,9 +45,9 @@ describe Request do
     allowed_user = Factory(:user)
     disallowed_user = Factory(:user)
     @request.framework.permissions.create( :role => allowed_role,
-      :action => Request::ACTIONS.first, :perspective => Version::PERSPECTIVES.first,
+      :action => Request::ACTIONS.first, :perspective => Edition::PERSPECTIVES.first,
       :status => Request.aasm_initial_state.to_s )
-    organization = @request.send(Version::PERSPECTIVES.first.pluralize).first
+    organization = @request.send(Edition::PERSPECTIVES.first.pluralize).first
     organization.memberships.create( :user => allowed_user,
       :role => allowed_role, :active => true ).id.should_not be_nil
     organization.memberships.create( :user => disallowed_user,
@@ -93,7 +93,7 @@ describe Request do
 
   it "should have a retriever method for each perspective" do
     request = Factory(:request)
-    Version::PERSPECTIVES.each do |perspective|
+    Edition::PERSPECTIVES.each do |perspective|
       organizations = request.send(perspective.pluralize)
       organizations.size.should > 0
       organizations.each do |organization|
@@ -235,18 +235,18 @@ describe Request do
 
   it "should have items.allocate which enforces caps" do
     first_expense = Factory(:administrative_expense)
-    first_version = first_expense.version
-    first_version.amount = 100.0
-    first_version.save
-    first_item = first_version.item
+    first_edition = first_expense.edition
+    first_edition.amount = 100.0
+    first_edition.save
+    first_item = first_edition.item
     first_item.node.item_quantity_limit = 3
     first_item.node.save
     second_item = first_item.clone
     second_item.position = nil
     second_item.save
-    second_item.versions.create( Factory.attributes_for(:version, :amount => 100.0, :administrative_expense_attributes => Factory.attributes_for(:administrative_expense) ) )
-    first_item.versions.next.save.should == true
-    second_item.versions.next.save.should == true
+    second_item.editions.create( Factory.attributes_for(:edition, :amount => 100.0, :administrative_expense_attributes => Factory.attributes_for(:administrative_expense) ) )
+    first_item.editions.next.save.should == true
+    second_item.editions.next.save.should == true
     request = first_item.request
     request.items.allocate(150.0)
     request.items.first.amount.should == 100.0

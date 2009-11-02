@@ -26,13 +26,13 @@ describe Item do
     second.save.should == false
   end
 
-  it "should have a versions.perspectives method that returns perspectives of versions represented" do
+  it "should have a editions.perspectives method that returns perspectives of editions represented" do
     item = Factory(:item)
-    item.versions.next.perspective.should == 'requestor'
-    item = Factory(:administrative_expense).version.item
-    item.versions.perspectives.size.should == 1
-    item.versions.perspectives.first.should == 'requestor'
-    item.versions.next.perspective.should == 'reviewer'
+    item.editions.next.perspective.should == 'requestor'
+    item = Factory(:administrative_expense).edition.item
+    item.editions.perspectives.size.should == 1
+    item.editions.perspectives.first.should == 'requestor'
+    item.editions.next.perspective.should == 'reviewer'
   end
 
   it "should have may_create? which returns same value as request.may_update?" do
@@ -95,7 +95,7 @@ describe Item do
     third.position.should == 2
   end
 
-  it "should have an initialize_next_version that initialize the next version in each child and in self" do
+  it "should have an initialize_next_edition that initialize the next edition in each child and in self" do
     first = @item
     first.save
     request = @item.request
@@ -108,9 +108,9 @@ describe Item do
     first.id.should_not be_nil
     second.id.should_not be_nil
     child.id.should_not be_nil
-    first.initialize_next_version
-    first.versions.first.class.should == Version
-    first.children.first.versions.first.class.should == Version
+    first.initialize_next_edition
+    first.editions.first.class.should == Edition
+    first.children.first.editions.first.class.should == Edition
   end
 end
 

@@ -11,8 +11,8 @@
   </tr>
   <% end %>
 
-  <% item.versions.next unless read_only %>
-  <%= render :partial => 'items/version', :collection => item.versions, :locals => { :read_only => read_only, :show_detail => show_detail } %>
+  <% item.editions.next unless read_only %>
+  <%= render :partial => 'items/edition', :collection => item.editions, :locals => { :read_only => read_only, :show_detail => show_detail } %>
 
   <%= render :partial => 'items/item', :collection => item.request.items.children_of(item), :locals => { :read_only => read_only, :show_detail => show_detail } %>
 

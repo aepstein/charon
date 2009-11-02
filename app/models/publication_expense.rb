@@ -1,7 +1,7 @@
 class PublicationExpense < ActiveRecord::Base
-  belongs_to :version
+  belongs_to :edition
 
-  validates_presence_of :version
+  validates_presence_of :edition
   validates_presence_of :title
   validates_numericality_of :number_of_issues, :only_integer => true, :greater_than => 0
   validates_numericality_of :copies_per_issue, :only_integer => true, :greater_than => 0

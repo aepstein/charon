@@ -1,0 +1,25 @@
+<% if edition.may_see? current_user %>
+    <tr>
+      <td><%= edition.perspective %></td>
+      <% if edition.new_record? then %>
+      <td colspan="2" align="center"><em>None yet.</em></td>
+      <% unless read_only %>
+      <td><%= link_to_if(edition.may_create?(current_user), "Add", new_item_edition_path(edition.item) ) { "" } %></td>
+      <% end %>
+      <% else %>
+      <td><%=h number_to_currency(edition.amount) %></td>
+      <td><%=h edition.comment %></td>
+      <% unless read_only %>
+      <td><%= link_to_if(edition.may_update?(current_user), "Edit", edit_edition_path(edition) ) { "" } %></td>
+      <% end %>
+      <% end %>
+    </tr>
+    <% if show_detail && edition.requestable %>
+    <tr>
+    <td colspan="3">
+    <%= render_requestable_detail edition.requestable %>
+    </td>
+    </tr>
+    <% end %>
+<% end %>
+

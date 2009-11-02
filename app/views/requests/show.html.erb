@@ -1,9 +1,9 @@
 <h1>Showing <%=h @request %></h1>
 
 <p>Status: <%=h @request.status %></p>
-<p>Requestor total: <%= number_to_currency @request.versions.perspective_equals('requestor').sum('versions.amount') %></p>
+<p>Requestor total: <%= number_to_currency @request.editions.perspective_equals('requestor').sum('editions.amount') %></p>
 <% if @request.may_review? current_user %>
-<p>Reviewer total: <%= number_to_currency @request.versions.perspective_equals('reviewer').sum('versions.amount') %></p>
+<p>Reviewer total: <%= number_to_currency @request.editions.perspective_equals('reviewer').sum('editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
 <table>
   <tr>
@@ -24,7 +24,7 @@
 <% if @request.status == 'started' %>
 <p>
 Below is a listing of items in your request.  You may add, move (re-prioritize),
-and delete items.  For each item, you should also add requestor version specifiying
+and delete items.  For each item, you should also add requestor edition specifiying
 details about that item, including the amount you are requesting.
 </p>
 

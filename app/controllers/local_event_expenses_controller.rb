@@ -1,8 +1,8 @@
 class LocalEventExpensesController < ApplicationController
 
   def index
-    @events = LocalEventExpense.find( :all, :include => { :version => { :item => { :request => { :organizations => :users } } } },
-      :conditions => ['versions.perspective = ? AND local_event_expenses.date >= ?', 'reviewer', Date.today - 1.weeks],
+    @events = LocalEventExpense.find( :all, :include => { :edition => { :item => { :request => { :organizations => :users } } } },
+      :conditions => ['editions.perspective = ? AND local_event_expenses.date >= ?', 'reviewer', Date.today - 1.weeks],
       :order => 'local_event_expenses.date ASC' )
     page = params[:page] ? params[:page] : 1
     respond_to do |format|

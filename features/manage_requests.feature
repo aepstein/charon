@@ -127,7 +127,7 @@ Feature: Manage requests
       | 1       | administrative expense |
       | 1       | durable good expense   |
       | 1       | publication expense    |
-    And the following versions:
+    And the following editions:
       | item | perspective |
       | 1    | requestor   |
       | 1    | reviewer    |

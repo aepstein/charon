@@ -1,7 +1,7 @@
 class DurableGoodExpense < ActiveRecord::Base
-  belongs_to :version
+  belongs_to :edition
 
-  validates_presence_of :version
+  validates_presence_of :edition
   validates_numericality_of :price, :greater_than => 0
   validates_numericality_of :quantity, :greater_than => 0
   validates_presence_of :description

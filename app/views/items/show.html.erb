@@ -6,7 +6,7 @@
   <strong>Request node:</strong> <%=h @item.node.name %>
 </p>
 
-<%= render :partial => 'versions/version', :collection => @item.versions %>
+<%= render :partial => 'editions/edition', :collection => @item.editions %>
 
 <p>
 <%= link_to 'Edit', edit_item_path(@item) %> |

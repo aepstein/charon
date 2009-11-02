@@ -1,7 +1,7 @@
 class Document < ActiveRecord::Base
   default_scope :include => :document_type, :order => 'document_types.name ASC'
 
-  belongs_to :version
+  belongs_to :edition
   belongs_to :document_type
 
   has_attached_file :attached,
@@ -10,16 +10,16 @@ class Document < ActiveRecord::Base
 
   delegate :max_size, :to => :document_type
   delegate :max_size_string, :to => :document_type
-  delegate :may_update?, :to => :version
-  delegate :may_see?, :to => :version
-  delegate :may_destroy?, :to => :version
+  delegate :may_update?, :to => :edition
+  delegate :may_see?, :to => :edition
+  delegate :may_destroy?, :to => :edition
 
   validates_attachment_presence :attached
-  validates_presence_of :version
+  validates_presence_of :edition
   validates_presence_of :document_type
-  validates_uniqueness_of :document_type_id, :scope => [ :version_id ]
+  validates_uniqueness_of :document_type_id, :scope => [ :edition_id ]
   validate :attached_file_size_must_be_less_than_max,
-           :document_type_must_be_allowed_by_version
+           :document_type_must_be_allowed_by_edition
 
   def attached_file_size_must_be_less_than_max
     return unless document_type && attached_file_size?
@@ -28,10 +28,10 @@ class Document < ActiveRecord::Base
     end
   end
 
-  def document_type_must_be_allowed_by_version
-    return if version.nil? || document_type.nil?
-    unless version.document_types.include?( document_type )
-      errors.add( :document_type, "is not a valid document type for #{version}." )
+  def document_type_must_be_allowed_by_edition
+    return if edition.nil? || document_type.nil?
+    unless edition.document_types.include?( document_type )
+      errors.add( :document_type, "is not a valid document type for #{edition}." )
     end
   end
 

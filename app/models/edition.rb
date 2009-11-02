@@ -1,4 +1,4 @@
-class Version < ActiveRecord::Base
+class Edition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
   belongs_to :item
   has_one :administrative_expense
@@ -29,7 +29,7 @@ class Version < ActiveRecord::Base
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validates_inclusion_of :perspective, :in => PERSPECTIVES
   validates_uniqueness_of :perspective, :scope => :item_id
-  validate :amount_must_be_within_requestable_max, :amount_must_be_within_original_version, :amount_must_be_within_node_limit
+  validate :amount_must_be_within_requestable_max, :amount_must_be_within_original_edition, :amount_must_be_within_node_limit
 
   delegate :request, :to => :item
   delegate :node, :to => :item
@@ -56,11 +56,11 @@ class Version < ActiveRecord::Base
   end
 
   def initialize_documents
-    documents.each { |document| document.version = self }
+    documents.each { |document| document.edition = self }
   end
 
   def initialize_requestable
-    requestable.version = self if requestable
+    requestable.edition = self if requestable
   end
 
   def amount_must_be_within_node_limit
@@ -77,9 +77,9 @@ class Version < ActiveRecord::Base
     end
   end
 
-  def amount_must_be_within_original_version
+  def amount_must_be_within_original_edition
     return if amount.nil? || perspective == 'requestor'
-    if amount >  item.versions.perspective_equals('requestor').first.amount
+    if amount >  item.editions.perspective_equals('requestor').first.amount
       errors.add(:amount, " is greater than original request amount.")
     end
   end
@@ -126,7 +126,7 @@ class Version < ActiveRecord::Base
   end
 
   def to_s
-    "#{perspective} version of #{item}"
+    "#{perspective} edition of #{item}"
   end
 end
 

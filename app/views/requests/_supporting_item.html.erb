@@ -4,7 +4,7 @@
 <% supporting_item.node.document_types.each do |document_type| %>
 <tr>
   <td><%=h document_type %></td>
-  <td><%= supporting_item.versions.for_perspective('requestor').documents.for_type?( document_type ) %></td>
+  <td><%= supporting_item.editions.for_perspective('requestor').documents.for_type?( document_type ) %></td>
   <td>&nbsp;&nbsp;</td>
 </tr>
 <% end %>

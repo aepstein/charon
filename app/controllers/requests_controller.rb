@@ -32,8 +32,8 @@ class RequestsController < ApplicationController
             csv << ( [ request.organizations.map { |o| o.name }.join(', '),
                      request.organizations.map { |o| o.club_sport? ? 'Y' : 'N' }.join(', '),
                      request.status,
-                     "$#{request.versions.perspective_equals('requestor').sum('amount')}",
-                     "$#{request.versions.perspective_equals('reviewer').sum('amount')}",
+                     "$#{request.editions.perspective_equals('requestor').sum('amount')}",
+                     "$#{request.editions.perspective_equals('reviewer').sum('amount')}",
                      "$#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "$#{request.items.allocation_for_category(c)}" } )
           end
         end

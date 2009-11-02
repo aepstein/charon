@@ -5,7 +5,7 @@ class Approver < ActiveRecord::Base
   validates_presence_of :framework
   validates_presence_of :role
   validates_inclusion_of :status, :in => Request.aasm_state_names
-  validates_inclusion_of :perspective, :in => Version::PERSPECTIVES
+  validates_inclusion_of :perspective, :in => Edition::PERSPECTIVES
   validates_uniqueness_of :role_id, :scope => [ :framework_id, :status, :perspective ]
 
   default_scope :include => [:role], :order => 'status ASC, perspective ASC, roles.name ASC'

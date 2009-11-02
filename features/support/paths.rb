@@ -48,14 +48,14 @@ module NavigationHelpers
     when /^"(.+)'s new approver page"$/
       new_framework_approver_path( Framework.find_by_name($1) )
 
-    when /the new document page of the (\d+)(?:st|nd|rd|th) version/
-      new_version_document_path( Version.all[ $1.to_i - 1 ] )
+    when /the new document page of the (\d+)(?:st|nd|rd|th) edition/
+      new_edition_document_path( Edition.all[ $1.to_i - 1 ] )
 
   when /the new document_type page/
       new_document_type_path
 
-    when /the new version page of the (\d+)(?:st|nd|rd|th) item/
-      new_item_version_path( Item.all[ $1.to_i - 1 ] )
+    when /the new edition page of the (\d+)(?:st|nd|rd|th) item/
+      new_item_edition_path( Item.all[ $1.to_i - 1 ] )
 
     when /the new role page/
       new_role_path

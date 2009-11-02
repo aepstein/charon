@@ -2,7 +2,7 @@ Given /^the following( reviewed)? local_event_expenses:$/ do |reviewed, local_ev
   local_event_expenses.hashes.each do |attributes|
     expense = Factory(:local_event_expense, attributes)
     if reviewed then
-      expense.version.item.versions.next( expense.version.attributes.merge( :local_event_expense_attributes => expense.attributes ) ).save!
+      expense.edition.item.editions.next( expense.edition.attributes.merge( :local_event_expense_attributes => expense.attributes ) ).save!
     end
   end
 end

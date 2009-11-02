@@ -3,7 +3,7 @@ class Item < ActiveRecord::Base
 
   belongs_to :node
   belongs_to :request, :touch => true, :autosave => true
-  has_many :versions, :autosave => true do
+  has_many :editions, :autosave => true do
     def for_perspective( perspective )
       self.each do |v|
         return v if v.perspective == perspective
@@ -16,27 +16,27 @@ class Item < ActiveRecord::Base
     def next(attributes = {})
       if last then
         return last if last.new_record?
-        return nil if last.perspective == Version::PERSPECTIVES.last
-        perspective = Version::PERSPECTIVES[ Version::PERSPECTIVES.index(last.perspective) + 1 ]
+        return nil if last.perspective == Edition::PERSPECTIVES.last
+        perspective = Edition::PERSPECTIVES[ Edition::PERSPECTIVES.index(last.perspective) + 1 ]
         attributes = last.attributes.merge( attributes )
         previous_requestable_attributes = last.requestable.attributes if last.requestable
       end
-      perspective ||= Version::PERSPECTIVES.first
+      perspective ||= Edition::PERSPECTIVES.first
       previous_attributes ||= Hash.new
       previous_requestable_attributes ||= Hash.new
-      version = build
-      version.build_requestable( previous_requestable_attributes )
-      version.attributes = attributes.merge( { :perspective => perspective } )
-      version
+      edition = build
+      edition.build_requestable( previous_requestable_attributes )
+      edition.attributes = attributes.merge( { :perspective => perspective } )
+      edition
     end
     def existing
-      self.reject { |version| version.new_record? }
+      self.reject { |edition| edition.new_record? }
     end
   end
   acts_as_list :scope => :parent_id
   acts_as_tree
 
-  accepts_nested_attributes_for :versions
+  accepts_nested_attributes_for :editions
 
   delegate :requestors, :to => :request
 
@@ -49,9 +49,9 @@ class Item < ActiveRecord::Base
 
   before_validation_on_create :set_title
 
-  def initialize_next_version
-    children.each { |item| item.initialize_next_version }
-    versions.next
+  def initialize_next_edition
+    children.each { |item| item.initialize_next_edition }
+    editions.next
   end
 
   def set_title

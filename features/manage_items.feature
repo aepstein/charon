@@ -48,7 +48,7 @@ Feature: Manage items
       | status   | organizations  | basis         |
       | started  | our club       | annual budget |
 
-  Scenario: Create new item and version
+  Scenario: Create new item and edition
     Given I am logged in as "president" with password "secret"
     When I am on "our club's requests page"
     And I follow "Show Items"
@@ -112,13 +112,13 @@ Feature: Manage items
       | travel event expense   |
       | requestor              |
 
-  Scenario: Show correct add version links
+  Scenario: Show correct add edition links
     Given the following items:
       | request | node                   |
       | 1       | administrative expense |
       | 1       | durable good expense   |
       | 1       | publication expense    |
-    And the following versions:
+    And the following editions:
       | item | perspective |
       | 1    | requestor   |
       | 1    | reviewer    |

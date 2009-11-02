@@ -1,7 +1,7 @@
 class AdministrativeExpense < ActiveRecord::Base
-  belongs_to :version
+  belongs_to :edition
 
-  validates_presence_of :version
+  validates_presence_of :edition
   validates_numericality_of :copies, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :chalk, :only_integer => true, :greater_than_or_equal_to => 0
   validates_numericality_of :sun_ads, :greater_than_or_equal_to => 0

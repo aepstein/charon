@@ -42,8 +42,8 @@ describe PublicationExpense do
     @expense.save.should == false
   end
 
-  it "should not save without a version" do
-    @expense.version = nil
+  it "should not save without a edition" do
+    @expense.edition = nil
     @expense.save.should == false
   end
 end

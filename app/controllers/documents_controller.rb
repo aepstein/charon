@@ -1,12 +1,12 @@
 class DocumentsController < ApplicationController
   before_filter :require_user
 
-  # GET /versions/:version_id/documents
-  # GET /versions/:version_id/documents.xml
+  # GET /editions/:edition_id/documents
+  # GET /editions/:edition_id/documents.xml
   def index
-    @version = Version.find(params[:version_id])
-    @documents = @version.documents
-    raise AuthorizationError unless @version.may_see? current_user
+    @edition = Edition.find(params[:edition_id])
+    @documents = @edition.documents
+    raise AuthorizationError unless @edition.may_see? current_user
 
     respond_to do |format|
       format.html # index.html.erb
@@ -26,10 +26,10 @@ class DocumentsController < ApplicationController
     end
   end
 
-  # GET /versions/:version_id/documents/new
-  # GET /versions/:version_id/documents/new.xml
+  # GET /editions/:edition_id/documents/new
+  # GET /editions/:edition_id/documents/new.xml
   def new
-    @document = Version.find(params[:version_id]).documents.build
+    @document = Edition.find(params[:edition_id]).documents.build
     raise AuthorizationError unless @document.may_create? current_user
 
     respond_to do |format|
@@ -44,10 +44,10 @@ class DocumentsController < ApplicationController
     raise AuthorizationError unless @document.may_update? current_user
   end
 
-  # POST /versions/:version_id/documents
-  # POST /versions/:version_id/documents.xml
+  # POST /editions/:edition_id/documents
+  # POST /editions/:edition_id/documents.xml
   def create
-    @document = Version.find(params[:version_id]).documents.build(params[:document])
+    @document = Edition.find(params[:edition_id]).documents.build(params[:document])
     raise AuthorizationError unless @document.may_create? current_user
 
     respond_to do |format|
@@ -88,7 +88,7 @@ class DocumentsController < ApplicationController
     @document.destroy
 
     respond_to do |format|
-      format.html { redirect_to( version_documents_url(@document.version) ) }
+      format.html { redirect_to( edition_documents_url(@document.edition) ) }
       format.xml  { head :ok }
     end
   end

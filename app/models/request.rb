@@ -66,8 +66,8 @@ class Request < ActiveRecord::Base
       for_category(category).each { |i| total += i.amount }
       total
     end
-    def initialize_next_version
-      root.each { |item| item.initialize_next_version }
+    def initialize_next_edition
+      root.each { |item| item.initialize_next_edition }
     end
     def allocate(cap = nil)
       root.each do |item|
@@ -75,8 +75,8 @@ class Request < ActiveRecord::Base
       end
     end
     def allocate_item(item, cap = nil)
-      version = item.versions.for_perspective('reviewer')
-      max = ( (version) ? version.amount : 0.0 )
+      edition = item.editions.for_perspective('reviewer')
+      max = ( (edition) ? edition.amount : 0.0 )
       if cap
         min = (cap > 0.0) ? cap : 0.0
         item.amount = ( ( max > min ) ? min : max )
@@ -90,7 +90,7 @@ class Request < ActiveRecord::Base
       cap
     end
   end
-  has_many :versions, :through => :items
+  has_many :editions, :through => :items
   has_and_belongs_to_many :organizations do
     def allowed?(organization)
       organization.eligible_for?(proxy_owner.framework)
@@ -203,7 +203,7 @@ class Request < ActiveRecord::Base
   def may(user)
     return Array.new if user.nil?
     return ACTIONS if user.admin?
-    Version::PERSPECTIVES.each do |perspective|
+    Edition::PERSPECTIVES.each do |perspective|
       actions = permissions.allowed_actions( user,
                                              user.roles.in( send(perspective.pluralize) ),
                                              perspective,

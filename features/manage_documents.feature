@@ -1,5 +1,5 @@
 Feature: Manage documents
-  In order to attach files to versions
+  In order to attach files to editions
   As a documentation-dependent organization
   I want to create, update, list, and delete documents
 
@@ -59,14 +59,14 @@ Feature: Manage documents
       | request | node                   |
       | 1       | local event expense    |
       | 1       | speaker expense        |
-    And the following versions:
+    And the following editions:
       | item | perspective |
       | 1    | requestor   |
       | 2    | requestor   |
 
   Scenario Outline: Create new document
     Given I am logged in as "admin" with password "secret"
-    And I am on the new document page of the 1st version
+    And I am on the new document page of the 1st edition
     When I select "venue reservation" from "Document type"
     And I attach the file at "features/support/assets/<file>.png" to "File"
     And I press "Create"
@@ -81,13 +81,13 @@ Feature: Manage documents
 
   Scenario: Delete document
     Given the following documents:
-      | version    | document_type |
+      | edition    | document_type |
       | 2          | intent letter |
       | 2          | travel quote  |
       | 2          | ad copy       |
       | 2          | lodging quote |
     And I am logged in as "admin" with password "secret"
-    When I delete the 3rd document of the 2nd version
+    When I delete the 3rd document of the 2nd edition
     Then I should see the following documents:
       | Type          |
       | ad copy       |

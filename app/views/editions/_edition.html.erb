@@ -1,0 +1,49 @@
+<p>
+  <b>Item id:</b> <%=h edition.item_id %>
+</p>
+
+<p>
+  <b>Requestable id:</b> <%=h edition.requestable.id %>
+</p>
+
+<p>
+  <b>Requestable type:</b> <%=h edition.item.node.requestable_type %>
+</p>
+
+<p>
+  <b>Request node:</b> <%= edition.item.node %>
+</p>
+
+<p>
+  <b>Perspective:</b> <%=h edition.perspective %>
+</p>
+
+<p>
+  <b>Maximum request:</b> <%=h number_to_currency(edition.requestable.max_request) %>
+</p>
+
+<p>
+  <b><%=h edition.perspective.titleize %> amount:</b> <%=h number_to_currency(edition.amount) %>
+</p>
+
+<p>
+  <b><%=h edition.perspective.titleize %> comment:</b> <%=h edition.comment %>
+</p>
+
+
+<%= render :partial => "#{edition.requestable.class.to_s.tableize}/#{edition.requestable.class.to_s.underscore}",
+           :object => edition.requestable %>
+
+<% unless @edition.documents.empty? %>
+<h2>Attached Documents</h2>
+
+<table>
+  <tr>
+    <th>Type</th>
+  </tr>
+
+<%= render :partial => 'documents/document', :collection => @edition.documents %>
+
+</table>
+<% end %>
+

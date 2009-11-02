@@ -30,7 +30,7 @@ describe Approver do
   it "should not save with invalid perspective" do
     approver = Factory(:approver)
     approver.perspective = 'invalid'
-    Version::PERSPECTIVES.should_not include(approver.perspective)
+    Edition::PERSPECTIVES.should_not include(approver.perspective)
     approver.save.should == false
   end
 
