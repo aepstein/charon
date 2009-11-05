@@ -1,6 +1,0 @@
-author: Dean Strelau
-summary: Provides handy methods for working with and validating Cornell University NetIDs
-plugin: svn://code.strelau.net/rails_plugins/cornell_net_id
-license: MIT
-version: 0.1
-rails_version: 1.2+

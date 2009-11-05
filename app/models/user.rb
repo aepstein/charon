@@ -93,7 +93,7 @@ protected
   def ldap_entry
     return nil if @ldap_entry == false
     begin
-      @ldap_entry ||= DirectoryImporter::Record.find net_id
+      @ldap_entry ||= CornellLdap::Record.find net_id
     rescue Exception
       @ldap_entry = false
     end

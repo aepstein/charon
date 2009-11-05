@@ -43,7 +43,7 @@ Rails::Initializer.run do |config|
   config.gem 'calendar_date_select'
   config.gem 'mislav-will_paginate', :lib => 'will_paginate', :source => 'http://gems.github.com'
   config.gem 'ruby-net-ldap', :lib => 'net/ldap'
-  config.gem 'activeldap', :lib => 'active_ldap', :version => '1.0.9'
+  config.gem 'activeldap', :lib => 'active_ldap'
   config.gem 'mysql' #May need to sudo apt-get install libmysqlclient15-dev
   config.gem 'rubyist-aasm', :lib => 'aasm', :source => 'http://gems.github.com'
   config.gem 'thoughtbot-paperclip', :lib => 'paperclip', :source => 'http://gems.github.com'
@@ -54,6 +54,8 @@ Rails::Initializer.run do |config|
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
   config.gem 'RedCloth', :lib => "redcloth"
   config.gem 'fastercsv'
+  config.gem 'cornell_netid', :source => 'http://gemcutter.org'
+  config.gem 'cornell_ldap', :source => 'http://gemcutter.org'
 
   config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
 end
