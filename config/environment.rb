@@ -46,7 +46,7 @@ Rails::Initializer.run do |config|
   config.gem 'activeldap', :lib => 'active_ldap'
   config.gem 'mysql' #May need to sudo apt-get install libmysqlclient15-dev
   config.gem 'rubyist-aasm', :lib => 'aasm', :source => 'http://gems.github.com'
-  config.gem 'thoughtbot-paperclip', :lib => 'paperclip', :source => 'http://gems.github.com'
+  config.gem 'paperclip', :source => 'http://gemcutter.org'
   config.gem 'validates_timeliness'
   config.gem 'prawn'
   config.gem 'searchlogic'
