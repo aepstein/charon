@@ -58,7 +58,12 @@ class ApprovalsController < ApplicationController
     @approval.destroy
 
     respond_to do |format|
-      format.html { redirect_to(@approval.approvable) }
+      format.html {
+        if current_user == @approval.user
+          redirect_to @approval.approvable
+        else
+          redirect_to polymorphic_url [ @approval.approvable, :approvals ]
+        end }
       format.xml  { head :ok }
     end
   end

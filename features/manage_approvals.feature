@@ -37,19 +37,37 @@ Feature: Manage approvals
 
   @wip
   Scenario: Register new approval (request)
+    Given a user "allowed" exists with net_id: "allowed", password: "secret"
+    And a role: "allowed" exists
+    And an organization: "owner" exists
+    And a membership exists with role: role "allowed", user: user "allowed", active: true, organization: organization "owner"
+    And a framework exists
+    And a permission exists with role: role "allowed", action: "approve", perspective: "requestor", status: "started", framework: the framework
+    And a structure exists with minimum_requestors: 1, maximum_requestors: 2
+    And a basis exists with framework: the framework, structure: the structure
+    And a request exists with basis: the basis, status: "started"
+    And the request is one of the requests of organization: "owner"
+    And I am logged in as "allowed" with password "secret"
+    And I am on the new approval page for the request
+    Then I should not see "unauthorized"
+    And I press "Confirm Approval"
+    Then I should see "Approval was successfully created."
 
-  @wip
   Scenario: Delete approval
-    Given the following approvals:
-      |user_id|
-      |user_id 1|
-      |user_id 2|
-      |user_id 3|
-      |user_id 4|
-    When I delete the 3rd approval
+    Given an agreement exists
+    And a user: "user4" exists with first_name: "John", last_name: "Doe 4"
+    And a user: "user3" exists with first_name: "John", last_name: "Doe 3"
+    And a user: "user2" exists with first_name: "John", last_name: "Doe 2"
+    And a user: "user1" exists with first_name: "John", last_name: "Doe 1"
+    And an approval exists with user: user "user4", approvable: the agreement
+    And an approval exists with user: user "user3", approvable: the agreement
+    And an approval exists with user: user "user2", approvable: the agreement
+    And an approval exists with user: user "user1", approvable: the agreement
+    And I am logged in as "admin" with password "secret"
+    When I delete the 3rd approval for the agreement
     Then I should see the following approvals:
-      |User|
-      |user_id 1|
-      |user_id 2|
-      |user_id 4|
+      | User      |
+      | John Doe 1|
+      | John Doe 2|
+      | John Doe 4|
 

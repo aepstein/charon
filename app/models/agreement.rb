@@ -46,10 +46,12 @@ class Agreement < ActiveRecord::Base
   end
 
   def may_unapprove?(user)
+    return true if user.admin?
     false
   end
 
   def may_unapprove_other?(user)
+    return true if user.admin?
     false
   end
 

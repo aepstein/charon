@@ -1,20 +1,22 @@
 <h1>Listing approvals</h1>
 
 <table>
+  <thead>
   <tr>
     <th>User</th>
     <th>Approvable</th>
     <th>Created</th>
   </tr>
-
+  </thead>
+<tbody>
 <%= render :partial => 'approval', :collection => @approvals,
-           :locals => { :user => true, :approvable => true } %>
-
+  :locals => { :user => true, :approvable => true } %>
+</tbody>
 </table>
 
 <br />
 
 <p>
-<%= link_to 'New approval', new_approval_path %>
+<%= link_to 'New approval', new_polymorphic_path( [ @approvable, :approval ] ) %>
 </p>
 

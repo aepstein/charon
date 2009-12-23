@@ -20,12 +20,11 @@ module NavigationHelpers
     when /the new membership page/
       new_membership_path
 
-
     when /the users page/
       users_path
 
-    when /the new approval page/
-      new_approval_path
+    when /^the new approval page for #{capture_model}$/
+      new_polymorphic_path( [ model($1), :approval ] )
 
     when /the registrations page/
       registrations_path
@@ -51,7 +50,7 @@ module NavigationHelpers
     when /the new document page of the (\d+)(?:st|nd|rd|th) edition/
       new_edition_document_path( Edition.all[ $1.to_i - 1 ] )
 
-  when /the new document_type page/
+    when /the new document_type page/
       new_document_type_path
 
     when /the new edition page of the (\d+)(?:st|nd|rd|th) item/

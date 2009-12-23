@@ -1,4 +1,6 @@
 class Approval < ActiveRecord::Base
+  default_scope :include => [ :user ], :order => 'users.last_name ASC, users.first_name ASC, users.middle_name ASC'
+
   belongs_to :approvable, :polymorphic => true
   belongs_to :user
 

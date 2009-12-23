@@ -11,14 +11,14 @@ Given /^the following approvals:$/ do |approvals|
   end
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) approval$/ do |pos|
-  visit approvals_url
-  within("table > tr:nth-child(#{pos.to_i+1})") do
-    click_link "Destroy"
+When /^I delete the (\d+)(?:st|nd|rd|th) approval for #{capture_model}$/ do |pos, approvable|
+  visit polymorphic_url [ model(approvable), :approvals ]
+  within("table > tbody > tr:nth-child(#{pos.to_i})") do
+    click_link "Unapprove"
   end
 end
 
 Then /^I should see the following approvals:$/ do |expected_approvals_table|
-  expected_approvals_table.diff!(table_at('table').to_a)
+  expected_approvals_table.diff!( tableish('table tr','th,td') )
 end
 
