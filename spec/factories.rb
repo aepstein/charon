@@ -156,10 +156,6 @@ Factory.define :attachable_edition, :parent => :edition do |f|
   f.association :item, :factory => :attachable_item
 end
 
-Factory.define :stage do |f|
-  f.sequence(:name) { |n| "Stage #{n}" }
-end
-
 Factory.define :administrative_expense do |f|
   f.association :edition
   f.copies 100

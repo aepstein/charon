@@ -115,7 +115,7 @@ Feature: Manage editions
     And I choose "edition_administrative_expense_attributes_mailbox_wsh_25"
     And I fill in "edition_amount" with "100"
     And I fill in "edition_comment" with "comment"
-    And I attach the file at "features/support/assets/small.png" to "price quote"
+    And I attach the file "features/support/assets/small.png" to "price quote"
     And I press "Create"
     Then I should see "Edition was successfully created."
     And I should see "Requestable type: AdministrativeExpense"

@@ -114,8 +114,7 @@ describe Edition do
   end
 
   it "should item.touch on save" do
-    @edition.item.request.should_receive(:touch).at_least(:once)
-    @edition.item.should_receive(:touch).at_least(:once)
+    @edition.should_receive(:belongs_to_touch_after_save_or_destroy_for_item)
     @edition.save
   end
 

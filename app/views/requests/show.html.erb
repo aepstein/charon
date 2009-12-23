@@ -94,6 +94,7 @@ This request is now submitted for review.
 <% end %>
 
 <p>
-<%= link_to_request_organization_profiles @request %>
+<%= link_to_request_organization_profiles @request %> |
+<%= link_to 'Edit', edit_request_path(@request) %>
 </p>
 

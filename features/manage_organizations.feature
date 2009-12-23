@@ -106,20 +106,14 @@ Feature: Manage organizations
       | allowed_user | see "basis 1"     | see "Destroy"     | see "Show"     |
       | global       | not see "basis 1" | not see "Destroy" | not see "Show" |
 
-  Scenario: Create a new request
+  Scenario: Create a new request and edit
     Given I am logged in as "allowed_user" with password "secret"
     And I am on "Org1's organization profile page"
     And I press "Create"
     Then I should be on the items page
     And I should see "Request was successfully created."
-  @wip
-  Scenario: Edit a request
-    Given the following requests:
-      | status   | organizations | basis   |
-      | started  | Org1          | basis 1 |
-    And I am logged in as "allowed_user" with password "secret"
-    And I am on "Org1's organization profile page"
-    When I follow "Edit"
+    When I follow "Show request"
+    And I follow "Edit"
     Then I should see "Editing Request for Org1"
     When I press "Update"
     Then I should see "Request was successfully updated."

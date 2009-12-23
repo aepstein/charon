@@ -1,6 +1,6 @@
 class Edition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
-  belongs_to :item
+  belongs_to :item, :touch => true
   has_one :administrative_expense
   has_one :local_event_expense
   has_one :speaker_expense

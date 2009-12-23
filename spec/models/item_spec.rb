@@ -69,7 +69,8 @@ describe Item do
   end
 
   it "should call request.touch on save" do
-    @item.request.should_receive(:touch)
+    @item.request
+    @item.should_receive(:belongs_to_touch_after_save_or_destroy_for_request)
     @item.save
   end
 

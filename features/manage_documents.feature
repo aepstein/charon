@@ -68,7 +68,7 @@ Feature: Manage documents
     Given I am logged in as "admin" with password "secret"
     And I am on the new document page of the 1st edition
     When I select "venue reservation" from "Document type"
-    And I attach the file at "features/support/assets/<file>.png" to "File"
+    And I attach the file "features/support/assets/<file>.png" to "File"
     And I press "Create"
     Then I should <see> "Document was successfully created."
     And I should <see> "Document type: venue reservation"

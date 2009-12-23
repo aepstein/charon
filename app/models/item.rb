@@ -2,7 +2,7 @@ class Item < ActiveRecord::Base
   default_scope :order => 'items.position ASC'
 
   belongs_to :node
-  belongs_to :request, :touch => true, :autosave => true
+  belongs_to :request, :touch => true
   has_many :editions, :autosave => true do
     def for_perspective( perspective )
       self.each do |v|

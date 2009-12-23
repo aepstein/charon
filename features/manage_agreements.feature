@@ -13,7 +13,7 @@ Feature: Manage agreements
     Given I am logged in as "admin" with password "secret"
     And I am on the new agreement page
     When I fill in "Name" with "Ethical Conduct Agreement"
-    And I fill in "Content" with "I agree to behave ethically."
+    And I fill in "Content" with "I *agree* to behave ethically."
     And I fill in "Contact name" with "Office of the Assemblies"
     And I fill in "Contact email" with "office@example.com"
     And I press "Create"

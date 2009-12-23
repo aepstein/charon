@@ -28,7 +28,7 @@ Then /^I should see the following documents:$/ do |documents|
   end
 end
 
-Then /all documents should be deleted/ do
+Then /^all documents should be deleted$/ do
   Document.all.each { |document| document.destroy }
 end
 

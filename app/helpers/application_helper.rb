@@ -27,10 +27,6 @@ module ApplicationHelper
     end
   end
 
-  def redcloth(source)
-    RedCloth::new(source).to_html
-  end
-
   def render_requestable_detail(requestable)
     render :partial => "#{requestable.class.to_s.underscore.pluralize}/#{requestable.class.to_s.underscore}",
            :object => requestable
