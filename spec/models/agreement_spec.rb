@@ -28,7 +28,7 @@ describe Agreement do
 
   it "should have methods for approvable" do
     agreement = Factory(:agreement)
-    agreement.may_approve?(nil).should == true
+    agreement.may_approve?(nil).should == false
     agreement.may_unapprove?(nil).should == false
     agreement.may_unapprove_other?(nil).should == false
     agreement.approve.should be_true

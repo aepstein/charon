@@ -35,21 +35,19 @@ Feature: Manage approvals
     When I press "Confirm Approval"
     Then I should see "Approval was successfully created."
 
-  @wip
   Scenario: Register new approval (request)
     Given a user "allowed" exists with net_id: "allowed", password: "secret"
-    And a role: "allowed" exists
-    And an organization: "owner" exists
-    And a membership exists with role: role "allowed", user: user "allowed", active: true, organization: organization "owner"
+    And a role: "approver" exists
+    And an organization: "owner" exists with last_name: "Cool Club"
+    And a membership exists with role: role "approver", user: user "allowed", active: true, organization: organization "owner"
     And a framework exists
-    And a permission exists with role: role "allowed", action: "approve", perspective: "requestor", status: "started", framework: the framework
+    And a permission exists with role: role "approver", action: "approve", perspective: "requestor", status: "started", framework: the framework
     And a structure exists with minimum_requestors: 1, maximum_requestors: 2
     And a basis exists with framework: the framework, structure: the structure
     And a request exists with basis: the basis, status: "started"
     And the request is one of the requests of organization: "owner"
     And I am logged in as "allowed" with password "secret"
     And I am on the new approval page for the request
-    Then I should not see "unauthorized"
     And I press "Confirm Approval"
     Then I should see "Approval was successfully created."
 
