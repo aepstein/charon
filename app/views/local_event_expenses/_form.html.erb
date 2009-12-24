@@ -1,43 +1,12 @@
-  <p>
-    <%= form.label :date %><br />
-    <%= form.calendar_date_select :date, :time => false %>
-  </p>
-
-  <p>
-    <%= form.label :title %><br />
-    <%= form.text_field :title %>
-  </p>
-
-  <p>
-    <%= form.label :location %><br />
-    <%= form.text_field :location %>
-  </p>
-
-  <p>
-    <%= form.label :purpose %><br />
-    <%= form.text_area :purpose, :size => "40x6" %>
-  </p>
-
-  <p>
-    <%= form.label :number_of_attendees, "Anticipated Number of Attendees" %><br />
-    <%= form.text_field :number_of_attendees %>
-  </p>
-
-  <p>
-    <%= form.label :price_per_attendee, "Admission Charge Per Attendee" %><br />
-    <%= form.text_field :price_per_attendee %>
-  </p>
-
-  <p>
-    <%= form.label :copies_quantity, "Number of Publicity Copies" %><br />
-    <%= form.text_field :copies_quantity %>
-  </p>
-
-  <p>
-    <%= form.label :services_cost, "Rental Equipment, Services, and Intellectual Property Use Fees" %><br />
-    <%= form.text_field :services_cost %>
-  </p>
-
+  <%= form.input :date, :as => :ft_calendar_date_select, :html_options => { :time => false } %>
+  <%= form.input :title %>
+  <%= form.input :location %>
+  <%= form.input :purpose %>
+  <%= form.input :number_of_attendees, :label => 'Anticipated Number of Attendees' %>
+  <%= form.input :price_per_attendee, :label => 'Admission Charge Per Attendee' %>
+  <%= form.input :copies_quantity, :label => "Number of Publicity Copies" %>
+  <%= form.input :services_cost, :label => 'Rental Equipment, Services, and Intellectual Property Use Fees' %>
+  <li>
   <p>
   A Use of University Property Form must be filed for certain large or higher risk events.
   The form enables event planners to connect with university officials in order
@@ -51,9 +20,6 @@
     <li>may be seen as controversial or high risk</li>
   </ul>
   </p>
-
-  <p>
-    <%= form.label :uup_required, 'Check if a Use of University Property Form will be filed for this event' %>
-    <%= form.check_box :uup_required %>
-  </p>
+  </li>
+  <%= form.input :uup_required, :label => 'Will a Use of University Property Form be filed for this event?', :as => :radio %>
 

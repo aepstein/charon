@@ -1,28 +1,9 @@
-  <p>
-    <%= form.label :title, "Name of Speaker, Performer, or Group" %><br />
-    <%= form.text_field :title %>
-  </p>
-
-  <p>
-    <%= form.label :distance, 'Travel distance' %><br />
-    <%= form.text_field :distance %>
-  </p>
-
-  <p>
-    <%= form.label :number_of_travelers, 'Number of travelers' %><br />
-    <%= form.text_field :number_of_travelers %>
-  </p>
-
-  <p>
-    <%= form.label :nights_of_lodging, 'Nights of lodging' %><br />
-    <%= form.text_field :nights_of_lodging %>
-  </p>
-
-  <p>
-    <%= form.label :engagement_fee %><br />
-    <%= form.text_field :engagement_fee %>
-  </p>
-
+  <%= form.input :title, :label => 'Name of Speaker, Performer, or Group' %>
+  <%= form.input :distance, :label => 'Travel distance' %>
+  <%= form.input :number_of_travelers, :label => 'Number of travelers' %>
+  <%= form.input :nights_of_lodging, :label => 'Nights of lodging' %>
+  <%= form.input :engagement_fee %>
+  <li>
   <p>
   Regarding the speaker or performer, do any of the following statements apply?
   The speaker or performer:
@@ -48,9 +29,7 @@
   associated costs are factored into your budget.  Additionally, you should indicate the dignitary
   is visiting by checking the box below.
   </p>
-
-  <p>
-    <%= form.label :dignitary, 'Check here if visitor is a dignitary' %>
-    <%= form.check_box :dignitary %>
-  </p>
+  </li>
+  <%= form.input :dignitary, :label => 'Is the speaker, performer or group a dignitary?',
+    :as => :radio %>
 

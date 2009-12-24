@@ -1,26 +1,7 @@
-  <p>
-    <%= form.label :copies, "Number of copies" %><br />
-    <%= form.text_field :copies %>
-  </p>
-
-  <p>
-    <%= form.label :chalk, "Number of buckets of chalk" %><br />
-    <%= form.text_field :chalk %>
-  </p>
-
-  <p>
-    <%= form.label :sun_ads, "Amount for Daily Sun Ads" %><br />
-    $<%= form.text_field :sun_ads %>
-  </p>
-
-  <p>
-    <%= form.label :repairs_restocking, "Repairs and Restocking" %><br />
-    $<%= form.text_field :repairs_restocking %>
-  </p>
-
-  <p>
-    Mailbox at Willard Straight Hall ($25 for renewal, $40 for new registration)<br />
-	<%= form.radio_button(:mailbox_wsh, 25) %> <%= form.label :mailbox_wsh_25, "$25" %><br />
-	<%= form.radio_button(:mailbox_wsh, 40) %> <%= form.label :mailbox_wsh_40, "$40" %>
-  </p>
+  <%= form.input :copies, :label => 'Number of copies' %>
+  <%= form.input :chalk, :label => 'Number of buckets of chalk' %>
+  <%= form.input :sun_ads, :label => 'Amount for Daily Sun Ads' %>
+  <%= form.input :repairs_restocking, :label => 'Repairs and Restocking' %>
+  <%= form.input :mailbox_wsh, :label => 'Mailbox at Willard Straight Hall ($25 renew, $40 new)',
+    :as => :radio, :collection => [ %w($25 25), %w($40 40) ] %>
 

@@ -1,50 +1,12 @@
-  <p>
-    <%= form.label :date, 'Event Date' %><br />
-    <%= form.calendar_date_select :date, :time => false %>
-  </p>
-
-  <p>
-    <%= form.label :title, 'Event Title' %><br />
-    <%= form.text_field :title %>
-  </p>
-
-  <p>
-    <%= form.label :location, 'Event Location' %><br />
-    <%= form.text_field :location %>
-  </p>
-
-  <p>
-    <%= form.label :purpose, 'Event Purpose' %><br />
-    <%= form.text_area :purpose, :size => "40x6" %>
-  </p>
-
-  <p>
-    <%= form.label :travelers_per_group, 'Number of travelers per group or team' %><br />
-    <%= form.text_field :travelers_per_group %>
-  </p>
-
-  <p>
-    <%= form.label :number_of_groups, 'Number of groups or teams' %><br />
-    <%= form.text_field :number_of_groups %>
-  </p>
-
-  <p>
-    <%= form.label :distance, 'Travel distance' %> (round trip in miles)<br />
-    <%= form.text_field :distance %>
-  </p>
-
-  <p>
-    <%= form.label :nights_of_lodging, 'Nights of lodging' %><br />
-    <%= form.text_field :nights_of_lodging %>
-  </p>
-
-  <p>
-    <%= form.label :per_person_fees, 'Fees per person' %> (excluding team or group fees)<br />
-    <%= form.text_field :per_person_fees %>
-  </p>
-
-  <p>
-    <%= form.label :per_group_fees, 'Fees per group or team' %> (excluding per person fees)<br />
-    <%= form.text_field :per_group_fees %>
-  </p>
+  <%= form.input :date, :as => :ft_calendar_date_select, :html_options => { :time => false },
+    :label => 'Event Date' %>
+  <%= form.input :title, :label => 'Event Title' %>
+  <%= form.input :location, :label => 'Event Location' %>
+  <%= form.input :purpose, :label => 'Event Purpose' %>
+  <%= form.input :travelers_per_group, :label => 'Number of travelers per group or team' %>
+  <%= form.input :number_of_groups, :label => 'Number of groups or teams' %>
+  <%= form.input :distance, :label => 'Travel distance' %>
+  <%= form.input :nights_of_lodging, :label => 'Nights of lodging' %>
+  <%= form.input :per_person_fees, :label => 'Fees per person' %>
+  <%= form.input :per_group_fees, :label => 'Fees per group or team' %>
 

@@ -1,25 +1,6 @@
-  <p>
-    <%= form.label :title %><br/>
-    <%= form.text_field :title %>
-  </p>
-
-  <p>
-    <%= form.label :number_of_issues %><br />
-    <%= form.text_field :number_of_issues %>
-  </p>
-
-  <p>
-    <%= form.label :copies_per_issue, "Number of Copies Per Issue" %><br />
-    <%= form.text_field :copies_per_issue %>
-  </p>
-
-  <p>
-    <%= form.label :price_per_copy, "Purchase Price Per Copy of Each Issue" %><br />
-    <%= form.text_field :price_per_copy %>
-  </p>
-
-  <p>
-    <%= form.label :cost_per_issue, "Cost of Publication Per Issue" %><br />
-    <%= form.text_field :cost_per_issue %>
-  </p>
+  <%= form.input :title %>
+  <%= form.input :number_of_issues %>
+  <%= form.input :copies_per_issue, :label => "Number of Copies Per Issue" %>
+  <%= form.input :price_per_copy, :label => "Purchase Price Per Copy of Each Issue" %>
+  <%= form.input :cost_per_issue, :label => "Cost of Publication Per Issue" %>
 

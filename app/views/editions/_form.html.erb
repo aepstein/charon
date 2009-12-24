@@ -1,41 +1,27 @@
-<fieldset>
+  <%= form.error_messages %>
 
-  <legend><b>Requestable Info</b></legend>
-
-  <% form.fields_for( form.object.requestable.class.to_s.underscore.to_sym,
-                      form.object.requestable ) do |requestable_form| %>
-    <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form",
-               :object => requestable_form %>
+  <% form.inputs :name => 'Basic Information' do %>
+    <% form.semantic_fields_for form.object.requestable.class.to_s.underscore.to_sym do |requestable_form| %>
+      <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form", :object => requestable_form %>
+    <% end %>
   <% end %>
+
+  <% form.inputs :name => 'Supporting Documents' do %>
+    <% form.semantic_fields_for :documents do |document_form| %>
+      <%= document_form.input :document_type_id, :as => :hidden %>
+      <%= document_form.input :attached, :label => document_form.object.document_type.to_s %>
+    <% end %>
+  <% end %>
+
 
   <% if form.object.requestable.max_request %>
     <p>Maximum request: <%=h number_to_currency(form.object.requestable.max_request) %></p>
   <% end %>
 
-</fieldset>
-
-<% unless form.object.documents.empty? %>
-<fieldset>
-
-  <legend><b>Attached documentation</b></legend>
-  <% form.fields_for :documents do |document_form| %>
-  <%= document_form.hidden_field :id unless document_form.object.new_record? %>
-  <%= document_form.hidden_field :document_type_id %>
-  <p>
-  <%= document_form.label :attached, document_form.object.document_type.name %>
-  <%= document_form.file_field :attached %>
-  </p>
+  <% form.inputs :name => 'Funding Amount and Rationale' do %>
+  <%= form.input :amount, :label => "#{form.object.perspective} Amount" %>
+  <%= form.input :comment, :label => "#{form.object.perspective} Comment" %>
   <% end %>
-</fieldset>
-<% end %>
 
-<p>
-  <%= form.label :amount, form.object.perspective + " Amount" %><br />
-  $<%= form.text_field :amount %>
-</p>
-
-<p>
-  <%= form.label :comment, form.object.perspective + " Comment" %><br />
-  <%= form.text_area :comment, :size => "40x6" %>
-</p>
+  <%= form.buttons %>
 
