@@ -1,13 +1,8 @@
-  <p>
-    <%= form.label :name %><br />
-    <%= form.text_field :name %>
-  </p>
-  <p>
-    <%= form.label :max_size_quantity %><br />
-    <%= form.text_field :max_size_quantity %>
-  </p>
-  <p>
-    <%= form.label :max_size_unit %><br />
-    <%= form.select :max_size_unit, DocumentType::UNITS %>
-  </p>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :name %>
+  <%= form.input :max_size_quantity %>
+  <%= form.input :max_size_unit, :as => :select, :collection => DocumentType::UNITS %>
+  <% end %>
+  <%= form.buttons %>
 

@@ -1,13 +1,7 @@
 <h1>Editing document type</h1>
 
-<% form_for(@document_type) do |f| %>
-  <%= f.error_messages %>
-
+<% semantic_form_for(@document_type) do |f| %>
   <%= render :partial => 'form', :object => f %>
-
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
 <% end %>
 
 <p>
