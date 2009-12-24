@@ -1,18 +1,10 @@
 <h1>Listing bases for <%=h @organization %></h1>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Open at</th>
-    <th>Closed at</th>
-  </tr>
-
-<%= render :partial => 'basis',
-           :collection => @bases %>
-
-</table>
+<%= render :partial => "bases", :object => @bases %>
 
 <br />
 
+<p>
 <%= link_to 'New basis', new_organization_basis_path( @organization ) %>
+</p>
 

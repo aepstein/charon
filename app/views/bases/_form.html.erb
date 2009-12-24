@@ -1,40 +1,13 @@
   <%= form.error_messages %>
-  <p>
-    <%= form.label :name %><br />
-    <%= form.text_field :name %>
-  </p>
-  <p>
-    <%= form.label :structure_id %><br />
-    <%= form.collection_select :structure_id,
-                               Structure.find(:all),
-                               :id,
-                               :name %>
-  </p>
-  <p>
-    <%= form.label :framework_id %><br />
-    <%= form.collection_select :framework_id,
-                               Framework.find(:all),
-                               :id,
-                               :name %>
-  </p>
-  <p>
-    <%= form.label :contact_name %>
-    <%= form.text_field :contact_name %>
-  </p>
-  <p>
-    <%= form.label :contact_email %>
-    <%= form.text_field :contact_email %>
-  </p>
-  <p>
-    <%= form.label :open_at %><br />
-    <%= form.calendar_date_select :open_at %>
-  </p>
-  <p>
-    <%= form.label :closed_at %><br />
-    <%= form.calendar_date_select :closed_at %>
-  </p>
-  <p>
-    <%= form.label :release_message %>
-    <%= form.text_area :release_message, :size => '40x6' %>
-  </p>
+  <% form.inputs do %>
+  <%= form.input :name %>
+  <%= form.input :structure %>
+  <%= form.input :framework %>
+  <%= form.input :contact_name %>
+  <%= form.input :contact_email %>
+  <%= form.input :open_at, :as => :ft_calendar_date_select %>
+  <%= form.input :closed_at, :as => :ft_calendar_date_select %>
+  <%= form.input :release_message %>
+  <% end %>
+  <%= form.buttons %>
 

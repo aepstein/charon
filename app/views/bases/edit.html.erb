@@ -1,11 +1,7 @@
 <h1>Editing basis</h1>
 
-<% form_for(@basis) do |f| %>
-  <%= render :partial => 'form',
-             :object => f %>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
+<% semantic_form_for(@basis) do |f| %>
+  <%= render :partial => 'form', :object => f %>
 <% end %>
 
 <p>

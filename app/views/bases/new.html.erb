@@ -1,14 +1,7 @@
 <h1>New basis managed by <%=h @basis.organization %></h1>
 
-<% form_for( :basis,
-             @basis,
-             :url => organization_bases_path(@basis.organization) ) do |f| %>
-
-  <%= render :partial => 'form',
-             :object => f %>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
+<% semantic_form_for( :basis, @basis, :url => organization_bases_path(@basis.organization) ) do |f| %>
+  <%= render :partial => 'form', :object => f %>
 <% end %>
 
 <p>
