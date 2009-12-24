@@ -1,13 +1,6 @@
 <h1>Listing documents for <%= @edition %></h1>
 
-<table>
-  <tr>
-    <th>Type</th>
-  </tr>
-
-<%= render :partial => 'document', :collection => @documents %>
-
-</table>
+<%= render :partial => "documents", :object => @documents %>
 
 <br />
 

@@ -1,21 +1,7 @@
 <h1>New document for <%= @document.edition %></h1>
 
-<% form_for( :document,
-             @document,
-             :url => edition_documents_path(@document.edition),
-             :html => { :multipart => true } ) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :document_type_id, "Document type:" %>
-    <%= f.collection_select :document_type_id, @document.edition.document_types, :id, :name %>
-  </p>
-
+<% semantic_form_for( :document, @document, :url => edition_documents_path(@document.edition), :html => { :multipart => true } ) do |f| %>
   <%= render :partial => 'form', :object => f %>
-
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
 <% end %>
 
 <p>

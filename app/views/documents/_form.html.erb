@@ -1,5 +1,7 @@
-<p>
-<%= form.label :attached, "File" %>
-<%= form.file_field :attached %>
-</p>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+    <%= form.input( :document_type, :collection => form.object.edition.document_types ) if form.object.new_record? %>
+    <%= form.input :attached, :label => 'File' %>
+  <% end %>
+  <%= form.buttons %>
 

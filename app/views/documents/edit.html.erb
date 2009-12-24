@@ -1,20 +1,11 @@
 <h1>Editing document</h1>
 
-<% form_for( :document,
-             @document,
-             :url => document_path( @document ),
-             :html => { :multipart => true } ) do |f| %>
-  <%= f.error_messages %>
-
+<% form_for( :document, @document, :html => { :multipart => true } ) do |f| %>
   <p>
     <strong>Document type:</strong> <%=h f.object.document_type.name %>
   </p>
 
   <%= render :partial => 'form', :object => f %>
-
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
 <% end %>
 
 <p>
