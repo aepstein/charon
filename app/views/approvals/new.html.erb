@@ -1,18 +1,20 @@
 <h1>Approve <%=h @approval.approvable %></h1>
 
-<% form_for( :approval, @approval, :url => approvable_approvals_path(@approval.approvable) ) do |f| %>
+<% semantic_form_for( :approval, @approval, :url => polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
   <%= f.error_messages %>
-  <%= f.hidden_field :as_of %>
-
-<p>
-Please review the document below and click "Confirm Approval" at the bottom if you approve.
-</p>
-
-<%= render_approvable @approval.approvable %>
 
   <p>
-    <%= f.submit 'Confirm Approval' %>
+  Please review the document below and click "Confirm Approval" at the bottom if you approve.
   </p>
+
+  <%= render_approvable @approval.approvable %>
+
+  <% f.inputs do %>
+    <%= f.input :as_of, :as => :hidden %>
+  <% end %>
+  <% f.buttons do %>
+    <%= f.commit_button :label => 'Confirm Approval' %>
+  <% end %>
 <% end %>
 
 <p>
