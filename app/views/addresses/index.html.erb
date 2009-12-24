@@ -1,22 +1,10 @@
 <h1>Listing addresses for <%= @addressable %></h1>
 
-<table>
-  <tr>
-    <th>Label</th>
-    <th>Street</th>
-    <th>City</th>
-    <th>State</th>
-    <th>Zip</th>
-    <th>On campus</th>
-  </tr>
-
-  <%= render :partial => 'address', :collection => @addresses %>
-
-</table>
+<%= render :partial => "addresses", :object => @addresses %>
 
 <br />
 
 <p>
-<%= link_to 'New address', new_addressable_address_path(@addressable) %>
+<%= link_to 'New address', new_polymorphic_path( [ @addressable, :address ] ) %>
 </p>
 

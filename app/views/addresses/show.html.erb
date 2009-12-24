@@ -26,6 +26,6 @@
 
 <p>
 <%= link_to 'Edit', edit_address_path(@address) %> |
-<%= link_to 'Back', addressable_addresses_path(@address.addressable) %>
+<%= link_to 'Back', polymorphic_path( [ @address.addressable, :addresses ] ) %>
 </p>
 

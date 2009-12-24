@@ -1,18 +1,10 @@
 <h1>New address for <%=h @address.addressable %></h1>
 
-<% form_for( :address, @address, :url => addressable_addresses_path( @address.addressable ) ) do |f| %>
-
-  <%= f.error_messages %>
-
+<% semantic_form_for( :address, @address, :url => polymorphic_path( [ @address.addressable, :addresses ] ) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
-
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-
 <% end %>
 
 <p>
-<%= link_to 'Back', addressable_addresses_path(@address.addressable) %>
+<%= link_to 'Back', polymorphic_path( [ @address.addressable, :addresses ] ) %>
 </p>
 
