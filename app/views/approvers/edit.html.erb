@@ -1,13 +1,7 @@
 <h1>Editing approver for <%= @approver.framework %></h1>
 
-<% form_for(@approver) do |f| %>
-  <%= f.error_messages %>
-
+<% semantic_form_for(@approver) do |f| %>
   <%= render :partial => 'form', :object => f %>
-
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
 <% end %>
 
 <p>

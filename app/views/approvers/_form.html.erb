@@ -1,17 +1,9 @@
-  <p>
-    <%= form.label :perspective %>
-    <%= form.select :perspective, Edition::PERSPECTIVES %>
-  </p>
-  <p>
-    <%= form.label :role_id %><br />
-    <%= form.collection_select :role_id, Role.all, :id, :name %>
-  </p>
-  <p>
-    <%= form.label :status %><br />
-    <%= form.select :status, Request.aasm_state_names %>
-  </p>
-  <p>
-    <%= form.label :quantity %><br />
-    <%= form.text_field :quantity %>
-  </p>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :perspective, :as => :select, :collection => Edition::PERSPECTIVES %>
+  <%= form.input :role %>
+  <%= form.input :status, :as => :select, :collection => Request.aasm_state_names %>
+  <%= form.input :quantity %>
+  <% end %>
+  <%= form.buttons %>
 

@@ -1,13 +1,7 @@
 <h1>New approver for <%= @approver.framework %></h1>
 
-<% form_for(:approver, @approver, :url => framework_approvers_path(@approver.framework) ) do |f| %>
-  <%= f.error_messages %>
-
+<% semantic_form_for(:approver, @approver, :url => framework_approvers_path(@approver.framework) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
-
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
 <% end %>
 
 <p>

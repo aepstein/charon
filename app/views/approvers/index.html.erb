@@ -1,24 +1,6 @@
 <h1>Listing approvers for <%=  @framework %></h1>
 
-<table>
-  <tr>
-    <th>Perspective</th>
-    <th>Role</th>
-    <th>Status</th>
-  </tr>
-
-<% @approvers.each do |approver| %>
-  <tr>
-    <td><%=h approver.perspective %></td>
-    <td><%=h approver.role %></td>
-    <td><%=h approver.status %></td>
-    <td><%= link_to 'Show', approver %></td>
-    <td><%= link_to 'Edit', edit_approver_path(approver) %></td>
-    <td><%= link_to 'Destroy', approver, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
-
+<%= render :partial => "approvers", :object => @approvers %>
 <br />
 
 <p>
