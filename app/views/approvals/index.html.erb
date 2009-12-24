@@ -1,19 +1,7 @@
 <h1>Listing approvals</h1>
 
-<table>
-  <thead>
-  <tr>
-    <th>User</th>
-    <th>Approvable</th>
-    <th>Created</th>
-  </tr>
-  </thead>
-<tbody>
-<%= render :partial => 'approval', :collection => @approvals,
+<%= render :partial => "approvals", :object => @approvals,
   :locals => { :user => true, :approvable => true } %>
-</tbody>
-</table>
-
 <br />
 
 <p>

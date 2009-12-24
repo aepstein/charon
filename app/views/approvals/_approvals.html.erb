@@ -1,0 +1,13 @@
+<table>
+  <thead>
+  <tr>
+    <th>User</th>
+    <th>Approvable</th>
+    <th>Created</th>
+  </tr>
+  </thead>
+<tbody>
+<%= render :partial => 'approval', :collection => approvals, :locals => { :user => user, :approvable => approvable } %>
+</tbody>
+</table>
+
