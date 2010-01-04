@@ -1,0 +1,13 @@
+<p>
+  <b>Minimal percentage:</b>
+  <%=h @membership_criterion.minimal_percentage %>
+</p>
+
+<p>
+  <b>Type of member:</b>
+  <%=h @membership_criterion.type_of_member %>
+</p>
+
+
+<%= link_to 'Edit', edit_membership_criterion_path(@membership_criterion) %> |
+<%= link_to 'Back', membership_criterions_path %>

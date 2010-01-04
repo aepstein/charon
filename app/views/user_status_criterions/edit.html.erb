@@ -1,0 +1,16 @@
+<h1>Editing user_status_criterion</h1>
+
+<% form_for(@user_status_criterion) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :statuses_mask %><br />
+    <%= f.text_field :statuses_mask %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @user_status_criterion %> |
+<%= link_to 'Back', user_status_criterions_path %>

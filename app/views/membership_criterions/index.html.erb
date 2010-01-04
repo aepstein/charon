@@ -1,0 +1,22 @@
+<h1>Listing membership_criterions</h1>
+
+<table>
+  <tr>
+    <th>Minimal percentage</th>
+    <th>Type of member</th>
+  </tr>
+
+<% @membership_criterions.each do |membership_criterion| %>
+  <tr>
+    <td><%=h membership_criterion.minimal_percentage %></td>
+    <td><%=h membership_criterion.type_of_member %></td>
+    <td><%= link_to 'Show', membership_criterion %></td>
+    <td><%= link_to 'Edit', edit_membership_criterion_path(membership_criterion) %></td>
+    <td><%= link_to 'Destroy', membership_criterion, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New membership_criterion', new_membership_criterion_path %>

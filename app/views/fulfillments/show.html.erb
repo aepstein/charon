@@ -1,0 +1,23 @@
+<p>
+  <b>Fulfiller:</b>
+  <%=h @fulfillment.fulfiller %>
+</p>
+
+<p>
+  <b>Fulfiller type:</b>
+  <%=h @fulfillment.fulfiller_type %>
+</p>
+
+<p>
+  <b>Fulfilled:</b>
+  <%=h @fulfillment.fulfilled %>
+</p>
+
+<p>
+  <b>Fulfilled type:</b>
+  <%=h @fulfillment.fulfilled_type %>
+</p>
+
+
+<%= link_to 'Edit', edit_fulfillment_path(@fulfillment) %> |
+<%= link_to 'Back', fulfillments_path %>

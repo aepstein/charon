@@ -1,0 +1,16 @@
+<h1>Editing registration_criterion</h1>
+
+<% form_for(@registration_criterion) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :must_register %><br />
+    <%= f.check_box :must_register %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @registration_criterion %> |
+<%= link_to 'Back', registration_criterions_path %>
