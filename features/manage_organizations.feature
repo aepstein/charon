@@ -50,16 +50,26 @@ Feature: Manage organizations
       | allowed_user | see              | see            | see             |
       | global       | not see          | not see        | not see         |
 
-  Scenario: Register a new organization
+  Scenario: Register a new organization and edit
     Given I am logged in as "admin" with password "secret"
     And I am on the new organization page
     When I fill in "First name" with "Cornell"
     And I fill in "Last name" with "Club"
-    And I check "Club sport"
+    And I choose "organization_club_sport_true"
     And I press "Create"
-    Then I should see "First name: Cornell"
+    Then I should see "Organization was successfully created."
+    And I should see "First name: Cornell"
     And I should see "Last name: Club"
     And I should see "Club sport: Yes"
+    When I follow "Edit"
+    And I fill in "First name" with "The Cornell"
+    And I fill in "Last name" with "Night Club"
+    And I choose "organization_club_sport_false"
+    And I press "Update"
+    Then I should see "Organization was successfully updated."
+    And I should see "First name: The Cornell"
+    And I should see "Last name: Night Club"
+    And I should see "Club sport: No"
 
   Scenario: Search organizations
     Given there are no organizations

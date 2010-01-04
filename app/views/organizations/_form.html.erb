@@ -1,13 +1,8 @@
-  <p>
-    <%= form.label :first_name %><br />
-    <%= form.text_field :first_name %>
-  </p>
-  <p>
-    <%= form.label :last_name %><br />
-    <%= form.text_field :last_name %>
-  </p>
-  <p>
-    <%= form.label :club_sport %>
-    <%= form.check_box :club_sport %>
-  </p>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :first_name %>
+  <%= form.input :last_name %>
+  <%= form.input :club_sport, :as => :radio %>
+  <% end %>
+  <%= form.buttons %>
 
