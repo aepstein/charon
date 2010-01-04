@@ -36,7 +36,7 @@ Feature: Manage frameworks
     Given I am logged in as "admin" with password "secret"
     And I am on the new framework page
     When I fill in "Name" with "safc framework"
-    And I check "Must register"
+    And I choose "framework_must_register_true"
     And I fill in "Member percentage" with "50"
     And I select "undergrads" from "Member percentage type"
     And I press "Create"
