@@ -1,26 +1,10 @@
-  <p>
-    <%= form.label :status %><br />
-    <%= form.select :status, Request.aasm_state_names %>
-  </p>
-  <p>
-    <%= form.label :role_id %><br />
-    <%= form.collection_select :role_id, Role.all, :id, :name %>
-  </p>
-  <p>
-    <%= form.label :action %><br />
-    <%= form.select :action, Request::ACTIONS %>
-  </p>
-  <p>
-    <%= form.label :perspective %><br />
-    <%= form.select :perspective, Edition::PERSPECTIVES %>
-  </p>
-
-  <p>
-    Identify the agreements a user must approve to have this permission:
-    <% Agreement.all.each do |agreement| %>
-      <br/>
-      <%= check_box_tag 'permission[agreement_ids][]', agreement.id, form.object.agreements.include?(agreement) %>
-      <%= agreement %>
-    <% end %>
-  </p>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :status, :as => :select, :collection => Request.aasm_state_names %>
+  <%= form.input :role %>
+  <%= form.input :action, :as => :select, :collection => Request::ACTIONS %>
+  <%= form.input :perspective, :as => :select, :collection => Edition::PERSPECTIVES %>
+  <%= form.input :agreements, :as => :check_boxes %>
+  <% end %>
+  <%= form.buttons %>
 

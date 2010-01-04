@@ -1,14 +1,7 @@
 <h1>Editing permission</h1>
 
-<% form_for(@permission) do |f| %>
-  <%= f.error_messages %>
-
-
+<% semantic_form_for(@permission) do |f| %>
   <%= render :partial => 'form', :object => f %>
-
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
 <% end %>
 
 <p>

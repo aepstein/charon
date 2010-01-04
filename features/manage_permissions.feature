@@ -5,8 +5,8 @@ Feature: Manage permissions
 
   Background:
     Given the following frameworks:
-      | name |
-      | safc |
+      | name   |
+      | safc   |
     And the following users:
       | net_id  | password | admin |
       | admin   | secret   | true  |
@@ -18,7 +18,7 @@ Feature: Manage permissions
       | advisor   |
       | officer   |
 
-  Scenario: Register new permission
+  Scenario: Register new permission and edit
     Given I am logged in as "admin" with password "secret"
     And I am on "safc's new permission page"
     When I select "started" from "Status"
@@ -32,6 +32,17 @@ Feature: Manage permissions
     And I should see "president"
     And I should see "approve"
     And I should see "requestor"
+    When I follow "Edit"
+    And I select "submitted" from "Status"
+    And I select "treasurer" from "Role"
+    And I select "update" from "Action"
+    And I select "reviewer" from "Perspective"
+    And I press "Update"
+    Then I should see "Permission was successfully updated."
+    And I should see "submitted"
+    And I should see "treasurer"
+    And I should see "update"
+    And I should see "reviewer"
 
   Scenario Outline:
     Given I am logged in as "<user>" with password "secret"
