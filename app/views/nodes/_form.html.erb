@@ -1,34 +1,14 @@
-  <p>
-    <%= form.label :parent_id,"Parent Node" %><br />
-    <%= form.collection_select :parent_id,
-                               form.object.structure.nodes,
-                               :id,
-                               :name,
-                               { :include_blank => true } %>
-  </p>
-
-  <p>
-    <%= form.label :name, "Name" %><br />
-    <%= form.text_field :name %>
-  </p>
-
-  <p>
-    <%= form.label :requestable_type, "Type of request calculation form" %><br />
-    <%= form.select :requestable_type, Node::ALLOWED_TYPES, { :include_blank => false } %>
-  </p>
-
-  <p>
-    <%= form.label :category_id, "Category" %>
-    <%= form.collection_select :category_id, Category.all, :id, :name, { :include_blank => false } %>
-  </p>
-
-  <p>
-    <%= form.label :item_amount_limit,"Item amount limit" %><br />
-    <%= form.text_field :item_amount_limit %>
-  </p>
-
-  <p>
-    <%= form.label :item_quantity_limit,"Item quantity limit" %><br />
-    <%= form.text_field :item_quantity_limit %>
-  </p>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :parent, :label => "Parent Node",
+    :collection => form.object.structure.nodes.map { |n| [ n.id, n.name ] },
+    :input_html => { :include_blank => true } %>
+  <%= form.input :name %>
+  <%= form.input :requestable_type, :label => "Type of request calculation form",
+    :collection => Node::ALLOWED_TYPES, :input_html => { :include_blank => false } %>
+  <%= form.input :category %>
+  <%= form.input :item_amount_limit %>
+  <%= form.input :item_quantity_limit %>
+  <% end %>
+  <%= form.buttons %>
 
