@@ -8,7 +8,7 @@ Feature: Manage structures
       | net_id | password | admin |
       | admin  | secret   | true  |
 
-  Scenario: Register new structure
+  Scenario: Register new structure and edit
     Given I am logged in as "admin" with password "secret"
     And I am on the new structure page
     When I fill in "Name" with "safc semester"
