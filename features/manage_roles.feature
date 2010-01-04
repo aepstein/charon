@@ -9,12 +9,18 @@ Feature: Manage roles
       | admin   | secret   | true  |
       | regular | secret   | false |
 
-  Scenario: Register new role
+  Scenario: Register new role and edit
     Given I am logged in as "admin" with password "secret"
     And I am on the new role page
     When I fill in "Name" with "leader"
     And I press "Create"
-    Then I should see "leader"
+    Then I should see "Role was successfully created."
+    And I should see "leader"
+    When I follow "Edit"
+    And I fill in "Name" with "follower"
+    And I press "Update"
+    Then I should see "Role was successfully updated."
+    And I should see "follower"
 
   Scenario Outline:
     Given I am logged in as "<user>" with password "secret"
