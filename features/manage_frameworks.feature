@@ -32,7 +32,7 @@ Feature: Manage frameworks
       | admin   | Editing framework |
       | regular | Unauthorized  |
 
-  Scenario: Register new framework
+  Scenario: Register new framework and edit
     Given I am logged in as "admin" with password "secret"
     And I am on the new framework page
     When I fill in "Name" with "safc framework"
@@ -40,9 +40,20 @@ Feature: Manage frameworks
     And I fill in "Member percentage" with "50"
     And I select "undergrads" from "Member percentage type"
     And I press "Create"
-    Then I should see "safc framework"
+    Then I should see "Framework was successfully created."
+    And I should see "safc framework"
     And I should see "Must register: yes"
     And I should see "Member requirement: 50% undergrads"
+    When I follow "Edit"
+    And I fill in "Name" with "gpsafc framework"
+    And I choose "framework_must_register_false"
+    And I fill in "Member percentage" with "60"
+    And I select "grads" from "Member percentage type"
+    And I press "Update"
+    Then I should see "Framework was successfully updated."
+    And I should see "gpsafc framework"
+    And I should see "Must register: no"
+    And I should see "Member requirement: 60% grads"
 
   Scenario: Delete framework
     Given I am logged in as "admin" with password "secret"
