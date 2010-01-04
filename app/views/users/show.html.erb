@@ -1,23 +1,16 @@
-<h2><%=h @user.full_name %></h2>
+<p>Net Id: <%=h @user.net_id %></p>
 
-<p>
-  Net Id:
-  <%=h @user.net_id %>
-</p>
+<p>First name: <%=h @user.first_name%></p>
 
-<p>
-  Email:
-  <%=h @user.email %>
-</p>
+<p>Middle name: <%=h @user.middle_name%></p>
 
-<p>
-  Date of Birth:
-  <%=h @user.date_of_birth.to_s(:long) if @user.date_of_birth %>
-</p>
+<p>Last name: <%=h @user.last_name%></p>
 
-<p>
-  Admin: <%= @user.admin? ? 'Yes' : 'No' %>
-</p>
+<p>Email: <%=h @user.email %></p>
+
+<p>Date of birth: <%=h @user.date_of_birth.to_s(:long) if @user.date_of_birth %></p>
+
+<p>Admin: <%= @user.admin? ? 'Yes' : 'No' %></p>
 
 <h3>Agreements approved by user</h3>
 

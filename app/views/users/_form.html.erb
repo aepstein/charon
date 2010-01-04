@@ -1,38 +1,16 @@
-  <p>
-    <%= form.label :net_id %>
-    <%= form.text_field :net_id %>
-  </p>
-  <p>
-    <%= form.label :email %>
-    <%= form.text_field :email %>
-  </p>
-  <p>
-    <%= form.label :first_name %>
-    <%= form.text_field :first_name %>
-  </p>
-  <p>
-    <%= form.label :middle_name %>
-    <%= form.text_field :middle_name %>
-  </p>
-  <p>
-    <%= form.label :last_name %>
-    <%= form.text_field :last_name %>
-  </p>
-  <p>
-    <%= form.label :password, form.object.new_record? ? nil : "Change password" %>
-    <%= form.password_field :password %>
-    <br />
-    <%= form.label :password_confirmation %>
-    <%= form.password_field :password_confirmation %>
-  </p>
-  <p>
-    <%= form.label :date_of_birth %>
-    <%= form.calendar_date_select :date_of_birth %>
-  </p>
-  <% if current_user.admin? then %>
-  <p>
-    <%= form.label :admin %>
-    <%= form.check_box :admin %>
-  </p>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :net_id %>
+  <%= form.input :email %>
+  <%= form.input :first_name %>
+  <%= form.input :middle_name %>
+  <%= form.input :last_name %>
+  <%= form.input :password, :label => (form.object.new_record? ? "Password" : "Change password") %>
+  <%= form.input :password_confirmation %>
+  <%= form.input :date_of_birth, :as => :ft_calendar_date_select %>
+  <% if current_user.admin? %>
+  <%= form.input :admin, :as => :radio %>
   <% end %>
+  <% end %>
+  <%= form.buttons %>
 

@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
 
 protected
   def extract_email
-    self.email = "#{self.net_id}@cornell.edu"
+    self.email = "#{net_id}@cornell.edu" if net_id && net_id_changed? && ( email.nil? || email.blank? )
   end
 
   def ldap_entry=(ldap_entry)

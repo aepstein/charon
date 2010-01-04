@@ -10,21 +10,44 @@ Feature: Manage users
       | owner   | false | secret   |
       | regular | false | secret   |
 
-  Scenario: Create a new user
+  Scenario: Create a new user and edit
     Given I am logged in as "admin" with password "secret"
     And I am on the new user page
     When I fill in "Net" with "net_id"
     And I fill in "Password" with "password"
     And I fill in "Password confirmation" with "password"
     And I fill in "First name" with "first"
+    And I fill in "Middle name" with "middle"
     And I fill in "Last name" with "last"
     And I fill in "Email" with "net_id@example.com"
     And I fill in "Date of birth" with "1982-06-04"
-    And I check "Admin"
+    And I choose "user_admin_true"
     And I press "Create"
     Then I should see "User was successfully created."
-    Given I am on "net_id's show user page"
-    Then I should see "Admin: Yes"
+    And I should see "First name: first"
+    And I should see "Middle name: middle"
+    And I should see "Last name: last"
+    And I should see "Email: net_id@example.com"
+    And I should see "Date of birth: June  4, 1982"
+    And I should see "Admin: Yes"
+    When I follow "Edit"
+    And I fill in "Net" with "net_id"
+    And I fill in "Password" with "password"
+    And I fill in "Password confirmation" with "password"
+    And I fill in "First name" with "new"
+    And I fill in "Middle name" with "second"
+    And I fill in "Last name" with "name"
+    And I fill in "Email" with "other@example.com"
+    And I fill in "Date of birth" with "1982-06-05"
+    And I choose "user_admin_false"
+    And I press "Update"
+    Then I should see "User was successfully updated."
+    And I should see "First name: new"
+    And I should see "Middle name: second"
+    And I should see "Last name: name"
+    And I should see "Email: other@example.com"
+    And I should see "Date of birth: June  5, 1982"
+    And I should see "Admin: No"
 
   Scenario: List and search users
     Given there are no users
