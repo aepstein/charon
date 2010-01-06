@@ -48,13 +48,12 @@ class Approval < ActiveRecord::Base
   end
 
   def approve_approvable
-    approvable.approve
+    approvable.class == Agreement ? approvable.approve( self ) : approvable.approve
     approvable.save if approvable.changed?
   end
 
-  # TODO must be more robust
   def unapprove_approvable
-    approvable.unapprove
+    approvable.class == Agreement ? approvable.unapprove( self ) : approvable.unapprove
     approvable.save if approvable.changed?
   end
 

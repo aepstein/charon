@@ -2,15 +2,19 @@ require 'spec_helper'
 
 describe Fulfillment do
   before(:each) do
-    @valid_attributes = {
-      :fulfiller_id => 1,
-      :fulfiller_type => "value for fulfiller_type",
-      :fulfilled_id => 1,
-      :fulfilled_type => "value for fulfilled_type"
-    }
+    @fulfillment = Factory(:fulfillment)
   end
 
   it "should create a new instance given valid attributes" do
-    Fulfillment.create!(@valid_attributes)
+    @fulfillment.id.should_not be_nil
+  end
+
+  it 'should have a self.fulfiller_type_for_fulfillable that returns correct results' do
+    Fulfillment.fulfiller_type_for_fulfillable(Agreement.new).should eql 'User'
+    Fulfillment.fulfiller_type_for_fulfillable('Agreement').should eql 'User'
+    Fulfillment.fulfiller_type_for_fulfillable('RegistrationCriterion').should eql 'Organization'
+    Fulfillment.fulfiller_type_for_fulfillable('UserStatusCriterion').should eql 'User'
+    Fulfillment.fulfiller_type_for_fulfillable('Basis').should be_nil
   end
 end
+

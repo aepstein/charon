@@ -17,13 +17,6 @@ class Registration < ActiveRecord::Base
                                    "number_of_staff + number_of_faculty + " +
                                    "number_of_others ) )", percent.to_i] }
               }
-  named_scope :min_percent_members_of_type,
-              lambda { |percent, type|
-                { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
-                                   "number_of_undergrads + number_of_grads + " +
-                                   "number_of_staff + number_of_faculty + " +
-                                   "number_of_others ) )", percent.to_i] }
-              }
 
 
   acts_as_tree
@@ -93,7 +86,8 @@ class Registration < ActiveRecord::Base
   validates_uniqueness_of :id
 
   before_save :verify_parent_exists, :update_organization
-  after_save :synchronize_memberships
+  after_save :synchronize_memberships, 'RegistrationCriterion.all.each { |c| Fulfillment.fulfill c }'
+  after_update 'RegistrationCriterion.all.each { |c| Fulfillment.unfulfill c }'
 
   # Eliminates reference to parent registration if registration is not in
   # database.

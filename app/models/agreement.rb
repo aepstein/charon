@@ -14,8 +14,9 @@ class Agreement < ActiveRecord::Base
   }
 
   has_and_belongs_to_many :permissions
-  has_many :approvals, :as => :approvable
+  has_many :approvals, :as => :approvable, :dependent => :destroy
   has_many :users, :through => :approvals
+  has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
 
   validates_uniqueness_of :name
   validates_presence_of :name
@@ -24,17 +25,21 @@ class Agreement < ActiveRecord::Base
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
 
   after_update :destroy_approvals_if_content_changes
+  after_create 'Fulfillment.fulfill self'
+  after_update 'Fulfillment.unfulfill self', 'Fulfillment.fulfill self'
 
   def destroy_approvals_if_content_changes
-    approvals.each { |approval| approval.destroy } if content_changed?
+    approvals.clear if content_changed?
   end
 
-  def approve
+  def approve( approval )
+    fulfillments.create( :fulfiller => approval.user )
     true
   end
 
-  def unapprove
-    false
+  def unapprove( approval )
+    fulfillments.delete fulfillments.fulfiller_id_eq( approval.user_id ).to_a
+    true
   end
 
   def approvals_fulfilled?

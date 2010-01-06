@@ -4,6 +4,11 @@ class User < ActiveRecord::Base
   attr_protected :admin
 
   default_scope :order => 'users.last_name ASC, users.first_name ASC, users.middle_name ASC, users.net_id ASC'
+  named_scope :approved, lambda { |approvable|
+    { :joins => :approvals,
+      :conditions => [ 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',
+      approvable.class.to_s, approvable.id ] }
+  }
 
   acts_as_authentic do |c|
     c.login_field = 'net_id'
@@ -24,6 +29,7 @@ class User < ActiveRecord::Base
       self.agreements.map { |a| a.approvable_id }
     end
   end
+  has_many :fulfillments, :as => :fulfiller
   has_many :memberships,  :include => [ :organization, :role ], :dependent => :destroy
   has_many :roles, :through => :memberships do
     def in(organizations)

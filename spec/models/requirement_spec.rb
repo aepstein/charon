@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe RegistrationCriterion do
+describe Requirement do
   before(:each) do
-    @criterion = Factory(:registration_criterion)
+    @requirement = Factory(:requirement)
   end
 
   it "should create a new instance given valid attributes" do
-    @criterion.id.should_not be_nil
+    @requirement.id.should_not be_nil
   end
 end
 

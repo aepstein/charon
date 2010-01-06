@@ -13,7 +13,7 @@ end
 Factory.define :approval do |f|
   f.association :user
   f.association :approvable, :factory => :request
-  f.as_of { |approval| approval.approvable.updated_at + 1.seconds }
+  f.as_of { |approval| approval.approvable.updated_at + 1.second }
 end
 
 Factory.define :approver do |f|
@@ -48,6 +48,11 @@ Factory.define :framework do |f|
   f.member_percentage nil
 end
 
+Factory.define :fulfillment do |f|
+  f.fulfiller { |r| r.association(:user) }
+  f.fulfillable { |r| r.association(:agreement) }
+end
+
 Factory.define :permission do |f|
   f.association :role
   f.association :framework
@@ -70,6 +75,17 @@ end
 
 Factory.define :registration do |f|
   f.sequence(:name) { |n| "Registered Organization #{n}" }
+end
+
+Factory.define :registration_criterion do |f|
+  f.must_register true
+  f.minimal_percentage 10
+  f.type_of_member 'undergrads'
+end
+
+Factory.define :requirement do |f|
+  f.association :permission
+  f.fulfillable { |r| r.fulfillable = Factory(:agreement) }
 end
 
 Factory.define :safc_eligible_registration, :parent => :registration do |f|

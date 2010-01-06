@@ -13,6 +13,7 @@ class Organization < ActiveRecord::Base
       ).select { |b| proxy_owner.eligible_for?(b.framework) }.map { |b| b.requests.build_for( proxy_owner ) }
     end
   end
+  has_many :fulfillments, :as => :fulfiller
 
   before_validation :format_name
 

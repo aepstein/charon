@@ -26,13 +26,26 @@ describe Agreement do
     agreement.save.should == false
   end
 
-  it "should have methods for approvable" do
+  it "should have authorization methods for approvable" do
     agreement = Factory(:agreement)
     agreement.may_approve?(nil).should == false
     agreement.may_unapprove?(nil).should == false
     agreement.may_unapprove_other?(nil).should == false
-    agreement.approve.should be_true
-    agreement.unapprove.should be_false
+  end
+
+  it "should have approve method that records fulfillment" do
+    agreement = Factory(:agreement)
+    approval = Factory.build(:approval, :approvable => agreement)
+    agreement.approve(approval).should eql true
+    agreement.fulfillments.size.should eql 1
+    agreement.fulfillments.first.fulfiller.should eql approval.user
+  end
+
+  it "should have unapprove method the removes fulfillment" do
+    agreement = Factory(:agreement)
+    approval = Factory(:approval, :approvable => agreement)
+    agreement.unapprove(approval).should eql true
+    agreement.fulfillments.size.should eql 0
   end
 
   it "should include the GlobalModelAuthorization module" do
