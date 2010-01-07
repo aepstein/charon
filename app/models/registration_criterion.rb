@@ -3,7 +3,8 @@ class RegistrationCriterion < ActiveRecord::Base
 
   validates_numericality_of :minimal_percentage, :integer_only => true,
     :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100
-  validates_presence_of :type_of_member, :in => Registration::MEMBER_TYPES
+  validates_inclusion_of :type_of_member, :in => Registration::MEMBER_TYPES
+  validates_presence_of :must_register
 
   after_create 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self', 'Fulfillment.fulfill self'

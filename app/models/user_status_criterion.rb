@@ -1,6 +1,10 @@
 class UserStatusCriterion < ActiveRecord::Base
-  validates_numericality_of :statuses_mask
+  validates_numericality_of :statuses_mask, :only_integer => true, :greater_than => 0
   validates_uniqueness_of :statuses_mask
+
+  has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
+  after_save 'Fulfillment.fulfill self'
+  after_update 'Fulfillment.unfulfill self'
 
   def statuses=(statuses)
     self.statuses_mask = (statuses & User::STATUSES).map { |s| 2**User::STATUSES.index(s) }.sum
@@ -10,15 +14,12 @@ class UserStatusCriterion < ActiveRecord::Base
     User::STATUSES.reject { |s| ((statuses_mask || 0) & 2**User::STATUSES.index(s)).zero? }
   end
 
-  after_create do |criterion|
-    # TODO
-    # Fulfill all users meeting criteria
-  end
-
-  after_update do |criterion|
-    # TODO
-    # Unfulfill all users not meeting criteria
-    # Fulfill users meeting criteria who are not already fulfilled
+  def user_ids
+    status_list = statuses.map { |s| connection.quote s }.join ", "
+    connection.select_values(
+      "SELECT users.id FROM users WHERE users.status " +
+      "IN (#{status_list})"
+    )
   end
 end
 
