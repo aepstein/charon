@@ -47,6 +47,18 @@ describe User do
     owner.may_destroy?(owner).should == false
   end
 
+  it 'should automatically fulfill user status criterions on create and update' do
+    criterion = Factory(:user_status_criterion, :statuses => %w( staff faculty ) )
+    criterion2 = Factory(:user_status_criterion, :statuses => %w( temporary ) )
+    user = Factory(:user, :status => 'staff')
+    user.fulfillments.size.should eql 1
+    user.fulfillments.first.fulfillable.should eql criterion
+    user.status = 'temporary'
+    user.save.should be_true
+    user.fulfillments.size.should eql 1
+    user.fulfillments.first.fulfillable.should eql criterion2
+  end
+
   it "should have approvals.unfulfilled_agreements identifying agreements that may be required to have full permissions" do
     required_and_done = Factory(:agreement)
     required_not_done = Factory(:agreement)
