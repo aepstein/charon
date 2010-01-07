@@ -17,6 +17,5 @@ class RegistrationCriterion < ActiveRecord::Base
       "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + number_of_others ) )"
     )
   end
-
 end
 

@@ -108,6 +108,10 @@ Factory.define :user do |f|
   f.ldap_entry false
 end
 
+Factory.define :user_status_criterion do |f|
+  f.statuses [ 'undergrad' ]
+end
+
 Factory.define :role do |f|
   f.sequence(:name) { |n| "Role #{n}" }
 end
@@ -144,6 +148,12 @@ Factory.define :basis do |f|
   f.closed_at DateTime.now + 10.days
   f.contact_name "a contact"
   f.contact_email "contact@example.com"
+end
+
+Factory.define :registration_criterion do |f|
+  f.must_register true
+  f.minimal_percentage 10
+  f.type_of_member 'undergrads'
 end
 
 Factory.define :request do |f|

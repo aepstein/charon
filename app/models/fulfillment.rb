@@ -11,6 +11,7 @@ class Fulfillment < ActiveRecord::Base
   validates_presence_of :fulfiller
   validates_presence_of :fulfillable
   validates_uniqueness_of :fulfillable_id, :scope => [ :fulfillable_type, :fulfiller_id, :fulfiller_type ]
+  validate :fulfillable_must_be_fulfillable_for_fulfiller
 
   def self.fulfiller_type_for_fulfillable(fulfillable)
     fulfillable_type = case fulfillable.class.to_s
