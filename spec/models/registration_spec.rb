@@ -39,5 +39,30 @@ describe Registration do
     registration.eligible_for?(framework).should == true
   end
 
+  it 'should fulfill/unfulfill related organizations on create/update' do
+    criterion1 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'undergrads', :must_register => true)
+    criterion2 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'undergrads', :must_register => false)
+    criterion3 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'others', :must_register => false)
+    registration = Factory(:registration, :organization => Factory(:organization), :number_of_undergrads => 10, :registered => true )
+    fulfillables = extract_fulfillables_from_registration registration
+    fulfillables.size.should eql 2
+    fulfillables.should include criterion1
+    fulfillables.should include criterion2
+    registration.registered = false
+    registration.save.should be_true
+    fulfillables = extract_fulfillables_from_registration registration
+    fulfillables.size.should eql 1
+    fulfillables.should include criterion2
+    registration.number_of_others = 11
+    registration.save.should be_true
+    fulfillables = extract_fulfillables_from_registration registration
+    fulfillables.size.should eql 1
+    fulfillables.should include criterion3
+  end
+
+  def extract_fulfillables_from_registration( registration )
+    registration.organization.fulfillments.map { |f| f.fulfillable }
+  end
+
 end
 
