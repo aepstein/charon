@@ -18,13 +18,5 @@ class RegistrationCriterion < ActiveRecord::Base
     )
   end
 
-  after_create do |criterion|
-    # Fulfill all registered organizations with appropriate membership
-  end
-
-  after_update do |criterion|
-    # Unfulfill unqualified organizations
-    # Fulfill qualified organizations not already fulfilled
-  end
 end
 

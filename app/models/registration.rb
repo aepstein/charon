@@ -86,8 +86,24 @@ class Registration < ActiveRecord::Base
   validates_uniqueness_of :id
 
   before_save :verify_parent_exists, :update_organization
-  after_save :synchronize_memberships, 'RegistrationCriterion.all.each { |c| Fulfillment.fulfill c }'
-  after_update 'RegistrationCriterion.all.each { |c| Fulfillment.unfulfill c }'
+  after_save :synchronize_memberships, 'Fulfillment.fulfill organization if organization && active?'
+  after_update 'Fulfillment.unfulfill organization if organization && active?'
+
+  def registration_criterions
+    RegistrationCriterion.all.inject([]) do |memo, criterion|
+      memo << criterion if fulfills? criterion
+      memo
+    end
+  end
+
+  def fulfills?(criterion)
+    percent_members_of_type(criterion.type_of_member) >= criterion.minimal_percentage
+  end
+
+  def percent_members_of_type(type)
+    ( send('number_of_' + type) * 100.0 ) / ( number_of_undergrads +
+      number_of_grads + number_of_staff + number_of_faculty + number_of_others )
+  end
 
   # Eliminates reference to parent registration if registration is not in
   # database.

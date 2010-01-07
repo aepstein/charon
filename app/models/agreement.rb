@@ -32,13 +32,11 @@ class Agreement < ActiveRecord::Base
     approvals.clear if content_changed?
   end
 
-  def approve( approval )
-    fulfillments.create( :fulfiller => approval.user )
+  def approve
     true
   end
 
-  def unapprove( approval )
-    fulfillments.delete fulfillments.fulfiller_id_eq( approval.user_id ).to_a
+  def unapprove
     true
   end
 

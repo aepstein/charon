@@ -13,13 +13,33 @@ class Organization < ActiveRecord::Base
       ).select { |b| proxy_owner.eligible_for?(b.framework) }.map { |b| b.requests.build_for( proxy_owner ) }
     end
   end
-  has_many :fulfillments, :as => :fulfiller
+  has_many :fulfillments, :as => :fulfiller do
+    def fulfill_registration_criterions
+      current = fulfillable_type_eq('RegistrationCriterion').map { |r| r.fulfillable_id }
+      registrations.current.registration_criterions.each do |criterion|
+        create( :fulfillable => criterion ) unless current.include? criterion.id
+      end
+    end
+    def unfulfill_registration_criterions
+      current = registrations.current.registration_criterion_ids
+      delete fulfillable_type_eq('RegistrationCriterion').reject { |f| current.include? f.fulfillable_id }
+    end
+  end
 
   before_validation :format_name
 
   default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC'
 
   validates_uniqueness_of :last_name, :scope => :first_name
+
+  def registration_criterions
+    return [] unless registrations.current
+    registrations.current.registration_criterions
+  end
+
+  def registration_criterion_ids
+    registration_criterions.map { |criterion| criterion.id }
+  end
 
   def name
     ( first_name.nil? || first_name.empty? ) ? last_name : "#{first_name} #{last_name}"

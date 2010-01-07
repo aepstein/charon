@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
       self.agreements.map { |a| a.approvable_id }
     end
   end
-  has_many :fulfillments, :as => :fulfiller
+  has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
   has_many :memberships,  :include => [ :organization, :role ], :dependent => :destroy
   has_many :roles, :through => :memberships do
     def in(organizations)
@@ -57,7 +57,16 @@ class User < ActiveRecord::Base
   before_validation_on_create :extract_email
   validates_inclusion_of    :status, :in => STATUSES
   before_validation :import_simple_ldap_attributes
-  after_save :import_complex_ldap_attributes
+  after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
+  after_update 'Fulfillment.unfulfill self'
+
+  def user_status_criterions
+    UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
+  end
+
+  def agreements
+    Agreement.find( approvals.approvable_type_eq('Agreement').map { |approval| approval.approvable_id } )
+  end
 
   def full_name
     "#{first_name} #{middle_name} #{last_name}".squeeze ' '

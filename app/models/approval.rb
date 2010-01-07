@@ -20,8 +20,8 @@ class Approval < ActiveRecord::Base
   validates_presence_of :user
   validate :approvable_must_not_change
 
-  after_create :approve_approvable, :deliver_approval_notice
-  after_destroy :unapprove_approvable, :deliver_unapproval_notice
+  after_create :approve_approvable, :deliver_approval_notice, 'Fulfillment.fulfill user if approvable_type == "Agreement"'
+  after_destroy :unapprove_approvable, :deliver_unapproval_notice, 'Fulfillment.unfulfill user if approvable_type == "Agreement"'
 
   def approvable_must_not_change
     return unless approvable && as_of
@@ -48,12 +48,12 @@ class Approval < ActiveRecord::Base
   end
 
   def approve_approvable
-    approvable.class == Agreement ? approvable.approve( self ) : approvable.approve
+    approvable.approve
     approvable.save if approvable.changed?
   end
 
   def unapprove_approvable
-    approvable.class == Agreement ? approvable.unapprove( self ) : approvable.unapprove
+    approvable.unapprove
     approvable.save if approvable.changed?
   end
 
