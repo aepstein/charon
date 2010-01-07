@@ -102,6 +102,22 @@ class Request < ActiveRecord::Base
       self.join ', '
     end
   end
+  has_many :permissions, :through => :framework
+    def allowed_actions(user, roles, perspective, status)
+      self.role(roles.map { |r| r.id } ).perspective(perspective).status(status).user_agrees(user).map { |p| p.action }.uniq
+    end
+#    def allowed_actions( user_id )
+#      Edition::PERSPECTIVES.inject do |memo, perspective|
+#        memo = allowed_actions_for_perspective( user_id, perspective )
+#        return memo unless memo.empty?
+#      end
+#    end
+    def allowed_actions_for_perspective( user_id, perspective )
+      oids = ( perspective == 'requestor' ? organization_ids : [ basis.organization_id ] )
+      permissions.status_eq(status).perspective_eq(perspective).memberships_user_id_eq(user_id
+      ).memberships_organization_id_eq_any(oids).fulfilled
+    end
+  end
 
   named_scope :organization_like, lambda { |name|
     { :include => :organizations,
