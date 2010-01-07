@@ -62,11 +62,12 @@ class Fulfillment < ActiveRecord::Base
     plural_ft = underscore_ft.pluralize
     fulfiller_ids = fulfillable.send(underscore_ft + "_ids")
     unless fulfiller_ids.empty?
-      connection.execute(
+      connection.insert_sql(
         "INSERT INTO fulfillments (fulfillable_type, fulfillable_id, fulfiller_type, created_at, fulfiller_id) " +
         "SELECT #{q_fulfillable_type}, #{fulfillable.id}, #{quoted_ft}, #{connection.quote DateTime.now.utc}, #{plural_ft}.id " +
         "FROM #{plural_ft} LEFT JOIN fulfillments ON fulfillments.fulfiller_id = #{plural_ft}.id " +
-        "AND fulfillments.fulfiller_type = #{quoted_ft} " +
+        "AND fulfillments.fulfiller_type = #{quoted_ft} AND fulfillments.fulfillable_type = #{q_fulfillable_type} " +
+        "AND fulfillments.fulfillable_id = #{fulfillable.id} " +
         "WHERE fulfillments.fulfiller_id IS NULL AND #{plural_ft}.id IN (#{fulfiller_ids.join(', ')})"
       )
       fulfillable.fulfillments.reload
@@ -83,7 +84,7 @@ class Fulfillment < ActiveRecord::Base
   def self.unfulfill_fulfillable( fulfillable )
     q_fulfillable_type = connection.quote fulfillable.class.to_s
     underscore_ft = fulfiller_type_for_fulfillable(fulfillable).underscore
-    connection.execute(
+    connection.delete_sql(
       "DELETE FROM fulfillments WHERE fulfillable_type = #{q_fulfillable_type} " +
       "AND fulfillable_id = #{fulfillable.id} AND " +
       "fulfiller_id NOT IN (#{fulfillable.send(underscore_ft + '_ids').join(', ')})"

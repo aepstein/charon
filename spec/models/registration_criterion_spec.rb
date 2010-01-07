@@ -26,9 +26,31 @@ describe RegistrationCriterion do
     @criterion.save.should be_false
   end
 
-  it 'should not save without must_register specified' do
-    @criterion.must_register = nil
-    @criterion.save.should be_false
+  it 'should not save a duplicate' do
+    duplicate = Factory.build(:registration_criterion)
+    duplicate.minimal_percentage.should eql @criterion.minimal_percentage
+    duplicate.type_of_member.should eql @criterion.type_of_member
+    duplicate.must_register.should eql @criterion.must_register
+    duplicate.save.should be_false
   end
+
+  it 'should correctly fulfill organizations on create and update' do
+    members_and_registration_ok = Factory(:registration, :organization => Factory(:organization), :number_of_others => 50, :registered => true )
+    members_only_ok = Factory(:registration, :organization => Factory(:organization), :number_of_others => 50 )
+    neither_ok = Factory(:registration, :organization => Factory(:organization), :number_of_undergrads => 50 )
+    criterion = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'others', :must_register => true)
+    criterion.fulfillments.size.should eql 1
+    criterion.fulfillments.first.fulfiller_id.should eql members_and_registration_ok.organization_id
+    criterion.must_register = false
+    criterion.save.should be_true
+    criterion.fulfillments.size.should eql 2
+    criterion.fulfillments.first.fulfiller_id.should eql members_and_registration_ok.organization_id
+    criterion.fulfillments.last.fulfiller_id.should eql members_only_ok.organization_id
+    criterion.type_of_member = 'undergrads'
+    criterion.save.should be_true
+    criterion.fulfillments.size.should eql 1
+    criterion.fulfillments.first.fulfiller_id.should eql neither_ok.organization_id
+  end
+
 end
 
