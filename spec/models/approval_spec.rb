@@ -62,13 +62,23 @@ describe Approval do
   it "should call deliver_approval_notice on create" do
     approval = Factory.build(:approval)
     approval.should_receive(:deliver_approval_notice)
-    approval.save
+    approval.save.should be_true
   end
 
   it "should call deliver_unapproval_notice on destroy" do
     approval = Factory(:approval)
     approval.should_receive(:deliver_unapproval_notice)
     approval.destroy
+  end
+
+  it 'should fulfill agreement for the user on create' do
+    user = Factory(:user)
+    agreement = Factory(:agreement)
+    approval = Factory(:approval, :user => user, :approvable => agreement)
+    user.fulfillments.size.should eql 1
+    user.fulfillments.first.fulfillable.should eql agreement
+    approval.destroy
+    user.fulfillments(true).size.should eql 0
   end
 end
 
