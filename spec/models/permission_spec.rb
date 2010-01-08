@@ -70,5 +70,36 @@ describe Permission do
     permission.framework.stub!(:may_see?).and_return('may_see')
     permission.may_see?(nil).should == 'may_see'
   end
+
+  it 'should have with_request_id(request_id) that returns only permissions relevant to a request' do
+    request = Factory(:request)
+    allowed_organization = request.organizations.first
+    allowed_status = request.status
+    allowed_role = Factory(:role)
+    allowed_member = Factory( :membership, :active => true, :organization => allowed_organization, :role => allowed_role )
+    allowed_permission = Factory( :permission, :framework => request.basis.framework,
+      :role => allowed_role, :status => allowed_status, :perspective => 'requestor' )
+    permission_different_role = Factory( :permission, :framework => request.basis.framework, :perspective => 'requestor' )
+    permission_different_role.role.should_not eql allowed_role
+    permission_different_status = Factory( :permission, :framework => request.basis.framework, :status => 'completed',
+      :perspective => 'requestor' )
+    permission_different_status.should_not eql allowed_status
+    permission_different_framework = Factory( :permission, :role => allowed_role, :status => allowed_status,
+      :perspective => 'requestor' )
+    permission_different_framework.framework.should_not eql allowed_permission.framework
+    permission_different_perspective = Factory( :permission, :framework => request.basis.framework, :role => allowed_role,
+      :status => allowed_status, :perspective => 'reviewer' )
+    permission_different_perspective.perspective.should_not eql allowed_permission.perspective
+    permissions = Permission.with_request_id( request.id )
+    permissions.size.should eql 1
+    permissions.should include allowed_permission
+    inactive_member = Factory(:membership, :role => allowed_member.role, :active => false, :organization => allowed_organization, :role => allowed_role )
+    wrong_organization_member = Factory(:membership, :role => allowed_member.role, :active => false, :organization => Factory(:organization), :role => allowed_role )
+    wrong_role_member = Factory(:membership, :role => Factory(:role), :active => false, :organization => allowed_organization )
+    allowed_member.destroy
+    permissions = Permission.with_request_id( request.id )
+    permissions.should be_empty
+  end
+
 end
 
