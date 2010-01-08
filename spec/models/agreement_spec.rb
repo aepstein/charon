@@ -53,28 +53,6 @@ describe Agreement do
     Agreement.included_modules.should include(GlobalModelAuthorization)
   end
 
-  it "should have a roles scope that returns agreements required for permissions of certain roles" do
-    required_agreement = Factory(:agreement)
-    unrequired_agreement = Factory(:agreement)
-    irrelevant_agreement = Factory(:agreement)
-    relevant_permission = Factory(:permission)
-    relevant_permission.agreements << required_agreement
-    irrelevant_permission = Factory(:permission)
-    irrelevant_permission.role = Factory(:role)
-    irrelevant_permission.save.should == true
-    irrelevant_permission.agreements << irrelevant_agreement
-    required_agreements = Agreement.roles(relevant_permission.role)
-    required_agreements.should include(required_agreement)
-    required_agreements.should_not include(unrequired_agreement)
-    required_agreements.should_not include(irrelevant_agreement)
-    required_agreements.size.should == 1
-    required_agreements = Agreement.roles([relevant_permission.role,irrelevant_permission.role])
-    required_agreements.should include(required_agreement)
-    required_agreements.should_not include(unrequired_agreement)
-    required_agreements.should include(irrelevant_agreement)
-    required_agreements.size.should == 2
-  end
-
   it "should delete associated approvals if content is changed" do
     new_name = 'new name'
     new_content = 'new content'

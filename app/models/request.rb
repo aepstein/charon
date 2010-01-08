@@ -222,14 +222,6 @@ class Request < ActiveRecord::Base
     end
   end
 
-#  def method_missing(name, *args, &block)
-#    if action = name[ /may_([a-z])+\?/, 1 ]
-#      return may(*args).include? action
-#    else
-#      super
-#    end
-#  end
-
   def may_create?(user)
     return false if user.nil?
     return true if user.admin? || ( may(user).include?('create') && basis.open? )

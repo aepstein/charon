@@ -1,5 +1,4 @@
 class Permission < ActiveRecord::Base
-  has_and_belongs_to_many :agreements
   belongs_to :framework
   belongs_to :role
   has_many :bases, :through => :framework
@@ -12,25 +11,6 @@ class Permission < ActiveRecord::Base
   validates_inclusion_of :perspective, :in => Edition::PERSPECTIVES
   validates_inclusion_of :status, :in => Request.aasm_state_names
 
-  named_scope :role, lambda { |role_ids|
-    { :conditions => { :role_id => role_ids } }
-  }
-  named_scope :action, lambda { |actions|
-    { :conditions => { :action => actions } }
-  }
-  named_scope :perspective, lambda { |perspectives|
-    { :conditions => { :perspective => perspectives } }
-  }
-  named_scope :status, lambda { |statuses|
-    { :conditions => { :status => statuses } }
-  }
-  named_scope :user_agrees, lambda { |user|
-    subquery = "SELECT approvable_id FROM approvals WHERE user_id = ? AND " +
-      "approvable_type = 'Agreement'"
-    { :conditions => ['0 = (SELECT COUNT(*) FROM agreements_permissions WHERE ' +
-        "permission_id = permissions.id AND agreement_id NOT IN (#{subquery}) )",
-        user.id ] }
-  }
   # Factored out of several scopes
   named_scope :with_bases, :joins => 'INNER JOIN bases', :conditions => 'permissions.framework_id = bases.framework_id'
   named_scope :with_memberships, :joins => 'INNER JOIN memberships',

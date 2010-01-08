@@ -1,19 +1,6 @@
 class Agreement < ActiveRecord::Base
   include GlobalModelAuthorization
 
-  named_scope :roles, lambda { |role|
-    if role.class == Role
-      roles = [role]
-    else
-      roles = role
-    end
-    role_ids = roles.map { |r| r.id }
-    conditions = 'agreements.id IN (SELECT agreement_id FROM agreements_permissions INNER JOIN permissions ' +
-                 'WHERE permissions.id = agreements_permissions.permission_id AND permissions.role_id IN (?) )'
-    { :conditions =>  [conditions, role_ids] }
-  }
-
-  has_and_belongs_to_many :permissions
   has_many :approvals, :as => :approvable, :dependent => :destroy
   has_many :users, :through => :approvals
   has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all

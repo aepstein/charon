@@ -59,20 +59,5 @@ describe User do
     user.fulfillments.first.fulfillable.should eql criterion2
   end
 
-  it "should have approvals.unfulfilled_agreements identifying agreements that may be required to have full permissions" do
-    required_and_done = Factory(:agreement)
-    required_not_done = Factory(:agreement)
-    optional = Factory(:agreement)
-    membership = Factory(:membership)
-    permission = Factory( :permission, { :role => membership.role } )
-    permission.agreements << required_and_done
-    permission.agreements << required_not_done
-    Factory( :approval, { :approvable => required_and_done, :user => membership.user } )
-    unfulfilled = membership.user.approvals.unfulfilled_agreements
-    unfulfilled.should_not include(required_and_done)
-    unfulfilled.should include(required_not_done)
-    unfulfilled.should_not include(optional)
-    unfulfilled.size.should == 1
-  end
 end
 
