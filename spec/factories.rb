@@ -57,7 +57,7 @@ Factory.define :permission do |f|
   f.association :role
   f.association :framework
   f.perspective Edition::PERSPECTIVES.first
-  f.status Request.aasm_states.first.name.to_s
+  f.status { |r| Request.aasm_initial_state.to_s }
   f.action Request::ACTIONS.first
 end
 

@@ -46,7 +46,7 @@ describe Request do
     disallowed_user = Factory(:user)
     @request.framework.permissions.create( :role => allowed_role,
       :action => Request::ACTIONS.first, :perspective => Edition::PERSPECTIVES.first,
-      :status => Request.aasm_initial_state.to_s )
+      :status => Request.aasm_initial_state.to_s ).id.should_not be_nil
     organization = @request.send(Edition::PERSPECTIVES.first.pluralize).first
     organization.memberships.create( :user => allowed_user,
       :role => allowed_role, :active => true ).id.should_not be_nil

@@ -1,5 +1,6 @@
 class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
+
   belongs_to :basis
   has_many :approvers, :through => :approvals, :source => :user do
     def empty_for_status?( status=nil )
@@ -102,22 +103,6 @@ class Request < ActiveRecord::Base
       self.join ', '
     end
   end
-#  has_many :permissions, :through => :framework do
-#    def allowed_actions(user, roles, perspective, status)
-#      self.role(roles.map { |r| r.id } ).perspective(perspective).status(status).user_agrees(user).map { |p| p.action }.uniq
-#    end
-#    def allowed_actions( user_id )
-#      Edition::PERSPECTIVES.inject do |memo, perspective|
-#        memo = allowed_actions_for_perspective( user_id, perspective )
-#        return memo unless memo.empty?
-#      end
-#    end
-#    def allowed_actions_for_perspective( user_id, perspective )
-#      oids = ( perspective == 'requestor' ? organization_ids : [ basis.organization_id ] )
-#      permissions.status_eq(status).perspective_eq(perspective).memberships_user_id_eq(user_id
-#      ).memberships_organization_id_eq_any(oids).memberships_active_eq(true).fulfilled
-#    end
-#  end
 
   named_scope :organization_like, lambda { |name|
     { :include => :organizations,
@@ -131,7 +116,6 @@ class Request < ActiveRecord::Base
   delegate :structure, :to => :basis
   delegate :framework, :to => :basis
   delegate :nodes, :to => :structure
-  delegate :permissions, :to => :framework
   delegate :contact_name, :to => :basis
   delegate :contact_email, :to => :basis
 
@@ -219,15 +203,12 @@ class Request < ActiveRecord::Base
   def may(user)
     return Array.new if user.nil?
     return ACTIONS if user.admin?
-    return Permission.fulfilled_for( user.id, id ).map { |p| p.action }.uniq
-#    Edition::PERSPECTIVES.each do |perspective|
-#      actions = permissions.allowed_actions( user,
-#                                             user.roles.in( send(perspective.pluralize) ),
-#                                             perspective,
-#                                             status.to_s )
-#      return actions if actions.first
-#    end
-#    Array.new
+    permissions = Permission.fulfilled_for( user, self )
+    Edition::PERSPECTIVES.each do |perspective|
+      values = permissions.select { |p| p.perspective == perspective }
+      return values.map { |v| v.action }.uniq unless values.empty?
+    end
+    Array.new
   end
 
   # Creates permission checking methods
@@ -240,6 +221,14 @@ class Request < ActiveRecord::Base
       false
     end
   end
+
+#  def method_missing(name, *args, &block)
+#    if action = name[ /may_([a-z])+\?/, 1 ]
+#      return may(*args).include? action
+#    else
+#      super
+#    end
+#  end
 
   def may_create?(user)
     return false if user.nil?
