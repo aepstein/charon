@@ -41,6 +41,9 @@
   </ul>
 <% end %>
 
+<% unless current_user.fulfillments %>
+<% end %>
+
 <% unless current_user.approvals.agreements.empty? %>
   <h3>Agreements you have accepted</h3>
 

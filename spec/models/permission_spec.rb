@@ -71,25 +71,25 @@ describe Permission do
     permission.may_see?(nil).should == 'may_see'
   end
 
-  it 'should have with_user_id(user_id) that returns only permissions relevant to a user' do
+  it 'should have user_id_eq(user_id) that returns only permissions relevant to a user' do
     setup_permission_scenario
-    permissions = Permission.with_memberships.with_user_id( @allowed_member.user_id)
+    permissions = Permission.user_id_eq( @allowed_member.user_id)
     permissions.size.should eql 3
     permissions.should include @allowed_permission
     permissions.should include @permission_different_perspective
     permissions.should include @permission_different_framework
-    Permission.with_memberships.with_user_id( @inactive_member.user_id ).should be_empty
-    Permission.with_memberships.with_user_id( @wrong_organization_member.user_id ).should be_empty
-    Permission.with_memberships.with_user_id( @wrong_role_member.user_id ).should be_empty
+    Permission.user_id_eq( @inactive_member.user_id ).should be_empty
+    Permission.user_id_eq( @wrong_organization_member.user_id ).should be_empty
+    Permission.user_id_eq( @wrong_role_member.user_id ).should be_empty
   end
 
   it 'should have with_request_id(request_id) that returns only permissions relevant to a request' do
     setup_permission_scenario
-    permissions = Permission.with_memberships.with_bases.with_request_id( @request.id )
+    permissions = Permission.memberships_active_eq(true).bases_open.with_request_id( @request.id )
     permissions.size.should eql 1
     permissions.should include @allowed_permission
     @allowed_member.destroy
-    Permission.with_memberships.with_bases.with_request_id( @request.id ).should be_empty
+    Permission.memberships_active_eq(true).bases_open.with_request_id( @request.id ).should be_empty
   end
 
   it 'should have a with_request_parameters(basis_id, status, organization_ids) that returns only permissions relevant to a new request' do
