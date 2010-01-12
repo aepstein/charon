@@ -71,59 +71,26 @@ describe Permission do
     permission.may_see?(nil).should == 'may_see'
   end
 
-  it 'should have user_id_eq(user_id) that returns only permissions relevant to a user' do
-    setup_permission_scenario
-    permissions = Permission.user_id_eq( @allowed_member.user_id)
-    permissions.size.should eql 3
-    permissions.should include @allowed_permission
-    permissions.should include @permission_different_perspective
-    permissions.should include @permission_different_framework
-    Permission.user_id_eq( @inactive_member.user_id ).should be_empty
-    Permission.user_id_eq( @wrong_organization_member.user_id ).should be_empty
-    Permission.user_id_eq( @wrong_role_member.user_id ).should be_empty
-  end
-
-  it 'should have with_request_id(request_id) that returns only permissions relevant to a request' do
-    setup_permission_scenario
-    permissions = Permission.memberships_active_eq(true).bases_open.with_request_id( @request.id )
-    permissions.size.should eql 1
-    permissions.should include @allowed_permission
-    @allowed_member.destroy
-    Permission.memberships_active_eq(true).bases_open.with_request_id( @request.id ).should be_empty
-  end
-
-  it 'should have a with_request_parameters(basis_id, status, organization_ids) that returns only permissions relevant to a new request' do
-    setup_permission_scenario
-    organization_ids = @request.organization_ids
-    permissions = Permission.with_memberships.with_bases.with_request_parameters( @request.basis_id, @request.status, organization_ids )
-    permissions.size.should eql 1
-    permissions.should include @allowed_permission
-    @request.destroy
-    permissions = Permission.with_memberships.with_bases.with_request_parameters( @request.basis_id, @request.status, organization_ids )
-    permissions.size.should eql 1
-    permissions.should include @allowed_permission
-  end
-
-  it 'should have fulfilled_for and unfulfilled_for methods that identify permissions a user has fulfilled requirements for' do
+  it 'should have satisfied method that identifies permissions a user has fulfilled requirements for' do
     setup_permission_scenario
     fulfillable = Factory(:agreement)
     @allowed_permission.requirements.create( :fulfillable => fulfillable )
-    Permission.fulfilled_for( @allowed_member.user, @request ).to_a.should be_empty
+    @allowed_member.user.permissions.satisfied.to_a.should be_empty
     @allowed_member.user.approvals.create(:approvable => fulfillable, :as_of => fulfillable.created_at + 1.day).id.should_not be_nil
-    permissions = Permission.fulfilled_for( @allowed_member.user, @request )
-    permissions.to_a.size.should eql 1
+    permissions = @allowed_member.user.permissions.satisfied.to_a
+    permissions.size.should eql 1
     permissions.should include @allowed_permission
   end
 
-  it 'should have unfulfilled_for method that identifies permissions the user has fulfilled requirements for in context' do
+  xit 'should have unsatisfied method that identifies permissions the user must satisfy requirements for' do
     setup_permission_scenario
     fulfillable = Factory(:agreement)
     @allowed_permission.requirements.create( :fulfillable => fulfillable )
-    permissions = Permission.unfulfilled_for( @allowed_member.user, @request ).to_a
+    permissions = @allowed_member.user.permissions.unsatisfied.to_a
     permissions.size.should eql 1
     permissions.should include @allowed_permission
     @allowed_member.user.approvals.create(:approvable => fulfillable, :as_of => fulfillable.created_at + 1.day).id.should_not be_nil
-    permissions = Permission.unfulfilled_for( @allowed_member.user, @request )
+    permissions = @allowed_member.user.permissions.unsatisfied.to_a
     permissions.to_a.should be_empty
   end
 

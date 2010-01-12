@@ -175,6 +175,10 @@ class Request < ActiveRecord::Base
 
   alias :requestors :organizations
 
+  def requestor_ids
+    organization_ids
+  end
+
   def deliver_required_approval_notice
     approvals = approvers.unfulfilled_for_status(status).map { |a| Approval.new( :user => a, :approvable => self ) }
     approvals.each do |approval|
@@ -199,11 +203,22 @@ class Request < ActiveRecord::Base
     [ basis.organization ]
   end
 
+  def reviewer_ids
+    return reviewers.map { |r| r.id }
+  end
+
+  def perspective_ids
+    Edition::PERSPECTIVES.inject([]) do |memo, perspective|
+      memo << send(perspective + "_ids").unshift(perspective)
+    end
+  end
+
   # Lists actions available to user on the request
   def may(user)
     return Array.new if user.nil?
     return ACTIONS if user.admin?
-    permissions = Permission.fulfilled_for( user, self )
+ #   permissions = Permission.fulfilled_for( user, self )
+    permissions = user.permissions.framework_id_eq(basis.framework_id).status_eq(status).perspectives_in(perspective_ids).satisfied
     Edition::PERSPECTIVES.each do |perspective|
       values = permissions.select { |p| p.perspective == perspective }
       return values.map { |v| v.action }.uniq unless values.empty?

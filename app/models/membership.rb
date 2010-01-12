@@ -8,6 +8,7 @@ class Membership < ActiveRecord::Base
   belongs_to :role
   belongs_to :registration
   belongs_to :organization
+  has_many :permissions, :primary_key => :role_id, :foreign_key => :role_id
 
   before_validation :set_organization_from_registration
 

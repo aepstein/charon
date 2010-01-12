@@ -16,7 +16,8 @@ class User < ActiveRecord::Base
 
   has_many :approvals
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
-  has_many :memberships,  :include => [ :organization, :role ], :dependent => :destroy
+  has_many :memberships, :dependent => :destroy
+  has_many :permissions, :through => :memberships, :conditions => "memberships.active = #{connection.quote true}"
   has_many :roles, :through => :memberships do
     def in(organizations)
       proxy_owner.memberships.active.in(organizations.map { |o| o.id } ).map { |m| m.role }
