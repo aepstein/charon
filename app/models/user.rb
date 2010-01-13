@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
   end
 
   def unfulfilled_requirements
-    unfulfilled_permissions.all(:include => :requirements).inject({}) do |memo, permission|
+    unfulfilled_permissions.all(:include => [:role, :framework, :requirements]).inject({}) do |memo, permission|
       permission.requirements.each do |requirement|
         memo[requirement.fulfillable] = [] unless memo.include? requirement.fulfillable
         memo[requirement.fulfillable] << permission unless memo[requirement.fulfillable].include? permission

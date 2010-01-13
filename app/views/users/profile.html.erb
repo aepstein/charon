@@ -30,7 +30,7 @@
   <h3>Unmatched Registrations:</h3>
 
   <p>
-  These are registrations that you have started with the Student Acitvities
+  These are registrations that you have started with the Student Activities
   Office, but have not yet matched to year-to-year record in the Office of the Assemblies.
   You should <a href="mailto:assembly@cornell.edu">email</a> the office or pick up your
   budget folder to get a matching year-to-year record set up.
@@ -42,29 +42,14 @@
 <% end %>
 
 <% unless current_user.unfulfilled_permissions.length == 0 %>
-<% current_user.unfulfilled_permissions.all(:include => :requirement).each do |permission| %>
-<li>You must #{requirement.fulfillable} in order to #{}</li>
+<% current_user.unfulfilled_requirements.each do |requirement, permissions| %>
+<li>You must #{requirement.fulfillable} in order to:
+<ul>
+<% permissions.each do |permission| %>
+<li><%=h permission.action %> <%=h permission.framework %> requests for <%=h permission.perspective.pluralize %> of which you are <%=h permission.role %></li>
 <% end %>
+</ul>
+</li>
 <% end %>
-
-<% unless current_user.approvals.agreements.empty? %>
-  <h3>Agreements you have accepted</h3>
-
-  <p>
-  You have agreed to abide by these agreements.
-  </p>
-
-  <%= render :partial => 'approvals', :object => current_user.approvals.agreements, :locals => { :id => 'accepted_agreements' } %>
-<% end %>
-
-<% unless current_user.approvals.unfulfilled.empty? %>
-  <h3>Agreements awaiting your approval</h3>
-
-  <p>
-  These are agreements you must approve before you will have full access to use
-  the application system.
-  </p>
-
-  <%= render :partial => 'approvals', :object => current_user.approvals.unfulfilled, :locals => { :id => 'unfulfilled_agreements' } %>
 <% end %>
 
