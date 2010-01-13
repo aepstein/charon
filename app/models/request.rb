@@ -217,8 +217,8 @@ class Request < ActiveRecord::Base
   def may(user)
     return Array.new if user.nil?
     return ACTIONS if user.admin?
- #   permissions = Permission.fulfilled_for( user, self )
-    permissions = user.permissions.framework_id_eq(basis.framework_id).status_eq(status).perspectives_in(perspective_ids).satisfied
+    permissions = Permission.satisfied.framework_id_eq(basis.framework_id
+      ).status_eq(status).perspectives_in(perspective_ids).memberships_user_id_eq(user.id)
     Edition::PERSPECTIVES.each do |perspective|
       values = permissions.select { |p| p.perspective == perspective }
       return values.map { |v| v.action }.uniq unless values.empty?

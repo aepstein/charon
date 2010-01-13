@@ -145,6 +145,20 @@ describe Permission do
     permissions.to_a.should be_empty
   end
 
+  it 'should have perspectives_in method that identifies permissions with a perspective matching an organization' do
+    setup_permission_scenario
+    permissions = Permission.perspectives_in([['requestor',@allowed_member.organization_id]]
+      ).memberships_user_id_eq(@allowed_member.user_id)
+    permissions.length.should eql 3
+    permissions.should include @allowed_permission
+    permissions.should include @permission_different_status
+    permissions.should include @permission_different_framework
+    permissions = Permission.perspectives_in([['reviewer',@allowed_member.organization_id]]
+      ).memberships_user_id_eq(@allowed_member.user_id)
+    permissions.length.should eql 1
+    permissions.should include @permission_different_perspective
+  end
+
   def setup_permission_scenario
     @request = Factory(:request)
     @allowed_organization = @request.organizations.first

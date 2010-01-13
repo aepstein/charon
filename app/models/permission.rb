@@ -29,7 +29,7 @@ class Permission < ActiveRecord::Base
   # Needs memberships table
   named_scope :perspectives_in, lambda { |perspectives|
     { :conditions => perspectives.map { |perspective|
-        "permissions.perspective = #{connection.quote perspective.shift} AND m.organization_id IN (#{perspective.join ','})"
+        "permissions.perspective = #{connection.quote perspective.shift} AND memberships.organization_id IN (#{perspective.join ','})"
       }.join( ' OR ' )
     }
   }

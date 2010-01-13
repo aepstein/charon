@@ -68,7 +68,7 @@ class Fulfillment < ActiveRecord::Base
       "FROM #{plural_ft} LEFT JOIN fulfillments ON fulfillments.fulfiller_id = #{plural_ft}.id " +
       "AND fulfillments.fulfiller_type = #{quoted_ft} AND fulfillments.fulfillable_type = #{q_fulfillable_type} " +
       "AND fulfillments.fulfillable_id = #{fulfillable.id} " +
-      "WHERE fulfillments.fulfiller_id IS NULL AND #{plural_ft}.id IN (#{fulfiller_ids.join(', ')})"
+      "WHERE fulfillments.fulfiller_id IS NULL AND #{plural_ft}.id IN (#{fulfiller_ids.join ','})"
     )
     fulfillable.fulfillments.reload
   end
