@@ -41,7 +41,10 @@
   </ul>
 <% end %>
 
-<% unless current_user.fulfillments %>
+<% unless current_user.unfulfilled_permissions.length == 0 %>
+<% current_user.unfulfilled_permissions.all(:include => :requirement).each do |permission| %>
+<li>You must #{requirement.fulfillable} in order to #{}</li>
+<% end %>
 <% end %>
 
 <% unless current_user.approvals.agreements.empty? %>

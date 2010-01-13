@@ -59,5 +59,34 @@ describe User do
     user.fulfillments.first.fulfillable.should eql criterion2
   end
 
+  it 'should have unfulfilled_permissions method that returns permissions the user cannot have because of missing requirements' do
+    setup_permission_scenario
+    permissions = @membership.user.unfulfilled_permissions.all
+    permissions.length.should eql 1
+    permissions.should include @unfulfilled_permission_user
+  end
+
+  it 'should have unfulfilled_requirements method that returns hash of unfulfilled requirements and associated permissions' do
+    setup_permission_scenario
+    requirements = @membership.user.unfulfilled_requirements
+    requirements.length.should eql 1
+    requirements.should include @user_requirement
+    requirements[@user_requirement].should include @unfulfilled_permission_user
+  end
+
+  def setup_permission_scenario
+    @membership = Factory(:membership)
+    @fulfilled_permission = Factory(:permission, :role => @membership.role)
+    @unfulfilled_permission_organization = Factory(:permission, :role => @membership.role)
+    @organization_requirement = Factory(:registration_criterion)
+    Factory(:requirement, :fulfillable => @organization_requirement, :permission => @unfulfilled_permission_organization)
+    @membership.organization.fulfillments.should be_empty
+    @unfulfilled_permission_user = Factory(:permission, :role => @membership.role)
+    @user_requirement = Factory(:user_status_criterion, :statuses => ['temporary'])
+    @user_requirement.id.should_not be_nil
+    Factory(:requirement, :fulfillable => @user_requirement, :permission => @unfulfilled_permission_user )
+    @membership.user.fulfillments.should be_empty
+  end
+
 end
 

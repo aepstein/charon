@@ -17,8 +17,7 @@ class User < ActiveRecord::Base
   has_many :approvals
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
   has_many :memberships, :dependent => :destroy
-  has_many :permissions, :through => :memberships, :conditions => "memberships.active = #{connection.quote true}"
-  has_many :roles, :through => :memberships do
+  has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
     def in(organizations)
       proxy_owner.memberships.active.in(organizations.map { |o| o.id } ).map { |m| m.role }
     end
@@ -46,6 +45,21 @@ class User < ActiveRecord::Base
   before_validation :import_simple_ldap_attributes
   after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self'
+
+  def unfulfilled_permissions
+    Permission.requirements_unfulfilled.requirements_with_fulfillments.requirements_fulfillable_type_eq_any(
+    Fulfillment::FULFILLABLE_TYPES['User']).memberships_user_id_eq(id)
+  end
+
+  def unfulfilled_requirements
+    unfulfilled_permissions.all(:include => :requirements).inject({}) do |memo, permission|
+      permission.requirements.each do |requirement|
+        memo[requirement.fulfillable] = [] unless memo.include? requirement.fulfillable
+        memo[requirement.fulfillable] << permission unless memo[requirement.fulfillable].include? permission
+      end
+      memo
+    end
+  end
 
   def user_status_criterions
     UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
