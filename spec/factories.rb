@@ -76,6 +76,7 @@ end
 Factory.define :registration do |f|
   f.sequence(:name) { |n| "Registered Organization #{n}" }
   f.sequence(:external_id) { |i| i }
+  f.number_of_undergrads 1
 end
 
 Factory.define :registration_criterion do |f|

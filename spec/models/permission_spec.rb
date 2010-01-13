@@ -105,6 +105,46 @@ describe Permission do
     permissions.should include @allowed_permission
   end
 
+  it 'should have satisfied method that identifies permissions the organization must satisfy requirements for' do
+    setup_permission_scenario
+    Factory(:registration, :organization => @allowed_member.organization)
+    fulfillable = Factory(:registration_criterion, :must_register => true, :minimal_percentage => 0)
+    @allowed_permission.requirements.create( :fulfillable => fulfillable )
+    permissions = Permission.satisfied.memberships_organization_id_eq(@allowed_member.organization_id)
+    permissions.length.should eql 3
+    permissions.should_not include @allowed_permission
+    permissions.should_not include @permission_different_role
+    permissions.should include @permission_different_status
+    permissions.should include @permission_different_framework
+    permissions.should include @permission_different_perspective
+    fulfillable.must_register = false
+    fulfillable.save.should be_true
+    @allowed_member.organization.fulfillments.length.should eql 1
+    @allowed_member.organization.fulfillments.first.fulfillable.should eql fulfillable
+    permissions = Permission.satisfied.memberships_organization_id_eq(@allowed_member.organization_id)
+    permissions.length.should eql 4
+    permissions.should include @allowed_permission
+    permissions.should_not include @permission_different_role
+    permissions.should include @permission_different_status
+    permissions.should include @permission_different_framework
+    permissions.should include @permission_different_perspective
+    permissions.should include @allowed_permission
+  end
+
+  it 'should have unsatisfied method that identifies permissions the organization must satisfy requirements for' do
+    setup_permission_scenario
+    Factory(:registration, :organization => @allowed_member.organization)
+    fulfillable = Factory(:registration_criterion, :must_register => true, :minimal_percentage => 0)
+    @allowed_permission.requirements.create( :fulfillable => fulfillable )
+    permissions = Permission.unsatisfied.memberships_organization_id_eq(@allowed_member.organization_id)
+    permissions.length.should eql 1
+    permissions.should include @allowed_permission
+    fulfillable.must_register = false
+    fulfillable.save.should be_true
+    permissions = Permission.unsatisfied.memberships_organization_id_eq(@allowed_member.organization_id)
+    permissions.to_a.should be_empty
+  end
+
   def setup_permission_scenario
     @request = Factory(:request)
     @allowed_organization = @request.organizations.first
