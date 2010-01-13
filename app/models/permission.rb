@@ -17,14 +17,14 @@ class Permission < ActiveRecord::Base
   # Needs requirements and memberships tables
   named_scope :with_fulfillments, :joins => 'LEFT JOIN fulfillments ON ' +
     'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
-    'requirements.fulfillable_id = fulfillments.fulfillable_id'
+    'requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
+    "( (fulfillments.fulfiller_type = 'Organization' AND fulfillments.fulfiller_id = memberships.organization_id) OR " +
+    "(fulfillments.fulfiller_type = 'User' AND fulfillments.fulfiller_id = memberships.user_id) )"
   # Needs requirements and fulfillments tables
-  named_scope :fulfilled, :group => 'requirements.permission_id',
-    :having => 'COUNT(fulfillments.id) = COUNT(requirements.id)',
-    :conditions => "(requirements.id IS NULL OR (fulfillments.fulfiller_type = 'Organization' AND fulfillments.fulfiller_id = memberships.organization_id) OR " +
-      "(fulfillments.fulfiller_type = 'User' AND fulfillments.fulfiller_id = memberships.user_id) )"
+  named_scope :fulfilled, :group => 'permissions.id',
+    :having => 'COUNT(fulfillments.id) = COUNT(requirements.id)'
   # Needs requirements and fulfillments tables
-  named_scope :unfulfilled, :group => 'requirements.permission_id',
+  named_scope :unfulfilled, :group => 'permissions.id',
     :having => 'COUNT(fulfillments.id) < COUNT(requirements.id)'
   # Needs memberships table
   named_scope :perspectives_in, lambda { |perspectives|
