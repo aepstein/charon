@@ -103,7 +103,9 @@ describe Item do
     node = @item.node
     node.item_quantity_limit = 2
     node.save
-    child_node = node.structure.nodes.create( Factory.attributes_for(:node).merge(:parent_id => node.id) )
+    child_node = node.structure.nodes.create( Factory.attributes_for(:node).merge(
+      :parent_id => node.id, :category => Factory(:category) ) )
+    child_node.id.should_not be_nil
     second = @item.request.items.create(:node => node)
     child = @item.request.items.create(:node => child_node, :parent => first)
     first.id.should_not be_nil
