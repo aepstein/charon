@@ -61,7 +61,7 @@ describe User do
 
   it 'should have unfulfilled_permissions method that returns permissions the user cannot have because of missing requirements' do
     setup_permission_scenario
-    permissions = @membership.user.unfulfilled_permissions.all
+    permissions = @membership.user.unfulfilled_permissions
     permissions.length.should eql 1
     permissions.should include @unfulfilled_permission_user
   end
@@ -75,6 +75,7 @@ describe User do
   end
 
   def setup_permission_scenario
+    Permission.delete_all
     @membership = Factory(:membership)
     @fulfilled_permission = Factory(:permission, :role => @membership.role)
     @unfulfilled_permission_organization = Factory(:permission, :role => @membership.role)
