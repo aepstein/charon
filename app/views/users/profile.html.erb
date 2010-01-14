@@ -43,14 +43,9 @@
 
 <% unless current_user.unfulfilled_permissions.length == 0 %>
 <p>You have unfulfilled requirements that may limit what you are able to do.</p>
-<% current_user.unfulfilled_requirements.each do |requirement, permissions| %>
-<li>You must #{requirement.fulfillable} in order to:
 <ul>
-<% permissions.each do |permission| %>
-<li><%=h permission.action %> <%=h permission.framework %> requests for <%=h permission.perspective.pluralize %> of which you are <%=h permission.role %></li>
+<% current_user.unfulfilled_requirements.each do |requirement, permissions| %>
+<%= unfulfilled_permission requirement, permission %>
 <% end %>
 </ul>
-</li>
-<% end %>
-<% end %>
 

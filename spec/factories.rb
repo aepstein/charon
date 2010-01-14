@@ -45,7 +45,6 @@ end
 
 Factory.define :framework do |f|
   f.sequence(:name) { |n| "Sequence #{n}" }
-  f.member_percentage nil
 end
 
 Factory.define :fulfillment do |f|

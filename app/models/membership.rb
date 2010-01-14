@@ -3,6 +3,12 @@ class Membership < ActiveRecord::Base
   named_scope :in, lambda { |organization_ids|
     { :conditions => { :organization_id => organization_ids } }
   }
+  scope_procedure :for_fulfiller, lambda { |fulfiller|
+    send fulfiller.fulfiller_type.underscore + "_id_eq", unfulfilled.id
+  }
+  scope_procedure :unfulfilled_for, lambda { |fulfiller|
+    permissions_unsatisfied.for_fulfiller fulfiller
+  }
 
   belongs_to :user
   belongs_to :role
@@ -15,6 +21,11 @@ class Membership < ActiveRecord::Base
   validates_presence_of :user
   validates_presence_of :role
   validate :must_have_registration_or_organization
+
+  def fulfiller_name( fulfillable )
+    return unless user_id && organization_id
+    send(fulfillable.fulfiller_type.underscore).name
+  end
 
   def set_organization_from_registration
     if registration && ( organization != registration.organization ) then

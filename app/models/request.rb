@@ -131,11 +131,6 @@ class Request < ActiveRecord::Base
     if organizations.empty?
       errors.add_to_base( "Must have at least one organization associated with request." )
     end
-    organizations.each do |organization|
-      unless organizations.allowed?(organization)
-        errors.add_to_base( "#{organization} is not currently eligible to participate in request." )
-      end
-    end
   end
 
   attr_readonly :basis_id

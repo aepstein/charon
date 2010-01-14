@@ -16,5 +16,9 @@ class Requirement < ActiveRecord::Base
   # Must have fulfillments table related
   named_scope :fulfilled, :conditions => 'fulfillments.id IS NOT NULL'
   named_scope :unfulfilled, :conditions => 'fulfillments.id IS NULL'
+
+  def fulfiller_type; Fulfillment.fulfiller_type_for_fulfillable fulfillable_type; end
+
+  def to_s; fulfillable.to_s; end
 end
 

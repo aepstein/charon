@@ -1,5 +1,5 @@
 class Agreement < ActiveRecord::Base
-  include GlobalModelAuthorization
+  include GlobalModelAuthorization, Fulfillable
 
   has_many :approvals, :as => :approvable, :dependent => :destroy
   has_many :users, :through => :approvals

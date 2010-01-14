@@ -1,20 +1,16 @@
 <h1><%=h @organization %> Profile</h1>
 
-<% unless @organization.unfulfilled_requirements.length == 0 %>
-<p>
-The organization has unfulfilled requirements that may limit what you are able to do.
-<% current_user.unfulfilled_requirements.each do |requirement, permissions| %>
-<li>The organization must #{requirement.fulfillable} in order to:
+<% unless @organization.unfulfilled_permissions.length == 0 %>
+<p>Your organization unfulfilled requirements that may limit what you are able to do.</p>
 <ul>
+<% @organization.unfulfilled_requirements.each do |requirement, permissions| %>
 <% permissions.each do |permission| %>
-<li><%=h permission.action %> <%=h permission.framework %> requests for <%=h permission.perspective.pluralize %> of which you are <%=h permission.role %></li>
+<%= unfulfilled_permission requirement, permission %>
+<% end %>
 <% end %>
 </ul>
-</li>
-<% end %>
-<% end %>
-</p>
-<% end %>
+
+
 
 <% unless @organization.requests.creatable.select { |r| r.may_see? current_user }.empty? %>
 <h2>Bases for you to make requests</h2>

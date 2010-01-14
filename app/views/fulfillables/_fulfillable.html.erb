@@ -1,0 +1,30 @@
+<li>
+<%= unfulfilled %>:
+<ul>
+<% permissions.each do |permission| %>
+  <li>
+  <%= permission.memberships.unfulfilled_for( unfulfilled ).map { |m| m.fulfiller_name unfulfilled, current_user }.join(', ') %>
+  may <%= permission.action %> for which the organ
+  </li>
+<% end %>
+</ul>
+</li>
+
+<li>
+<% if unfulfilled.fulfiller_type == 'Organization' %>
+<% permissions.map { |p| p.memberships.permissions_unsatisfied.map { |m| m.send(unfulfilled.fulfiller_type.underscore) } }.flatten.uniq.join( ',' ) %> must:
+<% end %>
+
+<% if unfulfilled.fulfiller_type == 'User' %>
+<% permissions.map { |p| p.memberships.permissions_unsatisfied.map { |m| m.user } }.flatten.uniq.join( ',' ) %> must:
+<% end %>
+
+
+You must #{requirement.fulfillable} in order to:
+<ul>
+<% permissions.each do |permission| %>
+<li><%=h permission.action %> <%=h permission.framework %> requests for <%=h permission.perspective.pluralize %> of which you are <%=h permission.role %></li>
+<% end %>
+</ul>
+</li>
+

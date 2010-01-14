@@ -1,5 +1,5 @@
 class RegistrationCriterion < ActiveRecord::Base
-  include GlobalModelAuthorization
+  include GlobalModelAuthorization, Fulfillable
 
   has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
 
