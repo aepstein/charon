@@ -23,22 +23,6 @@ describe Registration do
     registration.find_or_create_organization.should == organization
   end
 
-  it "should have an eligible_for? that queries a framework and determines eligibility correctly" do
-    framework = Factory(:framework)
-    registration = Factory(:registration)
-    registration.registered = true
-    framework.member_percentage = nil
-    registration.eligible_for?(framework).should == true
-    framework.member_percentage = 50
-    framework.member_percentage_type = 'undergrads'
-    registration.number_of_grads = 100
-    registration.percent_members_of_type(framework.member_percentage_type).should < framework.member_percentage
-    registration.eligible_for?(framework).should == false
-    framework.member_percentage = 5
-    framework.member_percentage_type = 'grads'
-    registration.eligible_for?(framework).should == true
-  end
-
   it 'should fulfill/unfulfill related organizations on create/update' do
     criterion1 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'undergrads', :must_register => true)
     criterion2 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'undergrads', :must_register => false)

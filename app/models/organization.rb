@@ -9,8 +9,7 @@ class Organization < ActiveRecord::Base
   has_many :bases
   has_and_belongs_to_many :requests do
     def creatable
-      Basis.open.no_draft_request_for( proxy_owner
-      ).select { |b| proxy_owner.eligible_for?(b.framework) }.map { |b| b.requests.build_for( proxy_owner ) }
+      Basis.open.no_draft_request_for( proxy_owner ).map { |b| b.requests.build_for proxy_owner }
     end
   end
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
@@ -42,6 +41,11 @@ class Organization < ActiveRecord::Base
 
   def registration_criterion_ids
     registration_criterions.map { |criterion| criterion.id }
+  end
+
+  def registered?
+    return false unless registrations.current
+    registrations.current.registered?
   end
 
   def name

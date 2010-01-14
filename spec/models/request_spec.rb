@@ -7,9 +7,6 @@ describe Request do
   end
 
   it "should create a new instance given valid attributes" do
-    @request.organizations.each do |organization|
-      @request.organizations.allowed?(organization).should == true
-    end
     @request.save.should == true
   end
 

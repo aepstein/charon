@@ -93,9 +93,6 @@ class Request < ActiveRecord::Base
   end
   has_many :editions, :through => :items
   has_and_belongs_to_many :organizations do
-    def allowed?(organization)
-      organization.eligible_for?(proxy_owner.framework)
-    end
     def may(action)
       self.map { |o| o.users }.flatten.select { |u| proxy_owner.send("may_#{action}?", u) }.uniq
     end

@@ -2,6 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Organization do
   before(:each) do
+    @organization = Factory(:organization)
     @registered_organization = Factory(:organization)
     @registered_organization.registrations << Factory(:registration, { :registered => true, :number_of_undergrads => 10 })
   end
@@ -12,10 +13,12 @@ describe Organization do
 
   it "should have a requests.creatable method that returns requests that can be made" do
     basis = Factory(:basis)
-    Basis.open.no_draft_request_for(@registered_organization).should include(basis)
-    basis.eligible_to_request?(@registered_organization).should == true
-    @registered_organization.requests.creatable.size.should == 1
-    @registered_organization.requests.creatable.first.class.should == Request
+    started_request = Factory(:request, :organizations => [@organization])
+    closed_basis = Factory(:basis, :open_at => DateTime.now - 1.year, :closed_at => DateTime.now - 1.day)
+    requests = @organization.requests.creatable
+    requests.length.should == 1
+    requests.first.class.should == Request
+    requests.first.basis.should eql basis
   end
 
   it "should have a requests.started method that returns started requests" do
