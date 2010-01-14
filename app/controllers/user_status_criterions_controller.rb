@@ -14,6 +14,7 @@ class UserStatusCriterionsController < ApplicationController
   # GET /user_status_criterions/1.xml
   def show
     @user_status_criterion = UserStatusCriterion.find(params[:id])
+    raise AuthorizationError unless @user_status_criterion.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -25,6 +26,7 @@ class UserStatusCriterionsController < ApplicationController
   # GET /user_status_criterions/new.xml
   def new
     @user_status_criterion = UserStatusCriterion.new
+    raise AuthorizationError unless @user_status_criterion.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -35,12 +37,14 @@ class UserStatusCriterionsController < ApplicationController
   # GET /user_status_criterions/1/edit
   def edit
     @user_status_criterion = UserStatusCriterion.find(params[:id])
+    raise AuthorizationError unless @user_status_criterion.may_update? current_user
   end
 
   # POST /user_status_criterions
   # POST /user_status_criterions.xml
   def create
     @user_status_criterion = UserStatusCriterion.new(params[:user_status_criterion])
+    raise AuthorizationError unless @user_status_criterion.may_create? current_user
 
     respond_to do |format|
       if @user_status_criterion.save
@@ -58,6 +62,7 @@ class UserStatusCriterionsController < ApplicationController
   # PUT /user_status_criterions/1.xml
   def update
     @user_status_criterion = UserStatusCriterion.find(params[:id])
+    raise AuthorizationError unless @user_status_criterion.may_update? current_user
 
     respond_to do |format|
       if @user_status_criterion.update_attributes(params[:user_status_criterion])
@@ -75,6 +80,7 @@ class UserStatusCriterionsController < ApplicationController
   # DELETE /user_status_criterions/1.xml
   def destroy
     @user_status_criterion = UserStatusCriterion.find(params[:id])
+    raise AuthorizationError unless @user_status_criterion.may_destroy? current_user
     @user_status_criterion.destroy
 
     respond_to do |format|
@@ -83,3 +89,4 @@ class UserStatusCriterionsController < ApplicationController
     end
   end
 end
+

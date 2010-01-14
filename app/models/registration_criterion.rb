@@ -1,4 +1,6 @@
 class RegistrationCriterion < ActiveRecord::Base
+  include GlobalModelAuthorization
+
   has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
 
   validates_numericality_of :minimal_percentage, :integer_only => true,

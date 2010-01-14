@@ -14,6 +14,7 @@ class RegistrationCriterionsController < ApplicationController
   # GET /registration_criterions/1.xml
   def show
     @registration_criterion = RegistrationCriterion.find(params[:id])
+    raise AuthorizationError unless @registration_criterion.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -25,6 +26,7 @@ class RegistrationCriterionsController < ApplicationController
   # GET /registration_criterions/new.xml
   def new
     @registration_criterion = RegistrationCriterion.new
+    raise AuthorizationError unless @registration_criterion.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -35,12 +37,14 @@ class RegistrationCriterionsController < ApplicationController
   # GET /registration_criterions/1/edit
   def edit
     @registration_criterion = RegistrationCriterion.find(params[:id])
+    raise AuthorizationError unless @registration_criterion.may_update? current_user
   end
 
   # POST /registration_criterions
   # POST /registration_criterions.xml
   def create
     @registration_criterion = RegistrationCriterion.new(params[:registration_criterion])
+    raise AuthorizationError unless @registration_criterion.may_create? current_user
 
     respond_to do |format|
       if @registration_criterion.save
@@ -58,6 +62,7 @@ class RegistrationCriterionsController < ApplicationController
   # PUT /registration_criterions/1.xml
   def update
     @registration_criterion = RegistrationCriterion.find(params[:id])
+    raise AuthorizationError unless @registration_criterion.may_update? current_user
 
     respond_to do |format|
       if @registration_criterion.update_attributes(params[:registration_criterion])
@@ -75,6 +80,7 @@ class RegistrationCriterionsController < ApplicationController
   # DELETE /registration_criterions/1.xml
   def destroy
     @registration_criterion = RegistrationCriterion.find(params[:id])
+    raise AuthorizationError unless @registration_criterion.may_destroy? current_user
     @registration_criterion.destroy
 
     respond_to do |format|
@@ -83,3 +89,4 @@ class RegistrationCriterionsController < ApplicationController
     end
   end
 end
+
