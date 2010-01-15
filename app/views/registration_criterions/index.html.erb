@@ -1,19 +1,6 @@
-<h1>Listing registration_criterions</h1>
+<h1>Listing registration criterions</h1>
 
-<table>
-  <tr>
-    <th>Must register</th>
-  </tr>
-
-<% @registration_criterions.each do |registration_criterion| %>
-  <tr>
-    <td><%=h registration_criterion.must_register %></td>
-    <td><%= link_to 'Show', registration_criterion %></td>
-    <td><%= link_to 'Edit', edit_registration_criterion_path(registration_criterion) %></td>
-    <td><%= link_to 'Destroy', registration_criterion, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+<%= render :partial => "registration_criterions", :object => @registration_criterions %>
 
 <br />
 

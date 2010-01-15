@@ -14,9 +14,7 @@
 #    require File.dirname(__FILE__) + '/../../spec/factories' # or wherever your factories are
 #
 # You may also need to add gem dependencies on your factory of choice in <tt>config/environments/cucumber.rb</tt>
-Spork.each_run do
-  require 'pickle/world'
-end
+require 'pickle/world'
 # Example of configuring pickle:
 #
 # Pickle.configure do |config|
