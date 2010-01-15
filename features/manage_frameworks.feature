@@ -4,33 +4,28 @@ Feature: Manage frameworks
   I want to create, show, delete, and list frameworks
 
   Background:
-    Given the following users:
-      | net_id  | password | admin |
-      | admin   | secret   | true  |
-      | regular | secret   | false |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
 
-  Scenario Outline: New framework form
-    Given I am logged in as "<user>" with password "secret"
+  Scenario Outline: Test permissions for frameworks controller actions
+    Given an framework: "basic" exists
+    And I am logged in as "<user>" with password "secret"
     And I am on the new framework page
-    Then I should see "<see>"
-
+    Then I should <create>
+    Given I post on the frameworks page
+    Then I should <create>
+    And I am on the edit page for framework: "basic"
+    Then I should <update>
+    Given I put on the page for framework: "basic"
+    Then I should <update>
+    Given I am on the page for framework: "basic"
+    Then I should <show>
+    Given I delete on the page for framework: "basic"
+    Then I should <destroy>
     Examples:
-      | user    | see           |
-      | admin   | New framework |
-      | regular | Unauthorized  |
-
-  Scenario Outline: Edit framework form
-    Given I am logged in as "<user>" with password "secret"
-    And the following frameworks:
-      | name      |
-      | safc      |
-    And I am on "safc's edit framework page"
-    Then I should see "<see>"
-
-    Examples:
-      | user    | see           |
-      | admin   | Editing framework |
-      | regular | Unauthorized  |
+      | user    | create                 | update                 | destroy                | show                   |
+      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
 
   Scenario: Register new framework and edit
     Given I am logged in as "admin" with password "secret"
@@ -38,25 +33,23 @@ Feature: Manage frameworks
     When I fill in "Name" with "safc framework"
     And I press "Create"
     Then I should see "Framework was successfully created."
-    And I should see "safc framework"
+    And I should see "Name: safc framework"
     When I follow "Edit"
     And I fill in "Name" with "gpsafc framework"
     And I press "Update"
     Then I should see "Framework was successfully updated."
-    And I should see "gpsafc framework"
+    And I should see "Name: gpsafc framework"
 
   Scenario: Delete framework
-    Given I am logged in as "admin" with password "secret"
-    And the following frameworks:
-      |name  |
-      |name 1|
-      |name 2|
-      |name 3|
-      |name 4|
+    Given a framework exists with name: "framework 4"
+    And a framework exists with name: "framework 3"
+    And a framework exists with name: "framework 2"
+    And a framework exists with name: "framework 1"
+    And I am logged in as "admin" with password "secret"
     When I delete the 3rd framework
     Then I should see the following frameworks:
-      |name  |
-      |name 1|
-      |name 2|
-      |name 4|
+      |Name       |
+      |framework 1|
+      |framework 2|
+      |framework 4|
 
