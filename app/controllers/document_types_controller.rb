@@ -50,7 +50,7 @@ class DocumentTypesController < ApplicationController
 
     respond_to do |format|
       if @document_type.save
-        flash[:notice] = 'DocumentType was successfully created.'
+        flash[:notice] = 'Document type was successfully created.'
         format.html { redirect_to(@document_type) }
         format.xml  { render :xml => @document_type, :status => :created, :location => @document_type }
       else
@@ -68,7 +68,7 @@ class DocumentTypesController < ApplicationController
 
     respond_to do |format|
       if @document_type.update_attributes(params[:document_type])
-        flash[:notice] = 'DocumentType was successfully updated.'
+        flash[:notice] = 'Document type was successfully updated.'
         format.html { redirect_to(@document_type) }
         format.xml  { head :ok }
       else
