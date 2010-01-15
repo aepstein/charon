@@ -10,21 +10,7 @@
 
 <%= will_paginate @organizations %>
 
-<table>
-  <tr>
-    <th>Name</th>
-  </tr>
-
-<% @organizations.each do |organization| %>
-  <tr>
-    <td><%=h organization.name %></td>
-    <td><%= link_to 'Show', organization %></td>
-    <td><%= link_to 'Profile', profile_organization_path( organization ) %></td>
-    <td><%= link_to 'Edit', edit_organization_path(organization) %></td>
-    <td><%= link_to 'Destroy', organization, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+<%= render :partial => "organizations", :object => @organizations %>
 
 <br />
 

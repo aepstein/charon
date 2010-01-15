@@ -11,6 +11,11 @@ describe Organization do
     Factory(:organization).new_record?.should == false
   end
 
+  it 'should not save without a last_name' do
+    @organization.last_name = nil
+    @organization.save.should be_false
+  end
+
   it "should have a requests.creatable method that returns requests that can be made" do
     basis = Factory(:basis)
     started_request = Factory(:request, :organizations => [@organization])

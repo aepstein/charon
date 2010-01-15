@@ -19,17 +19,36 @@ Feature: Manage organizations
     And a basis: "basis_2" exists with framework: framework "safc", name: "basis 2"
     And a membership exists with user: user "allowed_user", organization: organization "organization_1", role: role "allowed"
 
+  Scenario Outline: Test permissions for agreements controller actions
+    Given I am logged in as "<user>" with password "secret"
+    And I am on the new organization page
+    Then I should <create>
+    Given I post on the organizations page
+    Then I should <create>
+    And I am on the edit page for organization: "organization_1"
+    Then I should <update>
+    Given I put on the page for organization: "organization_1"
+    Then I should <update>
+    Given I am on the page for organization: "organization_1"
+    Then I should <show>
+    Given I delete on the page for organization: "organization_1"
+    Then I should <destroy>
+    Examples:
+      | user           | create                 | update                 | destroy                | show                   |
+      | admin          | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | allowed_user   | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | global         | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+
   Scenario Outline: Show the headings for categories of requests
-    Given the following requests:
-      | status   | organizations | basis   |
-      | started  | Org1          | basis 1 |
-      | released | Org1          | basis 1 |
+    Given a request exists with basis: basis "basis_1", status: "started"
+    And organization: "organization_1" is amongst the organizations of the request
+    And a request exists with basis: basis "basis_1", status: "released"
+    And organization: "organization_1" is amongst the organizations of the request
     And I am logged in as "<user>" with password "secret"
     And I am on "Org1's organization profile page"
     Then I should <creatable_action> "Bases for you to make requests"
     And I should <started_action> "Requests you've started"
     And I should <released_action> "Requests that have been released"
-
     Examples:
       | user         | creatable_action | started_action | released_action |
       | admin        | see              | see            | see             |
@@ -59,12 +78,10 @@ Feature: Manage organizations
 
   Scenario: Search organizations
     Given there are no organizations
-    And the following organizations:
-      | first_name | last_name        |
-      | Cornell    | Outing Club      |
-      | Cornell    | Fishing Club     |
-      |            | Optimist Society |
-      | Optimist   | Group            |
+    And an organization exists with first_name: "Cornell", last_name: "Outing Club"
+    And an organization exists with first_name: "Cornell", last_name: "Fishing Club"
+    And an organization exists with last_name: "Optimist Society"
+    And an organization exists with first_name: "Optimist", last_name: "Group"
     And I am logged in as "admin" with password "secret"
     And I am on the organizations page
     Then I should see the following organizations:
@@ -87,15 +104,13 @@ Feature: Manage organizations
       | Optimist Society |
 
   Scenario Outline: Show or hide Create, Edit, Destroy, and Show request links
-    Given the following requests:
-      | status   | organizations | basis   |
-      | started  | Org1          | basis 2 |
+    Given a request exists with basis: basis "basis_2"
+    And organization: "organization_1" is amongst the organizations of the request
     And I am logged in as "<user>" with password "secret"
-    And I am on "Org1's organization profile page"
+    And I am on the profile page for organization: "organization_1"
     Then I should <create_action>
     And I should <destroy_action>
     And I should <see_action>
-
     Examples:
       | user         | create_action     | destroy_action    | see_action     |
       | admin        | see "basis 1"     | see "Destroy"     | see "Show"     |
@@ -104,10 +119,9 @@ Feature: Manage organizations
 
   Scenario: Create a new request and edit
     Given I am logged in as "allowed_user" with password "secret"
-    And I am on "Org1's organization profile page"
+    And I am on the profile page for organization: "organization_1"
     And I press "Create"
-    Then I should be on the items page for organization: "organization_1"
-    And I should see "Request was successfully created."
+    Then I should see "Request was successfully created."
     When I follow "Show request"
     And I follow "Edit"
     Then I should see "Editing Request for Org1"

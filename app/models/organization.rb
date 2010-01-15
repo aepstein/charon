@@ -18,6 +18,7 @@ class Organization < ActiveRecord::Base
 
   default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC'
 
+  validates_presence_of :last_name
   validates_uniqueness_of :last_name, :scope => :first_name
 
   def unfulfilled_permissions
@@ -53,6 +54,7 @@ class Organization < ActiveRecord::Base
   end
 
   def format_name
+    return unless last_name
     self.first_name = "" unless first_name.class == String
     while match = last_name.match(/\A(Cornell|The|An|A)\s+(.*)\Z/) do
       self.first_name = "#{first_name} #{match[1]}".strip

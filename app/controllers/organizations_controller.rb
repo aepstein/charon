@@ -7,7 +7,7 @@ class OrganizationsController < ApplicationController
     page = params[:page] ? params[:page] : 1
     if params[:search]
       @organizations = Organization.first_name_or_last_name_like("%#{params[:search][:q]}%").paginate(:page => page)
-    else
+  else
       @organizations = Organization.paginate(:page => page)
     end
 
@@ -52,7 +52,7 @@ class OrganizationsController < ApplicationController
     else
       @organization = Organization.new
     end
-    raise AuthorizationErrror unless @organization.may_create? current_user
+    raise AuthorizationError unless @organization.may_create? current_user
 
     respond_to do |format|
       format.html # new.html.erb
@@ -78,7 +78,7 @@ class OrganizationsController < ApplicationController
     else
       @organization = Organization.new(params[:organization])
     end
-    raise AuthorizationErrror unless @organization.may_create? current_user
+    raise AuthorizationError unless @organization.may_create? current_user
 
     respond_to do |format|
       if @organization.save

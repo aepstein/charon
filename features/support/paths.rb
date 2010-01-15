@@ -29,6 +29,9 @@ module NavigationHelpers
     when /^the page for #{capture_model}$/
       polymorphic_path( [model($1)] )
 
+    when /^the profile page for #{capture_model}$/
+      polymorphic_path( [:profile,model($1)] )
+
     when /^"(.+)'s new approver page"$/
       new_framework_approver_path( Framework.find_by_name($1) )
 
