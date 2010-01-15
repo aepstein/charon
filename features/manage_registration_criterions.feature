@@ -9,7 +9,10 @@ Feature: Manage registration_criterions
 
   Scenario Outline:
     Given I am logged in as "<user>" with password "secret"
+    And a registration_criterion exists
     And I am on the new registration_criterion page
+    Then I should <see>
+    Given I am on the edit page for the registration_criterion
     Then I should <see>
     Examples:
       | user    | see                    |

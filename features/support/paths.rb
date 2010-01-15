@@ -10,9 +10,12 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+
+    when /^the edit page for #{capture_model}$/
+      edit_polymorphic_path( [model($1)] )
+
     when /the new registration_criterion page/
       new_registration_criterion_path
-
 
     when /the local_event_expenses page/
       local_event_expenses_path
