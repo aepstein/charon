@@ -3,15 +3,6 @@
 </p>
 
 <p>
-  <strong>Must register:</strong> <%=h @framework.must_register? ? "yes" : "no" %>
-</p>
-
-<p>
-  <strong>Member requirement:</strong> <%=h @framework.member_requirement %>
-</p>
-
-
-<p>
 <%= link_to 'Edit', edit_framework_path(@framework) %> |
 <%= link_to 'List permissions', framework_permissions_path(@framework) %> |
 <%= link_to 'Back', frameworks_path %>

@@ -16,9 +16,7 @@ Feature: Manage approvals
       | president |
 
   Scenario: Register new approval (agreement)
-    Given the following agreements:
-      | name | content        |
-      | safc | some agreement |
+    Given an agreement exists with name: "safc"
     And the following permissions:
       | role      |
       | president |
@@ -26,7 +24,7 @@ Feature: Manage approvals
       | role      | user      |
       | president | president |
     And I am logged in as "president" with password "secret"
-    When I follow "Approve"
+    And I am on the new approval page for the agreement
     Then I should see "Name: safc"
     Given 1 second elapses
     And the Agreement records change
