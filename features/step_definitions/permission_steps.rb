@@ -3,7 +3,6 @@ Given /^the following permissions:$/ do |permissions|
     complex = Hash.new
     complex['framework'] = Framework.find_by_name(permission['framework']) if permission['framework']
     complex['role'] = Role.find_by_name(permission['role']) if permission['role']
-    complex['agreements'] = permission['agreements'].split(',').map { |a| Agreement.find_by_name(a.strip) } if permission['agreements']
     Factory(:permission, permission.merge(complex))
   end
 end

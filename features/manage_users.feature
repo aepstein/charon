@@ -131,8 +131,8 @@ Feature: Manage users
       | safc   |
       | gpsafc |
     And the following permissions:
-      | role    | agreements   |
-      | allowed | safc, gpsafc |
+      | role    |
+      | allowed |
     And the following approvals:
       | agreement | user  |
       | safc      | owner |
@@ -143,12 +143,6 @@ Feature: Manage users
     And I should see "unregistered organization"
     And I should not see "irrelevant organization"
     And I should not see "irrelevant registration"
-    And I should see the following entries in "accepted_agreements":
-      | Approvable |
-      | safc       |
-    And I should see the following entries in "unfulfilled_agreements":
-      | Approvable |
-      | gpsafc     |
 
   Scenario: Delete user
     Given I am logged in as "admin" with password "secret"

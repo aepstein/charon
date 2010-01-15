@@ -1,1 +1,1 @@
-features/manage_addresses.feature:14 features/manage_agreements.feature:35 features/manage_approvals.feature:18:38 features/manage_approvers.feature:20 features/manage_bases.feature:39:51 features/manage_document_types.feature:22 features/manage_frameworks.feature:12:22 features/manage_items.feature:96 features/manage_permissions.feature:21:47 features/manage_roles.feature:25 features/manage_users.feature:75:87:109
+features/manage_approvals.feature:18

@@ -23,17 +23,6 @@
   <%=h @permission.perspective %>
 </p>
 
-<% unless @permission.agreements.empty? %>
-<p>
-  <b>Agreements:</b>
-  <ul>
-  <% @permission.agreements.each do |agreement| %>
-  <li><%= link_to agreement.to_s, agreement %></li>
-  <% end %>
-  </ul>
-</p>
-<% end %>
-
 <p>
 <%= link_to 'Edit', edit_permission_path(@permission) %> |
 <%= link_to 'Back', framework_permissions_path(@permission.framework) %>

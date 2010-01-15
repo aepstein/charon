@@ -20,8 +20,8 @@ Feature: Manage approvals
       | name | content        |
       | safc | some agreement |
     And the following permissions:
-      | role      | agreements |
-      | president | safc       |
+      | role      |
+      | president |
     And the following memberships:
       | role      | user      |
       | president | president |
