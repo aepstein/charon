@@ -27,9 +27,7 @@ ActionController::Routing::Routes.draw do |map|
     organization.resources :requests, :member => { :supporting_documents => :get } do |request|
       request.resources :approvals, :only => [ :create, :destroy, :index, :new ]
       request.resources :items, { :member => { :move => :get, :do_move => :put } } do |item|
-        item.resources :editions do |edition|
-          edition.resources :documents
-        end
+        item.resources :editions
       end
     end
   end
