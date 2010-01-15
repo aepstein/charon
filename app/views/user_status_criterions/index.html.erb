@@ -2,12 +2,12 @@
 
 <table>
   <tr>
-    <th>Statuses mask</th>
+    <th>Statuses</th>
   </tr>
 
 <% @user_status_criterions.each do |user_status_criterion| %>
   <tr>
-    <td><%=h user_status_criterion.statuses_mask %></td>
+    <td><%=h user_status_criterion.statuses.sort.join ', ' %></td>
     <td><%= link_to 'Show', user_status_criterion %></td>
     <td><%= link_to 'Edit', edit_user_status_criterion_path(user_status_criterion) %></td>
     <td><%= link_to 'Destroy', user_status_criterion, :confirm => 'Are you sure?', :method => :delete %></td>
@@ -17,4 +17,7 @@
 
 <br />
 
+<p>
 <%= link_to 'New user_status_criterion', new_user_status_criterion_path %>
+</p>
+

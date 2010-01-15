@@ -1,0 +1,10 @@
+<% form.error_messages %>
+
+<% form.inputs do %>
+<%= form.input :must_register, :as => :radio %>
+<%= form.input :minimal_percentage %>
+<%= form.input :type_of_member, :as => :select, :collection => Registration::MEMBER_TYPES %>
+<% end %>
+
+<%= form.buttons %>
+

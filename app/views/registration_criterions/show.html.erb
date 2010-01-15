@@ -1,8 +1,17 @@
 <p>
-  <b>Must register:</b>
-  <%=h @registration_criterion.must_register %>
+  <b>Must register:</b> <%= @registration_criterion.must_register? ? 'Yes' : 'No' %>
 </p>
 
+<p>
+  <b>Minimal percentage:</b> <%= @registration_criterion.minimal_percentage %>%
+</p>
 
+<p>
+  <b>Type of member:</b> <%= @registration_criterion.type_of_member %>
+</p>
+
+<p>
 <%= link_to 'Edit', edit_registration_criterion_path(@registration_criterion) %> |
 <%= link_to 'Back', registration_criterions_path %>
+</p>
+
