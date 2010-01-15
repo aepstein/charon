@@ -57,11 +57,18 @@ class Approval < ActiveRecord::Base
     approvable.save if approvable.changed?
   end
 
+  def may_see?(user)
+    return false unless user && self.user
+    self.user == user || user.admin?
+  end
+
   def may_create?(user)
+    return false unless user
     may_approve? user
   end
 
   def may_destroy?(user)
+    return false unless user
     return true if self.user == user && may_unapprove?( user )
     may_unapprove_other? user
   end

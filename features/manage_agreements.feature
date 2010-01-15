@@ -4,10 +4,8 @@ Feature: Manage agreements
   I want to create, edit, destroy, show, and list agreements
 
   Background:
-    Given the following users:
-      | net_id  | password | admin |
-      | admin   | secret   | true  |
-      | regular | secret   | false |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
 
   Scenario: Register new agreement
     Given I am logged in as "admin" with password "secret"
@@ -32,24 +30,32 @@ Feature: Manage agreements
     And I should see "Contact name: New Office of the Assemblies"
     And I should see "Contact email: new_office@example.com"
 
-  Scenario Outline: Properly restrict access to new agreement
-    Given I am logged in as "<user>" with password "secret"
+  Scenario Outline: Test permissions for agreements controller actions
+    Given an agreement: "basic" exists
+    And I am logged in as "<user>" with password "secret"
     And I am on the new agreement page
-    Then I should see "<see>"
-
+    Then I should <create>
+    Given I post on the agreements page
+    Then I should <create>
+    And I am on the edit page for agreement: "basic"
+    Then I should <update>
+    Given I put on the page for agreement: "basic"
+    Then I should <update>
+    Given I am on the page for agreement: "basic"
+    Then I should <show>
+    Given I delete on the page for agreement: "basic"
+    Then I should <destroy>
     Examples:
-      | user    | see           |
-      | admin   | New agreement |
-      | regular | Unauthorized  |
+      | user    | create                 | update                 | destroy                | show                   |
+      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
 
   Scenario: Delete agreement
     Given I am logged in as "admin" with password "secret"
-    And the following agreements:
-      |name  |content  |
-      |name 1|content 1|
-      |name 2|content 2|
-      |name 3|content 3|
-      |name 4|content 4|
+    And an agreement exists with name: "name 4", content: "content"
+    And an agreement exists with name: "name 3", content: "content"
+    And an agreement exists with name: "name 2", content: "content"
+    And an agreement exists with name: "name 1", content: "content"
     When I delete the 3rd agreement
     Then I should see the following agreements:
       |Name  |

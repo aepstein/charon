@@ -7,9 +7,9 @@
     <% end %>
     <td><%=h approval.created_at %></td>
     <% if approval.new_record? && approval.may_create?(current_user) %>
-    <td><%= link_to 'Approve', new_approvable_approval_path( approval.approvable ) %></td>
+    <td><%= link_to 'Create', new_approvable_approval_path( approval.approvable ) %></td>
     <% elsif approval.may_destroy?(current_user) %>
-    <td><%= link_to 'Unapprove', approval, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Destroy', approval, :confirm => 'Are you sure?', :method => :delete %></td>
     <% end %>
   </tr>
 

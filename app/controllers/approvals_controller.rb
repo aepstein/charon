@@ -2,8 +2,6 @@ class ApprovalsController < ApplicationController
 
   before_filter :require_user
 
-  helper_method :approvable_approvals_path, :approvable_approvals_url
-
   # GET /:approvable_class/:approvable_id/approvals
   # GET /:approvable_class/:approvable_id/approvals.xml
   def index
@@ -13,6 +11,18 @@ class ApprovalsController < ApplicationController
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @approvals }
+    end
+  end
+
+  # GET /approvals/1
+  # GET /approvals/1.xml
+  def show
+    @approval = Approval.find(params[:id])
+    raise AuthorizationError unless @approval.may_see? current_user
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml => @approval }
     end
   end
 
@@ -69,14 +79,6 @@ class ApprovalsController < ApplicationController
   end
 
 private
-  def approvable_approvals_path(*args)
-    send("#{approvable.class.to_s.underscore}_approvals_path",args)
-  end
-
-  def approvable_approvals_url(*args)
-    send("#{approvable.class.to_s.underscore}_approvals_url",args)
-  end
-
   def approvable
     @approvable ||= case
     when params[:request_id] then Request.find(params[:request_id])

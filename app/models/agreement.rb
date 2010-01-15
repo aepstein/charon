@@ -1,6 +1,8 @@
 class Agreement < ActiveRecord::Base
   include GlobalModelAuthorization, Fulfillable
 
+  default_scope :order => 'agreements.name ASC'
+
   has_many :approvals, :as => :approvable, :dependent => :destroy
   has_many :users, :through => :approvals
   has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all

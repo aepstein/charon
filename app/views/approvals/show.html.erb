@@ -1,18 +1,16 @@
 <p>
-  <b>User:</b>
-  <%=h @approval.user_id %>
+  <b>User:</b> <%=h @approval.user %>
 </p>
 
 <p>
-  <b>Approvable:</b>
-  <%=h @approval.approvable_id %>
+  <b>Approvable:</b> <%=h @approval.approvable %>
 </p>
 
 <p>
-  <b>Approvable type:</b>
-  <%=h @approval.approvable_type %>
+  <b>Created at:</b> <%=h @approval.created_at %>
 </p>
 
+<p>
+<%= link_to 'Back', polymorphic_path( [@approval.approvable,:approvals] ) %>
+</p>
 
-<%= link_to 'Edit', edit_approval_path(@approval) %> |
-<%= link_to 'Back', approvals_path %>

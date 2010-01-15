@@ -14,6 +14,8 @@ Feature: Manage registration_criterions
     Then I should <see>
     Given I am on the edit page for the registration_criterion
     Then I should <see>
+    Given I post on the registration_criterions page
+    Then I should <see>
     Examples:
       | user    | see                    |
       | admin   | not see "Unauthorized" |

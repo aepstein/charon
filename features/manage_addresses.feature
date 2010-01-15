@@ -1,30 +1,37 @@
 Feature: Manage addresses
   In order to track addresses for users and possibly other entities
   As a mail utilizing organization
-  I want to CRUD addresses
+  I want to create, update, delete, list, and show addresses
 
   Background:
-    Given the following users:
-      | net_id  | password | admin |
-      | admin   | secret   | true  |
-      | owner   | secret   | false |
-      | regular | secret   | false |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "owner" exists with net_id: "owner", password: "secret", admin: false
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
 
-
-  Scenario Outline: Gate new address form
-    Given I am logged in as "<user>" with password "secret"
-    And I am on "owner's" new address page
-    Then I should see "<see>"
-
+  Scenario Outline: Test permissions for addresses controller actions
+    Given an address: "owner_default" exists with addressable: user "owner"
+    And I am logged in as "<user>" with password "secret"
+    And I am on the new address page for user: "owner"
+    Then I should <create>
+    Given I post on the addresses page for user: "owner"
+    Then I should <create>
+    And I am on the edit page for address: "owner_default"
+    Then I should <update>
+    Given I put on the page for address: "owner_default"
+    Then I should <update>
+    Given I am on the page for address: "owner_default"
+    Then I should <show>
+    Given I delete on the page for address: "owner_default"
+    Then I should <destroy>
     Examples:
-      | user    | see          |
-      | admin   | New          |
-      | owner   | New          |
-      | regular | Unauthorized |
+      | user    | create                 | update                 | destroy                | show                   |
+      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | owner   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     |
 
   Scenario Outline: Register new address
     Given I am logged in as "<user>" with password "secret"
-    And I am on "owner's" new address page
+    And I am on the new address page for user: "owner"
     When I fill in "Label" with "house"
     And I fill in "Street" with "100 the Commons"
     And I fill in "City" with "Ithaca"
@@ -52,21 +59,18 @@ Feature: Manage addresses
     And I should see "State: NY"
     And I should see "Zip: 14853"
     And I should see "On campus: Yes"
-
     Examples:
       | user  |
       | admin |
       | owner |
 
   Scenario: Delete address
-    Given the following addresses:
-      |addressable|label  |street  |city  |state  |zip  |on_campus|
-      |owner      |label 1|street 1|city 1|state 1|zip 1|false    |
-      |owner      |label 2|street 2|city 2|state 2|zip 2|true     |
-      |owner      |label 3|street 3|city 3|state 3|zip 3|false    |
-      |owner      |label 4|street 4|city 4|state 4|zip 4|true     |
+    Given an address exists with addressable: user "owner", label: "label 4"
+    And an address exists with addressable: user "owner", label: "label 3"
+    And an address exists with addressable: user "owner", label: "label 2"
+    And an address exists with addressable: user "owner", label: "label 1"
     And I am logged in as "owner" with password "secret"
-    When I delete "owner's" 3rd address
+    When I delete the 3rd address for user: "owner"
     Then I should see the following addresses:
       |Label  |
       |label 1|

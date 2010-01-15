@@ -1,18 +1,11 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :user_status_criterions
-
-  map.resources :agreement_criterions
-
-  map.resources :membership_criterions
-
   map.resources :registration_criterions
-
-  map.resources :fulfillments
-
   map.resources :categories
   map.resources :users, :shallow => true do |user|
     user.resources :addresses
   end
+  map.resources :approvals, :only => [ :show ]
   map.resources :agreements, :shallow => true do |agreement|
     agreement.resources :approvals, :only => [ :create, :destroy, :index, :new ]
   end

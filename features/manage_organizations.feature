@@ -4,34 +4,20 @@ Feature: Manage organizations
   I want the organization profile page
 
   Background:
-    Given the following user records:
-      | net_id       | password | admin  |
-      | admin        | secret   | true   |
-      | allowed_user | secret   | false  |
-      | global       | secret   | false  |
-    And the following role records:
-      | name    |
-      | allowed |
-    And the following framework records:
-      | name |
-      | safc |
-    And the following permissions:
-      | framework | role    | status   | action  | perspective |
-      | safc      | allowed | started  | create  | requestor   |
-      | safc      | allowed | started  | update  | requestor   |
-      | safc      | allowed | started  | destroy | requestor   |
-      | safc      | allowed | started  | see     | requestor   |
-      | safc      | allowed | released | see     | requestor   |
-    And the following organization records:
-      | last_name |
-      | Org1      |
-    And the following bases:
-      | framework | name    |
-      | safc      | basis 1 |
-      | safc      | basis 2 |
-    And the following memberships:
-      | user         | organization | role    |
-      | allowed_user | Org1         | allowed |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "allowed_user" exists with net_id: "allowed_user", password: "secret", admin: false
+    And a user: "global" exists with net_id: "global", password: "secret", admin: false
+    And a role: "allowed" exists with name: "allowed"
+    And a framework: "safc" exists with name: "safc"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "create", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "update", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "destroy", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "released", action: "see", perspective: "requestor"
+    And an organization: "organization_1" exists with last_name: "Org1"
+    And a basis: "basis_1" exists with framework: framework "safc", name: "basis 1"
+    And a basis: "basis_2" exists with framework: framework "safc", name: "basis 2"
+    And a membership exists with user: user "allowed_user", organization: organization "organization_1", role: role "allowed"
 
   Scenario Outline: Show the headings for categories of requests
     Given the following requests:
@@ -120,7 +106,7 @@ Feature: Manage organizations
     Given I am logged in as "allowed_user" with password "secret"
     And I am on "Org1's organization profile page"
     And I press "Create"
-    Then I should be on the items page
+    Then I should be on the items page for organization: "organization_1"
     And I should see "Request was successfully created."
     When I follow "Show request"
     And I follow "Edit"

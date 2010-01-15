@@ -4,25 +4,71 @@ Feature: Manage approvals
   I want to create and destroy approvals
 
   Background:
-    Given the following users:
-      | net_id    | password | admin |
-      | admin     | secret   | true  |
-      | regular   | secret   | false |
-      | president | secret   | false |
-      | treasurer | secret   | false |
-      | advisor   | secret   | false |
-    And the following roles:
-      | name      |
-      | president |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    And a user: "president" exists with net_id: "president", password: "secret", admin: false
+    And a user: "treasurer" exists with net_id: "treasurer", password: "secret", admin: false
+    And a user: "advisor" exists with net_id: "advisor", password: "secret", admin: false
+    And a role: "president" exists with name: "president"
 
-  Scenario: Register new approval (agreement)
+  Scenario Outline: Test permissions for agreement approvals
+    Given an agreement: "basic" exists
+    And an approval: "president" exists with approvable: agreement "basic", user: user "president"
+    And I am logged in as "<user>" with password "secret"
+    And I am on the new approval page for agreement: "basic"
+    Then I should <create>
+    Given I post on the approvals page for agreement: "basic"
+    Then I should <create>
+    Given I am on the page for approval: "president"
+    Then I should <show>
+    Given I delete on the page for approval: "president"
+    Then I should <destroy>
+    Examples:
+      | user      | create                 | destroy                | show                   |
+      | admin     | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | president | not see "Unauthorized" | see "Unauthorized"     | not see "Unauthorized" |
+      | regular   | not see "Unauthorized" | see "Unauthorized"     | see "Unauthorized"     |
+
+  Scenario Outline: Test permissions for request approvals
+    Given a user "allowed" exists with net_id: "allowed", password: "secret"
+    And a user "allowed_not_yet" exists with net_id: "allowed_not_yet", password: "secret"
+    And a user "supervisor" exists with net_id: "supervisor", password: "secret"
+    And a role: "approver" exists
+    And a role: "supervisor" exists
+    And an organization: "owner" exists with last_name: "Cool Club"
+    And a membership exists with role: role "approver", user: user "allowed", active: true, organization: organization "owner"
+    And a membership exists with role: role "approver", user: user "allowed_not_yet", active: true, organization: organization "owner"
+    And a membership exists with role: role "supervisor", user: user "supervisor", active: true, organization: organization "owner"
+    And a framework exists
+    And a permission exists with role: role "approver", action: "approve", perspective: "requestor", status: "started", framework: the framework
+    And a permission exists with role: role "approver", action: "approve", perspective: "requestor", status: "completed", framework: the framework
+    And a permission exists with role: role "approver", action: "unapprove", perspective: "requestor", status: "completed", framework: the framework
+    And a permission exists with role: role "supervisor", action: "see", perspective: "requestor", status: "started", framework: the framework
+    And a permission exists with role: role "supervisor", action: "unapprove_other", perspective: "requestor", status: "completed", framework: the framework
+    And a structure exists with minimum_requestors: 1, maximum_requestors: 2
+    And a basis exists with framework: the framework, structure: the structure
+    And a request exists with basis: the basis, status: "started"
+    And the request is one of the requests of organization: "owner"
+    And an approval: "allowed" exists with user: user "allowed", approvable: the request
+    And I am logged in as "<user>" with password "secret"
+    And I am on the new approval page for the request
+    Then I should <create>
+    Given I post on the approvals page for the request
+    Then I should <create>
+    Given I am on the page for approval: "allowed"
+    Then I should <show>
+    Given I delete on the page for approval: "allowed"
+    Then I should <destroy>
+    Examples:
+      | user            | create                 | destroy                | show                   |
+      | admin           | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | allowed         | not see "Unauthorized" | see "Unauthorized"     | not see "Unauthorized" |
+      | allowed_not_yet | not see "Unauthorized" | see "Unauthorized"     | see "Unauthorized"     |
+      | supervisor      | see "Unauthorized"     | not see "Unauthorized" | see "Unauthorized"     |
+      | regular         | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     |
+
+  Scenario: Register new approval of an agreement
     Given an agreement exists with name: "safc"
-    And the following permissions:
-      | role      |
-      | president |
-    And the following memberships:
-      | role      | user      |
-      | president | president |
     And I am logged in as "president" with password "secret"
     And I am on the new approval page for the agreement
     Then I should see "Name: safc"
@@ -33,7 +79,7 @@ Feature: Manage approvals
     When I press "Confirm Approval"
     Then I should see "Approval was successfully created."
 
-  Scenario: Register new approval (request)
+  Scenario: Register new approval of a request
     Given a user "allowed" exists with net_id: "allowed", password: "secret"
     And a role: "approver" exists
     And an organization: "owner" exists with last_name: "Cool Club"
