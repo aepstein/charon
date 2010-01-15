@@ -1,14 +1,17 @@
 <h1>Listing permissions in <%=h @framework %></h1>
 
 <table>
+<thead>
   <tr>
     <th>Status</th>
     <th>Role</th>
     <th>Action</th>
     <th>Perspective</th>
   </tr>
-
+</thead>
+<tbody>
   <%= render :partial => 'permission', :collection => @permissions  %>
+</tbody>
 </table>
 
 <br />

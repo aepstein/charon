@@ -4,23 +4,17 @@ Feature: Manage permissions
   I want to create, show, list, update, and destroy permissions
 
   Background:
-    Given the following frameworks:
-      | name   |
-      | safc   |
-    And the following users:
-      | net_id  | password | admin |
-      | admin   | secret   | true  |
-      | regular | secret   | false |
-    And the following roles:
-      | name      |
-      | president |
-      | treasurer |
-      | advisor   |
-      | officer   |
+    Given a framework: "safc" exists with name: "safc"
+    And a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    And a role: "president" exists with name: "president"
+    And a role: "treasurer" exists with name: "treasurer"
+    And a role: "advisor" exists with name: "advisor"
+    And a role: "officer" exists with name: "officer"
 
   Scenario: Register new permission and edit
     Given I am logged in as "admin" with password "secret"
-    And I am on "safc's new permission page"
+    And I am on the new permission page for framework: "safc"
     When I select "started" from "Status"
     And I select "president" from "Role"
     And I select "approve" from "Action"
@@ -44,27 +38,35 @@ Feature: Manage permissions
     And I should see "update"
     And I should see "reviewer"
 
-  Scenario Outline:
-    Given I am logged in as "<user>" with password "secret"
-    And I am on "safc's new permission page"
-    Then I should see "<see>"
-
+  Scenario Outline: Test permissions for permissions controller actions
+    Given a permission: "basic" exists
+    And I am logged in as "<user>" with password "secret"
+    And I am on the new permission page for framework: "safc"
+    Then I should <create>
+    Given I post on the permissions page for framework: "safc"
+    Then I should <create>
+    And I am on the edit page for the permission
+    Then I should <update>
+    Given I put on the page for the permission
+    Then I should <update>
+    Given I am on the page for the permission
+    Then I should <show>
+    Given I delete on the page for the permission
+    Then I should <destroy>
     Examples:
-      | user    | see            |
-      | admin   | New permission |
-      | regular | Unauthorized   |
+      | user    | create                 | update                 | destroy                | show                   |
+      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
 
   Scenario: Delete permission
-    And the following permissions:
-      | framework | status  | role      | action  | perspective |
-      | safc      | started | president | approve | requestor   |
-      | safc      | started | treasurer | approve | requestor   |
-      | safc      | started | advisor   | approve | requestor   |
-      | safc      | started | officer   | approve | requestor   |
+    Given a permission exists with framework: the framework, status: "started", role: role "president", action: "approve", perspective: "requestor"
+    And a permission exists with framework: the framework, status: "started", role: role "treasurer", action: "approve", perspective: "requestor"
+    And a permission exists with framework: the framework, status: "started", role: role "advisor", action: "approve", perspective: "requestor"
+    And a permission exists with framework: the framework, status: "started", role: role "officer", action: "approve", perspective: "requestor"
     And I am logged in as "admin" with password "secret"
-    When I delete the 3rd permission for "safc"
+    When I delete the 3rd permission for framework: "safc"
     Then I should see the following permissions:
-      | status  | role      | action  | perspective |
+      | Status  | Role      | Action  | Perspective |
       | started | president | approve | requestor   |
       | started | treasurer | approve | requestor   |
       | started | officer   | approve | requestor   |
