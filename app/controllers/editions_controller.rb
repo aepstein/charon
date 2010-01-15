@@ -48,8 +48,8 @@ class EditionsController < ApplicationController
   # POST /items/:item_id/editions
   # POST /items/:item_id/editions.xml
   def create
-    @edition = Item.find(params[:item_id]).editions.next(params[:edition])
-    raise AuthorizationError unless @edition.may_see?(current_user)
+    @edition = Item.find(params[:item_id]).editions.next(params[:edition] || {})
+    raise AuthorizationError unless @edition.may_create?(current_user)
 
     respond_to do |format|
       if @edition.save
@@ -71,7 +71,7 @@ class EditionsController < ApplicationController
     raise AuthorizationError unless @edition.may_update?(current_user)
 
     respond_to do |format|
-      if @edition.update_attributes(params[:edition])
+      if @edition.update_attributes(params[:edition] || {})
         flash[:notice] = 'Edition was successfully updated.'
         format.html { redirect_to(@edition) }
         format.xml  { head :ok }
@@ -90,7 +90,7 @@ class EditionsController < ApplicationController
     @edition.destroy
 
     respond_to do |format|
-      format.html { redirect_to(editions_url) }
+      format.html { redirect_to item_editions_url @edition.item  }
       format.xml  { head :ok }
     end
   end

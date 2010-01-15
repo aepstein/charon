@@ -9,6 +9,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :agreements, :shallow => true do |agreement|
     agreement.resources :approvals, :only => [ :create, :destroy, :index, :new ]
   end
+  map.resources :documents, :only => [ :show ]
   map.resources :document_types
   map.resources :requests, :only => [ :index ]
   map.resources :frameworks, :shallow => true do |framework|

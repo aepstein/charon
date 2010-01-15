@@ -4,62 +4,62 @@ Feature: Manage editions
   I want to create, update, and show editions
 
   Background:
-    Given the following organizations:
-      | last_name                |
-      | our club                 |
-      | undergraduate commission |
-    And the following users:
-      | net_id       | password | admin |
-      | admin        | secret   | true  |
-      | president    | secret   | false |
-      | commissioner | secret   | false |
-    And the following roles:
-      | name         |
-      | president    |
-      | commissioner |
-    And the following memberships:
-      | organization             | role         | user         |
-      | our club                 | president    | president    |
-      | undergraduate commission | commissioner | commissioner |
-    And the following structures:
-      | name   |
-      | budget |
-    And the following nodes:
-      | structure | requestable_type      | name                   |
-      | budget    | AdministrativeExpense | administrative expense |
-      | budget    | LocalEventExpense     | local event expense    |
-      | budget    | TravelEventExpense    | travel event expense   |
-      | budget    | DurableGoodExpense    | durable good expense   |
-      | budget    | PublicationExpense    | publication expense    |
-      | budget    | SpeakerExpense        | speaker expense        |
-    And the following frameworks:
-      | name      |
-      | undergrad |
-    And the following permissions:
-      | framework | status  | role         | action     | perspective |
-      | undergrad | started | president    | see        | requestor   |
-      | undergrad | started | president    | create     | requestor   |
-      | undergrad | started | president    | update     | requestor   |
-      | undergrad | started | president    | destroy    | requestor   |
-      | undergrad | started | commissioner | see        | reviewer    |
-    And the following bases:
-      | name              | organization             | structure | framework |
-      | annual budget     | undergraduate commission | budget    | undergrad |
-    And the following requests:
-      | status   | organizations  | basis         |
-      | started  | our club       | annual budget |
-    And the following items:
-      | request | node                   |
-      | 1       | administrative expense |
-      | 1       | durable good expense   |
-      | 1       | publication expense    |
-      | 1       | local event expense    |
-      | 1       | travel event expense   |
-      | 1       | speaker expense        |
+    Given an organization: "club" exists with last_name: "our club"
+    And an organization: "commission" exists with last_name: "undergraduate commission"
+    And a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "president" exists with net_id: "president", password: "secret", admin: false
+    And a user: "commissioner" exists with net_id: "commissioner", password: "secret", admin: false
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    And a role: "president" exists with name: "president"
+    And a role: "commissioner" exists with name: "commissioner"
+    And a membership exists with organization: organization "club", role: role "president", user: user "president"
+    And a membership exists with organization: organization "commission", role: role "commissioner", user: user "commissioner"
+    And a structure: "annual" exists with name: "budget"
+    And a node: "administrative" exists with structure: structure "annual", requestable_type: "AdministrativeExpense", name: "administrative expense"
+    And a node: "local" exists with structure: structure "annual", requestable_type: "LocalEventExpense", name: "local event expense"
+    And a node: "travel" exists with structure: structure "annual", requestable_type: "TravelEventExpense", name: "travel event expense"
+    And a node: "durable" exists with structure: structure "annual", requestable_type: "DurableGoodExpense", name: "durable good expense"
+    And a node: "publication" exists with structure: structure "annual", requestable_type: "PublicationExpense", name: "publication expense"
+    And a node: "speaker" exists with structure: structure "annual", requestable_type: "SpeakerExpense", name: "speaker expense"
+    And a framework: "safc" exists with name: "undergrad"
+    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "create", perspective: "requestor"
+    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "update", perspective: "requestor"
+    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "destroy", perspective: "requestor"
+    And a permission exists with framework: framework "safc", status: "started", role: role "commissioner", action: "see", perspective: "reviewer"
+    And a basis: "annual_safc" exists with name: "annual budget", structure: structure "annual", framework: framework "safc", organization: organization "commission"
+    And a request exists with status: "started", basis: basis "annual_safc"
+    And organization: "club" is amongst the organizations of the request
+
+  Scenario Outline: Test permissions for editions controller actions
+    Given an item: "administrative" exists with request: the request, node: node "administrative"
+    And an item: "local" exists with request: the request, node: node "local"
+    And an edition: "basic" exists with item: item "administrative"
+    And an administrative_expense exists with edition: edition "basic"
+    And I am logged in as "<user>" with password "secret"
+    And I am on the new edition page for item: "local"
+    Then I should <create>
+    Given I post on the editions page for item: "local"
+    Then I should <create>
+    And I am on the edit page for the edition
+    Then I should <update>
+    Given I put on the page for the edition
+    Then I should <update>
+    Given I am on the page for the edition
+    Then I should <show>
+    Given I delete on the page for the edition
+    Then I should <destroy>
+    Examples:
+      | user        | create                 | update                 | destroy                | show                   |
+      | admin       | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | president   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | commissioner| see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | regular     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     |
 
   Scenario: Add and update edition (administrative_expense)
-    Given I am logged in as "admin" with password "secret"
-    And I am on the new edition page of the 1st item
+    Given an item exists with request: the request, node: node "administrative"
+    And I am logged in as "president" with password "secret"
+    And I am on the new edition page for the item
     When I fill in "edition_administrative_expense_attributes_copies" with "100"
     And I fill in "Number of buckets of chalk" with "2"
     And I fill in "Amount for Daily Sun Ads" with "20"
@@ -105,11 +105,11 @@ Feature: Manage editions
     Then I should not see "Edition was successfully updated."
 
   Scenario: Add and update edition with documentation (administrative_expense)
-    Given the following document_types:
-      | name        | nodes                  |
-      | price quote | administrative expense |
-    And I am logged in as "admin" with password "secret"
-    And I am on the new edition page of the 1st item
+    Given a document_type: "price_quote" exists with name: "price quote"
+    And the document_type is amongst the document_types of node: "administrative"
+    And an item exists with request: the request, node: node "administrative"
+    And I am logged in as "president" with password "secret"
+    And I am on the new edition page for the item
     When I fill in "edition_administrative_expense_attributes_copies" with "100"
     And I fill in "edition_administrative_expense_attributes_repairs_restocking" with "100"
     And I choose "edition_administrative_expense_attributes_mailbox_wsh_25"
@@ -154,8 +154,9 @@ Feature: Manage editions
     Then I should not see "Edition was successfully updated."
 
   Scenario: Add and update edition (durable_good_expense)
-    Given I am logged in as "admin" with password "secret"
-    And I am on the new edition page of the 2nd item
+    Given an item exists with request: the request, node: node "durable"
+    And I am logged in as "president" with password "secret"
+    And I am on the new edition page for the item
     When I fill in "edition_durable_good_expense_attributes_description" with "The goods"
     And I fill in "edition_durable_good_expense_attributes_quantity" with "50"
     And I fill in "edition_durable_good_expense_attributes_price" with "5"
@@ -193,8 +194,9 @@ Feature: Manage editions
     Then I should not see "Edition was successfully updated."
 
   Scenario: Add and update edition (publication_expense)
-    Given I am logged in as "admin" with password "secret"
-    And I am on the new edition page of the 3rd item
+    Given an item exists with request: the request, node: node "publication"
+    And I am logged in as "president" with password "secret"
+    And I am on the new edition page for the item
     When I fill in "Number of Issues" with "20"
     And I fill in "Title" with "Geek newsletter"
     And I fill in "Number of Copies Per Issue" with "10"
@@ -240,8 +242,9 @@ Feature: Manage editions
     Then I should not see "Edition was successfully updated."
 
   Scenario: Add and update edition (local_event_expense)
-    Given I am logged in as "admin" with password "secret"
-    And I am on the new edition page of the 4th item
+    Given an item exists with request: the request, node: node "local"
+    And I am logged in as "president" with password "secret"
+    And I am on the new edition page for the item
     When I fill in "Date" with "2009-08-18"
     And I fill in "Title" with "Chicken BBQ"
     And I fill in "Location" with "outside"
@@ -303,8 +306,9 @@ Feature: Manage editions
     Then I should not see "Edition was successfully updated."
 
   Scenario: Add and update edition (travel_event_expense)
-    Given I am logged in as "admin" with password "secret"
-    And I am on the new edition page of the 5th item
+    Given an item exists with request: the request, node: node "travel"
+    And I am logged in as "president" with password "secret"
+    And I am on the new edition page for the item
     When I fill in "Event Date" with "2009-08-18"
     And I fill in "Event Title" with "road trip"
     And I fill in "Event Location" with "Wisconsin"
@@ -370,8 +374,9 @@ Feature: Manage editions
     Then I should not see "Edition was successfully updated."
 
   Scenario: Add and update edition (speaker_expense)
-    Given I am logged in as "admin" with password "secret"
-    And I am on the new edition page of the 6th item
+    Given an item exists with request: the request, node: node "speaker"
+    And I am logged in as "president" with password "secret"
+    And I am on the new edition page for the item
     When I fill in "Name of Speaker, Performer, or Group" with "Bob"
     And I fill in "Travel distance" with "300"
     And I fill in "Number of travelers" with "1"
