@@ -1,4 +1,3 @@
-@wip
 Feature: Manage bases
   In order to set terms on which requests are made
   As a reviewer
