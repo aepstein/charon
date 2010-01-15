@@ -17,7 +17,7 @@ When /^I delete the (\d+)(?:st|nd|rd|th) #{capture_factory} for #{capture_model}
 end
 
 Then /^I should see the following #{capture_plural_factory}:$/ do |context, table|
-  table.diff!(tableish('table tr', 'td,th'))
+  table.diff!(tableish('table > thead,tbody > tr', 'td,th'))
 end
 
 Given /^there are no (.+)s$/ do |type|

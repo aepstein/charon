@@ -5,14 +5,17 @@ table td { padding: 4px; }
 <h1>Listing items for <%=h @request %></h1>
 
 <table border="1px">
+<thead>
   <tr>
     <th>Perspective</th>
     <th>Amount</th>
     <th>Comment</th>
   </tr>
-
+</thead>
+<tbody>
 <%= render :partial => 'item', :collection => @request.items.root,
       :locals => { :read_only => false, :show_detail => false } %>
+</tbody>
 
 <%= render :partial => 'new_item', :object => @request.items.build %>
 
