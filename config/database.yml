@@ -14,7 +14,7 @@ test: &TEST
   database: db/test.sqlite3
   pool: 5
   timeout: 5000
-#test:
+#test: &TEST
 #  adapter: mysql
 #  database: charon_test
 #  host: localhost

@@ -5,7 +5,7 @@ development:
 #  bind_dn: cn=admin,dc=local,dc=net
 #  password: secret
 
-test:
+test: &TEST
   host: directory.cornell.edu
   port: 389
   base: o=Cornell University,c=US
@@ -26,4 +26,7 @@ cornell_directory:
   port: 389
   base: o=Cornell University,c=US
 #  timeout: 10
+
+cucumber:
+  <<: *TEST
 

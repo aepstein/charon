@@ -27,13 +27,6 @@ Spork.prefork do
     config.open_error_files = false # Set to true if you want error pages to pop up in the browser
   end
 
-  # Example of configuring pickle:
-  #
-  # Pickle.configure do |config|
-  #   config.adapters = [:machinist]
-  #   config.map 'I', 'myself', 'me', 'my', :to => 'user: "me"'
-  # end
-  require 'pickle/world'
 
 end
 
@@ -67,14 +60,6 @@ Spork.each_run do
   # http://github.com/bmabey/database_cleaner for more info.
   require 'database_cleaner'
   DatabaseCleaner.strategy = :truncation
-
-  After do
-    # Remove test-generated files on completion of tests
-    data_directory = File.expand_path(File.dirname(__FILE__) + "../../../db/uploads/#{ENV['RAILS_ENV']}")
-    if File.directory?(data_directory)
-      FileUtils.rm_rf data_directory
-    end
-  end
 
 end
 
