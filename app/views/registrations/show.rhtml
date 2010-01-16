@@ -20,10 +20,10 @@
   <dd><%=h @registration.active? ? 'YES' : 'NO' %></dd>
 
   <dt>Independent?</dt>
-  <dd><%= @registration.is_independent? ? 'YES' : 'NO' %></dd>
+  <dd><%= @registration.independent? ? 'YES' : 'NO' %></dd>
 
   <dt>Registered?</dt>
-  <dd><%=h @registration.is_registered? ? 'YES' : 'NO' %></dd>
+  <dd><%=h @registration.registered? ? 'YES' : 'NO' %></dd>
 
   <dt>Number of Alumni</dt>
   <dd><%=@registration.number_of_alumni %></dd>

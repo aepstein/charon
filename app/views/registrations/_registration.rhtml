@@ -1,0 +1,8 @@
+  <tr>
+    <td><%=h registration %></td>
+    <td><%= link_to 'Show', registration_path(registration) %></td>
+    <% if registration.find_or_build_organization.may_create? current_user %>
+    <td><%= link_to 'New Organization', new_registration_organization_path( registration ) %></td>
+    <% end %>
+  </tr>
+

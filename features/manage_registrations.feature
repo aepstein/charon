@@ -4,16 +4,36 @@ Feature: Manage registrations
   I want to import, synchronize and delete registrations
 
   Background:
-    Given the following users:
-      | net_id | password | admin |
-      | admin  | secret   | true  |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+
+  Scenario Outline: Test permissions for registrations controller actions
+    Given a user: "member" exists with net_id: "member", password: "secret", admin: false
+    And a registration exists
+    And a membership exists with registration: the registration, user: user "member"
+    And I am logged in as "<user>" with password "secret"
+#    And I am on the new registration page
+#    Then I should <create>
+#    Given I post on the registrations page
+#    Then I should <create>
+#    And I am on the edit page for the registration
+#    Then I should <update>
+#    Given I put on the page for the registration
+#    Then I should <update>
+    Given I am on the page for the registration
+    Then I should <show>
+#    Given I delete on the page for the registration
+#    Then I should <destroy>
+    Examples:
+      | user           | create                 | update                 | destroy                | show                   |
+      | admin          | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | member         | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | regular        | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     |
 
   Scenario: Search organizations
-    Given the following registrations:
-      | name                     |
-      | Accounting Club, Cornell |
-      | Outing Club, Cornell     |
-      | Ski Racing Organization  |
+    Given a registration exists with name: "Accounting Club, Cornell"
+    And a registration exists with name: "Outing Club, Cornell"
+    And a registration exists with name: "Ski Racing Organization"
     And I am logged in as "admin" with password "secret"
     And I am on the registrations page
     Then I should see the following registrations:
@@ -34,9 +54,7 @@ Feature: Manage registrations
       | Ski Racing Organization  |
 
   Scenario: Create organization from registration
-    Given the following registrations:
-      | name                     |
-      | Accounting Club, Cornell |
+    Given a registration exists with name: "Accounting Club, Cornell"
     And I am logged in as "admin" with password "secret"
     And I am on the registrations page
     When I follow "New Organization"

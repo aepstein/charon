@@ -176,12 +176,14 @@ class Registration < ActiveRecord::Base
                       'officer' => Role.find_or_create_by_name('officer') }
   end
 
-  def to_s
-    name
+  def may_see?(user)
+    return false unless user
+    return true if user.admin?
+    users.include? user
   end
 
-  def may_see?(user)
-    user.admin?
+  def to_s
+    name
   end
 
 end
