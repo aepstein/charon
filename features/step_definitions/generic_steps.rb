@@ -49,6 +49,11 @@ Given(/^#{capture_model} is (?:in|one of|amongst) the (\w+) of #{capture_model}$
   model(owner).send(association) << model(target)
 end
 
+Given(/^#{capture_model} is alone (?:in|one of|amongst) the (\w+) of #{capture_model}$/) do |target, association, owner|
+  model(owner).send(association).delete_all
+  model(owner).send(association) << model(target)
+end
+
 Then /^I should see the following entries in "(.+)":$/ do |table_id, expected_approvals_table|
   expected_approvals_table.diff!(table_at("##{table_id}").to_a)
 end

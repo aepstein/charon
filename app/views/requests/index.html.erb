@@ -15,13 +15,16 @@
 <%= will_paginate @requests %>
 
 <table>
+<thead>
   <tr>
-    <td>Name</td>
+    <td>Organization</td>
     <td>Status</td>
     <td>Options</td>
   </tr>
-
+</thead>
+<tbody>
   <%= render :partial => 'request', :collection => @requests %>
+</tbody>
 </table>
 
 <%= will_paginate @requests %>

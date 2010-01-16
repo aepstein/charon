@@ -4,95 +4,79 @@ Feature: Manage requests
   I want to manage requests
 
   Background:
-    Given the following organizations:
-      | last_name |
-      | safc 1    |
-      | safc 2    |
-      | safc 3    |
-      | gpsafc 1  |
-    And the following user records:
-      | net_id    | password | admin  |
-      | admin     | secret   | true   |
-      | requestor | secret   | false  |
-      | global    | secret   | false  |
-    And the following role records:
-      | name    |
-      | allowed |
-    And the following framework records:
-      | name   |
-      | safc   |
-      | gpsafc |
-    And the following permissions:
-      | framework | role    | status    | action  | perspective |
-      | safc      | allowed | started   | create  | requestor   |
-      | safc      | allowed | started   | update  | requestor   |
-      | safc      | allowed | started   | destroy | requestor   |
-      | safc      | allowed | started   | see     | requestor   |
-      | safc      | allowed | completed | see     | requestor   |
-      | safc      | allowed | started   | approve | requestor   |
-    And the following memberships:
-      | user      | organization | role    |
-      | requestor | safc 1       | allowed |
-      | requestor | safc 2       | allowed |
-      | requestor | safc 3       | allowed |
-    And the following structures:
-      | name             |
-      | safc structure   |
-      | gpsafc structure |
-    And the following bases:
-      | name           | structure        | framework |
-      | safc basis 1   | safc structure   | safc      |
-      | safc basis 2   | safc structure   | safc      |
-      | gpsafc basis 1 | gpsafc structure | gpsafc    |
-    And the following requests:
-      | organizations   | basis          |
-      | safc 1, safc 2  | safc basis 1   |
-      | safc 2          | safc basis 2   |
-      | gpsafc 1        | gpsafc basis 1 |
+    Given an organization: "safc1" exists with last_name: "safc 1"
+    And an organization: "safc2" exists with last_name: "safc 2"
+    And an organization: "safc3" exists with last_name: "safc 3"
+    And an organization: "gpsafc1" exists with last_name: "gpsafc 1"
+    And a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "requestor" exists with net_id: "requestor", password: "secret", admin: false
+    And a user: "global" exists with net_id: "global", password: "secret", admin: false
+    And a role: "allowed" exists with name: "allowed"
+    And a framework: "safc" exists with name: "safc"
+    And a framework: "gpsafc" exists with name: "gpsafc"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "create", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "update", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "destroy", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "completed", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "approve", perspective: "requestor"
+    And a membership exists with user: user "requestor", organization: organization "safc1", role: role "allowed"
+    And a membership exists with user: user "requestor", organization: organization "safc2", role: role "allowed"
+    And a membership exists with user: user "requestor", organization: organization "safc3", role: role "allowed"
+    And a structure: "safc" exists with name: "safc structure"
+    And a structure: "gpsafc" exists with name: "gpsafc structure"
+    And a basis: "safc1" exists with name: "safc basis 1", structure: structure "safc", framework: framework "safc"
+    And a basis: "safc2" exists with name: "safc basis 2", structure: structure "safc", framework: framework "safc"
+    And a basis: "gpsafc1" exists with name: "gpsafc basis 1", structure: structure "gpsafc", framework: framework "gpsafc"
+    And a request: "coorg" exists with basis: basis "safc1"
+    And organization: "safc1" is alone amongst the organizations of the request
+    And organization: "safc2" is amongst the organizations of the request
+    And a request: "single" exists with basis: basis "safc2"
+    And organization: "safc2" is alone amongst the organizations of the request
+    And a request: "gpsafc" exists with basis: basis "gpsafc1"
+    And organization: "gpsafc1" is alone amongst the organizations of the request
 
   Scenario: Register new request
-    Given I am on "safc 1's organization profile page"
+    Given I am on the profile page for organization: "safc1"
     And I am logged in as "requestor" with password "secret"
     When I press "Create"
     Then I should see "Request was successfully created."
 
   Scenario: List requests for an organization with 1 request
     Given I am logged in as "requestor" with password "secret"
-    When I am on "safc 1's requests page"
+    And I am on the requests page for organization: "safc1"
     Then I should see the following requests:
-      | Basis        |
+      | Organization |
       | safc basis 1 |
 
   Scenario: List requests for an organization with 2 requests
     Given I am logged in as "requestor" with password "secret"
-    When I am on "safc 2's requests page"
+    And I am on the requests page for organization: "safc2"
     Then I should see the following requests:
-      | Basis        |
+      | Organization |
       | safc basis 1 |
       | safc basis 2 |
 
   Scenario: List requests for an organization with no requests
     Given I am logged in as "requestor" with password "secret"
-    When I am on "safc 3's requests page"
+    And I am on the requests page for the organization: "safc3"
     Then I should see the following requests:
-      | Basis |
+      | Organization |
 
   Scenario: List requests for a basis
-    Given the following bases:
-      | name            |
-      | fall semester   |
-      | spring semester |
-    And the following organizations:
-      | last_name        |
-      | Abc Club    |
-      | 14 Society  |
-      | Zxy Club    |
-    And the following requests:
-      | basis           | organizations | status   |
-      | fall semester   | Zxy Club      | accepted |
-      | spring semester | Abc Club      | accepted |
-      | fall semester   | Abc Club      | reviewed |
-      | fall semester   | 14 Society    | accepted |
+    Given a basis: "fall" exists with name: "fall semester"
+    And a basis: "spring" exists with name: "spring semester"
+    And an organization: "org1" exists with last_name: "Abc Club"
+    And an organization: "org2" exists with last_name: "14 Society"
+    And an organization: "org3" exists with last_name: "Zxy Club"
+    And a request exists with basis: basis "fall", status: "accepted"
+    And organization: "org3" is alone amongst the organizations of the request
+    And a request exists with basis: basis "spring", status: "accepted"
+    And organization: "org1" is alone amongst the organizations of the request
+    And a request exists with basis: basis "fall", status: "reviewed"
+    And organization: "org1" is alone amongst the organizations of the request
+    And a request exists with basis: basis "fall", status: "accepted"
+    And organization: "org2" is alone amongst the organizations of the request
     And I am logged in as "admin" with password "secret"
     And I am on the "fall semester" basis requests page
     Then I should see the following requests:
@@ -112,36 +96,4 @@ Feature: Manage requests
       | Organization |
       | 14 Society   |
       | Zxy Club     |
-
-
-  Scenario: Approve request for existing organization
-    Given the following nodes:
-      | structure      | requestable_type      | name                   |
-      | safc structure | AdministrativeExpense | administrative expense |
-      | safc structure | LocalEventExpense     | local event expense    |
-      | safc structure | TravelEventExpense    | travel event expense   |
-      | safc structure | DurableGoodExpense    | durable good expense   |
-      | safc structure | PublicationExpense    | publication expense    |
-    And the following items:
-      | request | node                   |
-      | 1       | administrative expense |
-      | 1       | durable good expense   |
-      | 1       | publication expense    |
-    And the following editions:
-      | item | perspective |
-      | 1    | requestor   |
-      | 1    | reviewer    |
-      | 2    | requestor   |
-    And I am logged in as "requestor" with password "secret"
-    And I am on "safc 1's requests page"
-    When I follow "Approve"
-    Then I should see the following items:
-      | Perspective            |
-      | administrative expense |
-      | requestor              |
-      | durable good expense   |
-      | requestor              |
-      | publication expense    |
-    When I press "Confirm Approval"
-    Then I should see "Approval was successfully created"
 
