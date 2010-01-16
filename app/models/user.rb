@@ -78,18 +78,22 @@ class User < ActiveRecord::Base
   end
 
   def may_create?(user)
+    return false unless user
     user.admin?
   end
 
   def may_update?(user)
+    return false unless user
     user.admin? || user == self
   end
 
   def may_destroy?(user)
+    return false unless user
     user.admin?
   end
 
   def may_see?(user)
+    return false unless user
     user.admin? || user == self
   end
 

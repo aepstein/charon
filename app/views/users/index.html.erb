@@ -10,17 +10,7 @@
 
 <%= will_paginate @users %>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Net Id</th>
-    <th>Email</th>
-    <th>Date of Birth</th>
-  </tr>
-
-<%= render :partial => 'user', :collection => @users %>
-
-</table>
+<%= render :partial => "users", :object => @users %>
 
 <%= will_paginate @users %>
 

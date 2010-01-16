@@ -29,7 +29,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     raise AuthorizationError unless @user.may_create?(current_user)
-    @user.admin = params[:user][:admin] if current_user.admin? && params[:user][:admin]
+    @user.admin = params[:user][:admin] if current_user.admin? && params[:user] && params[:user][:admin]
 
     respond_to do |format|
       if @user.save
@@ -45,6 +45,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
+    raise AuthorizationError unless @user.may_see? current_user
 
     respond_to do |format|
       format.html # show.html.erb
@@ -64,7 +65,7 @@ class UsersController < ApplicationController
   def update
     @user = User.find(params[:id])
     raise AuthorizationError unless @user.may_update?(current_user)
-    @user.admin = params[:user][:admin] if current_user.admin? && params[:user][:admin]
+    @user.admin = params[:user][:admin] if current_user.admin? && params[:user] && params[:user][:admin]
 
     respond_to do |format|
       if @user.update_attributes(params[:user])
