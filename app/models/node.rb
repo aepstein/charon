@@ -1,4 +1,15 @@
 class Node < ActiveRecord::Base
+  ALLOWED_TYPES = {
+    'Administrative' => 'AdministrativeExpense',
+    'Durable Good' => 'DurableGoodExpense',
+    'Local Event' => 'LocalEventExpense',
+    'Publication' => 'PublicationExpense',
+    'Travel Event' => 'TravelEventExpense',
+    'Speaker' => 'SpeakerExpense'
+  }
+
+  default_scope :order => 'nodes.name ASC'
+
   named_scope :allowed_for_children_of, lambda { |request, parent_item|
     parent_node_sql = parent_item.nil? ? "IS NULL" : "= #{parent_item.node_id}"
     parent_item_sql = parent_item.nil? ? "IS NULL" : "= #{parent_item.id}"
@@ -7,15 +18,6 @@ class Node < ActiveRecord::Base
       "items.node_id = nodes.id AND items.parent_id #{parent_item_sql})"
     { :conditions => "nodes.parent_id #{parent_node_sql} AND " +
                      "nodes.item_quantity_limit > #{parent_item_count_sql}" }
-  }
-
-  ALLOWED_TYPES = {
-    'Administrative' => 'AdministrativeExpense',
-    'Durable Good' => 'DurableGoodExpense',
-    'Local Event' => 'LocalEventExpense',
-    'Publication' => 'PublicationExpense',
-    'Travel Event' => 'TravelEventExpense',
-    'Speaker' => 'SpeakerExpense'
   }
 
   has_and_belongs_to_many :document_types

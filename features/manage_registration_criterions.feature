@@ -7,19 +7,25 @@ Feature: Manage registration_criterions
     Given a user exists with password: "secret", net_id: "admin", admin: true
     And a user exists with password: "secret", net_id: "regular", admin: false
 
-  Scenario Outline:
-    Given I am logged in as "<user>" with password "secret"
-    And a registration_criterion exists
+  Scenario Outline: Test permissions for registration criterions controller actions
+    Given a registration_criterion: "basic" exists
+    And I am logged in as "<user>" with password "secret"
     And I am on the new registration_criterion page
-    Then I should <see>
-    Given I am on the edit page for the registration_criterion
-    Then I should <see>
+    Then I should <create>
     Given I post on the registration_criterions page
-    Then I should <see>
+    Then I should <create>
+    And I am on the edit page for registration_criterion: "basic"
+    Then I should <update>
+    Given I put on the page for registration_criterion: "basic"
+    Then I should <update>
+    Given I am on the page for registration_criterion: "basic"
+    Then I should <show>
+    Given I delete on the page for registration_criterion: "basic"
+    Then I should <destroy>
     Examples:
-      | user    | see                    |
-      | admin   | not see "Unauthorized" |
-      | regular | see "Unauthorized"     |
+      | user    | create                 | update                 | destroy                | show                   |
+      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
 
   Scenario: Register new registration_criterion
     Given I am logged in as "admin" with password "secret"
