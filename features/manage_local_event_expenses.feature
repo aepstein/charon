@@ -4,9 +4,7 @@ Feature: Manage local_event_expenses
   I want to list planned events for which funding is appropriated
 
   Background:
-    Given the following users:
-      | net_id | password | admin |
-      | admin  | secret   | true  |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
 
   Scenario: List local event expenses
     Given the following reviewed local_event_expenses:

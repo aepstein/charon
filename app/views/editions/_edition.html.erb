@@ -38,12 +38,14 @@
 <h2>Attached Documents</h2>
 
 <table>
+<thead>
   <tr>
     <th>Type</th>
   </tr>
-
+</thead>
+<tbody>
 <%= render :partial => 'documents/document', :collection => @edition.documents %>
-
+</tbody>
 </table>
 <% end %>
 
