@@ -1,21 +1,10 @@
 <h1>Listing structures</h1>
 
-<table>
-  <tr>
-    <th>Name</th>
-  </tr>
-
-<% @structures.each do |structure| %>
-  <tr>
-    <td><%=h structure.name %></td>
-    <td><%= link_to 'Show', structure %></td>
-    <td><%= link_to 'Edit', edit_structure_path(structure) %></td>
-    <td><%= link_to 'Destroy', structure, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
+<%= render :partial => "structures", :object => @structures %>
 
 <br />
 
+<p>
 <%= link_to 'New structure', new_structure_path %>
+</p>
 

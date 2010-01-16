@@ -4,9 +4,28 @@ Feature: Manage structures
   I want a structure form
 
   Background:
-    Given the following users:
-      | net_id | password | admin |
-      | admin  | secret   | true  |
+    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
+    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+
+  Scenario Outline: Test permissions for structures controller actions
+    Given an structure: "basic" exists
+    And I am logged in as "<user>" with password "secret"
+    And I am on the new structure page
+    Then I should <create>
+    Given I post on the structures page
+    Then I should <create>
+    And I am on the edit page for structure: "basic"
+    Then I should <update>
+    Given I put on the page for structure: "basic"
+    Then I should <update>
+    Given I am on the page for structure: "basic"
+    Then I should <show>
+    Given I delete on the page for structure: "basic"
+    Then I should <destroy>
+    Examples:
+      | user    | create                 | update                 | destroy                | show                   |
+      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
+      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
 
   Scenario: Register new structure and edit
     Given I am logged in as "admin" with password "secret"
@@ -30,17 +49,15 @@ Feature: Manage structures
     And I should see "Minimum requestors: 2"
 
   Scenario: Delete structure
-    Given I am logged in as "admin" with password "secret"
-    And the following structures:
-      | name   |
-      | name 1 |
-      | name 2 |
-      | name 3 |
-      | name 4 |
+    Given a structure exists with name: "structure 4"
+    And a structure exists with name: "structure 3"
+    And a structure exists with name: "structure 2"
+    And a structure exists with name: "structure 1"
+    And I am logged in as "admin" with password "secret"
     When I delete the 3rd structure
     Then I should see the following structures:
-      | name   |
-      | name 1 |
-      | name 2 |
-      | name 4 |
+      | Name        |
+      | structure 1 |
+      | structure 2 |
+      | structure 4 |
 

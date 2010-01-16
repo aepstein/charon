@@ -1,4 +1,5 @@
 class Structure < ActiveRecord::Base
+  default_scope :order => 'structures.name ASC'
 
   has_many :nodes, :include => [ :parent ] do
     def children_of(node)
