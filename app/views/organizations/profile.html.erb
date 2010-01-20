@@ -4,7 +4,9 @@
 <p>The organization has unfulfilled requirements that may hinder certain permissions.</p>
 <ul>
 <% @organization.unfulfilled_requirements.each do |requirement, permissions| %>
-<%= unfulfilled_permission requirement, permission %>
+<li>
+<%= requirement %>
+</li>
 <% end %>
 </ul>
 <% end %>

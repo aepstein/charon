@@ -1,8 +1,10 @@
 # SQLite version 3.x
 #   gem install sqlite3-ruby (not necessary on OS X Leopard)
 development:
-  adapter: sqlite3
-  database: db/development.sqlite3
+  adapter: mysql
+  host: localhost
+  user: root
+  database: charon_development
   pool: 5
   timeout: 5000
 
@@ -35,3 +37,4 @@ external_registrations:
 
 cucumber:
   <<: *TEST
+

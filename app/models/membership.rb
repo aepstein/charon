@@ -4,7 +4,7 @@ class Membership < ActiveRecord::Base
     { :conditions => { :organization_id => organization_ids } }
   }
   scope_procedure :for_fulfiller, lambda { |fulfiller|
-    send fulfiller.fulfiller_type.underscore + "_id_eq", unfulfilled.id
+    send fulfiller.fulfiller_type.underscore + "_id_eq", fulfiller.id
   }
   scope_procedure :unfulfilled_for, lambda { |fulfiller|
     permissions_unsatisfied.for_fulfiller fulfiller

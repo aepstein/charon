@@ -1,14 +1,16 @@
 module FulfillableHelper
 
   def unfulfilled_permission(fulfillable, permission)
-    permission.memberships.unfulfilled_for(fulfillable).each(:include => [ :user, :organization ]) do |membership|
-      "<li>" +
+    out = ""
+    permission.memberships.unfulfilled_for(fulfillable).all(:include => [ :user, :organization ]).each do |membership|
+      out += "<li>" +
       "#{unfulfilled_membership_conjugation(membership,fulfillable)} #{fulfillable} in order for " +
       "#{membership.user == current_user ? 'you' : membership.user} " +
       "to #{permission.action} requests where #{membership.organization} is a " +
       "#{permission.perspective} (in the #{permission.framework} authorization framework)." +
       "</li>"
     end
+    out
   end
 
   def unfulfilled_membership_conjugation(membership,fulfillable)

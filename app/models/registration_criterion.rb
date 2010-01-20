@@ -22,5 +22,12 @@ class RegistrationCriterion < ActiveRecord::Base
       "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + number_of_others ) )"
     )
   end
+
+  def to_s
+    out = "No less than #{minimal_percentage} percent of members provided in the " +
+      "organization's current registration must be #{type_of_member}"
+    out += " and the organization must be registered" if must_register?
+    out
+  end
 end
 

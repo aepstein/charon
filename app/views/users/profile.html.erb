@@ -44,8 +44,8 @@
 <% unless current_user.unfulfilled_permissions.length == 0 %>
 <p>You have unfulfilled requirements that may limit what you are able to do.</p>
 <ul>
-<% current_user.unfulfilled_requirements.each do |requirement, permissions| %>
-<%= unfulfilled_permission requirement, permission %>
+<% current_user.unfulfilled_requirements.keys.select { |r| Fulfillment::FULFILLABLE_TYPES['User'].include? r.class.to_s }.each do |requirement| %>
+<li><%=h requirement %></li>
 <% end %>
 </ul>
 <% end %>
