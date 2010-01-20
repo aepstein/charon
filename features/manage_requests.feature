@@ -78,7 +78,7 @@ Feature: Manage requests
     And a request exists with basis: basis "fall", status: "accepted"
     And organization: "org2" is alone amongst the organizations of the request
     And I am logged in as "admin" with password "secret"
-    And I am on the "fall semester" basis requests page
+    And I am on the requests page for basis: "fall"
     Then I should see the following requests:
       | Organization |
       | 14 Society   |

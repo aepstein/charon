@@ -45,7 +45,7 @@ Feature: Manage organizations
     And a request exists with basis: basis "basis_1", status: "released"
     And organization: "organization_1" is amongst the organizations of the request
     And I am logged in as "<user>" with password "secret"
-    And I am on "Org1's organization profile page"
+    And I am on the profile page for organization: "organization_1"
     Then I should <creatable_action> "Bases for you to make requests"
     And I should <started_action> "Requests you've started"
     And I should <released_action> "Requests that have been released"

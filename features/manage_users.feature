@@ -47,7 +47,7 @@ Feature: Manage users
     And I should see "Middle name: middle"
     And I should see "Last name: last"
     And I should see "Email: net_id@example.com"
-    And I should see "Date of birth: June  4, 1982"
+    And I should see "Date of birth: June 4, 1982"
     And I should see "Admin: Yes"
     When I follow "Edit"
     And I fill in "Net" with "net_id"
@@ -65,7 +65,7 @@ Feature: Manage users
     And I should see "Middle name: second"
     And I should see "Last name: name"
     And I should see "Email: other@example.com"
-    And I should see "Date of birth: June  5, 1982"
+    And I should see "Date of birth: June 5, 1982"
     And I should see "Admin: No"
 
   Scenario: List and search users
@@ -97,14 +97,14 @@ Feature: Manage users
 
   Scenario Outline: Edit user form
     Given I am logged in as "<user>" with password "secret"
-    And I am on "owner's edit user page"
+    And I am on the edit page for user: "owner"
     Then I should <action>
     And I should be on <page>
     Examples:
-      | user    | action          | page                     |
-      | admin   | see "Admin"     | "owner's edit user page" |
-      | owner   | not see "Admin" | "owner's edit user page" |
-      | regular | not see "Admin" | the unauthorized page    |
+      | user    | action          | page                            |
+      | admin   | see "Admin"     | the edit page for user: "owner" |
+      | owner   | not see "Admin" | the edit page for user: "owner" |
+      | regular | not see "Admin" | the unauthorized page           |
 
   Scenario Outline: Display administrative options for admin on profile page
     Given I am logged in as "<user>" with password "secret"
