@@ -52,13 +52,11 @@ class User < ActiveRecord::Base
   end
 
   def unfulfilled_requirements
-    unfulfilled_permissions.all(:include => [:role, :framework, :requirements]).inject({}) do |memo, permission|
-      permission.requirements.each do |requirement|
-        memo[requirement.fulfillable] = [] unless memo.include? requirement.fulfillable
-        memo[requirement.fulfillable] << permission unless memo[requirement.fulfillable].include? permission
-      end
+    fulfillables = unfulfilled_permissions.all(:include => :requirements).inject([]) do |memo, permission|
+      permission.requirements.each { |r| memo << [ r.fulfillable_type, r.fulfillable_id ] }
       memo
     end
+    fulfillables.uniq.map { |f| f.first.classify.find(f.last) }
   end
 
   def user_status_criterions

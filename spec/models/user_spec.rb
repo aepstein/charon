@@ -78,6 +78,8 @@ describe User do
     Permission.delete_all
     @membership = Factory(:membership)
     @fulfilled_permission = Factory(:permission, :role => @membership.role)
+    @fulfilled_requirement = Factory(:requirement, :permission => @fulfilled_permission, :fulfillable => Factory(:agreement) )
+    Factory(:fulfillment, :fulfiller => @membership.user, :fulfillable => @fulfilled_requirement.fulfillable)
     @unfulfilled_permission_organization = Factory(:permission, :role => @membership.role)
     @organization_requirement = Factory(:registration_criterion)
     Factory(:requirement, :fulfillable => @organization_requirement, :permission => @unfulfilled_permission_organization)
@@ -86,7 +88,7 @@ describe User do
     @user_requirement = Factory(:user_status_criterion, :statuses => ['temporary'])
     @user_requirement.id.should_not be_nil
     Factory(:requirement, :fulfillable => @user_requirement, :permission => @unfulfilled_permission_user )
-    @membership.user.fulfillments.should be_empty
+    @membership.user.fulfillments.length.should eql 1
   end
 
 end
