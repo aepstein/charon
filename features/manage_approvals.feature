@@ -86,6 +86,7 @@ Feature: Manage approvals
     And a membership exists with role: role "approver", user: user "allowed", active: true, organization: organization "owner"
     And a framework exists
     And a permission exists with role: role "approver", action: "approve", perspective: "requestor", status: "started", framework: the framework
+    And a permission exists with role: role "approver", action: "see", perspective: "requestor", status: "completed", framework: the framework
     And a structure exists with minimum_requestors: 1, maximum_requestors: 2
     And a basis exists with framework: the framework, structure: the structure
     And a request exists with basis: the basis, status: "started"

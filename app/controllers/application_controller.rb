@@ -7,7 +7,6 @@ end
 class ApplicationController < ActionController::Base
   helper :all
   helper_method :current_user_session, :current_user, :sso_net_id
-  helper_method :approvable_approval_path, :new_approvable_approval_path
   filter_parameter_logging :password, :password_confirmation
 
 protected
@@ -17,7 +16,10 @@ protected
     when AuthorizationError
 #      head :forbidden
       respond_to do |format|
-        format.html { redirect_to( unauthorized_path ) }
+        format.html do
+          flash[:error] = "Unauthorized request: You are not allowed to perform the requested action."
+          redirect_to profile_path
+        end
       end
     else
       super(e)
@@ -29,21 +31,16 @@ protected
     request.env['REMOTE_USER']
   end
 
+  private
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find
   end
 
   def current_user
-    return @current_user if defined?(@current_user)
-    if sso_net_id
-      return @current_user = current_user_session.record if current_user_session &&
-        current_user_session.record && ( current_user_session.record.net_id == sso_net_id  )
-      current_user_session.destroy if current_user_session
-      @current_user = false
-    else
-      @current_user = current_user_session.record if current_user_session && current_user_session.record
-    end
+    @current_user = current_user_session && current_user_session.record
+    return nil if sso_net_id && (@current_user.nil? || @current_user.net_id != sso_net_id)
+    @current_user
   end
 
   def require_user
@@ -77,26 +74,5 @@ protected
     session[:return_to] = nil
   end
 
-  def approvable_approval_path(approvable)
-    case approvable.class.to_s
-    when "Agreement"
-      agreement_approval_path(approvable)
-    when "Request"
-      request_approval_path(approvable)
-    else
-      raise "Class #{approvable.class} not supported."
-    end
-  end
-
-  def new_approvable_approval_path(approvable)
-    case approvable.class.to_s
-    when "Agreement"
-      new_agreement_approval_path(approvable)
-    when "Request"
-      new_request_approval_path(approvable)
-    else
-      raise "Class #{approvable.class} not supported."
-    end
-  end
 end
 

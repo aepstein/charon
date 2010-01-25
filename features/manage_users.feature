@@ -107,22 +107,24 @@ Feature: Manage users
     And I am on the new user page
     Then I should <action>
     And I should be on <page>
+    And I should <see> "Unauthorized"
     Examples:
-      | user    | action          | page                  |
-      | admin   | see "Admin"     | the new user page     |
-      | owner   | not see "Admin" | the unauthorized page |
-      | regular | not see "Admin" | the unauthorized page |
+      | user    | action          | page                  | see     |
+      | admin   | see "Admin"     | the new user page     | not see |
+      | owner   | not see "Admin" | the profile page      | see     |
+      | regular | not see "Admin" | the profile page      | see     |
 
   Scenario Outline: Edit user form
     Given I am logged in as "<user>" with password "secret"
     And I am on the edit page for user: "owner"
     Then I should <action>
     And I should be on <page>
+    And I should <see> "Unauthorized"
     Examples:
-      | user    | action          | page                            |
-      | admin   | see "Admin"     | the edit page for user: "owner" |
-      | owner   | not see "Admin" | the edit page for user: "owner" |
-      | regular | not see "Admin" | the unauthorized page           |
+      | user    | action          | page                            | see     |
+      | admin   | see "Admin"     | the edit page for user: "owner" | not see |
+      | owner   | not see "Admin" | the edit page for user: "owner" | not see |
+      | regular | not see "Admin" | the profile page                | see     |
 
   Scenario Outline: Display administrative options for admin on profile page
     Given I am logged in as "<user>" with password "secret"
