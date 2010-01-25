@@ -2,28 +2,39 @@ class UserSessionsController < ApplicationController
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => :destroy
 
+  LOGIN_NOTICE = "Login successful!"
+  LOGOUT_NOTICE = "Logout successful!"
+
+  # GET /login
   def new
-    @user_session = UserSession.new
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @user_session }
+    if sso_net_id && ( user = User.find_by_net_id( sso_net_id ) )
+      @user_session = UserSession.create( user, true )
+      flash[:notice] = LOGIN_NOTICE
+      redirect_back_or_default root_url
+    else
+      @user_session = UserSession.new
+      respond_to do |format|
+        format.html # show.html.erb
+      end
     end
   end
 
+  # POST /user_session
   def create
     @user_session = UserSession.new(params[:user_session])
-    if ( sso_net_id ? false : @user_session.save )
-      flash[:notice] = "Login successful!"
-      redirect_back_or_default profile_url
+    if ( @user_session.save )
+      flash[:notice] = LOGIN_NOTICE
+      redirect_back_or_default root_url
     else
       render :action => :new
     end
   end
 
+  # GET /logout
   def destroy
     current_user_session.destroy
-    flash[:notice] = "Logout successful!"
-    redirect_back_or_default new_user_session_url
+    flash[:notice] = LOGOUT_NOTICE
+    redirect_back_or_default login_url
   end
 end
 
