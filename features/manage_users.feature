@@ -9,6 +9,24 @@ Feature: Manage users
     And a user: "regular" exists with net_id: "regular", password: "secret", admin: false, last_name: "Bo 2"
     And a user exists with last_name: "Bo 1", net_id: "zzz4"
 
+  Scenario Outline: Show unfulfilled requirements for user in profile
+    Given a role exists
+    And a permission exists with role: the role
+    And an agreement exists with name: "The Agreement"
+    And a requirement exists with permission: the permission, fulfillable: the agreement
+    And a membership exists with active: true, user: user "admin", role: the role
+    And a membership exists with active: true, user: user "owner", role: the role
+    And a membership exists with active: true, user: user "regular", role: the role
+    And an approval exists with approvable: the agreement, user: user "owner"
+    And I am logged in as "<user>" with password "secret"
+    Then I should <see> "You have unfulfilled requirements that may limit what you are able to do:"
+    And I should <see> "You must approve The Agreement. Click here to approve."
+    Examples:
+      | user    | see     |
+      | admin   | see     |
+      | owner   | not see |
+      | regular | see     |
+
   Scenario Outline: Test permissions for users controller actions
     Given I am logged in as "<user>" with password "secret"
     And I am on the new user page

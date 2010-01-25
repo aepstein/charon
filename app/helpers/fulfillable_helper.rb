@@ -1,21 +1,18 @@
 module FulfillableHelper
 
-  def unfulfilled_permission(fulfillable, permission)
-    out = ""
-    permission.memberships.unfulfilled_for(fulfillable).all(:include => [ :user, :organization ]).each do |membership|
-      out += "<li>" +
-      "#{unfulfilled_membership_conjugation(membership,fulfillable)} #{fulfillable} in order for " +
-      "#{membership.user == current_user ? 'you' : membership.user} " +
-      "to #{permission.action} requests where #{membership.organization} is a " +
-      "#{permission.perspective} (in the #{permission.framework} authorization framework)." +
-      "</li>"
+  def unfulfilled_requirement(fulfillable)
+    case fulfillable.class.to_s
+    when 'Agreement'
+      "must approve #{h fulfillable}.  #{link_to 'Click here', new_agreement_approval_path(fulfillable)} to approve."
+    when 'UserStatusCriterion'
+      "must be one of #{fulfillable.statuses.join ', '}."
+    when 'RegistrationCriterion'
+      "must " + ( fulfillable.must_register? ? "be registered and " : "" ) +
+      "have at least #{fulfillable.minimal_percentage}% #{fulfillable.type_of_member} in your registration. " +
+      "#{link_to 'Click here', 'http://sao.cornell.edu'} to update your registration."
+    else
+      h(fulfillable.to_s)
     end
-    out
-  end
-
-  def unfulfilled_membership_conjugation(membership,fulfillable)
-    return "You need" if current_user && membership.fulfiller_name(fulfillable) == current_user.name
-    membership.fulfiller_name(fulfillable) + " needs"
   end
 
 end

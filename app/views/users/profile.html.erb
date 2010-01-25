@@ -31,9 +31,9 @@
 
   <p>
   These are registrations that you have started with the Student Activities
-  Office, but have not yet matched to year-to-year record in the Office of the Assemblies.
-  You should <a href="mailto:assembly@cornell.edu">email</a> the office or pick up your
-  budget folder to get a matching year-to-year record set up.
+  Office, but have not yet matched to a corresponding record in the Office of the Assemblies.
+  You should <a href="mailto:assembly@cornell.edu">email</a> the office to get a matching
+  record set up.
   </p>
 
   <ul>
@@ -41,11 +41,11 @@
   </ul>
 <% end %>
 
-<% unless current_user.unfulfilled_permissions.length == 0 %>
-<p>You have unfulfilled requirements that may limit what you are able to do.</p>
+<% unless current_user.unfulfilled_requirements.length == 0 %>
+<p>You have unfulfilled requirements that may limit what you are able to do:</p>
 <ul>
-<% current_user.unfulfilled_requirements.keys.select { |r| Fulfillment::FULFILLABLE_TYPES['User'].include? r.class.to_s }.each do |requirement| %>
-<li><%=h requirement %></li>
+<% current_user.unfulfilled_requirements.each do |requirement| %>
+<li>You <%= unfulfilled_requirement requirement %></li>
 <% end %>
 </ul>
 <% end %>
