@@ -66,22 +66,18 @@ describe Organization do
     Factory(:organization).registered?.should == false
   end
 
-  it 'should have unfulfilled_permissions method that returns permissions the user cannot have because of missing requirements' do
+  it 'should have unfulfilled_permissions method that returns organization does not have because of unfulfilled requirements' do
     setup_permission_scenario
     permissions = @membership.organization.unfulfilled_permissions
-    permissions.length.should eql 2
-    permissions.should include @unfulfilled_permission_user
+    permissions.length.should eql 1
     permissions.should include @unfulfilled_permission_organization
   end
 
-  it 'should have unfulfilled_requirements method that returns hash of unfulfilled requirements and associated permissions' do
+  it 'should have unfulfilled_requirements method that returns array of requirements organization has not fulfilled' do
     setup_permission_scenario
     requirements = @membership.organization.unfulfilled_requirements
-    requirements.length.should eql 2
-    requirements.should include @user_requirement
+    requirements.length.should eql 1
     requirements.should include @organization_requirement
-    requirements[@user_requirement].should include @unfulfilled_permission_user
-    requirements[@organization_requirement].should include @unfulfilled_permission_organization
   end
 
   def setup_permission_scenario

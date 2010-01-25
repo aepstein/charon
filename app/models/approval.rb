@@ -63,7 +63,6 @@ class Approval < ActiveRecord::Base
   end
 
   def may_create?(user)
-    return false unless user
     may_approve? user
   end
 

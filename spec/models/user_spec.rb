@@ -71,7 +71,6 @@ describe User do
     requirements = @membership.user.unfulfilled_requirements
     requirements.length.should eql 1
     requirements.should include @user_requirement
-    requirements[@user_requirement].should include @unfulfilled_permission_user
   end
 
   def setup_permission_scenario

@@ -56,7 +56,7 @@ class User < ActiveRecord::Base
       permission.requirements.each { |r| memo << [ r.fulfillable_type, r.fulfillable_id ] }
       memo
     end
-    fulfillables.uniq.map { |f| f.first.classify.find(f.last) }
+    fulfillables.uniq.map { |f| f.first.constantize.find f.last }
   end
 
   def user_status_criterions
