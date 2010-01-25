@@ -22,13 +22,15 @@ class Organization < ActiveRecord::Base
   validates_uniqueness_of :last_name, :scope => :first_name
 
   def unfulfilled_permissions
-    Permission.requirements_unfulfilled.requirements_with_fulfillments.requirements_fulfillable_type_eq_any(
+    Permission.requirements_unfulfilled.requirements_with_fulfillments.requirements_fulfillable_type_equals_any(
     Fulfillment::FULFILLABLE_TYPES['Organization']).memberships_organization_id_eq(id)
   end
 
   def unfulfilled_requirements
-    fulfillables = unfulfilled_permissions.all(:include => :requirements).inject([]) do |memo, permission|
-      permission.requirements.each { |r| memo << [ r.fulfillable_type, r.fulfillable_id ] }
+    requirements = Requirement.unfulfilled.with_fulfillments.fulfillable_type_equals_any(
+    Fulfillment::FULFILLABLE_TYPES['Organization']).permission_memberships_organization_id_eq(id)
+    fulfillables = requirements.all.inject([]) do |memo, requirement|
+      memo << [ requirement.fulfillable_type, requirement.fulfillable_id ]
       memo
     end
     fulfillables.uniq.map { |f| f.first.constantize.find f.last }

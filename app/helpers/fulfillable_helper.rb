@@ -8,8 +8,8 @@ module FulfillableHelper
       "must be one of #{fulfillable.statuses.join ', '}."
     when 'RegistrationCriterion'
       "must " + ( fulfillable.must_register? ? "be registered and " : "" ) +
-      "have at least #{fulfillable.minimal_percentage}% #{fulfillable.type_of_member} in your registration. " +
-      "#{link_to 'Click here', 'http://sao.cornell.edu'} to update your registration."
+      "have at least #{fulfillable.minimal_percentage}% #{fulfillable.type_of_member} as members in the registration. " +
+      "#{link_to 'Click here', 'http://sao.cornell.edu'} to update the registration."
     else
       h(fulfillable.to_s)
     end

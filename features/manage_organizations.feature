@@ -19,6 +19,25 @@ Feature: Manage organizations
     And a basis: "basis_2" exists with framework: framework "safc", name: "basis 2"
     And a membership exists with user: user "allowed_user", organization: organization "organization_1", role: role "allowed"
 
+  Scenario Outline: Show unfulfilled requirements for organization in profile
+    Given a role exists
+    And a permission exists with role: the role
+    And a registration_criterion exists with must_register: true, minimal_percentage: 10, type_of_member: "staff"
+    And a requirement exists with permission: the permission, fulfillable: the registration_criterion
+    And an organization: "qualified" exists
+    And a registration exists with organization: organization "qualified", number_of_staff: 10, registered: true
+    And an organization: "unqualified" exists
+    And a membership exists with active: true, organization: organization "qualified", role: the role
+    And a membership exists with active: true, organization: organization "unqualified", role: the role
+    And I am logged in as "admin" with password "secret"
+    And I am on the profile page for organization: "<organization>"
+    Then I should <see> "The organization has unfulfilled requirements that may limit what it is able to do:"
+    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration. Click here to update the registration."
+    Examples:
+      | organization | see     |
+      | qualified    | not see |
+      | unqualified  | see     |
+
   Scenario Outline: Test permissions for agreements controller actions
     Given I am logged in as "<user>" with password "secret"
     And I am on the new organization page

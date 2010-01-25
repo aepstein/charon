@@ -1,12 +1,10 @@
 <h1><%=h @organization %> Profile</h1>
 
-<% unless @organization.unfulfilled_permissions.length == 0 %>
-<p>The organization has unfulfilled requirements that may hinder certain permissions.</p>
+<% unless @organization.unfulfilled_requirements.length == 0 %>
+<p>The organization has unfulfilled requirements that may limit what it is able to do:</p>
 <ul>
-<% @organization.unfulfilled_requirements.each do |requirement, permissions| %>
-<li>
-<%= requirement %>
-</li>
+<% @organization.unfulfilled_requirements.each do |requirement| %>
+<li>The organization <%= unfulfilled_requirement requirement %></li>
 <% end %>
 </ul>
 <% end %>
