@@ -16,8 +16,8 @@
       <td><% if @basis %><%=h request.organizations %><% else %><%=h request.basis.name %><% end %></td>
       <td><%=h request.status %></td>
       <td>
-        <%= link_to_if(request.may_see?(current_user), 'Show', request) %> |
-        <%= link_to_if(request.may_see?(current_user), 'Show Items', request_items_path(request) ) %> |
+        <%= link_to_if(request.may_see?(current_user), 'Show Detail', request) %> |
+        <%= link_to_if(request.may_see?(current_user), 'Manage Items', request_items_path(request) ) %> |
         <%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %> |
         <%= link_to_if(request.may_approve?(current_user) && request.approvals.user_id_equals(current_user.id).empty?, 'Approve', new_request_approval_path( request ) ) { "" } %> |
         <%= link_to_unapprove_request(request) %>

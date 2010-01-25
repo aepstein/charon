@@ -3,7 +3,7 @@ class Agreement < ActiveRecord::Base
 
   default_scope :order => 'agreements.name ASC'
 
-  has_many :approvals, :as => :approvable, :dependent => :destroy
+  has_many :approvals, :as => :approvable, :dependent => :delete_all
   has_many :users, :through => :approvals
   has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
 
@@ -13,7 +13,7 @@ class Agreement < ActiveRecord::Base
   validates_presence_of :contact_name
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
 
-  after_update :destroy_approvals_if_content_changes
+#  after_update :destroy_approvals_if_content_changes
   after_create 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self', 'Fulfillment.fulfill self'
 
