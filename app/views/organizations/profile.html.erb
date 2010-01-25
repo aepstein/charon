@@ -11,7 +11,7 @@
 
 
 
-<% unless @organization.requests.creatable.select { |r| r.may_see? current_user }.empty? %>
+<% unless @organization.requests.creatable.select { |r| r.may_create? current_user }.empty? %>
 <h2>Bases for you to make requests</h2>
 
 <p>Choose a new request you would like to create and get started on:</p>
