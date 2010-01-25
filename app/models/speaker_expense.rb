@@ -10,7 +10,7 @@ class SpeakerExpense < ActiveRecord::Base
 
   def travel_cost
     return 0.0 unless distance && number_of_travelers
-    0.585 * distance * number_of_travelers
+    0.5 * distance * number_of_travelers
   end
 
   def basic_lodging_cost

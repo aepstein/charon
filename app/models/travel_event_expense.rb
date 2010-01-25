@@ -30,7 +30,7 @@ class TravelEventExpense < ActiveRecord::Base
 
   def travel_cost
     return 0.0 unless distance
-    0.073 * participants * distance
+    0.063 * participants * distance
   end
 
   def lodging_cost
