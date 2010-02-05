@@ -18,3 +18,5 @@
   Mailbox at Willard Straight Hall: <%= number_to_currency(administrative_expense.mailbox_wsh) %>
 </p>
 
+<%= render :partial => "administrative_expenses/calculation", :object => administrative_expense %>
+

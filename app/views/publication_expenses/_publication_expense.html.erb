@@ -22,3 +22,5 @@
     Revenue: <%= number_to_currency(publication_expense.revenue) %>
   </p>
 
+<%= render :partial => "publication_expenses/calculation", :object => publication_expense %>
+

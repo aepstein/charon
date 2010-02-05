@@ -34,3 +34,5 @@
     Use of University Property Form required: <%= local_event_expense.uup_required ? 'Yes' : 'No' %>
   </p>
 
+<%= render :partial => "local_event_expenses/calculation", :object => local_event_expense %>
+

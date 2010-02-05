@@ -38,3 +38,5 @@
   Fees per group or team: <%= number_to_currency(travel_event_expense.per_group_fees) %>
 </p>
 
+<%= render :partial => "travel_event_expenses/calculation", :object => travel_event_expense %>
+

@@ -22,3 +22,5 @@
   Dignitary: <%= speaker_expense.dignitary? ? 'Yes' : 'No' %>
 </p>
 
+<%= render :partial => "speaker_expenses/calculation", :object => speaker_expense %>
+
