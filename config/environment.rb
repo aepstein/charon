@@ -58,4 +58,5 @@ Rails::Initializer.run do |config|
 end
 
 CalendarDateSelect.format = :hyphen_ampm
+Formtastic::SemanticFormHelper.builder = CustomFormBuilder
 
