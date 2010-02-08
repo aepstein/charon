@@ -1,0 +1,19 @@
+<table>
+<thead>
+  <tr>
+  <% unless fulfiller %>
+    <th>Fulfiller</th>
+  <% end %>
+  <% unless fulfillable %>
+    <th>Fulfillable</th>
+  <% end %>
+  </tr>
+</thead>
+
+<tbody>
+<%= render :partial => "fulfillment", :collection => fulfillments,
+  :locals => { :fulfiller => fulfiller, :fulfillable => fulfillable } %>
+</tbody>
+
+</table>
+

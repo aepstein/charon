@@ -4,6 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :categories
   map.resources :users, :shallow => true do |user|
     user.resources :addresses
+    user.resources :fulfillments, :only => [ :index ]
   end
   map.resources :approvals, :only => [ :show ]
   map.resources :agreements, :shallow => true do |agreement|
@@ -21,6 +22,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :local_event_expenses, :only => [ :index ]
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
+    organization.resources :fulfillments, :only => [ :index ]
     organization.resources :bases do |basis|
       basis.resources :requests
     end

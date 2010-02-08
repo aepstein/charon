@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new fulfillment page/
+      new_fulfillment_path
+
 
     when /^the edit page for #{capture_model}$/
       edit_polymorphic_path( [model($1)] )

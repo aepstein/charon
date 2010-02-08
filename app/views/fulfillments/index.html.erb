@@ -1,26 +1,26 @@
-<h1>Listing fulfillments</h1>
-
-<table>
-  <tr>
-    <th>Fulfiller</th>
-    <th>Fulfiller type</th>
-    <th>Fulfilled</th>
-    <th>Fulfilled type</th>
-  </tr>
-
-<% @fulfillments.each do |fulfillment| %>
-  <tr>
-    <td><%=h fulfillment.fulfiller %></td>
-    <td><%=h fulfillment.fulfiller_type %></td>
-    <td><%=h fulfillment.fulfilled %></td>
-    <td><%=h fulfillment.fulfilled_type %></td>
-    <td><%= link_to 'Show', fulfillment %></td>
-    <td><%= link_to 'Edit', edit_fulfillment_path(fulfillment) %></td>
-    <td><%= link_to 'Destroy', fulfillment, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+<h1>
+Listing fulfillments
+<% if @fulfiller %>
+for <%=h @fulfiller %>
 <% end %>
-</table>
+<% if @fulfillable %>
+for <%=h @fulfillable %>
+<% end %>
+</h1>
 
-<br />
+<%= will_paginate @fulfillments %>
 
-<%= link_to 'New fulfillment', new_fulfillment_path %>
+<%= render :partial => "fulfillments", :object => @fulfillments,
+  :locals => { :fulfiller => @fulfiller, :fulfillable => @fulfillable } %>
+
+<%= will_paginate @fulfillments %>
+
+<p>
+<% if @fulfiller %>
+<%= link_to 'Back', @fulfiller %>
+<% end %>
+<% if @fulfillable %>
+<%= link_to 'Back', @fulfillable %>
+<% end %>
+</p>
+
