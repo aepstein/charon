@@ -17,6 +17,11 @@
 <p>
 <% if current_user %>
 <%= link_to 'my profile', profile_path %> | <%= link_to 'logout', logout_path %>
+  <% if current_user.admin? %>
+  Administration: <%= %w( agreements categories document_types frameworks organizations registrations roles structures users ).map { |option|
+    link_to option, send(option + '_path')
+  }.join(' | ') %>
+  <% end %>
 <% else %>
 <%= link_to 'login', login_path %>
 <% end %>
