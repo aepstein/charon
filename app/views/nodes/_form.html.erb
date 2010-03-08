@@ -1,7 +1,6 @@
   <%= form.error_messages %>
   <% form.inputs do %>
-  <%= form.input :parent, :label => "Parent Node",
-    :collection => form.object.structure.nodes.map { |n| [ n.id, n.name ] },
+  <%= form.input :parent, :label => "Parent Node", :collection => form.object.structure.nodes,
     :input_html => { :include_blank => true } %>
   <%= form.input :name %>
   <%= form.input :requestable_type, :label => "Type of request calculation form",
