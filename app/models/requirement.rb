@@ -19,6 +19,8 @@ class Requirement < ActiveRecord::Base
 
   def fulfiller_type; Fulfillment.fulfiller_type_for_fulfillable fulfillable_type; end
 
+  def flat_fulfillable_id; "#{fulfillable_id}_#{fulfillable_type}"; end
+
   def to_s; fulfillable.to_s; end
 end
 

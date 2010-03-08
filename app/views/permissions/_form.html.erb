@@ -4,7 +4,8 @@
   <%= form.input :role %>
   <%= form.input :action, :as => :select, :collection => Request::ACTIONS %>
   <%= form.input :perspective, :as => :select, :collection => Edition::PERSPECTIVES %>
-  <%= form.input :requirements, :as => :check_boxes %>
+  <%= form.input :fulfillable_ids, :as => :check_boxes, :collection => form.object.potential_fulfillable_ids,
+    :label => 'Requirements' %>
   <% end %>
   <%= form.buttons %>
 

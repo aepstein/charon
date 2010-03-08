@@ -71,6 +71,41 @@ describe Permission do
     permission.may_see?(nil).should == 'may_see'
   end
 
+  it 'should have potential_fulfillables method that returns all members of requirements classes' do
+    agreement = Factory(:agreement)
+    registration_criterion = Factory(:registration_criterion)
+    user_criterion = Factory(:user_status_criterion)
+    permission = Factory(:permission)
+    fulfillables = permission.potential_fulfillables
+    fulfillables.length.should eql 3
+    fulfillables.should include agreement
+    fulfillables.should include registration_criterion
+    fulfillables.should include user_criterion
+    fids = permission.potential_fulfillable_ids
+    fids.should include "#{agreement.id}_Agreement"
+    fids.should include "#{registration_criterion.id}_RegistrationCriterion"
+    fids.should include "#{user_criterion.id}_UserStatusCriterion"
+  end
+
+  it 'should have fulfillable_ids method that returns flat fulfillable ids of requirements' do
+    old_agreement = Factory(:agreement)
+    new_agreement = Factory(:agreement)
+    permission = Factory(:permission)
+    permission.requirements.create( :fulfillable => old_agreement ).id.should_not be_nil
+    permission.fulfillable_ids.length.should eql 1
+    permission.fulfillable_ids.should include "#{old_agreement.id}_Agreement"
+  end
+
+  it 'should have fulfillable_ids method that returns flat fulfillable ids of requirements' do
+    old_agreement = Factory(:agreement)
+    new_agreement = Factory(:agreement)
+    permission = Factory(:permission)
+    permission.requirements.create( :fulfillable => old_agreement ).id.should_not be_nil
+    permission.fulfillable_ids = ["#{new_agreement.id}_Agreement"]
+    permission.fulfillable_ids.length.should eql 1
+    permission.fulfillable_ids.should include "#{new_agreement.id}_Agreement"
+  end
+
   it 'should have unsatisfied method that identifies permissions the user must satisfy requirements for' do
     setup_permission_scenario
     fulfillable = Factory(:agreement)
