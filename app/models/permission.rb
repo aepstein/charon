@@ -53,7 +53,8 @@ class Permission < ActiveRecord::Base
     requirements.map { |requirement| requirement.flat_fulfillable_id }
   end
 
-  def fulfillable_ids=(new_ids)
+  def fulfillable_ids=(ids)
+    new_ids = ids.reject { |i| i.blank? }
     (fulfillable_ids - new_ids).each do |old_id|
       requirements.delete requirements.flat_fulfillable_id_equals old_id
     end

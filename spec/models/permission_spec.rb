@@ -96,7 +96,7 @@ describe Permission do
     permission.fulfillable_ids.should include "#{old_agreement.id}_Agreement"
   end
 
-  it 'should have fulfillable_ids method that returns flat fulfillable ids of requirements' do
+  it 'should have fulfillable_ids= method that appropriately creates and destroys fulfillables' do
     old_agreement = Factory(:agreement)
     new_agreement = Factory(:agreement)
     permission = Factory(:permission)
@@ -104,6 +104,7 @@ describe Permission do
     permission.fulfillable_ids = ["#{new_agreement.id}_Agreement"]
     permission.fulfillable_ids.length.should eql 1
     permission.fulfillable_ids.should include "#{new_agreement.id}_Agreement"
+    permission.save.should be_true
   end
 
   it 'should have unsatisfied method that identifies permissions the user must satisfy requirements for' do
