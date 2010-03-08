@@ -72,6 +72,13 @@ class Permission < ActiveRecord::Base
     end
   end
 
+  def potential_fulfillable_ids_with_labels
+    potential_fulfillables.inject({}) do |memo, f|
+      memo[f.to_s] = "#{f.id}_#{f.class.to_s}"
+      memo
+    end
+  end
+
   def potential_fulfillable_ids
     potential_fulfillables.map { |f| "#{f.id}_#{f.class.to_s}" }
   end
