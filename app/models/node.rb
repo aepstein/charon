@@ -1,5 +1,6 @@
 class Node < ActiveRecord::Base
   ALLOWED_TYPES = {
+    'External Equity' => 'ExternalEquityReport',
     'Administrative' => 'AdministrativeExpense',
     'Durable Good' => 'DurableGoodExpense',
     'Local Event' => 'LocalEventExpense',

@@ -1,0 +1,13 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  anticipated_expenses: 9.99
+  anticipated_income: 9.99
+  current_assets: 9.99
+  current_liabilities: 9.99
+
+two:
+  anticipated_expenses: 9.99
+  anticipated_income: 9.99
+  current_assets: 9.99
+  current_liabilities: 9.99

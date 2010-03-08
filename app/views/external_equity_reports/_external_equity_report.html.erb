@@ -1,0 +1,18 @@
+<p>
+  Anticipated expenses: <%= number_to_currency external_equity_report.anticipated_expenses %>
+</p>
+
+<p>
+  Anticipated income: <%= number_to_currency external_equity_report.anticipated_income %>
+</p>
+
+<p>
+  Current assets: <%= number_to_currency external_equity_report.current_assets %>
+</p>
+
+<p>
+  Current liabilities: <%= number_to_currency external_equity_report.current_liabilities %>
+</p>
+
+<%= render :partial => "external_equity_reports/calculation", :object => external_equity_report %>
+

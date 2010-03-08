@@ -252,3 +252,7 @@ Factory.define :speaker_expense do |f|
   f.engagement_fee 1000
 end
 
+Factory.define :external_equity_report do |f|
+  f.association :edition, :factory => :external_equity_report_edition
+end
+

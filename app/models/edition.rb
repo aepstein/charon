@@ -7,6 +7,7 @@ class Edition < ActiveRecord::Base
   has_one :travel_event_expense
   has_one :durable_good_expense
   has_one :publication_expense
+  has_one :external_equity_report
   has_many :documents do
     def for_type?( document_type )
       self.map { |d| d.document_type }.include?( document_type )
@@ -23,6 +24,7 @@ class Edition < ActiveRecord::Base
   accepts_nested_attributes_for :travel_event_expense
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
+  accepts_nested_attributes_for :external_equity_report
   accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['attached'].nil? || attributes['attached'].original_filename.blank? }
 
   validates_presence_of :item
