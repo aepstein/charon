@@ -40,6 +40,7 @@ describe Edition do
     @edition.amount = @edition.item.node.item_amount_limit + 1
     @edition.save.should == false
     @edition.errors.first.to_s.should == "amount is greater than maximum for #{@edition.item.node}."
+    @edition.max_request.should eql @edition.item.node.item_amount_limit
   end
 
   it "should not save with an amount higher than requestable.max_request" do
@@ -50,6 +51,7 @@ describe Edition do
     edition.requestable.stub!(:max_request).and_return(50.0)
     edition.amount = 500.0
     edition.save.should == false
+    edition.max_request.should eql edition.requestable.max_request
   end
 
   it "should not save with an amount higher than original edition amount" do
@@ -60,7 +62,8 @@ describe Edition do
     review.perspective.should == 'reviewer'
     review.amount.should > original.amount
     review.save.should == false
-    review.errors.first.to_s.should == 'amount is greater than original request amount.'
+    review.errors.first.to_s.should == "amount is greater than original request amount."
+    review.max_request.should eql original.amount
   end
 
   it "should have may_create? which is true if request.may_revise? and in review stage" do

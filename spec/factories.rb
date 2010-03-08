@@ -129,8 +129,7 @@ Factory.define :structure do |f|
 end
 
 Factory.define :node do |f|
-  f.requestable_type "AdministrativeExpense"
-  f.sequence(:name) { |n| "administrative expense #{n}" }
+  f.sequence(:name) { |n| "node #{n}" }
   f.item_quantity_limit 1
   f.association :structure
   f.association :category
@@ -178,26 +177,39 @@ Factory.define :edition do |f|
   f.association :item
 end
 
+Node::ALLOWED_TYPES.each_value do |t|
+  Factory.define "#{t}Node".underscore.to_sym, :parent => :node do |f|
+    f.requestable_type t
+  end
+  Factory.define "#{t}Item".underscore.to_sym, :parent => :item do |f|
+    f.association :request
+    f.node { |item| item.association("#{t}Node".underscore.to_sym, :structure => item.request.structure) }
+  end
+  Factory.define "#{t}Edition".underscore.to_sym, :parent => :edition do |f|
+    f.item { |edition| edition.association "#{t}Item".underscore.to_sym  }
+  end
+end
+
 Factory.define :attachable_edition, :parent => :edition do |f|
   f.association :item, :factory => :attachable_item
 end
 
 Factory.define :administrative_expense do |f|
-  f.association :edition
+  f.association :edition, :factory => :administrative_expense_edition
   f.copies 100
   f.repairs_restocking 100
   f.mailbox_wsh 25
 end
 
 Factory.define :durable_good_expense do |f|
-  f.association :edition
+  f.association :edition, :factory => :durable_good_expense_edition
   f.description 'a durable good'
   f.quantity 1.5
   f.price 1.5
 end
 
 Factory.define :local_event_expense do |f|
-  f.association :edition
+  f.association :edition, :factory => :local_event_expense_edition
   f.date Date.today + 2.months
   f.title 'An Event'
   f.location 'Willard Straight Hall'
@@ -209,7 +221,7 @@ Factory.define :local_event_expense do |f|
 end
 
 Factory.define :publication_expense do |f|
-  f.association :edition
+  f.association :edition, :factory => :publication_expense_edition
   f.title 'Publication'
   f.number_of_issues 3
   f.copies_per_issue 500
@@ -218,7 +230,7 @@ Factory.define :publication_expense do |f|
 end
 
 Factory.define :travel_event_expense do |f|
-  f.association :edition
+  f.association :edition, :factory => :travel_event_expense_edition
   f.date Date.today + 2.months
   f.title "A tournament"
   f.location 'Los Angeles, CA'
@@ -232,7 +244,7 @@ Factory.define :travel_event_expense do |f|
 end
 
 Factory.define :speaker_expense do |f|
-  f.association :edition
+  f.association :edition, :factory => :speaker_expense_edition
   f.title 'An Important Person'
   f.distance 204
   f.number_of_travelers 1

@@ -1,8 +1,10 @@
   <%= form.error_messages %>
 
   <% form.inputs :name => 'Basic Information' do %>
+    <% if form.object.requestable %>
     <% form.semantic_fields_for form.object.requestable.class.to_s.underscore.to_sym do |requestable_form| %>
       <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form", :object => requestable_form %>
+    <% end %>
     <% end %>
   <% end %>
 
@@ -14,8 +16,10 @@
   <% end %>
 
   <% form.inputs :name => 'Calculations' do %>
+    <% if form.object.requestable %>
     <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/calculation", :object => form.object.requestable %>
-    <p>Maximum request: <%=h number_to_currency(form.object.requestable.max_request) %></p>
+    <% end %>
+    <p>Maximum request: <%=h number_to_currency(form.object.max_request) %></p>
   <% end %>
 
   <% form.inputs :name => 'Funding Amount and Rationale' do %>

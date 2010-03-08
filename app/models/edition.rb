@@ -63,6 +63,16 @@ class Edition < ActiveRecord::Base
     requestable.edition = self if requestable
   end
 
+  def max_request
+    amounts = []
+    amounts << item.node.item_amount_limit if item
+    amounts << requestable.max_request if requestable
+    unless perspective.blank? || perspective == Edition::PERSPECTIVES.first
+      amounts << item.editions.perspective_equals( Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first.amount
+    end
+    amounts.sort.first
+  end
+
   def amount_must_be_within_node_limit
     return if item.nil? || amount.nil?
     if amount > item.node.item_amount_limit
@@ -78,29 +88,29 @@ class Edition < ActiveRecord::Base
   end
 
   def amount_must_be_within_original_edition
-    return if amount.nil? || perspective == 'requestor'
-    if amount >  item.editions.perspective_equals('requestor').first.amount
+    return unless amount && previous
+    if amount > previous.amount
       errors.add(:amount, " is greater than original request amount.")
     end
   end
 
   def requestable(force_reload=false)
-    return nil if item.nil?
+    return nil if item.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}",force_reload)
   end
 
   def build_requestable(attributes={})
-    return nil if item.nil?
+    return nil if item.nil? || item.node.requestable_type.blank?
     self.send("build_#{item.node.requestable_type.underscore}",attributes)
   end
 
   def create_requestable(attributes={})
-    return nil if item.nil?
+    return nil if item.nil? || item.node.requestable_type.blank?
     self.send("create_#{item.node.requestable_type.underscore}",attributes)
   end
 
   def requestable=(requestable)
-    return nil if item.nil?
+    return nil if item.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}=",requestable)
   end
 
@@ -123,6 +133,11 @@ class Edition < ActiveRecord::Base
       return request.may_revise?(user) || request.may_review?(user)
     end
     request.may_see?(user)
+  end
+
+  def previous
+    return nil unless perspective && Edition::PERSPECTIVES.index(perspective) && Edition::PERSPECTIVES.index(perspective) > 0
+    item.editions.perspective_equals( Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first
   end
 
   def to_s

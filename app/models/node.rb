@@ -26,7 +26,7 @@ class Node < ActiveRecord::Base
   belongs_to :category
   acts_as_tree
 
-  validates_inclusion_of :requestable_type, :in => Node::ALLOWED_TYPES.values
+  validates_inclusion_of :requestable_type, :in => Node::ALLOWED_TYPES.values, :allow_blank => true
   validates_presence_of :category
 
   delegate :may_update?, :to => :structure
