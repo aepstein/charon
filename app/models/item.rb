@@ -59,7 +59,7 @@ class Item < ActiveRecord::Base
   end
 
   def allowed_nodes
-    Node.allowed_for_children_of( request, parent )
+    Node.allowed_for_children_of( request, parent ).structure_id_equals( request.basis.structure_id )
   end
 
   def node_must_be_allowed
