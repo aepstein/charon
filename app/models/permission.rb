@@ -49,6 +49,8 @@ class Permission < ActiveRecord::Base
   delegate :may_update?, :to => :framework
   delegate :may_see?, :to => :framework
 
+  before_validation_on_create { |p| p.requirements.each { |r| r.permission = p } }
+
   def fulfillable_ids
     requirements.map { |requirement| requirement.flat_fulfillable_id }
   end

@@ -24,6 +24,19 @@
 </p>
 
 <p>
+<b>Requirements:</b>
+<% if @permission.requirements.length > 0 %>
+<ul>
+  <% @permission.requirements.each do |requirement| %>
+  <li><%= requirement.fulfillable %></li>
+  <% end %>
+</ul>
+<% else %>
+<i>There are no requirements for this permission.</i>
+<% end %>
+</p>
+
+<p>
 <%= link_to 'Edit', edit_permission_path(@permission) %> |
 <%= link_to 'Back', framework_permissions_path(@permission.framework) %>
 </p>
