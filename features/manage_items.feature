@@ -77,7 +77,7 @@ Feature: Manage items
     And an item exists with request: the request, node: node "travel"
     And I am logged in as "president" with password "secret"
     And I am on the items page for the request
-    When I follow "Move"
+    When I move the 1st item
     And I select "publication expense" from "Move to priority of"
     And I press "Move"
     Then I should see "Item was successfully moved."
@@ -91,6 +91,36 @@ Feature: Manage items
       | requestor              |
       | travel event expense   |
       | requestor              |
+
+  Scenario: Move an item (with parent)
+    Given a node: "top" exists with structure: structure "annual", name: "top"
+    And a node: "administrative_n" exists with structure: structure "annual", requestable_type: "AdministrativeExpense", name: "child administrative expense", parent: node "top"
+    And a node: "travel_n" exists with structure: structure "annual", requestable_type: "TravelEventExpense", name: "child travel event expense", parent: node "top"
+    And a node: "durable_n" exists with structure: structure "annual", requestable_type: "DurableGoodExpense", name: "child durable good expense", parent: node "top"
+    And a node: "publication_n" exists with structure: structure "annual", requestable_type: "PublicationExpense", name: "child publication expense", parent: node "top"
+    And an item: "top" exists with request: the request, node: node "top"
+    And an item exists with request: the request, node: node "administrative_n", parent: item "top"
+    And an item exists with request: the request, node: node "durable_n", parent: item "top"
+    And an item exists with request: the request, node: node "publication_n", parent: item "top"
+    And an item exists with request: the request, node: node "travel_n", parent: item "top"
+    And I am logged in as "president" with password "secret"
+    And I am on the items page for the request
+    When I move the 2nd item
+    And I select "child publication expense" from "Move to priority of"
+    And I press "Move"
+    Then I should see "Item was successfully moved."
+    And I should see the following items:
+      | Perspective                  |
+      | top                          |
+      | requestor                    |
+      | child durable good expense   |
+      | requestor                    |
+      | child publication expense    |
+      | requestor                    |
+      | child administrative expense |
+      | requestor                    |
+      | child travel event expense   |
+      | requestor                    |
 
   Scenario: Delete an item
     Given an item exists with request: the request, node: node "administrative"

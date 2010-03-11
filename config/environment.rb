@@ -52,6 +52,7 @@ Rails::Initializer.run do |config|
   config.gem 'fastercsv', :source => 'http://gemcutter.org'
   config.gem 'cornell_netid', :source => 'http://gemcutter.org'
   config.gem 'cornell_ldap', :source => 'http://gemcutter.org'
+  config.gem 'validation_reflection'
   config.gem 'formtastic', :source => 'http://gemcutter.org'
 
   config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
