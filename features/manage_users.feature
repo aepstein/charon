@@ -129,7 +129,7 @@ Feature: Manage users
   Scenario Outline: Display administrative options for admin on profile page
     Given I am logged in as "<user>" with password "secret"
     And I am on the profile page
-    Then I <see> see "Administration"
+    Then I <see> see "agreements"
     Examples:
       | user  | see        |
       | admin | should     |

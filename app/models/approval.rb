@@ -72,8 +72,6 @@ class Approval < ActiveRecord::Base
     may_unapprove_other? user
   end
 
-  def to_s
-    "Approval of #{user} for #{request}"
-  end
+  def to_s; "Approval of #{user} for #{request}"; end
 end
 

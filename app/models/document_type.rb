@@ -23,8 +23,6 @@ class DocumentType < ActiveRecord::Base
     "#{max_size_quantity} #{(max_size_quantity == 1) ? max_size_unit : max_size_unit.pluralize}"
   end
 
-  def to_s
-    name
-  end
+  def to_s; name; end
 end
 

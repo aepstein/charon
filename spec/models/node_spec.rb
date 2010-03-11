@@ -2,10 +2,21 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Node do
   before(:each) do
+    @node = Factory(:node)
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:node).id.should_not be_nil
+    @node.id.should_not be_nil
+  end
+
+  it 'should not save without a structure' do
+    @node.structure = nil
+    @node.save.should be_false
+  end
+
+  it 'should not save without a name' do
+    @node.name = nil
+    @node.save.should be_false
   end
 
   it "should not validate with an invalid requestable_type" do
@@ -43,6 +54,13 @@ describe Node do
     node = Factory(:node)
     node.structure.stub!(:may_see?).and_return('may_see')
     node.may_see?(nil).should == 'may_see'
+  end
+
+  it 'should not save with a duplicate name for a certain structure' do
+    duplicate = Factory(:node)
+    duplicate.name = @node.name
+    duplicate.structure = @node.structure
+    duplicate.valid?.should be_false
   end
 
 end

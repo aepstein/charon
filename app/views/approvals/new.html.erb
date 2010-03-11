@@ -1,4 +1,4 @@
-<h1>Approve <%=h @approval.approvable %></h1>
+<h2>Approve <%=h @approval.approvable %></h2>
 
 <% semantic_form_for( :approval, @approval, :url => polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
   <%= f.error_messages %>

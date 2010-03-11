@@ -143,7 +143,7 @@ Feature: Manage organizations
     Then I should see "Request was successfully created."
     When I follow "Show request"
     And I follow "Edit"
-    Then I should see "Editing Request for Org1"
+    Then I should see "Editing request for Org1"
     When I press "Update"
     Then I should see "Request was successfully updated."
 

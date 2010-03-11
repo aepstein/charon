@@ -1,4 +1,4 @@
-<h1>New address for <%=h @address.addressable %></h1>
+<h2>New address for <%=h @address.addressable %></h2>
 
 <% semantic_form_for( :address, @address, :url => polymorphic_path( [ @address.addressable, :addresses ] ) ) do |f| %>
   <%= render :partial => 'form', :object => f %>

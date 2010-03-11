@@ -67,8 +67,6 @@ class Basis < ActiveRecord::Base
     (open_at < DateTime.now) && (closed_at > DateTime.now)
   end
 
-  def to_s
-    name
-  end
+  def to_s; name; end
 end
 

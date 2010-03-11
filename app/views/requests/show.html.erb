@@ -1,4 +1,4 @@
-<h1>Showing <%=h @request %></h1>
+<h2><%=h @request %></h2>
 
 <p>Status: <%=h @request.status %></p>
 <p>Requestor total: <%= number_to_currency @request.editions.perspective_equals('requestor').sum('editions.amount') %></p>

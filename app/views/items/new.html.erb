@@ -1,4 +1,4 @@
-<h1>New item</h1>
+<h2>New item for <%=h @item.request %></h2>
 
 <% form_for( :item, @item, :url => request_items_path( @item.request_id ) ) do |f| %>
   <%= f.error_messages %>

@@ -1,4 +1,4 @@
-<h1>Listing requests</h1>
+<h2>Listing requests</h2>
 
 <% if @basis %>
 <% form_for :search, :url => basis_requests_path( @basis ), :html => { :method => :get } do |f| %>
@@ -14,6 +14,8 @@
 
 <%= will_paginate @requests %>
 
+<hr/>
+
 <table>
 <thead>
   <tr>
@@ -26,6 +28,8 @@
   <%= render :partial => 'request', :collection => @requests %>
 </tbody>
 </table>
+
+<hr/>
 
 <%= will_paginate @requests %>
 

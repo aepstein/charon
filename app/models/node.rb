@@ -27,6 +27,9 @@ class Node < ActiveRecord::Base
   belongs_to :category
   acts_as_tree
 
+  validates_presence_of :name
+  validates_uniqueness_of :name, :scope => [:structure_id]
+  validates_presence_of :structure
   validates_inclusion_of :requestable_type, :in => Node::ALLOWED_TYPES.values, :allow_blank => true
   validates_presence_of :category
 
@@ -41,9 +44,7 @@ class Node < ActiveRecord::Base
     may_update? user
   end
 
-  def to_s
-    name
-  end
+  def to_s; name; end
 
 end
 

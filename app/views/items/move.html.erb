@@ -1,4 +1,4 @@
-<h1>Move <%= @item.title %> to different priority</h1>
+<h2>Move <%=h @item %> to different priority</h2>
 
 <%= form_tag do_move_item_path(@item), :method => :put %>
 <p>

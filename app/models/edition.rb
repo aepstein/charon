@@ -142,8 +142,6 @@ class Edition < ActiveRecord::Base
     item.editions.perspective_equals( Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first
   end
 
-  def to_s
-    "#{perspective} edition of #{item}"
-  end
+  def to_s; "#{perspective} edition of #{item}"; end
 end
 
