@@ -14,5 +14,9 @@
   Current liabilities: <%= number_to_currency external_equity_report.current_liabilities %>
 </p>
 
+<p>
+  Participants receive academic credit? <%= external_equity_report.academic_credit? ? 'Yes' : 'No' %>
+</p>
+
 <%= render :partial => "external_equity_reports/calculation", :object => external_equity_report %>
 
