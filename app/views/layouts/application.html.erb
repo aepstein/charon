@@ -47,7 +47,7 @@
   <% if current_user.admin? %>
   <%= %w( agreements categories document_types frameworks organizations registrations roles structures users ).map { |option|
     content_tag 'li', link_to( option, send(option + '_path') )
-  }.join(' | ') %>
+  }.join("\n") %>
   <% end %>
 <% else %>
 <%= content_tag 'li', link_to( 'login', login_path ) %>
