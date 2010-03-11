@@ -25,23 +25,7 @@
   <dt>Registered?</dt>
   <dd><%=h @registration.registered? ? 'YES' : 'NO' %></dd>
 
-  <dt>Number of Alumni</dt>
-  <dd><%=@registration.number_of_alumni %></dd>
-
-  <dt>Number of Faculty</dt>
-  <dd><%=@registration.number_of_faculty %></dd>
-
-  <dt>Number of Grads</dt>
-  <dd><%=@registration.number_of_grads %></dd>
-
-  <dt>Number of Others</dt>
-  <dd><%=@registration.number_of_others %></dd>
-
-  <dt>Number of Staff</dt>
-  <dd><%=@registration.number_of_staff %></dd>
-
-  <dt>Number of Undergrads</dt>
-  <dd><%=@registration.number_of_undergrads %></dd>
+  <%= render :partial => "membership", :object => @registration %>
 
   <dt>Advisor</dt>
   <dd><dl>

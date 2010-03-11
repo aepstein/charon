@@ -76,6 +76,15 @@ This request is now submitted for review.
 </ul>
 <% end %>
 
+<% @request.organizations.each do |organization| %>
+<% if organization.registrations.current %>
+<h3>Membership information for <%=h organization %></h3>
+<dl>
+<%= render :partial => 'registrations/membership', :object => organization.registrations.current %>
+</dl>
+<% end %>
+<% end %>
+
 <h2>Who has approved</h2>
 
 <% if @request.approvals.empty? %>
