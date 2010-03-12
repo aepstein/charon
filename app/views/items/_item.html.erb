@@ -15,11 +15,13 @@
   <% item.editions.next unless read_only %>
   <%= render :partial => 'items/edition', :collection => item.editions, :locals => { :read_only => read_only, :show_detail => show_detail } %>
 
-  <%= render :partial => 'items/item', :collection => item.request.items.children_of(item), :locals => { :read_only => read_only, :show_detail => show_detail } %>
-
   <% unless read_only %>
   <%= render :partial => 'items/new_item', :object => item.request.items.build( :parent => item ) %>
   <% end %>
+
   <% table_row_class %>
+
+  <%= render :partial => 'items/item', :collection => item.request.items.children_of(item).reject { |i| i.new_record? },
+    :locals => { :read_only => read_only, :show_detail => show_detail } %>
 <% end %>
 

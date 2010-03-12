@@ -32,8 +32,13 @@ module ApplicationHelper
            :object => requestable
   end
 
-  def table_row_tag(increment=true,&block)
-    content_tag 'tr', :class => table_row_class(increment), &block
+  def table_row_tag(increment=true, &block)
+    content_tag = content_tag 'tr', capture(&block), :class => table_row_class(increment)
+    if block_called_from_erb?(block)
+      concat(content_tag)
+    else
+      content_tag
+    end
   end
 
   def table_row_class(increment=true)
