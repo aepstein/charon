@@ -38,23 +38,25 @@
 
 <%= markdown @basis.release_message %>
 
-<h2>Requests overview</h2>
+<h3>Requests overview</h3>
 <table>
+<thead>
 <tr>
 <th>Status</th>
 <th>Quantity</th>
 <th>Requestor Amount</th>
 <th>Reviewer Amount</th>
 <th>Allocation Amount</th>
+</thead>
 </tr>
 <% Request.aasm_state_names.each do |status| %>
-<tr>
+<% table_row_tag do %>
 <td><%=h status %></td>
 <td><%= @basis.requests.send(status).size %></td>
 <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('requestor',status) ) %></td>
 <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
 <td><%= number_to_currency( @basis.requests.item_amount_for_status(status) ) %></td>
-</tr>
+<% end %>
 <% end %>
 </table>
 
