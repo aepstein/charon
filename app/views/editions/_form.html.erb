@@ -21,7 +21,9 @@
     <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/calculation", :object => form.object.requestable %>
     </li>
     <% end %>
+    <li>
     <p>Maximum request: <%=h number_to_currency(form.object.max_request) %></p>
+    </li>
   <% end %>
 
   <% form.inputs :name => 'Funding Amount and Rationale' do %>
