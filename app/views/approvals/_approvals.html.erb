@@ -1,8 +1,13 @@
+<% user ||= false; approvable ||= false %>
 <table>
   <thead>
   <tr>
+    <% if user %>
     <th>User</th>
+    <% end %>
+    <% if approvable %>
     <th>Approvable</th>
+    <% end %>
     <th>Created</th>
   </tr>
   </thead>

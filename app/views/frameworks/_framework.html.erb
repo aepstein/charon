@@ -1,7 +1,7 @@
-  <tr>
+  <% table_row_tag do %>
     <td><%=h framework.name %></td>
     <td><%= link_to 'Show', framework %></td>
     <td><%= link_to 'Edit', edit_framework_path(framework) %></td>
     <td><%= link_to 'Destroy', framework, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+  <% end %>
 

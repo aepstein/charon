@@ -9,7 +9,7 @@
   </tr>
 
 <% @memberships.each do |membership| %>
-  <tr>
+  <% table_row_tag do %>
     <td><%=h membership.group_id %></td>
     <td><%=h membership.person_id %></td>
     <td><%=h membership.registration_id %></td>
@@ -17,7 +17,7 @@
     <td><%= link_to 'Show', membership %></td>
     <td><%= link_to 'Edit', edit_membership_path(membership) %></td>
     <td><%= link_to 'Destroy', membership, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+  <% end %>
 <% end %>
 </table>
 

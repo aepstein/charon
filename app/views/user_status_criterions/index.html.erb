@@ -1,18 +1,21 @@
 <h2>Listing user status criterions</h2>
 
 <table>
+<thead>
   <tr>
     <th>Statuses</th>
   </tr>
-
+</thead>
+<tbody>
 <% @user_status_criterions.each do |user_status_criterion| %>
-  <tr>
+  <% table_row_tag do %>
     <td><%=h user_status_criterion.statuses.sort.join ', ' %></td>
     <td><%= link_to 'Show', user_status_criterion %></td>
     <td><%= link_to 'Edit', edit_user_status_criterion_path(user_status_criterion) %></td>
     <td><%= link_to 'Destroy', user_status_criterion, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
+  <% end %>
 <% end %>
+</tbody>
 </table>
 
 <br />

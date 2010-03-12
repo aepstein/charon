@@ -1,5 +1,5 @@
-  <tr>
+  <% table_row_tag do %>
     <td><%=h document.document_type %></td>
     <td><%= link_to_if document.may_see?(current_user), 'Show', document %></td>
-  </tr>
+  <% end %>
 
