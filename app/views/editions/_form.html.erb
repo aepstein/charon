@@ -27,8 +27,8 @@
   <% end %>
 
   <% form.inputs :name => 'Funding Amount and Rationale' do %>
-  <%= form.input :amount, :label => "#{form.object.perspective} Amount" %>
-  <%= form.input :comment, :label => "#{form.object.perspective} Comment" %>
+  <%= form.input :amount, :label => "#{form.object.perspective.capitalize} Amount" %>
+  <%= form.input :comment, :label => "#{form.object.perspective.capitalize} Comment" %>
   <% end %>
 
   <%= form.buttons %>
