@@ -150,12 +150,12 @@ Feature: Manage items
     When I am on the items page for the request
     Then I should see the following items:
       | Perspective            | Amount         |
-      | administrative expense | Move Destroy   |
+      | administrative expense | Move           |
       | Requestor edition      | $0.00          |
       | Reviewer edition       | $0.00          |
-      | durable good expense   | Move Destroy   |
+      | durable good expense   | Move           |
       | Requestor edition      | $0.00          |
       | Reviewer edition       | None yet.      |
-      | publication expense    | Move Destroy   |
+      | publication expense    | Move           |
       | Requestor edition      | None yet.      |
 
