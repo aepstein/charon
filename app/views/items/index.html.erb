@@ -4,18 +4,9 @@ table td { padding: 4px; }
 
 <h2>Listing items for <%=h @request %></h2>
 
-<table>
-<thead>
-  <tr>
-    <th>Perspective</th>
-    <th>Amount</th>
-    <th>Comment</th>
-  </tr>
-</thead>
-<tbody>
-<%= render :partial => 'item', :collection => @request.items.root,
-      :locals => { :read_only => false, :show_detail => false } %>
-</tbody>
+<%= render :partial => "items", :object => @request.items.root, :locals => {
+  :show_detail => false, :read_only => false
+} %>
 
 <%= render :partial => 'new_item', :object => @request.items.build %>
 

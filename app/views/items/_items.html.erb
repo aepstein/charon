@@ -1,0 +1,17 @@
+<% read_only ||= false %>
+<% show_detail ||= false %>
+
+<table>
+<thead>
+  <tr>
+    <th>Perspective</th>
+    <th>Amount</th>
+    <th>Comment</th>
+  </tr>
+</thead>
+<tbody>
+<%= render :partial => 'items/item', :collection => items,
+      :locals => { :read_only => read_only, :show_detail => show_detail } %>
+</tbody>
+</table>
+

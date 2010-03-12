@@ -54,17 +54,8 @@ This request is now submitted for review.
 
 <h2>Items</h2>
 
-<table border="1px">
-  <tr>
-    <th>Perspective</th>
-    <th>Amount</th>
-    <th>Comment</th>
-  </tr>
-
-<%= render :partial => 'items/item', :collection => @request.items.root,
+<%= render :partial => 'items/items', :collection => @request.items.root,
       :locals => { :read_only => true, :show_detail => true } %>
-
-</table>
 
 <% unless @request.approvers.unfulfilled_for_status(@request.status).empty? %>
 <h2>Who must approve</h2>
