@@ -14,6 +14,7 @@ class Structure < ActiveRecord::Base
   end
   has_many :bases
   has_many :requests
+  has_many :categories, :through => :nodes
 
   validates_numericality_of :minimum_requestors, :only_integer => true
   validates_numericality_of :maximum_requestors, :only_integer => true

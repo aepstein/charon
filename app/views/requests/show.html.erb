@@ -6,16 +6,20 @@
 <p>Reviewer total: <%= number_to_currency @request.editions.perspective_equals('reviewer').sum('editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
 <table>
+  <thead>
   <tr>
     <th>Category</th>
     <th>Allocation (after caps)</th>
   </tr>
-  <% Category.all.each do |category| %>
-  <tr>
+  </thead>
+  <tbody>
+  <% @request.basis.structure.categories.each do |category| %>
+  <% table_row_tag do %>
     <td><%=h category.name %></td>
     <td><%= number_to_currency @request.items.allocation_for_category(category) %></td>
-  </tr>
   <% end %>
+  <% end %>
+  </tbody>
 </table>
 
 <p>Note: Higher priority items are allocated before lower priorities until the allocation cap is reached.</p>
@@ -78,20 +82,8 @@ This request is now submitted for review.
 
 <h3>Who has approved</h3>
 
-<% if @request.approvals.empty? %>
-<p>No users have approved this request yet.</p>
-<% else %>
-<table border="1px">
-  <tr>
-    <th>User</th>
-    <th>Created</th>
-  </tr>
-
-<%= render :partial => 'approvals/approval', :collection => @request.approvals,
+<%= render :partial => 'approvals/approvals', :object => @request.approvals.all(:include => :user),
            :locals => { :user => true, :approvable => false } %>
-
-</table>
-<% end %>
 
 <p>
 <%= link_to_request_organization_profiles @request %> |

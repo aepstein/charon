@@ -1,4 +1,4 @@
-  <tr>
+  <% table_row_tag do %>
     <% if user then %>
     <td><%=h approval.user %></td>
     <% end %>
@@ -10,6 +10,8 @@
     <td><%= link_to 'Create', new_approvable_approval_path( approval.approvable ) %></td>
     <% elsif approval.may_destroy?(current_user) %>
     <td><%= link_to 'Destroy', approval, :confirm => 'Are you sure?', :method => :delete %></td>
+    <% else %>
+    <td>&nbsp;</td>
     <% end %>
-  </tr>
+  <% end %>
 
