@@ -8,12 +8,15 @@
   </p>
 
   <table>
+  <thead>
     <tr>
       <th>Organization</th>
       <th>Your Role(s)</th>
     </tr>
-
+  </thead>
+  <tbody>
     <%= render :partial => "organization", :collection => current_user.organizations %>
+  </tbody>
   </table>
 <% end %>
 
