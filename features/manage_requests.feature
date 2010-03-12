@@ -46,14 +46,14 @@ Feature: Manage requests
     Given I am logged in as "requestor" with password "secret"
     And I am on the requests page for organization: "safc1"
     Then I should see the following requests:
-      | Organization |
+      | Basis        |
       | safc basis 1 |
 
   Scenario: List requests for an organization with 2 requests
     Given I am logged in as "requestor" with password "secret"
     And I am on the requests page for organization: "safc2"
     Then I should see the following requests:
-      | Organization |
+      | Basis        |
       | safc basis 1 |
       | safc basis 2 |
 
@@ -61,7 +61,7 @@ Feature: Manage requests
     Given I am logged in as "requestor" with password "secret"
     And I am on the requests page for the organization: "safc3"
     Then I should see the following requests:
-      | Organization |
+      | Organizations |
 
   Scenario: List requests for a basis
     Given a basis: "fall" exists with name: "fall semester"
@@ -80,20 +80,20 @@ Feature: Manage requests
     And I am logged in as "admin" with password "secret"
     And I am on the requests page for basis: "fall"
     Then I should see the following requests:
-      | Organization |
-      | 14 Society   |
-      | Abc Club     |
-      | Zxy Club     |
+      | Organizations |
+      | 14 Society    |
+      | Abc Club      |
+      | Zxy Club      |
     When I fill in "Search" with "club"
     And I press "Go"
     Then I should see the following requests:
-      | Organization |
-      | Abc Club     |
-      | Zxy Club     |
+      | Organizations |
+      | Abc Club      |
+      | Zxy Club      |
     When I select "accepted" from "Status"
     And I press "Go"
     Then I should see the following requests:
-      | Organization |
-      | 14 Society   |
-      | Zxy Club     |
+      | Organizations |
+      | 14 Society    |
+      | Zxy Club      |
 

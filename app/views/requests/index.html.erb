@@ -16,18 +16,7 @@
 
 <hr/>
 
-<table>
-<thead>
-  <tr>
-    <td>Organization</td>
-    <td>Status</td>
-    <td>Options</td>
-  </tr>
-</thead>
-<tbody>
-  <%= render :partial => 'request', :collection => @requests %>
-</tbody>
-</table>
+<%= render :partial => "requests", :object => @requests, :locals => { :basis => @basis } %>
 
 <hr/>
 

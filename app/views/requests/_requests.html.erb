@@ -1,0 +1,25 @@
+<% status ||= false %>
+<% basis ||= false %>
+<% organization ||= false %>
+
+<table>
+<thead>
+  <tr>
+  <% unless basis %>
+    <td>Basis</td>
+  <% end %>
+  <% unless organization %>
+    <td>Organizations</td>
+  <% end %>
+  <% unless status %>
+    <td>Status</td>
+  <% end %>
+  </tr>
+</thead>
+<tbody>
+  <%= render :partial => 'requests/request', :collection => requests, :locals => {
+    :organization => organization, :status => status, :basis => basis
+  } %>
+</tbody>
+</table>
+

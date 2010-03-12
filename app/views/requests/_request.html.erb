@@ -1,30 +1,33 @@
-<% if request.may_see?(current_user) %>
+<% status ||= false %>
+<% basis ||= false %>
+<% organization ||= false %>
 
-  <% if request.new_record? %>
+<% if request.may_see?(current_user) %>
     <tr>
+      <% unless basis %>
       <td><%=h request.basis.name %></td>
-      <td><em>Not applicable</em></td>
+      <% end %>
+      <% unless organization %>
+      <td><%=h request.organizations %></td>
+      <% end %>
+      <% unless status %>
+      <td><%= request.status %></td>
+      <% end %>
+      <% if request.new_record? %>
       <td>
         <% form_for :request, request, :url => organization_requests_path(request.organizations.first) do |f| %>
           <%= f.hidden_field :basis_id %>
           <%= f.submit 'Create' %>
         <% end %>
       </td>
+      <% else %>
+      <td/>
+      <td><%= link_to_if(request.may_see?(current_user), 'Show Detail', request) %></td>
+      <td><%= link_to_if(request.may_see?(current_user), 'Manage Items', request_items_path(request) ) %></td>
+      <td><%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %></td>
+      <td><%= link_to_if(request.may_approve?(current_user) && request.approvals.user_id_equals(current_user.id).empty?, 'Approve', new_request_approval_path( request ) ) { "" } %></td>
+      <td><%= link_to_unapprove_request(request) %></td>
+      <% end %>
     </tr>
-  <% else %>
-    <tr>
-      <td><% if @basis %><%=h request.organizations %><% else %><%=h request.basis.name %><% end %></td>
-      <td><%=h request.status %></td>
-      <td>
-        <%= link_to_if(request.may_see?(current_user), 'Show Detail', request) %> |
-        <%= link_to_if(request.may_see?(current_user), 'Manage Items', request_items_path(request) ) %> |
-        <%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %> |
-        <%= link_to_if(request.may_approve?(current_user) && request.approvals.user_id_equals(current_user.id).empty?, 'Approve', new_request_approval_path( request ) ) { "" } %> |
-        <%= link_to_unapprove_request(request) %>
-      </td>
-     </tr>
-
-  <% end %>
-
 <% end %>
 

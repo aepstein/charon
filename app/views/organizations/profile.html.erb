@@ -16,7 +16,9 @@
 
 <p>Choose a new request you would like to create and get started on:</p>
 
-<%= render :partial => 'requests/request', :collection => @organization.requests.creatable %>
+<%= render :partial => 'requests/requests', :object => @organization.requests.creatable, :locals => {
+  :organization => @organization, :status => true
+} %>
 <% end %>
 
 <% unless @organization.requests.started.select { |r| r.may_see? current_user }.empty? %>
@@ -24,7 +26,9 @@
 
 <p>Choose a request below to examine and modify its items:</p>
 
-<%= render :partial => 'requests/request', :collection => @organization.requests.started %>
+<%= render :partial => 'requests/requests', :object => @organization.requests.started, :locals => {
+  :organization => @organization, :status => true
+} %>
 <% end %>
 
 <% unless @organization.requests.completed.select { |r| r.may_see? current_user }.empty? %>
@@ -32,7 +36,9 @@
 
 <p>If you need to make changes, each person who has approved the request must unapprove it.</p>
 
-<%= render :partial => 'requests/request', :collection => @organization.requests.completed %>
+<%= render :partial => 'requests/requests', :object => @organization.requests.completed, :locals => {
+  :organization => @organization, :status => true
+} %>
 <% end %>
 
 <% unless @organization.requests.submitted.select { |r| r.may_see? current_user }.empty? %>
@@ -40,7 +46,9 @@
 
 <p>You may view details of any of the following requests, although reviews have not yet been released:</p>
 
-<%= render :partial => 'requests/request', :collection => @organization.requests.submitted %>
+<%= render :partial => 'requests/requests', :object => @organization.requests.submitted, :locals => {
+  :organization => @organization, :status => true
+} %>
 <% end %>
 
 <% unless @organization.requests.released.select { |r| r.may_see? current_user }.empty? %>
@@ -48,7 +56,9 @@
 
 <p>Results are available for the following requests:</p>
 
-<%= render :partial => 'requests/request', :collection => @organization.requests.released %>
+<%= render :partial => 'requests/requests', :object => @organization.requests.released, :locals => {
+  :organization => @organization, :status => true
+} %>
 <% end %>
 
 <p>
