@@ -12,7 +12,7 @@
 
 
 <% unless @organization.requests.creatable.select { |r| r.may_create? current_user }.empty? %>
-<h2>Bases for you to make requests</h2>
+<h3>Bases for you to make requests</h3>
 
 <p>Choose a new request you would like to create and get started on:</p>
 
@@ -22,7 +22,7 @@
 <% end %>
 
 <% unless @organization.requests.started.select { |r| r.may_see? current_user }.empty? %>
-<h2>Requests you've started</h2>
+<h3>Requests you've started</h3>
 
 <p>Choose a request below to examine and modify its items:</p>
 
@@ -32,7 +32,7 @@
 <% end %>
 
 <% unless @organization.requests.completed.select { |r| r.may_see? current_user }.empty? %>
-<h2>Requests you've completed, but are still awaiting approvals</h2>
+<h3>Requests you've completed, but are still awaiting approvals</h3>
 
 <p>If you need to make changes, each person who has approved the request must unapprove it.</p>
 
@@ -42,7 +42,7 @@
 <% end %>
 
 <% unless @organization.requests.submitted.select { |r| r.may_see? current_user }.empty? %>
-<h2>Requests you've completed and submitted</h2>
+<h3>Requests you've completed and submitted</h3>
 
 <p>You may view details of any of the following requests, although reviews have not yet been released:</p>
 
@@ -52,7 +52,7 @@
 <% end %>
 
 <% unless @organization.requests.released.select { |r| r.may_see? current_user }.empty? %>
-<h2>Requests that have been released</h2>
+<h3>Requests that have been released</h3>
 
 <p>Results are available for the following requests:</p>
 
