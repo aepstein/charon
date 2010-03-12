@@ -1184,7 +1184,6 @@ hr {
  * Office of the Assemblies Hacks
  */
 table { padding: 0; border-collapse: collapse; border-width: 0; }
-td { border-left: 0; border-right: 0; }
 td p { font-size: 1.0em; }
 p.notice { color: #008800 }
 .errorExplanation { background: #880000; color: #FFFFFF; border: 3px #FF0000 dotted }
