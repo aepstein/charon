@@ -1,5 +1,5 @@
 <% if new_item.allowed_nodes.size > 0 && new_item.may_create?(current_user) %>
-<tr>
+<% table_row_tag false do %>
   <td colspan="3">
   <% form_for( :item,
                new_item,
@@ -17,6 +17,6 @@
 
   <% end %>
   </td>
-</tr>
+<% end %>
 <% end %>
 

@@ -32,6 +32,18 @@ module ApplicationHelper
            :object => requestable
   end
 
+  def table_row_tag(increment=true,&block)
+    content_tag 'tr', :class => table_row_class(increment), &block
+  end
+
+  def table_row_class(increment=true)
+    @table_row_class ||= 'row1'
+    out = @table_row_class
+    @table_row_class = ( @table_row_class == 'row1' ? 'row2' : 'row1' ) if increment
+    @table_row_class = 'row1' if increment == :reset
+    out
+  end
+
   def link_to_external_registration(organization)
     return organization.name unless organization.registrations.current && organization.registrations.current.external_id
     link_to organization.name, "http://sao.cornell.edu/SO/search.php?igroup=#{organization.registrations.current.external_id}"

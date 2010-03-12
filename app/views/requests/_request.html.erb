@@ -3,7 +3,7 @@
 <% organization ||= false %>
 
 <% if request.may_see?(current_user) %>
-    <tr>
+    <% table_row_tag do %>
       <% unless basis %>
       <td><%=h request.basis.name %></td>
       <% end %>
@@ -28,6 +28,6 @@
       <td><%= link_to_if(request.may_approve?(current_user) && request.approvals.user_id_equals(current_user.id).empty?, 'Approve', new_request_approval_path( request ) ) { "" } %></td>
       <td><%= link_to_unapprove_request(request) %></td>
       <% end %>
-    </tr>
+    <% end %>
 <% end %>
 

@@ -1,14 +1,15 @@
 <% if item.may_see? current_user %>
-  <tr>
+  <% table_row_tag false do %>
     <td colspan="3"><%=h item.title %><% if item.title != item.node.name %> (<%=h item.node.name %>)<% end %></td>
     <% unless read_only %>
     <td><%= link_to_if item.may_update?(current_user), 'Move', move_item_path(item) %> <%= link_to_if item.may_destroy?(current_user), 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
     <% end %>
-  </tr>
+  <% end %>
   <% if show_detail && item.request.may_review?(current_user) %>
-  <tr>
-    <td colspan="3">Allocation (adjusted for caps): <%=h number_to_currency item.amount %></td>
-  </tr>
+  <% table_row_tag false do %>
+    <td>Allocation Amount</td>
+    <td><%=h number_to_currency item.amount %></td>
+  <% end %>
   <% end %>
 
   <% item.editions.next unless read_only %>
@@ -19,5 +20,6 @@
   <% unless read_only %>
   <%= render :partial => 'items/new_item', :object => item.request.items.build( :parent => item ) %>
   <% end %>
+  <% table_row_class %>
 <% end %>
 

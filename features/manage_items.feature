@@ -84,13 +84,13 @@ Feature: Manage items
     And I should see the following items:
       | Perspective            |
       | durable good expense   |
-      | requestor              |
+      | Requestor edition      |
       | publication expense    |
-      | requestor              |
+      | Requestor edition      |
       | administrative expense |
-      | requestor              |
+      | Requestor edition      |
       | travel event expense   |
-      | requestor              |
+      | Requestor edition      |
 
   Scenario: Move an item (with parent)
     Given a node: "top" exists with structure: structure "annual", name: "top"
@@ -112,15 +112,15 @@ Feature: Manage items
     And I should see the following items:
       | Perspective                  |
       | top                          |
-      | requestor                    |
+      | Requestor edition            |
       | child durable good expense   |
-      | requestor                    |
+      | Requestor edition            |
       | child publication expense    |
-      | requestor                    |
+      | Requestor edition            |
       | child administrative expense |
-      | requestor                    |
+      | Requestor edition            |
       | child travel event expense   |
-      | requestor                    |
+      | Requestor edition            |
 
   Scenario: Delete an item
     Given an item exists with request: the request, node: node "administrative"
@@ -133,11 +133,11 @@ Feature: Manage items
     And I should see the following items:
       | Perspective            |
       | administrative expense |
-      | requestor              |
+      | Requestor edition      |
       | durable good expense   |
-      | requestor              |
+      | Requestor edition      |
       | travel event expense   |
-      | requestor              |
+      | Requestor edition      |
 
   Scenario: Show correct add edition links
     Given an item: "administrative" exists with request: the request, node: node "administrative"
@@ -151,11 +151,11 @@ Feature: Manage items
     Then I should see the following items:
       | Perspective            | Amount         |
       | administrative expense | Move Destroy   |
-      | requestor              | $0.00          |
-      | reviewer               | $0.00          |
+      | Requestor edition      | $0.00          |
+      | Reviewer edition       | $0.00          |
       | durable good expense   | Move Destroy   |
-      | requestor              | $0.00          |
-      | reviewer               | None yet.      |
+      | Requestor edition      | $0.00          |
+      | Reviewer edition       | None yet.      |
       | publication expense    | Move Destroy   |
-      | requestor              | None yet.      |
+      | Requestor edition      | None yet.      |
 
