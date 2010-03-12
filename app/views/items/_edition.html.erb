@@ -4,7 +4,7 @@
       <% if edition.new_record? then %>
       <td colspan="2" align="center"><em>None yet.</em></td>
       <% if read_only %>
-      <td/>
+      <td>&nbsp;</td>
       <% else %>
       <td><%= link_to_if(edition.may_create?(current_user), "Add", new_item_edition_path(edition.item) ) { "" } %></td>
       <% end %>
@@ -12,7 +12,7 @@
       <td><%=h number_to_currency edition.amount %></td>
       <td><%=h edition.comment %></td>
       <% if read_only %>
-      <td/>
+      <td>&nbsp;</td>
       <% else %>
       <td><%= link_to_if(edition.may_update?(current_user), "Edit", edit_edition_path(edition) ) { "" } %></td>
       <% end %>
