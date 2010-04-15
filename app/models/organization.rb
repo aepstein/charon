@@ -6,6 +6,7 @@ class Organization < ActiveRecord::Base
     end
   end
   has_many :memberships
+  has_many :roles, :through => :memberships
   has_many :bases
   has_and_belongs_to_many :requests do
     def creatable
@@ -20,6 +21,10 @@ class Organization < ActiveRecord::Base
 
   validates_presence_of :last_name
   validates_uniqueness_of :last_name, :scope => :first_name
+
+  def permissions
+    Permission.role_id_equals_any(role_ids)
+  end
 
   def unfulfilled_permissions
     Permission.requirements_unfulfilled.requirements_with_fulfillments.requirements_fulfillable_type_equals_any(

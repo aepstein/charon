@@ -21,9 +21,13 @@ Feature: Manage organizations
 
   Scenario Outline: Show unfulfilled requirements for organization in profile
     Given a role exists
-    And a permission exists with role: the role
+    And a framework exists with name: "SAFC"
+    And a permission: "first" exists with role: the role, framework: the framework, action: "create"
+    And a permission: "second" exists with role: the role, framework: the framework, action: "update"
+    And a permission: "third" exists with role: the role, framework: the framework, action: "review"
     And a registration_criterion exists with must_register: true, minimal_percentage: 10, type_of_member: "staff"
-    And a requirement exists with permission: the permission, fulfillable: the registration_criterion
+    And a requirement exists with permission: permission "first", fulfillable: the registration_criterion
+    And a requirement exists with permission: permission "second", fulfillable: the registration_criterion
     And an organization: "qualified" exists
     And a registration exists with organization: organization "qualified", number_of_staff: 10, registered: true
     And an organization: "unqualified" exists
@@ -32,7 +36,7 @@ Feature: Manage organizations
     And I am logged in as "admin" with password "secret"
     And I am on the profile page for organization: "<organization>"
     Then I should <see> "The organization has unfulfilled requirements that may limit what it is able to do:"
-    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration. Click here to update the registration."
+    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration in order to create, update SAFC requests. Click here to update the registration."
     Examples:
       | organization | see     |
       | qualified    | not see |

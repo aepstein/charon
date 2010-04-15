@@ -11,16 +11,20 @@ Feature: Manage users
 
   Scenario Outline: Show unfulfilled requirements for user in profile
     Given a role exists
-    And a permission exists with role: the role
+    And a framework exists with name: "SAFC"
+    And a permission: "first" exists with role: the role, framework: the framework, action: "create"
+    And a permission: "second" exists with role: the role, framework: the framework, action: "update"
+    And a permission exists with role: the role, framework: the framework, action: "review"
     And an agreement exists with name: "The Agreement"
-    And a requirement exists with permission: the permission, fulfillable: the agreement
+    And a requirement exists with permission: permission "first", fulfillable: the agreement
+    And a requirement exists with permission: permission "second", fulfillable: the agreement
     And a membership exists with active: true, user: user "admin", role: the role
     And a membership exists with active: true, user: user "owner", role: the role
     And a membership exists with active: true, user: user "regular", role: the role
     And an approval exists with approvable: the agreement, user: user "owner"
     And I am logged in as "<user>" with password "secret"
     Then I should <see> "You have unfulfilled requirements that may limit what you are able to do:"
-    And I should <see> "You must approve The Agreement. Click here to approve."
+    And I should <see> "You must approve The Agreement in order to create, update SAFC requests. Click here to approve."
     Examples:
       | user    | see     |
       | admin   | see     |

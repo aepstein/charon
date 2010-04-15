@@ -36,10 +36,10 @@
 <% end %>
 
 <% unless current_user.unfulfilled_requirements.length == 0 %>
-<p>You have unfulfilled requirements that may limit what you are able to do:</p>
+<p>You have unfulfilled requirements that <i>may</i> limit what you are able to do:</p>
 <ul>
 <% current_user.unfulfilled_requirements.each do |requirement| %>
-<li>You <%= unfulfilled_requirement requirement %></li>
+<li>You <%= unfulfilled_requirement requirement, current_user %></li>
 <% end %>
 </ul>
 <% end %>

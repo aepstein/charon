@@ -46,6 +46,10 @@ class User < ActiveRecord::Base
   after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self'
 
+  def permissions
+    Permission.role_id_equals_any(role_ids)
+  end
+
   def unfulfilled_permissions
     Permission.requirements_unfulfilled.requirements_with_fulfillments.requirements_fulfillable_type_equals_any(
     Fulfillment::FULFILLABLE_TYPES['User'] ).memberships_user_id_eq(id)
