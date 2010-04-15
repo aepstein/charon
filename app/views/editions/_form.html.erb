@@ -26,8 +26,16 @@
     </li>
   <% end %>
 
-  <% form.inputs :name => 'Funding Amount and Rationale' do %>
+  <% form.inputs :name => 'Funding Amount and Comments' do %>
+  <% if form.object.item.node.item_amount_limit == 0 %>
+  <% form.object.amount = 0.0 %>
+  <%= form.input :amount, :as => :hidden %>
+  <li>
+  <p>No request amount may be specified for this item.</p>
+  </li>
+  <% else %>
   <%= form.input :amount, :label => "#{form.object.perspective.capitalize} Amount" %>
+  <% end %>
   <%= form.input :comment, :label => "#{form.object.perspective.capitalize} Comment" %>
   <% end %>
 
