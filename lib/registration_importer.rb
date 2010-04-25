@@ -69,10 +69,11 @@ module RegistrationImporter
     end
 
     # Returns number of records imported
-    def self.import
+    def self.import(registrations = nil)
+      registrations ||= ExternalRegistration.importable
       count, destroy_count = 0, 0
       Registration.transaction do
-        ExternalRegistration.importable.each do |external|
+        registrations.each do |external|
           registration = Registration.find_or_initialize_by_external_id( external.org_id )
           registration.attributes = external.attributes_for_local
           registration.save && count += 1 if registration.new_record? || registration.changed?
