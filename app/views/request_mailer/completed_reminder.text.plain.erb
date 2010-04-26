@@ -1,0 +1,10 @@
+This email is to inform you that your <%= @request %> has been completed, but requires further action before it will be considered submitted.
+
+The following people must approve the request before it is considered submitted:
+
+<% @request.approvers.unfulfilled_for_status('completed').each do |user| -%>
+ * <%= user.name %>
+<% end -%>
+
+They may approve the request here <<%= new_polymorphic_url( [ @request, 'approval' ] ) %>>.
+
