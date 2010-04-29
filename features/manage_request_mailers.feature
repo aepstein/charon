@@ -8,6 +8,7 @@ Feature: Manage request_mailers
     And a role: "president" exists with name: "president"
     And a role: "treasurer" exists with name: "treasurer"
     And a role: "commissioner" exists with name: "commissioner"
+    And a permission exists with action: "update", status: "started", role: role "president", perspective: "requestor", framework: the framework
     And an approver exists with framework: the framework, role: role "president", perspective: "requestor", status: "completed"
     And an approver exists with framework: the framework, role: role "treasurer", perspective: "requestor", status: "completed"
     And an organization: "requestor" exists with last_name: "Money Taking Club"
