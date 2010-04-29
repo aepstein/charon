@@ -1,12 +1,22 @@
+<p>
 Dear Officers of <%= @request.organizations.map { |o| o.to_s }.join(', ') %>,
+</p>
 
+<p>
 This email is to inform you that your <%= @request %> has been started, but requires further action before it will be considered submitted.
+</p>
 
+<p>
 You may <%= link_to 'make changes to the request here', request_items_url(@request) %>.
+</p>
 
+<p>
 When the request is ready for submission, any of the following <%= link_to 'may approve it here', new_polymorphic_url( [@request, 'approval'] ) %>:
+</p>
 
+<ul>
 <% @request.approvers.unfulfilled_for_status('completed').each do |user| -%>
- * <%= user.name %>
+<li><%= user.name %></li>
 <% end -%>
+</ul>
 
