@@ -1,3 +1,5 @@
+Dear Officers of <%= @request.organizations.map { |o| o.to_s }.join(', ') %>,
+
 This email is to inform you that your <%= @request %> has been started, but requires further action before it will be considered submitted.
 
 You may <%= link_to 'make changes to the request here', request_items_url(@request) %>.
