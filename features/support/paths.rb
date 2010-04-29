@@ -10,6 +10,9 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
+    when /the new request_mailer page/
+      new_request_mailer_path
+
     when /the new fulfillment page/
       new_fulfillment_path
 

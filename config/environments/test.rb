@@ -37,4 +37,5 @@ config.gem 'pickle', :lib => false, :source => 'http://gemcutter.org'
 config.gem 'selenium-client', :lib => false
 config.gem 'ruby-ldapserver', :lib => false
 config.gem 'spork', :lib => false
+config.gem 'email_spec'
 
