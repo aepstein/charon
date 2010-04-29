@@ -43,9 +43,9 @@ module RegistrationImporter
     set_primary_key "org_id"
     default_scope :select => RegistrationImporter::ATTR_MAP.keys.join(', ')
     named_scope :importable, lambda {
-      max = Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission], :conditions => 'external_id IS NOT NULL')
-      if max then
-      { :conditions => ["updaters_date_submission > ?", ExternalRegistration.utcize_time(max)] }
+      max_registration = Registration.find(:first, :conditions => 'when_updated IS NOT NULL', :order => 'when_updated DESC')
+      if max_registration then
+      { :conditions => ["updaters_date_submission > ?", ExternalRegistration.utcize_time( max_registration.when_updated ) ] }
       else
       { }
       end.merge( { :order => :updaters_date_submission } )
