@@ -43,10 +43,9 @@ module RegistrationImporter
     set_primary_key "org_id"
     default_scope :select => RegistrationImporter::ATTR_MAP.keys.join(', ')
     named_scope :importable, lambda {
-      if Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission], :conditions => 'external_id IS NOT NULL') then
-      { :conditions => [
-          "updaters_date_submission > ?",
-          Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission], :conditions => 'external_id IS NOT NULL') ] }
+      max = Registration.maximum(RegistrationImporter::ATTR_MAP[:updaters_date_submission], :conditions => 'external_id IS NOT NULL')
+      if max then
+      { :conditions => ["updaters_date_submission > ?", ExternalRegistration.utcize_time(max)] }
       else
       { }
       end.merge( { :order => :updaters_date_submission } )
@@ -66,6 +65,11 @@ module RegistrationImporter
         out[value] = send(key) if send("#{key}?")
       end
       out
+    end
+
+    # Create a UTC-formatted date that is actually local time
+    def self.utcize_time(time)
+      time.utc + time.utc_offset.seconds
     end
 
     # Returns number of records imported
