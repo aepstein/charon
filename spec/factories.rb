@@ -146,8 +146,10 @@ Factory.define :basis do |f|
   f.association :structure
   f.open_at DateTime.now - 1.days
   f.closed_at DateTime.now + 10.days
+  f.submissions_due_at { |b| b.closed_at - 1.days }
   f.contact_name "a contact"
   f.contact_email "contact@example.com"
+  f.contact_web "http://example.com"
 end
 
 Factory.define :registration_criterion do |f|

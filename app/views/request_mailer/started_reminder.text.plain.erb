@@ -10,3 +10,15 @@ When the request is ready for submission, any of the following may approve it he
  * <%= user.name %>
 <% end -%>
 
+<% if @request.basis.submissions_due_at && @request.basis.submissions_due_at > DateTime.now -%>
+The next deadline for submissions is <%= @request.basis.submissions_due_at.to_s :long_ordinal %>
+<% end -%>
+
+<% if @request.basis.contact_web -%>
+More information is available here <<%= @request.basis.contact_web %>>.
+<% end -%>
+
+Best regards,
+
+<%= @request.basis.contact_name %>
+

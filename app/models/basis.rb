@@ -60,8 +60,10 @@ class Basis < ActiveRecord::Base
   validates_presence_of :organization
   validates_presence_of :contact_name
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
+  validates_presence_of :contact_web
   validates_datetime :open_at
   validates_datetime :closed_at, :after => :open_at
+  validates_datetime :submissions_due_at, :before => :closed_at
 
   def open?
     (open_at < DateTime.now) && (closed_at > DateTime.now)
