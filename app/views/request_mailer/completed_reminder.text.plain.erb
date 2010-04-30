@@ -11,7 +11,7 @@ The following people must approve the request before it is considered submitted:
 They may approve the request here <<%= new_polymorphic_url( [ @request, 'approval' ] ) %>>.
 
 <% if @request.basis.submissions_due_at && @request.basis.submissions_due_at > DateTime.now -%>
-The next deadline for submissions is <%= @request.basis.submissions_due_at.to_s :long_ordinal %>
+The next deadline for submissions is <%= @request.basis.submissions_due_at.to_s :us_ordinal %>.
 <% end -%>
 
 <% if @request.basis.contact_web -%>

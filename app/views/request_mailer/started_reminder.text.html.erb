@@ -22,7 +22,7 @@ When the request is ready for submission, any of the following <%= link_to 'may 
 
 <% if @request.basis.submissions_due_at && @request.basis.submissions_due_at > DateTime.now %>
 <p>
-The next deadline for submissions is <%= @request.basis.submissions_due_at.to_s :long_ordinal %>
+The next deadline for submissions is <%= @request.basis.submissions_due_at.to_s :us_ordinal %>.
 </p>
 <% end %>
 

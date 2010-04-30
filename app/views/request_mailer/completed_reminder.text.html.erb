@@ -18,7 +18,7 @@ The following people must <%= link_to 'approve the request', new_polymorphic_url
 
 <% if @request.basis.submissions_due_at && @request.basis.submissions_due_at > DateTime.now %>
 <p>
-The next deadline for submissions is <%= @request.basis.submissions_due_at.to_s :long_ordinal %>
+The next deadline for submissions is <%= @request.basis.submissions_due_at.to_s :us_ordinal %>.
 </p>
 <% end %>
 

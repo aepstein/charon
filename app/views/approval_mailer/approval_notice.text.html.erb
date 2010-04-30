@@ -1,7 +1,7 @@
 <p>
 This email is a confirmation that you approved <%=h @approval.approvable %> on
-<%=h @approval.created_at %>.  If you have any questions, please contact
+<%=h @approval.created_at.to_s :us_ordinal %>.  If you have any questions, please contact
 <%=h @approval.approvable.contact_name %>
-&gt;<a href="mailto:<%= @approval.approvable.contact_email%>"><%= @approval.approvable.contact_email %></a>&lt;.
+&lt;<a href="mailto:<%= @approval.approvable.contact_email%>"><%= @approval.approvable.contact_email %></a>&gt;.
 </p>
 
