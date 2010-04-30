@@ -133,7 +133,8 @@ class RequestsController < ApplicationController
     @request.destroy
 
     respond_to do |format|
-      format.html { redirect_to(organization_requests_url(@request.organization)) }
+      flash[:notice] = 'Request was successfully destroyed.'
+      format.html { redirect_to( profile_url ) }
       format.xml  { head :ok }
     end
   end
