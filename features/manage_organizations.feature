@@ -13,10 +13,14 @@ Feature: Manage organizations
     And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "update", perspective: "requestor"
     And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "destroy", perspective: "requestor"
     And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "completed", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "submitted", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "accepted", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "reviewed", action: "see", perspective: "requestor"
+    And a permission exists with framework: framework "safc", role: role "allowed", status: "certified", action: "see", perspective: "requestor"
     And a permission exists with framework: framework "safc", role: role "allowed", status: "released", action: "see", perspective: "requestor"
     And an organization: "organization_1" exists with last_name: "Org1"
     And a basis: "basis_1" exists with framework: framework "safc", name: "basis 1"
-    And a basis: "basis_2" exists with framework: framework "safc", name: "basis 2"
     And a membership exists with user: user "allowed_user", organization: organization "organization_1", role: role "allowed"
 
   Scenario Outline: Show unfulfilled requirements for organization in profile
@@ -62,21 +66,29 @@ Feature: Manage organizations
       | allowed_user   | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
       | global         | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
 
-  Scenario Outline: Show the headings for categories of requests
-    Given a request exists with basis: basis "basis_1", status: "started"
-    And organization: "organization_1" is amongst the organizations of the request
-    And a request exists with basis: basis "basis_1", status: "released"
+  Scenario Outline: Show headings for requests appropriately based on requests status
+    Given a request exists with basis: basis "basis_1", status: "<status>"
     And organization: "organization_1" is amongst the organizations of the request
     And I am logged in as "<user>" with password "secret"
     And I am on the profile page for organization: "organization_1"
-    Then I should <creatable_action> "Bases for you to make requests"
-    And I should <started_action> "Requests you've started"
-    And I should <released_action> "Requests that have been released"
+    Then I should <creatable> "Bases for you to make new requests"
+    And I should <started> "Requests you have started"
+    And I should <completed> "Requests you have completed"
+    And I should <submitted> "Requests you have submitted"
+    And I should <accepted> "Requests that have been accepted for review"
+    And I should <released> "Requests that have been released"
+    And I should see "basis 1"
     Examples:
-      | user         | creatable_action | started_action | released_action |
-      | admin        | see              | see            | see             |
-      | allowed_user | see              | see            | see             |
-      | global       | not see          | not see        | not see         |
+      | user         | status    | creatable | started | completed | submitted | accepted | released |
+      | admin        | started   | not see   | see     | not see   | not see   | not see  | not see  |
+      | admin        | completed | not see   | not see | see       | not see   | not see  | not see  |
+      | allowed_user | started   | not see   | see     | not see   | not see   | not see  | not see  |
+      | allowed_user | completed | not see   | not see | see       | not see   | not see  | not see  |
+      | allowed_user | submitted | see       | not see | not see   | see       | not see  | not see  |
+      | allowed_user | accepted  | see       | not see | not see   | not see   | see      | not see  |
+      | allowed_user | reviewed  | see       | not see | not see   | not see   | see      | not see  |
+      | allowed_user | certified | see       | not see | not see   | not see   | see      | not see  |
+      | allowed_user | released  | see       | not see | not see   | not see   | not see  | see      |
 
   Scenario: Register a new organization and edit
     Given I am logged in as "admin" with password "secret"
@@ -127,7 +139,8 @@ Feature: Manage organizations
       | Optimist Society |
 
   Scenario Outline: Show or hide Create, Edit, Destroy, and Show request links
-    Given a request exists with basis: basis "basis_2"
+    Given a basis: "basis_2" exists with framework: framework "safc", name: "basis 2"
+    And a request exists with basis: basis "basis_2"
     And organization: "organization_1" is amongst the organizations of the request
     And I am logged in as "<user>" with password "secret"
     And I am on the profile page for organization: "organization_1"

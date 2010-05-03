@@ -152,12 +152,6 @@ Factory.define :basis do |f|
   f.contact_web "http://example.com"
 end
 
-Factory.define :registration_criterion do |f|
-  f.must_register true
-  f.minimal_percentage 10
-  f.type_of_member 'undergrads'
-end
-
 Factory.define :request do |f|
   f.association :basis
   f.organizations { |o| [ o.association(:organization) ] }
