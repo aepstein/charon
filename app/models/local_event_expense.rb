@@ -16,7 +16,7 @@ class LocalEventExpense < ActiveRecord::Base
 
   def copies_cost
     return 0.0 unless copies_quantity
-    0.03 * copies_quantity
+    APP_CONFIG['expenses']['general']['copies'] * copies_quantity
   end
 
   def revenue

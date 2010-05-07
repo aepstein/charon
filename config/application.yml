@@ -1,0 +1,39 @@
+development:
+  expenses:
+    general:
+      copies: 0.03
+      chalk: 8.0
+    speaker:
+      travel: 0.5
+      lodging: 75.0
+      meals: 30.0
+    travel:
+      travel: 0.063
+      lodging: 15.0
+
+test:
+  expenses:
+    general:
+      copies: 0.03
+      chalk: 8.0
+    speaker:
+      travel: 0.5
+      lodging: 75.0
+      meals: 30.0
+    travel:
+      travel: 0.063
+      lodging: 15.0
+
+production:
+  expenses:
+    general:
+      copies: 0.03
+      chalk: 8.0
+    speaker:
+      travel: 0.5
+      lodging: 75.0
+      meals: 30.0
+    travel:
+      travel: 0.063
+      lodging: 15.0
+

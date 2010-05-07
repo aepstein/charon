@@ -30,12 +30,12 @@ class TravelEventExpense < ActiveRecord::Base
 
   def travel_cost
     return 0.0 unless distance
-    0.063 * participants * distance
+    APP_CONFIG['expenses']['travel']['travel'] * participants * distance
   end
 
   def lodging_cost
     return 0.0 unless nights_of_lodging
-    15.0 * participants * nights_of_lodging
+    APP_CONFIG['expenses']['travel']['lodging'] * participants * nights_of_lodging
   end
 
   def max_request

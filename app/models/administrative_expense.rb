@@ -10,12 +10,12 @@ class AdministrativeExpense < ActiveRecord::Base
 
   def copies_expense
     return 0.0 unless copies
-    0.03 * copies
+    APP_CONFIG['expenses']['general']['copies'] * copies
   end
 
   def chalk_expense
     return 0.0 unless chalk
-    8.0 * chalk
+    APP_CONFIG['expenses']['general']['chalk'] * chalk
   end
 
 	def max_request
