@@ -256,6 +256,31 @@ describe Request do
     request.items.last.amount.should == 0.0
   end
 
+  it 'should have an incomplete_for_perspective scope that returns requests that are incomplete for a perspective' do
+    complete = Factory(:edition).item.request
+    complete.editions.should_not be_empty
+    incomplete = Factory(:item).request
+    incomplete.editions.should be_empty
+    Request.incomplete_for_perspective('requestor').should_not include complete
+    Request.incomplete_for_perspective('reviewer').should include complete
+    Request.incomplete_for_perspective('requestor').should include incomplete
+    Request.incomplete_for_perspective('reviewer').should include incomplete
+  end
+
+  it 'should have an approvable? method that will not allow approval if there are missing editions' do
+    complete = Factory(:edition).item.request
+    incomplete = Factory(:item).request
+    reviewed = Factory(:edition).item.request
+    reviewed.status = 'accepted'
+    Factory(:edition, :perspective => 'reviewer', :item => reviewed.items.first)
+    unreviewed = Factory(:edition).item.request
+    unreviewed.status = 'accepted'
+    complete.approvable?.should be_true
+    incomplete.approvable?.should be_false
+    reviewed.approvable?.should be_true
+    unreviewed.approvable?.should be_false
+  end
+
   def setup_approvers
     @request.save.should == true
     @president = Role.create(:name => 'president')

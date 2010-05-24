@@ -109,6 +109,11 @@ class Request < ActiveRecord::Base
   named_scope :basis_like, lambda { |name|
     { :include => :basis, :order => 'bases.name ASC', :conditions => ['bases.name LIKE ?', "%#{name}%"] }
   }
+  named_scope :incomplete_for_perspective, lambda { |perspective|
+    { :conditions => [ "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
+        "editions ON items.id = editions.item_id AND editions.perspective = ? " +
+        "WHERE items.request_id = requests.id AND editions.id IS NULL)", perspective ] }
+  }
 
   delegate :structure, :to => :basis
   delegate :framework, :to => :basis
@@ -150,9 +155,9 @@ class Request < ActiveRecord::Base
     transitions :to => :submitted, :from => :completed
   end
   aasm_event :approve do
-    transitions :to => :completed, :from => :started
+    transitions :to => :completed, :from => :started, :guard => :approvable?
     transitions :to => :submitted, :from => :completed, :guard => :approvals_fulfilled?
-    transitions :to => :reviewed, :from => :accepted
+    transitions :to => :reviewed, :from => :accepted, :guard => :approvable?
     transitions :to => :certified, :from => :reviewed, :guard => :approvals_fulfilled?
   end
   aasm_event :unapprove do
@@ -166,6 +171,15 @@ class Request < ActiveRecord::Base
   end
 
   alias :requestors :organizations
+
+  def approvable?
+    case status
+    when 'started'
+      !Request.incomplete_for_perspective('requestor').include?(self)
+    else
+      !Request.incomplete_for_perspective('reviewer').include?(self)
+    end
+  end
 
   def requestor_ids
     organization_ids
