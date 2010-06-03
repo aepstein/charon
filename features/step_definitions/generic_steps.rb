@@ -2,6 +2,14 @@ Given /^(?:|I )(put|post|delete) on (.+)$/ do |method, page_name|
   visit path_to(page_name), method.to_sym
 end
 
+Then /^I should see authorized$/ do
+  Then %{I should not see "You are not allowed to perform the requested action."}
+end
+
+Then /^I should not see authorized$/ do
+  Then %{I should see "You are not allowed to perform the requested action."}
+end
+
 When /^I delete the (\d+)(?:st|nd|rd|th) #{capture_factory}$/ do |position, subject|
   visit polymorphic_path( [ subject.pluralize ] )
   within("table > tbody > tr:nth-child(#{position.to_i})") do

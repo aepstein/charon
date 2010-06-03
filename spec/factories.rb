@@ -52,14 +52,6 @@ Factory.define :fulfillment do |f|
   f.fulfillable { |r| r.association(:agreement) }
 end
 
-Factory.define :permission do |f|
-  f.association :role
-  f.association :framework
-  f.perspective Edition::PERSPECTIVES.first
-  f.status { |r| Request.aasm_initial_state.to_s }
-  f.action Request::ACTIONS.first
-end
-
 Factory.define :safc_framework, :parent => :framework do |f|
   f.must_register true
   f.member_percentage 60
@@ -103,7 +95,7 @@ Factory.define :user do |f|
   f.first_name "John"
   f.sequence(:last_name) { |n| "Doe #{n}"}
   f.sequence(:net_id) { |n| "zzz#{n}"}
-  f.password "pjlmiok"
+  f.password "secret"
   f.password_confirmation { |u| u.password }
   f.status "undergrad"
   f.ldap_entry false
@@ -115,6 +107,18 @@ end
 
 Factory.define :role do |f|
   f.sequence(:name) { |n| "Role #{n}" }
+end
+
+Factory.define :requestor_role, :parent => :role do |f|
+  f.permissions %w( requestor )
+end
+
+Factory.define :reviewer_role, :parent => :role do |f|
+  f.permissions %w( reviewer )
+end
+
+Factory.define :manager_role, :parent => :role do |f|
+  f.permissions %w( manager )
 end
 
 Factory.define :membership do |f|

@@ -2,39 +2,45 @@ Feature: Manage requests
   In order to prepare, review, and generate transactions
   As a requestor or reviewer
   I want to manage requests
-
-  Background:
-    Given an organization: "safc1" exists with last_name: "safc 1"
-    And an organization: "safc2" exists with last_name: "safc 2"
-    And an organization: "safc3" exists with last_name: "safc 3"
-    And an organization: "gpsafc1" exists with last_name: "gpsafc 1"
-    And a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "requestor" exists with net_id: "requestor", password: "secret", admin: false
-    And a user: "global" exists with net_id: "global", password: "secret", admin: false
-    And a role: "allowed" exists with name: "allowed"
-    And a framework: "safc" exists with name: "safc"
-    And a framework: "gpsafc" exists with name: "gpsafc"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "create", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "update", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "destroy", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "completed", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "approve", perspective: "requestor"
-    And a membership exists with user: user "requestor", organization: organization "safc1", role: role "allowed"
-    And a membership exists with user: user "requestor", organization: organization "safc2", role: role "allowed"
-    And a membership exists with user: user "requestor", organization: organization "safc3", role: role "allowed"
-    And a structure: "safc" exists with name: "safc structure"
-    And a structure: "gpsafc" exists with name: "gpsafc structure"
-    And a basis: "safc1" exists with name: "safc basis 1", structure: structure "safc", framework: framework "safc"
-    And a basis: "safc2" exists with name: "safc basis 2", structure: structure "safc", framework: framework "safc"
-    And a basis: "gpsafc1" exists with name: "gpsafc basis 1", structure: structure "gpsafc", framework: framework "gpsafc"
-    And a request: "coorg" exists with basis: basis "safc1"
-    And organization: "safc1" is alone amongst the organizations of the request
-    And organization: "safc2" is amongst the organizations of the request
-    And a request: "single" exists with basis: basis "safc2"
-    And organization: "safc2" is alone amongst the organizations of the request
-    And a request: "gpsafc" exists with basis: basis "gpsafc1"
-    And organization: "gpsafc1" is alone amongst the organizations of the request
+@wip
+  Scenario Outline: Test permissions for requests controller
+    Given an organization: "source" exists with last_name: "Funding Source"
+    And an organization: "applicant" exists with last_name: "Applicant"
+    And an organization: "observer" exists with last_name: "Observer"
+    And a manager_role: "manager" exists with name: "Manager"
+    And a requestor_role: "requestor" exists with name: "Requestor"
+    And a reviewer_role: "reviewer" exists with name: "Reviewer"
+    And a user: "admin" exists with admin: true
+    And a user: "source_manager" exists
+    And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
+    And a user: "source_reviewer" exists
+    And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
+    And a user: "applicant_requestor" exists
+    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
+    And a user: "observer_requestor" exists
+    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
+    And a user: "regular" exists
+    And a basis exists with name: "Annual", organization: organization "source"
+    And a request: "annual" exists with basis: the basis
+    And organization: "applicant" is alone amongst the organizations of the request
+    And I log in as user: "<user>"
+    And I am on the new request page for the organization
+    Then I should <create> authorized
+    Given I post on the requests page for the organization
+    Then I should <create> authorized
+    And I am on the edit page for the request
+    Then I should <update> authorized
+    Given I put on the page for the request
+    Then I should <update> authorized
+    Given I am on the page for the request
+    Then I should <show> authorized
+    Given I am on the requests page for the organization
+    Then I should <show> "Request of Applicant from Annual"
+    Given I delete on the page for the request
+    Then I should <destroy> authorized
+    Examples:
+      | user    | create  | update  | show    | destroy |
+      | admin   | see     | see     | see     | see     |
 
   Scenario: Register new request
     Given I am on the profile page for organization: "safc1"

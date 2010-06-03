@@ -1,21 +1,10 @@
 <h2>New request for <%=h @organization.name %></h2>
 
-<% form_for(:request, @request, :url => organization_requests_path(@organization) ) do |f| %>
-
-  <%= f.error_messages %>
-
+<% semantic_form_for(:request, @request, :url => organization_requests_path(@organization) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
-
-  <%= f.label :basis_id, 'Basis for request' %>
-  <%= f.collection_select :basis_id,
-                          @organization.requests.creatable.map { |r| r.basis },
-                          :id,
-                          :name %>
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
-
 <% end %>
 
+<p>
 <%= link_to 'Back', profile_organization_path( @organization ) %>
+</p>
 

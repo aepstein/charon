@@ -2,7 +2,7 @@
 
 <p>Status: <%=h @request.status %></p>
 <p>Requestor total: <%= number_to_currency @request.editions.perspective_equals('requestor').sum('editions.amount') %></p>
-<% if @request.may_review? current_user %>
+<% if permitted_to? :review -%>
 <p>Reviewer total: <%= number_to_currency @request.editions.perspective_equals('reviewer').sum('editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
 <table>
@@ -13,17 +13,17 @@
   </tr>
   </thead>
   <tbody>
-  <% @request.basis.structure.categories.each do |category| %>
-  <% table_row_tag do %>
+  <% @request.basis.structure.categories.each do |category| -%>
+  <% table_row_tag do -%>
     <td><%=h category.name %></td>
     <td><%= number_to_currency @request.items.allocation_for_category(category) %></td>
-  <% end %>
-  <% end %>
+  <% end -%>
+  <% end -%>
   </tbody>
 </table>
 
 <p>Note: Higher priority items are allocated before lower priorities until the allocation cap is reached.</p>
-<% end %>
+<% end -%>
 
 <% if @request.status == 'started' %>
 <p>
@@ -43,18 +43,18 @@ Its status will advance to <em>submitted</em> once all required approvals are
 registered.
 </p>
 <% else %>
-<% if @request.may_review? current_user %>
-<% if @request.status == 'accepted' %>
+<% if permitted_to? :review -%>
+<% if @request.status == 'accepted' -%>
 <p>
 This request is accepted for review by the commission.
 </p>
-<% end %>
-<% else %>
+<% end -%>
+<% else -%>
 <p>
 This request is now submitted for review.
 </p>
-<% end %>
-<% end %>
+<% end -%>
+<% end -%>
 
 <h3>Items</h3>
 

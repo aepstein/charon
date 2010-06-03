@@ -1,1 +1,8 @@
+<%= form.error_messages %>
+<% form.inputs do %>
+  <% if form.object.new_record? && form.object.organizations.length > 0 -%>
+  <%= form.input :basis, :collection => form.object.organizations.first.requests.creatable.map { |r| r.basis } %>
+  <% end -%>
+<% end %>
+<%= form.buttons %>
 

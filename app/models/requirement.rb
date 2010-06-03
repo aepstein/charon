@@ -1,10 +1,10 @@
 class Requirement < ActiveRecord::Base
-  belongs_to :permission
+  belongs_to :framework
   belongs_to :fulfillable, :polymorphic => true
 
-  validates_presence_of :permission
+  validates_presence_of :framework
   validates_presence_of :fulfillable
-  validates_uniqueness_of :permission_id, :scope => [ :fulfillable_id, :fulfillable_type ]
+  validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type ]
   validates_inclusion_of :fulfillable_type, :in => Fulfillment::FULFILLABLE_TYPES.values.flatten
 
   # Must have memberships table related

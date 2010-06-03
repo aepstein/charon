@@ -1,15 +1,25 @@
 <h2>Listing requests</h2>
 
-<% if @basis %>
 <% form_for :search, :url => basis_requests_path( @basis ), :html => { :method => :get } do |f| %>
+  <% unless @basis -%>
   <p>
-    <%= f.label :q, 'Search' %>
-    <%= f.text_field :q %>
+    <%= f.label :basis_name_like, 'Basis' %>
+    <%= f.text_field :basis_name_like %>
+  </p>
+  <% end -%>
+  <% unless @organization -%>
+  <p>
+    <%= f.label :organizations_name_like, 'Organization' %>
+    <%= f.label :organizations_name_like %>
+  </p>
+  <% end -%>
+  <p>
     <%= f.label :status, 'Status' %>
     <%= f.select :status, Request.aasm_state_names, { :include_blank => true } %>
+  </p>
+  <p>
     <%= f.submit 'Go' %>
   </p>
-<% end %>
 <% end %>
 
 <%= will_paginate @requests %>

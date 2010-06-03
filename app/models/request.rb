@@ -1,6 +1,9 @@
 class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
 
+  default_scope :include => [ :organizations, :basis ],
+    :order => 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC'
+
   belongs_to :basis
   has_many :approvers, :through => :approvals, :source => :user do
     def empty_for_status?( status=nil )
@@ -102,12 +105,10 @@ class Request < ActiveRecord::Base
   end
 
   named_scope :organization_like, lambda { |name|
-    { :include => :organizations,
-      :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ],
-      :order => 'organizations.last_name ASC, organizations.first_name ASC' }
+    { :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ] }
   }
   named_scope :basis_like, lambda { |name|
-    { :include => :basis, :order => 'bases.name ASC', :conditions => ['bases.name LIKE ?', "%#{name}%"] }
+    { :conditions => ['bases.name LIKE ?', "%#{name}%"] }
   }
   named_scope :incomplete_for_perspective, lambda { |perspective|
     { :conditions => [ "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
@@ -125,6 +126,7 @@ class Request < ActiveRecord::Base
 
   validate :must_have_eligible_organizations
   validates_datetime :approval_checkpoint
+  validates_presence_of :basis
 
   def must_have_open_basis
     errors.add( :basis_id, 'must be an open basis.' ) unless basis.open?

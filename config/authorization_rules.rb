@@ -3,7 +3,7 @@ authorization do
     has_permission_on [ :addresses, :agreements, :approvals, :approvers,
       :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
       :items, :nodes, :organizations, :permissions, :registration_criterions,
-      :registrations, :requests, :roles, :users ], :to => :manage
+      :registrations, :requests, :roles, :users ], :to => [ :manage, :request, :review, :approve, :unapprove ]
   end
   role :user do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
@@ -21,18 +21,16 @@ authorization do
     has_permission_on [ :organizations ], :to => :manage do
       if_attribute :memberships => { :user_id => is { user.id }, :active => true, :role => { :permissions => contains { 'manage' } } }
     end
-    has_permission_on [ :basis ], :to => :request
     has_permission_on [ :basis ], :to => :review do
       if_permitted_to :review, :organization
     end
     has_permission_on [ :basis ], :to => :manage do
       if_permitted_to :manage, :organization
     end
-    has_permission_on [ :requests ], :to => :request, :join_by => :and do
+    has_permission_on [ :requests ], :to => :request do
       if_permitted_to :request, :organizations
-      if_permitted_to :request, :basis
     end
-    has_permission_on [ :requests ], :to => :review, :join_by => :and do
+    has_permission_on [ :requests ], :to => :review do
       if_permitted_to :review, :basis
     end
     has_permission_on [ :requests ], :to => :manage do
@@ -49,6 +47,10 @@ authorization do
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
       if_permitted_to :review
       if_attribute :status => is_in { %w( accepted reviewed ) }
+    end
+    has_permission_on [ :requests ], :to => :unapprove, :join_by => :and do
+      if_permitted_to :approve
+      if_attribute :status => is_in { %w( completed reviewed ) }
     end
     has_permission_on [ :items ], :to => :request do
       if_permitted_to :request, :request
@@ -91,13 +93,16 @@ authorization do
 end
 
 privileges do
-  privelege :request do
+  privilege :request do
     includes :show, :index
   end
   privilege :review do
     includes :show, :index
   end
-  privelege :approve do
+  privilege :approve do
+    includes :show
+  end
+  privilege :unapprove do
     includes :show
   end
   privilege :manage do

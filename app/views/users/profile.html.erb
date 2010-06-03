@@ -1,7 +1,13 @@
-<h2>Welcome, <%=h current_user.full_name %> (<%=h current_user.net_id %>)</h2>
+<h2>Welcome, <%=h current_user.first_name %> (<%=h current_user.net_id %>)</h2>
 
-<% unless current_user.organizations.empty? %>
-  <h3>Organizations You Are In:</h3>
+<p>
+You are logged in as <%= current_user.full_name %>.  Please completely quit your
+browser if this is incorrect or you wish to log out.  You may
+<%= link_to 'update your information', edit_user_path(current_user) %>.
+</p>
+
+<% unless current_user.organizations.empty? -%>
+  <h3>Your Organizations</h3>
 
   <p>
   Choose a specific organization to get options particular to that organization.
@@ -18,10 +24,10 @@
     <%= render :partial => "organization", :collection => current_user.organizations %>
   </tbody>
   </table>
-<% end %>
+<% end -%>
 
-<% unless current_user.registrations.active.unmatched.empty? %>
-  <h3>Unmatched Registrations:</h3>
+<% unless current_user.registrations.active.unmatched.empty? -%>
+  <h3>Your <em>Unmatched</em> Registrations</h3>
 
   <p>
   These are registrations that you have started with the Student Activities
@@ -33,14 +39,6 @@
   <ul>
   <%= render :partial => "registration", :collection => current_user.registrations.active.unmatched %>
   </ul>
-<% end %>
 
-<% unless current_user.unfulfilled_requirements.length == 0 %>
-<p>You have unfulfilled requirements that <i>may</i> limit what you are able to do:</p>
-<ul>
-<% current_user.unfulfilled_requirements.each do |requirement| %>
-<li>You <%= unfulfilled_requirement requirement, current_user %></li>
-<% end %>
-</ul>
-<% end %>
+<% end -%>
 

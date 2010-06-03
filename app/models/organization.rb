@@ -18,6 +18,7 @@ class Organization < ActiveRecord::Base
   before_validation :format_name
 
   default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC'
+  scope_procedure :name_like, lambda { |name| first_name_like_or_last_name_like( name ) }
 
   validates_presence_of :last_name
   validates_uniqueness_of :last_name, :scope => :first_name

@@ -46,25 +46,6 @@ class User < ActiveRecord::Base
   after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self'
 
-  def permissions
-    Permission.role_id_equals_any(role_ids)
-  end
-
-  def unfulfilled_permissions
-    Permission.requirements_unfulfilled.requirements_with_fulfillments.requirements_fulfillable_type_equals_any(
-    Fulfillment::FULFILLABLE_TYPES['User'] ).memberships_user_id_eq(id)
-  end
-
-  def unfulfilled_requirements
-    requirements = Requirement.unfulfilled.with_fulfillments.fulfillable_type_equals_any(
-    Fulfillment::FULFILLABLE_TYPES['User'] ).permission_memberships_user_id_eq(id)
-    fulfillables = requirements.all.inject([]) do |memo, requirement|
-      memo << [ requirement.fulfillable_type, requirement.fulfillable_id ]
-      memo
-    end
-    fulfillables.uniq.map { |f| f.first.constantize.find f.last }
-  end
-
   def user_status_criterions
     UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
   end
@@ -79,6 +60,11 @@ class User < ActiveRecord::Base
 
   def name
     "#{first_name} #{last_name}".squeeze ' '
+  end
+
+  def role_symbols
+    return [:admin,:user] if admin?
+    [:user]
   end
 
   def may_create?(user)

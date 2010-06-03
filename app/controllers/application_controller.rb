@@ -1,6 +1,3 @@
-class AuthorizationError < StandardError
-end
-
 # Filters added to this controller apply to all controllers in the application.
 # Likewise, all the methods added will be available for all controllers.
 
@@ -8,22 +5,13 @@ class ApplicationController < ActionController::Base
   helper :all
   helper_method :current_user_session, :current_user, :sso_net_id
   filter_parameter_logging :password, :password_confirmation
+  before_filter :check_authorization
 
 protected
 
-  def rescue_action(e)
-    case e
-    when AuthorizationError
-#      head :forbidden
-      respond_to do |format|
-        format.html do
-          flash[:error] = "Unauthorized request: You are not allowed to perform the requested action."
-          redirect_to profile_path
-        end
-      end
-    else
-      super(e)
-    end
+  def permission_denied
+    flash[:error] = "You are not allowed to perform the requested action."
+    redirect_to profile_url
   end
 
   def sso_net_id
@@ -32,6 +20,10 @@ protected
   end
 
   private
+  def check_authorization
+    Authorization.current_user = current_user
+  end
+
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find
