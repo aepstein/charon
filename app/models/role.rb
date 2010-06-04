@@ -9,11 +9,11 @@ class Role < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy
 
   def permissions
-    Role::PERMISSIONS.reject { |permission| ((permissions_mask || 0) & 2**Role::PERMISSIONS.index(permission)).zero? }
+    PERMISSIONS.reject { |permission| ((permissions_mask || 0) & 2**PERMISSIONS.index(permission)).zero? }
   end
 
   def permissions=(values)
-    self.permissions_mask = (permissions & Role::PERMISSIONS).map { |permission| 2**Role::PERMISSIONS.index(permission) }.sum
+    self.permissions_mask=( (values & PERMISSIONS).map { |permission| 2**PERMISSIONS.index(permission) }.sum )
   end
 
   def to_s

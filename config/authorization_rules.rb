@@ -4,27 +4,29 @@ authorization do
       :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
       :items, :nodes, :organizations, :permissions, :registration_criterions,
       :registrations, :requests, :roles, :users ], :to => [ :manage, :request, :review, :approve, :unapprove ]
+    has_permission_on :authorization_rules, :to => :read
   end
   role :user do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
       :frameworks, :fulfillments, :items, :nodes, :organizations, :registration_criterions,
-      :roles ], :to => [ :show, :index ]
+      :roles ], :to => [ :show ]
     has_permission_on [ :users ], :to => [ :edit, :update ] do
       if_attribute :id => is { user.id }
     end
+    has_permission_on [ :organizations ], :to => [ :show ]
     has_permission_on [ :organizations ], :to => :request do
-      if_attribute :memberships => { :user_id => is { user.id }, :active => true, :role => { :permissions => contains { 'request' } } }
+      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :permissions => contains { 'request' } } }
     end
     has_permission_on [ :organizations ], :to => :review do
-      if_attribute :memberships => { :user_id => is { user.id }, :active => true, :role => { :permissions => contains { 'review' } } }
+      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :permissions => contains { 'review' } } }
     end
     has_permission_on [ :organizations ], :to => :manage do
-      if_attribute :memberships => { :user_id => is { user.id }, :active => true, :role => { :permissions => contains { 'manage' } } }
+      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :permissions => contains { 'manage' } } }
     end
-    has_permission_on [ :basis ], :to => :review do
+    has_permission_on [ :bases ], :to => :review do
       if_permitted_to :review, :organization
     end
-    has_permission_on [ :basis ], :to => :manage do
+    has_permission_on [ :bases ], :to => :manage do
       if_permitted_to :manage, :organization
     end
     has_permission_on [ :requests ], :to => :request do
@@ -94,10 +96,10 @@ end
 
 privileges do
   privilege :request do
-    includes :show, :index
+    includes :show
   end
   privilege :review do
-    includes :show, :index
+    includes :show
   end
   privilege :approve do
     includes :show
@@ -106,7 +108,16 @@ privileges do
     includes :show
   end
   privilege :manage do
-    includes :create, :new, :update, :edit, :destroy, :show, :index
+    includes :create, :update, :destroy, :show
+  end
+  privilege :create do
+    includes :new
+  end
+  privilege :update do
+    includes :edit
+  end
+  privilege :show do
+    includes :index
   end
 end
 

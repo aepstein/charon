@@ -110,15 +110,15 @@ Factory.define :role do |f|
 end
 
 Factory.define :requestor_role, :parent => :role do |f|
-  f.permissions %w( requestor )
+  f.permissions %w( request )
 end
 
 Factory.define :reviewer_role, :parent => :role do |f|
-  f.permissions %w( reviewer )
+  f.permissions %w( review )
 end
 
 Factory.define :manager_role, :parent => :role do |f|
-  f.permissions %w( manager )
+  f.permissions %w( manage )
 end
 
 Factory.define :membership do |f|

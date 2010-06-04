@@ -20,8 +20,14 @@ describe Role do
     duplicate_role.save.should == false
   end
 
-  it "should include the GlobalModelAuthorization module" do
-    Role.included_modules.should include(GlobalModelAuthorization)
+  it 'should save permissions correctly' do
+    role = Factory(:role)
+    role.permissions.should be_empty
+    role.permissions = ['manager']
+    role.save
+    role.permissions.should include 'manager'
+    role.permissions.length.should eql 1
   end
+
 end
 

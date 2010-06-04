@@ -1,6 +1,7 @@
 class RequestsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
   before_filter :new_request_from_params, :only => [ :new, :create ]
   filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
   filter_access_to :index do
@@ -13,7 +14,7 @@ class RequestsController < ApplicationController
   # GET /organizations/:organization_id/requests.xml
   def index
     @search = @requests.searchlogic( params[:search] )
-    @search.current_scope[:joins] = 'LEFT OUTER JOIN "organizations_requests" ON "organizations_requests".request_id = "requests".id  LEFT OUTER JOIN "organizations" ON "organizations".id = "organizations_requests".organization_id'
+#    @search.current_scope[:joins] = 'LEFT OUTER JOIN `organizations_requests` ON `organizations_requests`.request_id = `requests`.id  LEFT OUTER JOIN `organizations` ON `organizations`.id = `organizations_requests`.organization_id  LEFT OUTER JOIN `bases` ON `bases`.id = `requests`.basis_id'
     @requests = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
@@ -48,7 +49,7 @@ class RequestsController < ApplicationController
     respond_to do |format|
       if @request.save
         flash[:notice] = 'Request was successfully created.'
-        format.html { redirect_to(request_items_path(@request)) }
+        format.html { redirect_to @request }
         format.xml  { render :xml => @request, :status => :created, :location => @request }
       else
         format.html { render :action => "new" }
@@ -70,7 +71,7 @@ class RequestsController < ApplicationController
     respond_to do |format|
       if @request.update_attributes(params[:request])
         flash[:notice] = 'Request was successfully updated.'
-        format.html { redirect_to(request_items_path(@request)) }
+        format.html { redirect_to @request }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -97,9 +98,13 @@ class RequestsController < ApplicationController
     @basis = Basis.find params[:basis_id] if params[:basis_id]
     @organization = Organization.find params[:organization_id] if params[:organization_id]
     @request = Request.find params[:id] if params[:id]
+  end
+
+  def initialize_index
     @requests = Request
-    @requests = @requests.organizations_id_equals( @organization.id ) if @organization
-    @requests = @requests.basis_id_equals( @basis.id ) if @basis
+    @requests = @requests.scoped( :conditions => ["organizations.id = ?", @organization.id] ) if @organization
+    @requests = @requests.scoped( :conditions => { :basis_id => @basis.id }) if @basis
+    @requests = @requests.with_permissions_to(:show)
   end
 
   def new_request_from_params

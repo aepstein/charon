@@ -24,9 +24,9 @@ Feature: Manage requests
     And a request: "annual" exists with basis: the basis
     And organization: "applicant" is alone amongst the organizations of the request
     And I log in as user: "<user>"
-    And I am on the new request page for the organization
+    And I am on the new request page for organization: "applicant"
     Then I should <create> authorized
-    Given I post on the requests page for the organization
+    Given I post on the requests page for organization: "applicant"
     Then I should <create> authorized
     And I am on the edit page for the request
     Then I should <update> authorized
@@ -34,13 +34,15 @@ Feature: Manage requests
     Then I should <update> authorized
     Given I am on the page for the request
     Then I should <show> authorized
-    Given I am on the requests page for the organization
-    Then I should <show> "Request of Applicant from Annual"
+    Given I am on the requests page for organization: "applicant"
+    Then I should <show> "Annual"
     Given I delete on the page for the request
     Then I should <destroy> authorized
     Examples:
-      | user    | create  | update  | show    | destroy |
-      | admin   | see     | see     | see     | see     |
+      | user                | create  | update  | show    | destroy |
+      | admin               | see     | see     | see     | see     |
+      | source_manager      | not see | see     | see     | see     |
+      | applicant_requestor | see     | see     | see     | see     |
 
   Scenario: Register new request
     Given I am on the profile page for organization: "safc1"
