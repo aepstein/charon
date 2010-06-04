@@ -102,14 +102,13 @@ class RequestsController < ApplicationController
 
   def initialize_index
     @requests = Request
-    @requests = @requests.scoped( :conditions => ["organizations.id = ?", @organization.id] ) if @organization
+    @requests = @requests.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
     @requests = @requests.scoped( :conditions => { :basis_id => @basis.id }) if @basis
     @requests = @requests.with_permissions_to(:show)
   end
 
   def new_request_from_params
-    @request = Request.new(params[:request])
-    @request.organizations << @organization
+    @request = @organization.requests.build( params[:request] )
   end
 
   def csv_index
@@ -117,8 +116,8 @@ class RequestsController < ApplicationController
       csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
       @requests.each do |request|
         next unless request.may_review? current_user
-        csv << ( [ request.organizations.map { |o| o.name }.join(', '),
-                   request.organizations.map { |o| o.club_sport? ? 'Y' : 'N' }.join(', '),
+        csv << ( [ request.organization.name,
+                   ( request.organization.club_sport? ? 'Yes' : 'No' ),
                    request.status,
                    "$#{request.editions.perspective_equals('requestor').sum('amount')}",
                    "$#{request.editions.perspective_equals('reviewer').sum('amount')}",

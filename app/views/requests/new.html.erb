@@ -1,10 +1,10 @@
-<h2>New request for <%=h @organization.name %></h2>
+<h2>New request for <%=h @request.organization %></h2>
 
-<% semantic_form_for(:request, @request, :url => organization_requests_path(@organization) ) do |f| %>
+<% semantic_form_for(:request, @request, :url => organization_requests_path(@request.organization) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 
 <p>
-<%= link_to 'Back', profile_organization_path( @organization ) %>
+<%= link_to 'Back', profile_organization_path( @request.organization ) %>
 </p>
 

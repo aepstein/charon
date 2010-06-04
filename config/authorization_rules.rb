@@ -30,7 +30,7 @@ authorization do
       if_permitted_to :manage, :organization
     end
     has_permission_on [ :requests ], :to => :request do
-      if_permitted_to :request, :organizations
+      if_permitted_to :request, :organization
     end
     has_permission_on [ :requests ], :to => :review do
       if_permitted_to :review, :basis
@@ -39,7 +39,7 @@ authorization do
       if_permitted_to :manage, :basis
     end
     has_permission_on [ :requests ], :to => :manage, :join_by => :and do
-      if_permitted_to :request, :organizations
+      if_permitted_to :request, :organization
       if_attribute :status => is_in { %w( started ) }
     end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do

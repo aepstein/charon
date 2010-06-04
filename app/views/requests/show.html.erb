@@ -61,32 +61,30 @@ This request is now submitted for review.
 <%= render :partial => 'items/items', :object => @request.items.root,
       :locals => { :read_only => true, :show_detail => true } %>
 
-<% unless @request.approvers.unfulfilled_for_status(@request.status).empty? %>
+<% unless @request.approvers.unfulfilled_for_status(@request.status).empty? -%>
 <h2>Who must approve</h2>
 <p>The following users must approve before the request may be considered submitted.</p>
 <ul>
-  <% @request.approvers.unfulfilled_for_status(@request.status).each do |user| %>
+  <% @request.approvers.unfulfilled_for_status(@request.status).each do |user| -%>
   <li><%=h user %></li>
-  <% end %>
+  <% end -%>
 </ul>
-<% end %>
 
-<% @request.organizations.each do |organization| %>
-<% if organization.registrations.current %>
+<% end -%>
+<% if @request.organization.registrations.current -%>
 <h3>Membership information for <%=h organization %></h3>
 <dl>
 <%= render :partial => 'registrations/membership', :object => organization.registrations.current %>
 </dl>
-<% end %>
-<% end %>
 
+<% end -%>
 <h3>Who has approved</h3>
 
 <%= render :partial => 'approvals/approvals', :object => @request.approvals.all(:include => :user),
            :locals => { :user => true, :approvable => false } %>
 
 <p>
-<%= link_to_request_organization_profiles @request %> |
+<%= link_to h("Back to #{@request.organization}"), @request.organization %> |
 <%= link_to 'Edit', edit_request_path(@request) %>
 </p>
 

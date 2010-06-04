@@ -21,8 +21,7 @@ Feature: Manage requests
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
     And a basis exists with name: "Annual", organization: organization "source"
-    And a request: "annual" exists with basis: the basis
-    And organization: "applicant" is alone amongst the organizations of the request
+    And a request: "annual" exists with basis: the basis, organization: organization "applicant"
     And I log in as user: "<user>"
     And I am on the new request page for organization: "applicant"
     Then I should <create> authorized

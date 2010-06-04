@@ -7,10 +7,14 @@ class Organization < ActiveRecord::Base
   end
   has_many :memberships
   has_many :roles, :through => :memberships
-  has_many :bases
+  has_many :bases do
+    def requestable
+      Basis.open.no_draft_request_for( proxy_owner )
+    end
+  end
   has_many :requests do
     def creatable
-      Basis.open.no_draft_request_for( proxy_owner ).map { |b| b.requests.build_for proxy_owner }
+      proxy_owner.bases.requestable.map { |basis| build( :basis => basis ) }
     end
   end
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all

@@ -35,19 +35,12 @@ class Request < ActiveRecord::Base
       potential_for( approver ) & self.find(:all, :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint.utc ] )
     end
     def potential_for( approver )
-      sql = case approver.perspective
-      when 'requestor'
-        "memberships INNER JOIN organizations_requests WHERE memberships.organization_id = " +
-        "organizations_requests.organization_id AND request_id = :request_id"
-      when 'reviewer'
-        "memberships WHERE organization_id = :organization_id"
-      end
-      conditions = [
-        "users.id IN (SELECT user_id FROM #{sql} AND active = :true AND role_id = :role_id)",
-        { :request_id => proxy_owner.id, :role_id => approver.role_id, :true => true,
-          :organization_id => proxy_owner.basis.organization_id }
-      ]
-      User.find( :all, :conditions => conditions )
+      User.all( :conditions => [
+        "users.id IN (SELECT user_id FROM memberships WHERE organization_id = ? AND active = ? AND role_id = ?)",
+        ( (approver.perspective == Edition::PERSPECTIVES.first) ? proxy_owner.organization_id : proxy_owner.basis.organization.id ),
+        true,
+        approver.role_id
+      ] )
     end
   end
   has_many :approvals, :dependent => :delete_all, :as => :approvable do

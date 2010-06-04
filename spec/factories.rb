@@ -158,7 +158,7 @@ end
 
 Factory.define :request do |f|
   f.association :basis
-  f.organizations { |o| [ o.association(:organization) ] }
+  f.association :organization
 end
 
 Factory.define :item do |f|

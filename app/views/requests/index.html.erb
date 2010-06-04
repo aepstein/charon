@@ -32,3 +32,14 @@
 
 <%= will_paginate @requests %>
 
+<hr/>
+
+<p>
+<% if @organization -%>
+<%= link_to h("Back to #{@organization}"), @organization %> |
+<% end -%>
+<% if @basis -%>
+<%= link_to h("Back to #{@basis}"), @basis %> |
+<% end -%>
+</p>
+
