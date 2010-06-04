@@ -3,16 +3,8 @@
     <% if read_only %>
     <td colspan="2">&nbsp;</td>
     <% else %>
-    <td><%= link_to_if item.may_update?(current_user), 'Move', move_item_path(item) %></td>
-    <td><%= link_to_if item.may_destroy?(current_user), 'Destroy', item, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to( 'Destroy', item, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, item ) %></td>
     <% end %>
-  <% end %>
-  <% if show_detail && item.request.may_review?(current_user) %>
-  <% table_row_tag false do %>
-    <td>Allocation Amount</td>
-    <td><%=h number_to_currency item.amount %></td>
-    <td colspan="3">&nbsp;</td>
-  <% end %>
   <% end %>
 
   <%= render :partial => 'items/edition', :collection => item.editions, :locals => { :read_only => read_only, :show_detail => show_detail } %>

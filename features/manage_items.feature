@@ -4,54 +4,48 @@ Feature: Manage items
   I want request item form
 
   Background:
-    Given an organization: "club" exists with last_name: "our club"
-    And an organization: "commission" exists with last_name: "undergraduate commission"
-    And a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "president" exists with net_id: "president", password: "secret", admin: false
-    And a user: "commissioner" exists with net_id: "commissioner", password: "secret", admin: false
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
-    And a role: "president" exists with name: "president"
-    And a role: "commissioner" exists with name: "commissioner"
-    And a membership exists with organization: organization "club", role: role "president", user: user "president"
-    And a membership exists with organization: organization "commission", role: role "commissioner", user: user "commissioner"
-    And a structure: "annual" exists with name: "budget"
-    And a node: "administrative" exists with structure: structure "annual", requestable_type: "AdministrativeExpense", name: "administrative expense"
-    And a node: "local" exists with structure: structure "annual", requestable_type: "LocalEventExpense", name: "local event expense"
-    And a node: "travel" exists with structure: structure "annual", requestable_type: "TravelEventExpense", name: "travel event expense"
-    And a node: "durable" exists with structure: structure "annual", requestable_type: "DurableGoodExpense", name: "durable good expense"
-    And a node: "publication" exists with structure: structure "annual", requestable_type: "PublicationExpense", name: "publication expense"
-    And a node: "speaker" exists with structure: structure "annual", requestable_type: "SpeakerExpense", name: "speaker expense"
-    And a framework: "safc" exists with name: "undergrad"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "create", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "update", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "destroy", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "commissioner", action: "see", perspective: "reviewer"
-    And a basis: "annual_safc" exists with name: "annual budget", structure: structure "annual", framework: framework "safc", organization: organization "commission"
-    And a request exists with status: "started", basis: basis "annual_safc"
-    And organization: "club" is amongst the organizations of the request
-
-  Scenario Outline: Test permissions for items controller actions
-    Given an item exists with request: the request, node: node "administrative"
-    And I am logged in as "<user>" with password "secret"
+    Given a user: "admin" exists with admin: true
+@wip
+  Scenario Outline: Test permissions for items controller
+    Given an organization: "source" exists with last_name: "Funding Source"
+    And an organization: "applicant" exists with last_name: "Applicant"
+    And an organization: "observer" exists with last_name: "Observer"
+    And a manager_role: "manager" exists
+    And a requestor_role: "requestor" exists
+    And a reviewer_role: "reviewer" exists
+    And a user: "source_manager" exists
+    And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
+    And a user: "source_reviewer" exists
+    And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
+    And a user: "applicant_requestor" exists
+    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
+    And a user: "observer_requestor" exists
+    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
+    And a user: "regular" exists
+    And a structure exists
+    And a node: "root" exists with structure: the structure, name: "Root"
+    And a basis exists with name: "Annual", organization: organization "source", structure: the structure
+    And a request exists with basis: the basis, organization: organization "applicant", status: "<status>"
+    And an item: "root" exists with request: the request, node: node "root"
+    And an edition exists with item: item "root", perspective: "requestor"
+    And I log in as user: "<user>"
     And I am on the new item page for the request
-    Then I should <create>
+    Then I should <create> authorized
     Given I post on the items page for the request
-    Then I should <create>
+    Then I should <create> authorized
     And I am on the edit page for the item
-    Then I should <update>
+    Then I should <update> authorized
     Given I put on the page for the item
-    Then I should <update>
+    Then I should <update> authorized
     Given I am on the page for the item
-    Then I should <show>
+    Then I should <show> authorized
+    Given I am on the items page for the request
+    Then I should <show> "Root"
     Given I delete on the page for the item
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user        | create                 | update                 | destroy                | show                   |
-      | admin       | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | president   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | commissioner| see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
-      | regular     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     |
+      | status    | user                | create  | update  | show    | destroy |
+      | started   | admin               | see     | see     | see     | see     |
 
   Scenario: Create new item and edition
     Given I am logged in as "president" with password "secret"

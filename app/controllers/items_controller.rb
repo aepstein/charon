@@ -92,6 +92,7 @@ class ItemsController < ApplicationController
 
   def initialize_context
     @request = Request.find params[:request_id] if params[:request_id]
+    @item = Item.find params[:id] if params[:id]
   end
 
   def initialize_index
@@ -106,7 +107,7 @@ class ItemsController < ApplicationController
 
   def populate_editions
     edition = @item.editions.next
-    edition.item = @item if @item.new_record?
+    edition.item = @item if edition && @item.new_record?
     @item.editions.each { |edition| edition.documents.populate }
   end
 end

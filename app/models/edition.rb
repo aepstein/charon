@@ -13,6 +13,7 @@ class Edition < ActiveRecord::Base
       self.map { |d| d.document_type }.include?( document_type )
     end
     def populate
+      return if proxy_owner.item.nil? || proxy_owner.item.node.nil?
       proxy_owner.node.document_types.each do |document_type|
         self.build(:document_type => document_type) if self.select { |d| d.document_type == document_type }.empty?
       end
@@ -67,7 +68,7 @@ class Edition < ActiveRecord::Base
 
   def max_request
     amounts = []
-    amounts << item.node.item_amount_limit if item
+    amounts << item.node.item_amount_limit if item && item.node
     amounts << requestable.max_request if requestable
     unless perspective.blank? || perspective == Edition::PERSPECTIVES.first
       amounts << item.editions.perspective_equals( Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first.amount
@@ -97,22 +98,22 @@ class Edition < ActiveRecord::Base
   end
 
   def requestable(force_reload=false)
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}",force_reload)
   end
 
   def build_requestable(attributes={})
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("build_#{item.node.requestable_type.underscore}",attributes)
   end
 
   def create_requestable(attributes={})
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("create_#{item.node.requestable_type.underscore}",attributes)
   end
 
   def requestable=(requestable)
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}=",requestable)
   end
 
