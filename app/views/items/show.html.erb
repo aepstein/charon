@@ -1,14 +1,14 @@
 <h2><%= @item %></h2>
 
 <p>
-  <strong>Requestable type:</strong> <%=h @item.node.requestable_type %>
+  <b>Requestable type:</b> <%=h @item.node.requestable_type %>
 </p>
 
 <p>
-  <strong>Request node:</strong> <%=h @item.node.name %>
+  <b>Request node:</b> <%=h @item.node.name %>
 </p>
 
-<%= render :partial => 'editions/edition', :collection => @item.editions %>
+<%= render :partial => 'editions/edition', :collection => @item.editions.with_permissions_to(:show) %>
 
 <p>
 <%= link_to 'Edit', edit_item_path(@item) %> |

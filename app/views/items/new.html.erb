@@ -1,14 +1,7 @@
 <h2>New item for <%=h @item.request %></h2>
 
-<% form_for( :item, @item, :url => request_items_path( @item.request_id ) ) do |f| %>
-  <%= f.error_messages %>
-
-  <%= f.hidden_field :parent_id %>
-  <%= f.hidden_field :node_id %>
-
-  <p>
-    <%= f.submit 'Create' %>
-  </p>
+<% semantic_form_for( :item, @item, :url => request_items_path( @item.request_id ) ) do |f| %>
+  <%= render :partial => 'form', :object => f %>
 <% end %>
 
 <p>

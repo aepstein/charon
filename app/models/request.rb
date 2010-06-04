@@ -1,6 +1,4 @@
 class Request < ActiveRecord::Base
-  ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
-
   default_scope :include => [ :organization, :basis ],
     :order => 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC'
 
@@ -198,48 +196,6 @@ class Request < ActiveRecord::Base
     Edition::PERSPECTIVES.inject([]) do |memo, perspective|
       memo << send(perspective + "_ids").unshift(perspective)
     end
-  end
-
-  # Lists actions available to user on the request
-  def may(user)
-    return Array.new if user.nil?
-    return ACTIONS if user.admin?
-    permissions = Permission.satisfied.framework_id_eq(basis.framework_id
-      ).status_eq(status).perspectives_in(perspective_ids).memberships_user_id_eq(user.id)
-    Edition::PERSPECTIVES.each do |perspective|
-      values = permissions.select { |p| p.perspective == perspective }
-      return values.map { |v| v.action }.uniq unless values.empty?
-    end
-    Array.new
-  end
-
-  # Creates permission checking methods
-  # May need to override some to provide additional logic (experiment with super)
-  ACTIONS.each do |action|
-    define_method("may_#{action}?") do |user|
-      # may need to override with custom methods for some actions
-      # return false if basis.closed?
-      return true if may(user).include?(action)
-      false
-    end
-  end
-
-  def may_create?(user)
-    return false if user.nil?
-    return true if user.admin? || ( may(user).include?('create') && basis.open? )
-    false
-  end
-
-  def may_destroy?(user)
-    return false if user.nil?
-    return true if user.admin? || ( may(user).include?('destroy') && basis.open? )
-    false
-  end
-
-  def may_update?(user)
-    return false if user.nil?
-    return true if user.admin? || ( may(user).include?('update') && basis.open? )
-    false
   end
 
   def approvals_fulfilled?

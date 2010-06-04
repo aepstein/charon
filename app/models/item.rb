@@ -36,6 +36,9 @@ class Item < ActiveRecord::Base
   acts_as_list :scope => :parent_id
   acts_as_tree
 
+  attr_readonly :node_id
+  attr_readonly :parent_id
+
   accepts_nested_attributes_for :editions
 
   delegate :requestors, :to => :request
@@ -48,6 +51,9 @@ class Item < ActiveRecord::Base
   validate_on_update :node_must_not_change
 
   before_validation_on_create :set_title
+  before_update { |item| item.insert_at( item.new_position.to_i ) unless item.new_position.blank? }
+
+  attr_accessor :new_position
 
   def initialize_next_edition
     children.each { |item| item.initialize_next_edition }
@@ -65,26 +71,6 @@ class Item < ActiveRecord::Base
   def node_must_be_allowed
     return if node.nil?
     errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
-  end
-
-  def node_must_not_change
-    errors.add( :node_id, "must not change." ) if node_id_changed?
-  end
-
-  def may_create?(user)
-    request.may_update?(user)
-  end
-
-  def may_update?(user)
-    request.may_update?(user)
-  end
-
-  def may_destroy?(user)
-    request.may_update?(user)
-  end
-
-  def may_see?(user)
-    request.may_see?(user)
   end
 
   def to_s

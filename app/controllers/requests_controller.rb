@@ -14,7 +14,6 @@ class RequestsController < ApplicationController
   # GET /organizations/:organization_id/requests.xml
   def index
     @search = @requests.searchlogic( params[:search] )
-#    @search.current_scope[:joins] = 'LEFT OUTER JOIN `organizations_requests` ON `organizations_requests`.request_id = `requests`.id  LEFT OUTER JOIN `organizations` ON `organizations`.id = `organizations_requests`.organization_id  LEFT OUTER JOIN `bases` ON `bases`.id = `requests`.basis_id'
     @requests = @search.paginate( :page => params[:page] )
 
     respond_to do |format|

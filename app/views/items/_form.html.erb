@@ -1,19 +1,28 @@
-<% fields_for :edition do |edition_form| %>
+<%= form.error_messages %>
 
-  <% fields_for :requestable do |requestable_form| %>
-    <%= render :partial => "#{form.object.node.requestable_type.tableize}/form",
-               :object => requestable_form %>
-  <% end %>
-
-  <p>
-    <%= edition_form.label :amount,"Requested Amount" %><br />
-    <%= edition_form.text_field :amount %>
-  </p>
-
-  <p>
-    <%= edition_form.label :comment,"Requestor Comment" %><br />
-    <%= edition_form.text_field :comment %>
-  </p>
-
+<% form.inputs do %>
+  <% if form.object.new_record? -%>
+    <%= form.input :node_id, :as => :hidden %>
+    <%= form.input :parent_id, :as => :hidden %>
+  <% else -%>
+    <% if permitted_to?( :update, form.object ) -%>
+      <%= form.input :new_position, :label => 'Reprioritize to', :hint => 'Use this to change the priority of this item relative to others', :as => :select, :collection => options_for_position(form.object) %>
+    <% end -%>
+    <% if permitted_to?( :allocate, form.object ) -%>
+      <%= form.input :amount, :hint => 'What allocation amount should be provided for this item?' %>
+    <% end -%>
+  <% end -%>
 <% end %>
+
+<% form.semantic_fields_for :editions do |edition_form| %>
+  <% if form.object.new_record? || (edition_form.object.new_record? && permitted_to?( :create, edition_form.object ) ) -%>
+    <%= render :partial => 'editions/form', :object => edition_form  %>
+  <% elsif permitted_to?( :show, edition_form.object ) -%>
+    <%= render :partial => 'editions/edition', :object => edition_form.object  %>
+  <% else -%>
+    <p>You may not see the <%= edition_form.object.perspective %> edition.</p>
+  <% end -%>
+<% end %>
+
+<%= form.buttons %>
 

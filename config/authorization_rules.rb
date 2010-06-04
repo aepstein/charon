@@ -3,7 +3,9 @@ authorization do
     has_permission_on [ :addresses, :agreements, :approvals, :approvers,
       :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
       :items, :nodes, :organizations, :permissions, :registration_criterions,
-      :registrations, :requests, :roles, :users ], :to => [ :manage, :request, :review, :approve, :unapprove ]
+      :registrations, :requests, :roles, :users ], :to => [ :manage ]
+    has_permission_on [ :organizations, :requests, :items, :editions ], :to => [ :request, :review ]
+    has_permission_on [ :requests, :agreements ], :to => [ :approve, :unapprove ]
     has_permission_on :authorization_rules, :to => :read
   end
   role :user do
@@ -20,7 +22,7 @@ authorization do
     has_permission_on [ :organizations ], :to => :review do
       if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::REVIEWER } } }
     end
-    has_permission_on [ :organizations ], :to => :manage do
+    has_permission_on [ :organizations ], :to => [ :manage, :allocate ] do
       if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::MANAGER } } }
     end
     has_permission_on [ :bases ], :to => :review do
@@ -28,6 +30,9 @@ authorization do
     end
     has_permission_on [ :bases ], :to => :manage do
       if_permitted_to :manage, :organization
+    end
+    has_permission_on [ :requests ], :to => :allocate do
+      if_permitted_to :manage, :basis
     end
     has_permission_on [ :requests ], :to => :request do
       if_permitted_to :request, :organization
@@ -46,6 +51,10 @@ authorization do
       if_permitted_to :request
       if_attribute :status => is_in { %w( started completed ) }
     end
+    has_permission_on [ :requests ], :to => :update, :join_by => :and do
+      if_permitted_to :review
+      if_attribute :status => is_in { %w( accepted ) }
+    end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
       if_permitted_to :review
       if_attribute :status => is_in { %w( accepted reviewed ) }
@@ -53,6 +62,10 @@ authorization do
     has_permission_on [ :requests ], :to => :unapprove, :join_by => :and do
       if_permitted_to :approve
       if_attribute :status => is_in { %w( completed reviewed ) }
+    end
+
+    has_permission_on [ :items ], :to => :allocate do
+      if_permitted_to :allocate, :request
     end
     has_permission_on [ :items ], :to => :request do
       if_permitted_to :request, :request
@@ -63,21 +76,22 @@ authorization do
     has_permission_on [ :items ], :to => :review do
       if_permitted_to :review, :request
     end
-    has_permission_on [ :editions ], :to => :manage, :join_by => :and do
-      if_permitted_to :manage, :item
+    has_permission_on [ :items ], :to => :update do
+      if_permitted_to :update, :request
     end
-    has_permission_on [ :editions ], :to => :request, :join_by => :and do
-      if_permitted_to :request, :item
+
+    has_permission_on [ :editions ], :to => :manage, :join_by => :and do
+      if_permitted_to :update, :item
       if_attribute :perspective => is { Edition::PERSPECTIVES.first }
     end
-    has_permission_on [ :editions ], :to => :review, :join_by => :and do
-      if_permitted_to :review, :item
-    end
     has_permission_on [ :editions ], :to => :manage, :join_by => :and do
       if_permitted_to :review, :item
-      if_attribute :item => { :request => { :status => is { 'accepted' } } }
-      if_attribute :perspective => is { Edition::PERSPECTIVES.last }
+      if_attribute :item => { :request => { :status => is_in { %w( accepted ) } } }
     end
+    has_permission_on [ :editions ], :to => :manage, :join_by => :and do
+      if_permitted_to :allocate, :item
+    end
+
     has_permission_on [ :approvals ], :to => [ :new, :create ] do
       if_permitted_to :approve, :approvable
     end
@@ -114,7 +128,7 @@ privileges do
     includes :new
   end
   privilege :update do
-    includes :edit
+    includes :edit, :move, :do_move
   end
   privilege :show do
     includes :index

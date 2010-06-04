@@ -1,4 +1,4 @@
-<% if edition.may_see? current_user %>
+<% if permitted_to? :show, edition %>
     <% table_row_tag false do %>
       <td><%= edition.perspective.capitalize %> edition</td>
       <% if edition.new_record? then %>
@@ -6,7 +6,7 @@
       <% if read_only %>
       <td>&nbsp;</td>
       <% else %>
-      <td><%= link_to_if(edition.may_create?(current_user), "Add", new_item_edition_path(edition.item) ) { "" } %></td>
+      <td><%= link_to( "Add", new_item_edition_path(edition.item) ) permitted_to?( :create, edition )%></td>
       <% end %>
       <% else %>
       <td><%=h number_to_currency edition.amount %></td>
@@ -14,7 +14,7 @@
       <% if read_only %>
       <td>&nbsp;</td>
       <% else %>
-      <td><%= link_to_if(edition.may_update?(current_user), "Edit", edit_edition_path(edition) ) { "" } %></td>
+      <td><%= link_to( "Edit", edit_edition_path(edition) ) if permitted_to?( :update, edition ) %></td>
       <% end %>
       <% end %>
       <td>&nbsp;</td>

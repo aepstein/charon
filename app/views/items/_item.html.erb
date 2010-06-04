@@ -1,4 +1,3 @@
-<% if item.may_see? current_user %>
   <% table_row_tag false do %>
     <td colspan="3"><%=h item.title %><% if item.title != item.node.name %> (<%=h item.node.name %>)<% end %></td>
     <% if read_only %>
@@ -16,7 +15,6 @@
   <% end %>
   <% end %>
 
-  <% item.editions.next unless read_only %>
   <%= render :partial => 'items/edition', :collection => item.editions, :locals => { :read_only => read_only, :show_detail => show_detail } %>
 
   <% unless read_only %>
@@ -27,5 +25,4 @@
 
   <%= render :partial => 'items/item', :collection => item.request.items.children_of(item).reject { |i| i.new_record? },
     :locals => { :read_only => read_only, :show_detail => show_detail } %>
-<% end %>
 
