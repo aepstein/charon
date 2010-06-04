@@ -1,5 +1,6 @@
 <h2><%=h @request %></h2>
 
+<p>Basis: <%=h @request.basis %></p>
 <p>Status: <%=h @request.status %></p>
 <p>Requestor total: <%= number_to_currency @request.editions.perspective_equals('requestor').sum('editions.amount') %></p>
 <% if permitted_to? :review -%>

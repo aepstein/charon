@@ -3,6 +3,9 @@ Feature: Manage requests
   As a requestor or reviewer
   I want to manage requests
 
+  Background:
+    Given a user: "admin" exists with admin: true
+
   Scenario Outline: Test permissions for requests controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -10,7 +13,6 @@ Feature: Manage requests
     And a manager_role: "manager" exists
     And a requestor_role: "requestor" exists
     And a reviewer_role: "reviewer" exists
-    And a user: "admin" exists with admin: true
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
     And a user: "source_reviewer" exists
@@ -64,64 +66,57 @@ Feature: Manage requests
       | accepted  | observer_requestor  | not see | not see | not see | not see |
       | accepted  | regular             | not see | not see | not see | not see |
 
-  Scenario: Register new request
-    Given I am on the profile page for organization: "safc1"
-    And I am logged in as "requestor" with password "secret"
-    When I press "Create"
+  Scenario: Create and update requests
+    Given a basis exists with name: "Annual Budget"
+    And a basis exists with name: "Semester Budget"
+    And an organization exists with last_name: "Spending Club"
+    And I log in as user: "admin"
+    And I am on the new request page for the organization
+    When I select "Annual Budget" from "Basis"
+    And I press "Create"
     Then I should see "Request was successfully created."
+    And I should see "Basis: Annual Budget"
+    When I follow "Edit"
+    And I press "Update"
+    Then I should see "Request was successfully updated."
 
-  Scenario: List requests for an organization with 1 request
-    Given I am logged in as "requestor" with password "secret"
-    And I am on the requests page for organization: "safc1"
+  Scenario: List and delete requests
+    Given a basis: "annual" exists with name: "Annual"
+    And a basis: "semester" exists with name: "Semester"
+    And an organization: "first" exists with last_name: "First Club"
+    And an organization: "last" exists with last_name: "Last Club"
+    And a request exists with basis: basis "semester", organization: organization: "last", status: "started"
+    And a request exists with basis: basis "semester", organization: organization: "first", status: "completed"
+    And a request exists with basis: basis "annual", organization: organization: "last", status: "submitted"
+    And a request exists with basis: basis "annual", organization: organization: "first", status: "accepted"
+    And I log in as user: "admin"
+    And I am on the requests page
+    When I fill in "Basis" with "annual"
+    And I press "Search"
     Then I should see the following requests:
-      | Basis        |
-      | safc basis 1 |
-
-  Scenario: List requests for an organization with 2 requests
-    Given I am logged in as "requestor" with password "secret"
-    And I am on the requests page for organization: "safc2"
+      | Basis    | Organization |
+      | Annual   | First Club   |
+      | Annual   | Last Club    |
+    And I fill in "Organization" with "first"
+    And I press "Search"
     Then I should see the following requests:
-      | Basis        |
-      | safc basis 1 |
-      | safc basis 2 |
-
-  Scenario: List requests for an organization with no requests
-    Given I am logged in as "requestor" with password "secret"
-    And I am on the requests page for the organization: "safc3"
+      | Basis    | Organization |
+      | Annual   | First Club   |
+    Given I am on the requests page for basis: "annual"
     Then I should see the following requests:
-      | Organizations |
-
-  Scenario: List requests for a basis
-    Given a basis: "fall" exists with name: "fall semester"
-    And a basis: "spring" exists with name: "spring semester"
-    And an organization: "org1" exists with last_name: "Abc Club"
-    And an organization: "org2" exists with last_name: "14 Society"
-    And an organization: "org3" exists with last_name: "Zxy Club"
-    And a request exists with basis: basis "fall", status: "accepted"
-    And organization: "org3" is alone amongst the organizations of the request
-    And a request exists with basis: basis "spring", status: "accepted"
-    And organization: "org1" is alone amongst the organizations of the request
-    And a request exists with basis: basis "fall", status: "reviewed"
-    And organization: "org1" is alone amongst the organizations of the request
-    And a request exists with basis: basis "fall", status: "accepted"
-    And organization: "org2" is alone amongst the organizations of the request
-    And I am logged in as "admin" with password "secret"
-    And I am on the requests page for basis: "fall"
+      | Organization | Status    |
+      | First Club   | accepted  |
+      | Last Club    | submitted |
+    Given I am on the requests page for organization: "first"
     Then I should see the following requests:
-      | Organizations |
-      | 14 Society    |
-      | Abc Club      |
-      | Zxy Club      |
-    When I fill in "Search" with "club"
-    And I press "Go"
+      | Basis    | Status    |
+      | Annual   | accepted  |
+      | Semester | completed |
+    When I delete the 3rd request
+    And I am on the requests page
     Then I should see the following requests:
-      | Organizations |
-      | Abc Club      |
-      | Zxy Club      |
-    When I select "accepted" from "Status"
-    And I press "Go"
-    Then I should see the following requests:
-      | Organizations |
-      | 14 Society    |
-      | Zxy Club      |
+      | Basis    | Organization | Status    |
+      | Annual   | First Club   | accepted  |
+      | Annual   | Last Club    | submitted |
+      | Semester | Last Club    | started   |
 

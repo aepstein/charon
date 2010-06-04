@@ -97,6 +97,8 @@ class RequestsController < ApplicationController
   def initialize_context
     @basis = Basis.find params[:basis_id] if params[:basis_id]
     @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @context ||= @basis
+    @context ||= @organization
     @request = Request.find params[:id] if params[:id]
   end
 

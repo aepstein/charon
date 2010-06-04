@@ -90,10 +90,10 @@ class Request < ActiveRecord::Base
   has_many :editions, :through => :items
   belongs_to :organization
 
-  named_scope :organization_like, lambda { |name|
+  named_scope :organization_name_like, lambda { |name|
     { :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ] }
   }
-  named_scope :basis_like, lambda { |name|
+  named_scope :basis_name_like, lambda { |name|
     { :conditions => ['bases.name LIKE ?', "%#{name}%"] }
   }
   named_scope :incomplete_for_perspective, lambda { |perspective|
