@@ -15,13 +15,13 @@ authorization do
     end
     has_permission_on [ :organizations ], :to => [ :show ]
     has_permission_on [ :organizations ], :to => :request do
-      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :permissions => contains { 'request' } } }
+      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::REQUESTOR } } }
     end
     has_permission_on [ :organizations ], :to => :review do
-      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :permissions => contains { 'review' } } }
+      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::REVIEWER } } }
     end
     has_permission_on [ :organizations ], :to => :manage do
-      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :permissions => contains { 'manage' } } }
+      if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::MANAGER } } }
     end
     has_permission_on [ :bases ], :to => :review do
       if_permitted_to :review, :organization

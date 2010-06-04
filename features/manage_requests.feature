@@ -7,9 +7,9 @@ Feature: Manage requests
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
     And an organization: "observer" exists with last_name: "Observer"
-    And a manager_role: "manager" exists with name: "Manager"
-    And a requestor_role: "requestor" exists with name: "Requestor"
-    And a reviewer_role: "reviewer" exists with name: "Reviewer"
+    And a manager_role: "manager" exists
+    And a requestor_role: "requestor" exists
+    And a reviewer_role: "reviewer" exists
     And a user: "admin" exists with admin: true
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"

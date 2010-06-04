@@ -106,19 +106,19 @@ Factory.define :user_status_criterion do |f|
 end
 
 Factory.define :role do |f|
-  f.sequence(:name) { |n| "Role #{n}" }
+  f.sequence(:name) { |n| "role #{n}" }
 end
 
 Factory.define :requestor_role, :parent => :role do |f|
-  f.permissions %w( request )
+  f.name Role::REQUESTOR.first
 end
 
 Factory.define :reviewer_role, :parent => :role do |f|
-  f.permissions %w( review )
+  f.name Role::REVIEWER.first
 end
 
 Factory.define :manager_role, :parent => :role do |f|
-  f.permissions %w( manage )
+  f.name Role::MANAGER.first
 end
 
 Factory.define :membership do |f|

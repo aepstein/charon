@@ -1,5 +1,7 @@
 class Role < ActiveRecord::Base
-  PERMISSIONS = %w( request review manage )
+  MANAGER = %w( staff )
+  REVIEWER = %w( member )
+  REQUESTOR =  %w( president vice-president treasurer officer advisor )
 
   default_scope :order => 'roles.name ASC'
 
@@ -7,14 +9,6 @@ class Role < ActiveRecord::Base
   validates_uniqueness_of :name
 
   has_many :memberships, :dependent => :destroy
-
-  def permissions
-    PERMISSIONS.reject { |permission| ((permissions_mask || 0) & 2**PERMISSIONS.index(permission)).zero? }
-  end
-
-  def permissions=(values)
-    self.permissions_mask=( (values & PERMISSIONS).map { |permission| 2**PERMISSIONS.index(permission) }.sum )
-  end
 
   def to_s
     name

@@ -20,14 +20,5 @@ describe Role do
     duplicate_role.save.should == false
   end
 
-  it 'should save permissions correctly' do
-    role = Factory(:role)
-    role.permissions.should be_empty
-    role.permissions = ['manager']
-    role.save
-    role.permissions.should include 'manager'
-    role.permissions.length.should eql 1
-  end
-
 end
 
