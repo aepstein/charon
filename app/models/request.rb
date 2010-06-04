@@ -1,7 +1,7 @@
 class Request < ActiveRecord::Base
   ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
 
-  default_scope :include => [ :organizations, :basis ],
+  default_scope :include => [ :organization, :basis ],
     :order => 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC'
 
   belongs_to :basis
@@ -95,14 +95,7 @@ class Request < ActiveRecord::Base
     end
   end
   has_many :editions, :through => :items
-  has_and_belongs_to_many :organizations do
-    def may(action)
-      self.map { |o| o.users }.flatten.select { |u| proxy_owner.send("may_#{action}?", u) }.uniq
-    end
-    def to_s
-      self.join ', '
-    end
-  end
+  belongs_to :organization
 
   named_scope :organization_like, lambda { |name|
     { :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ] }
@@ -124,17 +117,12 @@ class Request < ActiveRecord::Base
 
   before_validation_on_create :set_approval_checkpoint
 
-  validate :must_have_eligible_organizations
+  validates_presence_of :organization
   validates_datetime :approval_checkpoint
   validates_presence_of :basis
 
   def must_have_open_basis
     errors.add( :basis_id, 'must be an open basis.' ) unless basis.open?
-  end
-  def must_have_eligible_organizations
-    if organizations.empty?
-      errors.add_to_base( "Must have at least one organization associated with request." )
-    end
   end
 
   attr_readonly :basis_id
@@ -171,8 +159,6 @@ class Request < ActiveRecord::Base
   aasm_event :release do
     transitions :to => :released, :from => :certified
   end
-
-  alias :requestors :organizations
 
   def approvable?
     case status
@@ -285,7 +271,7 @@ class Request < ActiveRecord::Base
   end
 
   def to_s
-    "Request of #{organizations.join(", ")} from #{basis}"
+    "Request of #{organization} from #{basis}"
   end
 end
 

@@ -8,7 +8,7 @@ class Organization < ActiveRecord::Base
   has_many :memberships
   has_many :roles, :through => :memberships
   has_many :bases
-  has_and_belongs_to_many :requests do
+  has_many :requests do
     def creatable
       Basis.open.no_draft_request_for( proxy_owner ).map { |b| b.requests.build_for proxy_owner }
     end
