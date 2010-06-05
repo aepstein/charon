@@ -61,14 +61,10 @@ module ApplicationHelper
 
   def link_to_unapprove_request(request)
     approval = request.approvals.user_id_equals(current_user.id).first
-    if approval && approval.may_destroy?(current_user)
+    if approval && permitted_to?( :destroy, approval )
       return link_to 'Unapprove', approval, :confirm => 'Are you sure?', :method => :delete
     end
     ''
-  end
-
-  def link_to_request_organization_profiles(request)
-    request.organizations.map { |o| link_to "#{o} profile", profile_organization_path(o) }.join " | "
   end
 end
 

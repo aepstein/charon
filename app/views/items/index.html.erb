@@ -13,7 +13,7 @@ table td { padding: 4px; }
 </table>
 
 <p>
-<%= link_to_request_organization_profiles @request %> |
-<%= link_to 'Show request', @request %>
+<%= link_to "Back to #{@request.organization}", @request.organization %> |
+<%= link_to "Back to #{@request}", @request %>
 </p>
 
