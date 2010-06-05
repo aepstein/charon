@@ -131,7 +131,7 @@ privileges do
     includes :new
   end
   privilege :update do
-    includes :edit, :move, :do_move
+    includes :edit
   end
   privilege :show do
     includes :index

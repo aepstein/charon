@@ -5,7 +5,7 @@ Feature: Manage items
 
   Background:
     Given a user: "admin" exists with admin: true
-@wip
+
   Scenario Outline: Test permissions for items controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -87,6 +87,38 @@ Feature: Manage items
       | released  | applicant_requestor | not see | not see | see     | not see |
       | released  | observer_requestor  | not see | not see | not see | not see |
       | released  | regular             | not see | not see | not see | not see |
+@wip
+  Scenario: Create or update an item with embedded edtion
+    Given an organization exists with last_name: "Applicant"
+    And a structure exists
+    And a node: "new" exists with name: "New", structure: the structure
+    And a node: "existing" exists with name: "Existing", structure: the structure
+    And a node: "subordinate" exists with name: "Subordinate", structure: the structure, parent: node "existing"
+    And a basis exists with structure: the structure
+    And a request exists with basis: the basis, organization: the organization
+    And I log in as user: "admin"
+    When I am on the items page for the request
+    And I select "New" from "Add New Root Item"
+    And I press "Add Root Item"
+    And I fill in "Requestor Amount" with "100"
+    And I fill in "Requestor Comment" with "This is *important*."
+    And I press "Create Item"
+    Then I should see "Item was successfully created."
+    And I should not see "Parent:"
+    And I should see "Node: New"
+    And I should see "Requestor amount: $100.00"
+    And I should see "This is important."
+    When I follow "Edit"
+    And I fill in "Requestor Amount" with "200"
+    And I fill in "Requestor Comment" with "Different comment."
+    And I fill in "Reviewer Amount" with "100"
+    And I fill in "Reviewer Comment" with "Final comment."
+    And I press "Update Item"
+    Then I should see "Item was successfully updated."
+    And I should see "Requestor amount: $200.00"
+    And I should see "Different comment."
+    And I should see "Reviewer amount: $100.00"
+    And I should see "Final comment."
 
   Scenario: Create new item and edition
     Given I am logged in as "president" with password "secret"

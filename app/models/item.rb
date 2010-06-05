@@ -38,6 +38,7 @@ class Item < ActiveRecord::Base
 
   attr_readonly :node_id
   attr_readonly :parent_id
+  attr_readonly :perspective
 
   accepts_nested_attributes_for :editions
 
@@ -50,6 +51,7 @@ class Item < ActiveRecord::Base
   validate_on_create :node_must_be_allowed
 
   before_validation_on_create :set_title
+  before_validation_on_create { |item| item.editions.each { |edition| edition.item = item } }
   before_update { |item| item.insert_at( item.new_position.to_i ) unless item.new_position.blank? }
 
   attr_accessor :new_position

@@ -43,7 +43,7 @@ class ItemsController < ApplicationController
     respond_to do |format|
       if @item.save
         flash[:notice] = 'Item was successfully created.'
-        format.html { redirect_to( request_items_url(@item.request) ) }
+        format.html { redirect_to @item }
         format.xml  { render :xml => @item, :status => :created, :location => @item }
       else
         populate_editions
@@ -66,7 +66,7 @@ class ItemsController < ApplicationController
     respond_to do |format|
       if @item.update_attributes(params[:item])
         flash[:notice] = 'Item was successfully updated.'
-        format.html { redirect_to(@item) }
+        format.html { redirect_to @item }
         format.xml  { head :ok }
       else
         populate_editions

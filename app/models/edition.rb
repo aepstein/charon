@@ -1,6 +1,6 @@
 class Edition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
-  belongs_to :item, :touch => true
+  belongs_to :item
   has_one :administrative_expense
   has_one :local_event_expense
   has_one :speaker_expense
@@ -44,10 +44,7 @@ class Edition < ActiveRecord::Base
   after_save :set_item_title
 
   def set_item_title
-    if title.nil?
-      item.touch
-      item.request.touch
-    else
+    unless title.blank? || ( title != item.title )
       item.title = title
       item.save
     end
@@ -115,27 +112,6 @@ class Edition < ActiveRecord::Base
   def requestable=(requestable)
     return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}=",requestable)
-  end
-
-  def may_create?(user)
-    return request.may_revise?(user) if perspective == 'reviewer'
-    request.may_update?(user) if perspective == 'requestor'
-  end
-
-  def may_update?(user)
-    return request.may_revise?(user) if perspective == 'reviewer'
-    request.may_update?(user)
-  end
-
-  def may_destroy?(user)
-    may_update? user
-  end
-
-  def may_see?(user)
-    if perspective == 'reviewer'
-      return request.may_revise?(user) || request.may_review?(user)
-    end
-    request.may_see?(user)
   end
 
   def previous

@@ -1,16 +1,25 @@
 <h2><%=h @item %> of <%=h @item.request %></h2>
+
+<% if @item.parent -%>
 <p>
-  <b>Requestable type:</b> <%=h @item.node.requestable_type %>
+  <b>Parent:</b> <%=h @item.parent %>
 </p>
 
+<% end -%>
 <p>
-  <b>Request node:</b> <%=h @item.node.name %>
+  <b>Node:</b> <%=h @item.node %>
 </p>
+
+<% if permitted_to?( :review, @item ) -%>
+<p>
+  <b>Amount:</b> <%= number_to_currency @item.amount %>
+</p>
+<% end -%>
 
 <%= render :partial => 'editions/edition', :collection => @item.editions.with_permissions_to(:show) %>
 
 <p>
 <%= link_to 'Edit', edit_item_path(@item) %> |
-<%= link_to 'Back', request_items_path(@item.request_id) %>
+<%= link_to h("Back to #{@item.request}"), request_items_path(@item.request) %>
 </p>
 

@@ -15,7 +15,9 @@
 <% end %>
 
 <% form.semantic_fields_for :editions do |edition_form| %>
-  <% if form.object.new_record? || (edition_form.object.new_record? && permitted_to?( :create, edition_form.object ) ) -%>
+  <% if form.object.new_record? ||
+        (edition_form.object.new_record? && permitted_to?( :create, edition_form.object ) ) ||
+        (edition_form.object.id && permitted_to?( :update, edition_form.object ) ) -%>
     <%= render :partial => 'editions/form', :object => edition_form  %>
   <% elsif permitted_to?( :show, edition_form.object ) -%>
     <%= render :partial => 'editions/edition', :object => edition_form.object  %>

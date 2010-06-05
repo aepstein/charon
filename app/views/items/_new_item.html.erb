@@ -1,16 +1,16 @@
 <% if new_item.allowed_nodes.size > 0 && permitted_to?( :create, new_item ) %>
   <% table_row_tag false do %>
     <td colspan="3">
-    <% form_for( :item, new_item, :url => new_request_item_path( new_item.request ), :method => :get ) do |f| %>
+    <% form_for( :item, new_item, :url => new_request_item_path( new_item.request ), :html => { :method => :get } ) do |f| %>
 
     <% unless new_item.parent.nil? %>
       <%= f.hidden_field :parent_id %>
     <% end %>
 
     <p>
-      <%= f.label :node_id, 'Add New Item:' %>
+      <%= f.label :node_id, ( new_item.parent ? "Add New Subitem for #{new_item.parent}" : 'Add New Root Item') %>
       <%= f.collection_select :node_id, new_item.allowed_nodes, :id, :name %>
-      <%= f.submit 'Add' %>
+      <%= f.submit ( new_item.parent ? 'Add Subitem' : 'Add Root Item') %>
     </p>
 
     <% end %>

@@ -1,19 +1,5 @@
 <p>
-  <b>Item id:</b> <%=h edition.item_id %>
-</p>
-
-<% if edition.requestable %>
-<p>
-  <b>Requestable id:</b> <%=h edition.requestable.id %>
-</p>
-
-<p>
-  <b>Requestable type:</b> <%=h edition.item.node.requestable_type %>
-</p>
-<% end %>
-
-<p>
-  <b>Request node:</b> <%= edition.item.node %>
+  <b>Node:</b> <%= edition.item.node %>
 </p>
 
 <p>
@@ -21,16 +7,18 @@
 </p>
 
 <p>
-  <b>Maximum request:</b> <%=h number_to_currency(edition.max_request) %>
+  <b>Maximum request:</b> <%= number_to_currency edition.max_request %>
 </p>
 
 <p>
-  <b><%=h edition.perspective.titleize %> amount:</b> <%=h number_to_currency(edition.amount) %>
+  <b><%= edition.perspective.titleize %> amount:</b> <%=h number_to_currency(edition.amount) %>
 </p>
 
 <p>
-  <b><%=h edition.perspective.titleize %> comment:</b> <%=h edition.comment %>
+  <b><%= edition.perspective.titleize %> comment:</b>
 </p>
+
+<%=markdown edition.comment %>
 
 <% if edition.requestable %>
 <%= render :partial => "#{edition.requestable.class.to_s.tableize}/#{edition.requestable.class.to_s.underscore}",
