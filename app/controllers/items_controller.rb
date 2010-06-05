@@ -4,7 +4,7 @@ class ItemsController < ApplicationController
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_item_from_request, :only => [ :new, :create ]
   before_filter :populate_editions, :only => [ :new, :edit ]
-  filter_access_to :new, :create, :edit, :update, :destroy, :show, :move, :do_move, :attribute_check => true
+  filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
   filter_access_to :index do
     permitted_to!( :show, @request )
   end

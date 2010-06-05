@@ -15,6 +15,7 @@ authorization do
     has_permission_on [ :users ], :to => [ :edit, :update ] do
       if_attribute :id => is { user.id }
     end
+
     has_permission_on [ :organizations ], :to => [ :show ]
     has_permission_on [ :organizations ], :to => :request do
       if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::REQUESTOR } } }
@@ -25,12 +26,14 @@ authorization do
     has_permission_on [ :organizations ], :to => [ :manage, :allocate ] do
       if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::MANAGER } } }
     end
+
     has_permission_on [ :bases ], :to => :review do
       if_permitted_to :review, :organization
     end
     has_permission_on [ :bases ], :to => :manage do
       if_permitted_to :manage, :organization
     end
+
     has_permission_on [ :requests ], :to => :allocate do
       if_permitted_to :manage, :basis
     end
@@ -48,19 +51,19 @@ authorization do
       if_attribute :status => is_in { %w( started ) }
     end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
-      if_permitted_to :request
+      if_permitted_to :request, :organization
       if_attribute :status => is_in { %w( started completed ) }
     end
     has_permission_on [ :requests ], :to => :update, :join_by => :and do
-      if_permitted_to :review
+      if_permitted_to :review, :basis
       if_attribute :status => is_in { %w( accepted ) }
     end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
-      if_permitted_to :review
+      if_permitted_to :review, :basis
       if_attribute :status => is_in { %w( accepted reviewed ) }
     end
     has_permission_on [ :requests ], :to => :unapprove, :join_by => :and do
-      if_permitted_to :approve
+      if_permitted_to :review, :basis
       if_attribute :status => is_in { %w( completed reviewed ) }
     end
 

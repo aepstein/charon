@@ -45,7 +45,12 @@ Feature: Manage items
     Then I should <destroy> authorized
     Examples:
       | status    | user                | create  | update  | show    | destroy |
-      | started   | admin               | see     | see     | see     | see     |
+#      | started   | admin               | see     | see     | see     | see     |
+#      | started   | source_manager      | see     | see     | see     | see     |
+#      | started   | source_reviewer     | not see | not see | see     | not see |
+#      | started   | applicant_requestor | see     | see     | see     | see     |
+      | started   | observer_requestor  | not see | not see | not see | not see |
+      | started   | regular             | not see | not see | not see | not see |
 
   Scenario: Create new item and edition
     Given I am logged in as "president" with password "secret"
