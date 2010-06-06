@@ -112,7 +112,7 @@ Feature: Manage requests
       | Basis    | Status    |
       | Annual   | accepted  |
       | Semester | completed |
-    When I delete the 3rd request
+    When I follow "Destroy" for the 3rd request
     And I am on the requests page
     Then I should see the following requests:
       | Basis    | Organization | Status    |

@@ -100,7 +100,8 @@ Feature: Manage items
     And an item exists with node: node "existing", request: request "<request>"
     And I log in as user: "admin"
     When I am on the items page for the request
-    And I select "<node>" from "Add New <box>"
+    Then I should not see "Reviewer"
+    When I select "<node>" from "Add New <box>"
     And I press "Add <button>"
     And I fill in "Requestor Amount" with "100"
     And I fill in "Requestor Comment" with "This is *important*."
@@ -125,23 +126,6 @@ Feature: Manage items
       | request | node        | box                  | button    | parent  |
       | other   | New         | Root Item            | Root Item | not see |
       | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
-
-  Scenario: Create new item and edition
-    Given I am logged in as "president" with password "secret"
-    And I am on the items page for the request
-    And I select "administrative expense" from "Add New Item"
-    And I press "Add"
-    Then I should see "Item was successfully created."
-
-  Scenario Outline: Create new item only if admin or may update request
-    Given I am logged in as "<user>" with password "secret"
-    When I am on the items page for the request
-    Then I should <should>
-    Examples:
-      | user         | should                 |
-      | admin        | see "Add New Item"     |
-      | president    | see "Add New Item"     |
-      | commissioner | not see "Add New Item" |
 
   Scenario: Move an item
     Given an item exists with request: the request, node: node "administrative"

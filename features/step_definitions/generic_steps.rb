@@ -10,17 +10,10 @@ Then /^I should not see authorized$/ do
   Then %{I should see "You are not allowed to perform the requested action."}
 end
 
-When /^I delete the (\d+)(?:st|nd|rd|th) #{capture_factory}$/ do |position, subject|
-  visit polymorphic_path( [ subject.pluralize ] )
+When /^I follow "(.+)" for the (\d+)(?:st|nd|rd|th) #{capture_factory}(?: for #{capture_model})?$/ do |link, position, subject, context|
+  visit polymorphic_path( [ ( context.blank? ? nil : model(context) ), subject.pluralize ] )
   within("table > tbody > tr:nth-child(#{position.to_i})") do
-    click_link "Destroy"
-  end
-end
-
-When /^I delete the (\d+)(?:st|nd|rd|th) #{capture_factory} for #{capture_model}$/ do |position, subject, context|
-  visit polymorphic_path( [ model(context), subject.pluralize ] )
-  within("table > tbody > tr:nth-child(#{position.to_i})") do
-    click_link "Destroy"
+    click_link "#{link}"
   end
 end
 

@@ -52,7 +52,7 @@ class Item < ActiveRecord::Base
 
   before_validation_on_create :set_title
   before_validation_on_create { |item| item.editions.each { |edition| edition.item = item } }
-  before_update { |item| item.insert_at( item.new_position.to_i ) unless item.new_position.blank? }
+  after_save { |item| item.insert_at( item.new_position.to_i ) unless item.new_position.blank? || ( item.new_position == item.position ) }
 
   attr_accessor :new_position
 
