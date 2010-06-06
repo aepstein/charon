@@ -87,25 +87,27 @@ Feature: Manage items
       | released  | applicant_requestor | not see | not see | see     | not see |
       | released  | observer_requestor  | not see | not see | not see | not see |
       | released  | regular             | not see | not see | not see | not see |
-@wip
-  Scenario: Create or update an item with embedded edtion
+
+  Scenario Outline: Create or update an item with embedded edtion
     Given an organization exists with last_name: "Applicant"
     And a structure exists
     And a node: "new" exists with name: "New", structure: the structure
     And a node: "existing" exists with name: "Existing", structure: the structure
     And a node: "subordinate" exists with name: "Subordinate", structure: the structure, parent: node "existing"
     And a basis exists with structure: the structure
-    And a request exists with basis: the basis, organization: the organization
+    And a request: "other" exists with basis: the basis
+    And a request: "focus" exists with basis: the basis, organization: the organization
+    And an item exists with node: node "existing", request: request "<request>"
     And I log in as user: "admin"
     When I am on the items page for the request
-    And I select "New" from "Add New Root Item"
-    And I press "Add Root Item"
+    And I select "<node>" from "Add New <box>"
+    And I press "Add <button>"
     And I fill in "Requestor Amount" with "100"
     And I fill in "Requestor Comment" with "This is *important*."
     And I press "Create Item"
     Then I should see "Item was successfully created."
-    And I should not see "Parent:"
-    And I should see "Node: New"
+    And I should <parent> "Parent: Existing"
+    And I should see "Node: <node>"
     And I should see "Requestor amount: $100.00"
     And I should see "This is important."
     When I follow "Edit"
@@ -119,6 +121,10 @@ Feature: Manage items
     And I should see "Different comment."
     And I should see "Reviewer amount: $100.00"
     And I should see "Final comment."
+    Examples:
+      | request | node        | box                  | button    | parent  |
+      | other   | New         | Root Item            | Root Item | not see |
+      | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
 
   Scenario: Create new item and edition
     Given I am logged in as "president" with password "secret"
