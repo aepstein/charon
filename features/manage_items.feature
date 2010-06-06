@@ -126,16 +126,22 @@ Feature: Manage items
       | request | node        | box                  | button    | parent  |
       | other   | New         | Root Item            | Root Item | not see |
       | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
-  @wip
-  Scenario: Move an item
-    Given a request exists
-    And an item exists with request: the request
+
+  Scenario Outline: Move items among priorities
+    Given a structure exists
+    And a node: "1" exists with structure: the structure, name: "node 1"
+    And a node: "2" exists with structure: the structure, parent: node "1", name: "node 2"
+    And a node: "3" exists with structure: the structure, parent: node "1", name: "node 3"
+    And a node: "4" exists with structure: the structure, name: "node 4"
+    And a basis exists with structure: the structure
+    And a request exists with basis: the basis
+    And an item: "1" exists with request: the request, node: node "1"
     And edition exists with item: the item
-    And an item exists with request: the request
+    And an item: "2" exists with request: the request, node: node "2", parent: item "1"
     And edition exists with item: the item
-    And an item exists with request: the request
+    And an item: "3" exists with request: the request, node: node "3", parent: item "1"
     And edition exists with item: the item
-    And an item exists with request: the request
+    And an item: "4" exists with request: the request, node: node "4"
     And edition exists with item: the item
     And I log in as user: "admin"
     When I am on the items page for the request
@@ -145,82 +151,45 @@ Feature: Manage items
       | node 2 |
       | node 3 |
       | node 4 |
-    When I follow "Edit" for the 4th item for the request
-    And I select "node 1" from "Move to priority of"
+    When I follow "Edit" for the <old> item for the request
+    And I select "<new>" from "Move to priority of"
     And I press "Update Item"
     Then I should see "Item was successfully updated."
     When I am on the items page for the request
     Then I should see the following items:
       | Title  |
-      | node 4 |
+      | <new1> |
+      | <new2> |
+      | <new3> |
+      | <new4> |
+    Examples:
+      | old | new    | new1   | new2   | new3   | new4   |
+      | 4th | node 1 | node 4 | node 1 | node 2 | node 3 |
+      | 3rd | node 2 | node 1 | node 3 | node 2 | node 4 |
+      | 2nd | node 3 | node 1 | node 3 | node 2 | node 4 |
+      | 1st | node 4 | node 4 | node 1 | node 2 | node 3 |
+
+  Scenario: List and delete items
+    Given a structure exists
+    And a node: "1" exists with structure: the structure, name: "node 1"
+    And a node: "2" exists with structure: the structure, parent: node "1", name: "node 2"
+    And a node: "3" exists with structure: the structure, parent: node "1", name: "node 3"
+    And a node: "4" exists with structure: the structure, name: "node 4"
+    And a basis exists with structure: the structure
+    And a request exists with basis: the basis
+    And an item: "1" exists with request: the request, node: node "1"
+    And an item: "2" exists with request: the request, node: node "2", parent: item "1"
+    And an item: "3" exists with request: the request, node: node "3", parent: item "1"
+    And an item: "4" exists with request: the request, node: node "4"
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd item for the request
+    Then I should see the following items:
+      | Title  |
       | node 1 |
       | node 2 |
-      | node 3 |
-
-  Scenario: Move an item (with parent)
-    Given a node: "top" exists with structure: structure "annual", name: "top"
-    And a node: "administrative_n" exists with structure: structure "annual", requestable_type: "AdministrativeExpense", name: "child administrative expense", parent: node "top"
-    And a node: "travel_n" exists with structure: structure "annual", requestable_type: "TravelEventExpense", name: "child travel event expense", parent: node "top"
-    And a node: "durable_n" exists with structure: structure "annual", requestable_type: "DurableGoodExpense", name: "child durable good expense", parent: node "top"
-    And a node: "publication_n" exists with structure: structure "annual", requestable_type: "PublicationExpense", name: "child publication expense", parent: node "top"
-    And an item: "top" exists with request: the request, node: node "top"
-    And an item exists with request: the request, node: node "administrative_n", parent: item "top"
-    And an item exists with request: the request, node: node "durable_n", parent: item "top"
-    And an item exists with request: the request, node: node "publication_n", parent: item "top"
-    And an item exists with request: the request, node: node "travel_n", parent: item "top"
-    And I am logged in as "president" with password "secret"
-    And I am on the items page for the request
-    When I move the 2nd item
-    And I select "child publication expense" from "Move to priority of"
-    And I press "Move"
-    Then I should see "Item was successfully moved."
-    And I should see the following items:
-      | Perspective                  |
-      | top                          |
-      | Requestor edition            |
-      | child durable good expense   |
-      | Requestor edition            |
-      | child publication expense    |
-      | Requestor edition            |
-      | child administrative expense |
-      | Requestor edition            |
-      | child travel event expense   |
-      | Requestor edition            |
-
-  Scenario: Delete an item
-    Given an item exists with request: the request, node: node "administrative"
-    And an item exists with request: the request, node: node "durable"
-    And an item exists with request: the request, node: node "publication"
-    And an item exists with request: the request, node: node "travel"
-    And I am logged in as "president" with password "secret"
-    When I delete the 5th item for the request
-    Then I should see "Item was successfully destroyed."
-    And I should see the following items:
-      | Perspective            |
-      | administrative expense |
-      | Requestor edition      |
-      | durable good expense   |
-      | Requestor edition      |
-      | travel event expense   |
-      | Requestor edition      |
-
-  Scenario: Show correct add edition links
-    Given an item: "administrative" exists with request: the request, node: node "administrative"
-    And an item: "durable" exists with request: the request, node: node "durable"
-    And an item exists with request: the request, node: node "publication"
-    And an edition exists with item: item "administrative", perspective: "requestor"
-    And an edition exists with item: item "administrative", perspective: "reviewer"
-    And an edition exists with item: item "durable", perspective: "requestor"
-    And I am logged in as "admin" with password "secret"
-    When I am on the items page for the request
+      | node 4 |
+    When I follow "Destroy" for the 1st item for the request
     Then I should see the following items:
-      | Perspective            | Amount         |
-      | administrative expense | Move           |
-      | Requestor edition      | $0.00          |
-      | Reviewer edition       | $0.00          |
-      | durable good expense   | Move           |
-      | Requestor edition      | $0.00          |
-      | Reviewer edition       | None yet.      |
-      | publication expense    | Move           |
-      | Requestor edition      | None yet.      |
+      | Title  |
+      | node 4 |
 
