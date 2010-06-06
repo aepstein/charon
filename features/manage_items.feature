@@ -126,28 +126,36 @@ Feature: Manage items
       | request | node        | box                  | button    | parent  |
       | other   | New         | Root Item            | Root Item | not see |
       | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
-
+  @wip
   Scenario: Move an item
-    Given an item exists with request: the request, node: node "administrative"
-    And an item exists with request: the request, node: node "durable"
-    And an item exists with request: the request, node: node "publication"
-    And an item exists with request: the request, node: node "travel"
-    And I am logged in as "president" with password "secret"
-    And I am on the items page for the request
-    When I move the 1st item
-    And I select "publication expense" from "Move to priority of"
-    And I press "Move"
-    Then I should see "Item was successfully moved."
-    And I should see the following items:
-      | Perspective            |
-      | durable good expense   |
-      | Requestor edition      |
-      | publication expense    |
-      | Requestor edition      |
-      | administrative expense |
-      | Requestor edition      |
-      | travel event expense   |
-      | Requestor edition      |
+    Given a request exists
+    And an item exists with request: the request
+    And edition exists with item: the item
+    And an item exists with request: the request
+    And edition exists with item: the item
+    And an item exists with request: the request
+    And edition exists with item: the item
+    And an item exists with request: the request
+    And edition exists with item: the item
+    And I log in as user: "admin"
+    When I am on the items page for the request
+    Then I should see the following items:
+      | Title  |
+      | node 1 |
+      | node 2 |
+      | node 3 |
+      | node 4 |
+    When I follow "Edit" for the 4th item for the request
+    And I select "node 1" from "Move to priority of"
+    And I press "Update Item"
+    Then I should see "Item was successfully updated."
+    When I am on the items page for the request
+    Then I should see the following items:
+      | Title  |
+      | node 4 |
+      | node 1 |
+      | node 2 |
+      | node 3 |
 
   Scenario: Move an item (with parent)
     Given a node: "top" exists with structure: structure "annual", name: "top"

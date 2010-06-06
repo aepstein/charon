@@ -44,15 +44,15 @@ class Edition < ActiveRecord::Base
   after_save :set_item_title
 
   def set_item_title
-    unless title.blank? || ( title != item.title )
+    unless title.blank? || ( perspective == PERSPECTIVES.first && title != item.title )
       item.title = title
       item.save
     end
   end
 
   def title
-    return nil unless requestable
-    requestable.title
+    return requestable.title if requestable
+    item.node.name if item && item.node
   end
 
   def initialize_documents

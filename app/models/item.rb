@@ -50,9 +50,9 @@ class Item < ActiveRecord::Base
   validates_numericality_of :amount, :greater_than_or_equal_to => 0.0
   validate_on_create :node_must_be_allowed
 
-  before_validation_on_create :set_title
   before_validation_on_create { |item| item.editions.each { |edition| edition.item = item } }
-  after_save { |item| item.insert_at( item.new_position.to_i ) unless item.new_position.blank? || ( item.new_position == item.position ) }
+  before_validation :set_title
+  after_save :move_to_new_position
 
   attr_accessor :new_position
 
@@ -62,7 +62,11 @@ class Item < ActiveRecord::Base
   end
 
   def set_title
-    self.title = node.name if (title.nil? || title.blank?) && node
+    if editions.first && editions.first.title
+      self.title = editions.first.title
+    elsif title.blank? && node
+      self.title = node.name
+    end
   end
 
   def allowed_nodes
@@ -77,5 +81,15 @@ class Item < ActiveRecord::Base
   def to_s
     title
   end
+
+  private
+
+  def move_to_new_position
+    unless new_position.blank? || ( (np = new_position.to_i) == position )
+      self.new_position = nil
+      insert_at np
+    end
+  end
+
 end
 
