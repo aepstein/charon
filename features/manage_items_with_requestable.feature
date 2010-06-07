@@ -9,7 +9,7 @@ Feature: Manage items with requestable
     And a basis: "focus" exists with structure: structure "focus", name: "Basis"
     And an organization: "focus" exists with last_name: "Applicant"
     And a request: "focus" exists with basis: basis "focus", organization: organization "focus"
-@wip
+
   Scenario: External equity report
     Given a node: "focus" exists with structure: structure "focus", name: "Focus", item_amount_limit: 0, requestable_type: "ExternalEquityReport"
     And I log in as user: "admin"
