@@ -23,12 +23,6 @@ Feature: Manage editions
     And a node: "durable" exists with structure: structure "annual", requestable_type: "DurableGoodExpense", name: "durable good expense"
     And a node: "publication" exists with structure: structure "annual", requestable_type: "PublicationExpense", name: "publication expense"
     And a node: "speaker" exists with structure: structure "annual", requestable_type: "SpeakerExpense", name: "speaker expense"
-    And a framework: "safc" exists with name: "undergrad"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "create", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "update", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "destroy", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "commissioner", action: "see", perspective: "reviewer"
     And a basis: "annual_safc" exists with name: "annual budget", structure: structure "annual", framework: framework "safc", organization: organization "commission"
     And a request exists with status: "started", basis: basis "annual_safc"
     And organization: "club" is amongst the organizations of the request

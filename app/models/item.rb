@@ -25,6 +25,7 @@ class Item < ActiveRecord::Base
       previous_attributes ||= Hash.new
       previous_requestable_attributes ||= Hash.new
       edition = build
+      edition.item = proxy_owner if proxy_owner.new_record?
       edition.build_requestable( previous_requestable_attributes )
       edition.attributes = attributes.merge( { :perspective => perspective } )
       edition

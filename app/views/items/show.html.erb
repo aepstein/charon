@@ -1,9 +1,9 @@
 <h2><%=h @item %> of <%=h @item.request %></h2>
 
 <% if @item.parent -%>
-<p>
-  <b>Parent:</b> <%=h @item.parent %>
-</p>
+  <p>
+    <b>Parent:</b> <%=h @item.parent %>
+  </p>
 
 <% end -%>
 <p>
@@ -11,11 +11,11 @@
 </p>
 
 <% if permitted_to?( :review, @item ) -%>
-<p>
-  <b>Amount:</b> <%= number_to_currency @item.amount %>
-</p>
-<% end -%>
+  <p>
+    <b>Amount:</b> <%= number_to_currency @item.amount %>
+  </p>
 
+<% end -%>
 <%= render :partial => 'editions/edition', :collection => @item.editions.with_permissions_to(:show) %>
 
 <p>

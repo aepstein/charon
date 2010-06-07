@@ -106,8 +106,7 @@ class ItemsController < ApplicationController
   end
 
   def populate_editions
-    edition = @item.editions.next
-    edition.item = @item if edition && @item.new_record?
+    @item.editions.next
     @item.editions.each { |edition| edition.documents.populate }
   end
 end

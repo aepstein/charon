@@ -1,19 +1,15 @@
-<p>
-  <b>Node:</b> <%= edition.item.node %>
-</p>
+<h3><%= edition.perspective.titleize %> edition</h3>
 
+<% unless (edition.item.node.item_amount_limit == 0.0) -%>
 <p>
-  <b>Perspective:</b> <%=h edition.perspective %>
-</p>
-
-<p>
-  <b>Maximum request:</b> <%= number_to_currency edition.max_request %>
+  <b>Maximum request:</b> <%= number_to_currency edition.max_request -%>
 </p>
 
 <p>
   <b><%= edition.perspective.titleize %> amount:</b> <%=h number_to_currency(edition.amount) %>
 </p>
 
+<% end -%>
 <p>
   <b><%= edition.perspective.titleize %> comment:</b>
 </p>
