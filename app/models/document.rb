@@ -10,9 +10,6 @@ class Document < ActiveRecord::Base
 
   delegate :max_size, :to => :document_type
   delegate :max_size_string, :to => :document_type
-  delegate :may_update?, :to => :edition
-  delegate :may_see?, :to => :edition
-  delegate :may_destroy?, :to => :edition
 
   validates_attachment_presence :attached
   validates_presence_of :edition
@@ -35,8 +32,5 @@ class Document < ActiveRecord::Base
     end
   end
 
-  def may_create?(user)
-    may_update? user
-  end
 end
 

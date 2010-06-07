@@ -63,7 +63,7 @@ class Item < ActiveRecord::Base
   end
 
   def set_title
-    if editions.first && editions.first.title
+    if editions.first && editions.first.title?
       self.title = editions.first.title
     elsif title.blank? && node
       self.title = node.name

@@ -95,6 +95,13 @@ authorization do
       if_permitted_to :allocate, :item
     end
 
+    has_permission_on [ :documents ], :to => :manage do
+      if_permitted_to :manage, :edition
+    end
+    has_permission_on [ :documents ], :to => :show do
+      if_permitted_to :show, :edition
+    end
+
     has_permission_on [ :approvals ], :to => [ :new, :create ] do
       if_permitted_to :approve, :approvable
     end
