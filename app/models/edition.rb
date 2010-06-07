@@ -44,16 +44,6 @@ class Edition < ActiveRecord::Base
   before_validation_on_create :initialize_requestable
   after_save :set_item_title
 
-  def set_item_title
-    return if @set_item_title
-    if title? && ( perspective == PERSPECTIVES.first )
-      item.title = title if title? && item.title != title
-      @set_item_title = true
-      item.save
-      @set_item_title = false
-    end
-  end
-
   def title
     return requestable.title if requestable
     nil
@@ -126,5 +116,19 @@ class Edition < ActiveRecord::Base
   end
 
   def to_s; "#{perspective} edition of #{item}"; end
+
+  private
+
+  # Use an instance variable to prevent infinite recursion
+  def set_item_title
+    return if @set_item_title
+    if title? && ( perspective == PERSPECTIVES.first )
+      item.title = title if title? && item.title != title
+      @set_item_title = true
+      item.save
+      @set_item_title = false
+    end
+  end
+
 end
 

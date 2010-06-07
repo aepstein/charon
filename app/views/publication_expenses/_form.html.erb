@@ -1,6 +1,9 @@
-  <%= form.input :title %>
-  <%= form.input :number_of_issues %>
-  <%= form.input :copies_per_issue, :label => "Number of Copies Per Issue" %>
-  <%= form.input :price_per_copy, :label => "Purchase Price Per Copy of Each Issue" %>
-  <%= form.input :cost_per_issue, :label => "Cost of Publication Per Issue" %>
+  <%= form.input :title, :hint => 'What is the title of the publication?' %>
+  <%= form.input :number_of_issues, :hint => 'How many issues a printed in a semester?' %>
+  <%= form.input :copies_per_issue, :label => "Number of copies per issue",
+    :hint => 'How many copies are printed of each issue produced?' %>
+  <%= form.input :price_per_copy, :label => "Purchase price per copy of each issue",
+    :hint => 'What price is charged for each copy distributed to the community? Put 0 if it is distributed for free.' %>
+  <%= form.input :cost_per_issue, :label => "Cost of publication per issue",
+    :hint => 'What is the cost of printing each issue?' %>
 
