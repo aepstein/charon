@@ -11,9 +11,7 @@ class DurableGoodExpense < ActiveRecord::Base
 		quantity * price
   end
 
-  def title
-    description
-  end
+  def title; description; end
 
 end
 

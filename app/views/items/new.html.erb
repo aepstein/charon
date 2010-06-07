@@ -1,10 +1,10 @@
-<h2>New item for <%=h @item.request %></h2>
+<h2>New <%= @item.node %> item for <%=h @item.parent ? @item.parent : @item.request %></h2>
 
 <% semantic_form_for( :item, @item, :url => request_items_path( @item.request_id ) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 
 <p>
-<%= link_to 'Back', request_items_path( @item.request_id ) %>
+<%= link_to 'Back', request_items_path( @item.request ) %>
 </p>
 

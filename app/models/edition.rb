@@ -45,9 +45,12 @@ class Edition < ActiveRecord::Base
   after_save :set_item_title
 
   def set_item_title
+    return if @set_item_title
     if title? && ( perspective == PERSPECTIVES.first )
-      item.title = title if title?
-      item.save if item.title_changed?
+      item.title = title if title? && item.title != title
+      @set_item_title = true
+      item.save
+      @set_item_title = false
     end
   end
 

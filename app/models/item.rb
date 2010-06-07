@@ -3,7 +3,7 @@ class Item < ActiveRecord::Base
 
   belongs_to :node
   belongs_to :request, :touch => true
-  has_many :editions, :autosave => true do
+  has_many :editions do
     def for_perspective( perspective )
       self.each do |v|
         return v if v.perspective == perspective
@@ -79,9 +79,7 @@ class Item < ActiveRecord::Base
     errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
   end
 
-  def to_s
-    title
-  end
+  def to_s; title; end
 
   private
 
