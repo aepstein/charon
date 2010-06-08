@@ -12,6 +12,7 @@ authorization do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
       :frameworks, :fulfillments, :nodes, :organizations, :registration_criterions,
       :roles ], :to => [ :show ]
+
     has_permission_on [ :users ], :to => [ :edit, :update ] do
       if_attribute :id => is { user.id }
     end

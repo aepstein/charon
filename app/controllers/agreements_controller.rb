@@ -1,10 +1,14 @@
 class AgreementsController < ApplicationController
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_agreement_from_params, :only => [ :new, :create ]
+  filter_resource_access
 
   # GET /agreements
   # GET /agreements.xml
   def index
-    @agreements = Agreement.all
+    @agreements = @agreements.paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,9 +19,6 @@ class AgreementsController < ApplicationController
   # GET /agreements/1
   # GET /agreements/1.xml
   def show
-    @agreement = Agreement.find(params[:id])
-    raise AuthorizationError unless @agreement.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @agreement }
@@ -27,9 +28,6 @@ class AgreementsController < ApplicationController
   # GET /agreements/new
   # GET /agreements/new.xml
   def new
-    @agreement = Agreement.new
-    raise AuthorizationError unless @agreement.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @agreement }
@@ -38,16 +36,14 @@ class AgreementsController < ApplicationController
 
   # GET /agreements/1/edit
   def edit
-    @agreement = Agreement.find(params[:id])
-    raise AuthorizationError unless @agreement.may_update? current_user
+    respond_to do |format|
+      format.html # new.html.erb
+    end
   end
 
   # POST /agreements
   # POST /agreements.xml
   def create
-    @agreement = Agreement.new(params[:agreement])
-    raise AuthorizationError unless @agreement.may_create? current_user
-
     respond_to do |format|
       if @agreement.save
         flash[:notice] = 'Agreement was successfully created.'
@@ -63,9 +59,6 @@ class AgreementsController < ApplicationController
   # PUT /agreements/1
   # PUT /agreements/1.xml
   def update
-    @agreement = Agreement.find(params[:id])
-    raise AuthorizationError unless @agreement.may_update? current_user
-
     respond_to do |format|
       if @agreement.update_attributes(params[:agreement])
         flash[:notice] = 'Agreement was successfully updated.'
@@ -81,14 +74,26 @@ class AgreementsController < ApplicationController
   # DELETE /agreements/1
   # DELETE /agreements/1.xml
   def destroy
-    @agreement = Agreement.find(params[:id])
-    raise AuthorizationError unless @agreement.may_destroy? current_user
     @agreement.destroy
 
     respond_to do |format|
       format.html { redirect_to(agreements_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def new_agreement_from_params
+    @agreement = Agreement.new( params[:agreement] )
+  end
+
+  def initialize_context
+    @agreement = Agreement.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @agreements = Agreement
   end
 end
 

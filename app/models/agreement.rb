@@ -33,21 +33,6 @@ class Agreement < ActiveRecord::Base
     true
   end
 
-  def may_approve?(user)
-    return true if user
-    false
-  end
-
-  def may_unapprove?(user)
-    return true if user && user.admin?
-    false
-  end
-
-  def may_unapprove_other?(user)
-    return true if user && user.admin?
-    false
-  end
-
   def to_s; name; end
 end
 
