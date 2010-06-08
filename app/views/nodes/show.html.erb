@@ -29,7 +29,9 @@
 </p>
 
 <p>
+<% if permitted_to? :edit, @node -%>
 <%= link_to 'Edit', edit_node_path(@node) %> |
+<% end -%>
 <%= link_to 'Back', structure_nodes_path( @node.structure ) %>
 </p>
 

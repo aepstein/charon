@@ -1,4 +1,8 @@
 class LocalEventExpensesController < ApplicationController
+  before_filter :require_user
+  filter_access_to :index do
+    current_user.admin?
+  end
 
   def index
     @events = LocalEventExpense.find( :all, :include => { :edition => { :item => { :request => { :organizations => :users } } } },
