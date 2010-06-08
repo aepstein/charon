@@ -34,6 +34,8 @@ authorization do
     has_permission_on [ :bases ], :to => :manage do
       if_permitted_to :manage, :organization
     end
+    # TODO Should only show bases that are open as of current date
+    has_permission_on [ :bases ], :to => :show
 
     has_permission_on [ :requests ], :to => :allocate do
       if_permitted_to :manage, :basis

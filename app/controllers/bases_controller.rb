@@ -1,12 +1,16 @@
 class BasesController < ApplicationController
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_basis_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :edit, :update, :new, :create, :destroy, :attribute_check => true
+  filter_access_to :index do
+    permitted_to!( :show, @organization )
+  end
 
   # GET /organizations/:organization_id/bases
   # GET /organizations/:organization_id/bases.xml
   def index
-    @organization = Organization.find(params[:organization_id])
-    @bases = @organization.bases
-
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @bases }
@@ -16,9 +20,6 @@ class BasesController < ApplicationController
   # GET /bases/1
   # GET /bases/1.xml
   def show
-    @basis = Basis.find(params[:id])
-    raise AuthorizationError unless @basis.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @basis }
@@ -28,9 +29,6 @@ class BasesController < ApplicationController
   # GET /organizations/:organization_id/bases/new
   # GET /organizations/:organization_id/bases/new.xml
   def new
-    @basis = Organization.find(params[:organization_id]).bases.build
-    raise AuthorizationError unless @basis.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @basis }
@@ -39,16 +37,14 @@ class BasesController < ApplicationController
 
   # GET /bases/1/edit
   def edit
-    @basis = Basis.find(params[:id])
-    raise AuthorizationError unless @basis.may_update? current_user
+    respond_to do |format|
+      format.html # edit.html.erb
+    end
   end
 
   # POST /organizations/:organization_id/bases
   # POST /organizations/:organization_id/bases.xml
   def create
-    @basis = Organization.find(params[:organization_id]).bases.build(params[:basis])
-    raise AuthorizationError unless @basis.may_create? current_user
-
     respond_to do |format|
       if @basis.save
         flash[:notice] = 'Basis was successfully created.'
@@ -64,9 +60,6 @@ class BasesController < ApplicationController
   # PUT /bases/1
   # PUT /bases/1.xml
   def update
-    @basis = Basis.find(params[:id])
-    raise AuthorizationError unless @basis.may_update? current_user
-
     respond_to do |format|
       if @basis.update_attributes(params[:basis])
         flash[:notice] = 'Basis was successfully updated.'
@@ -82,8 +75,6 @@ class BasesController < ApplicationController
   # DELETE /bases/1
   # DELETE /bases/1.xml
   def destroy
-    @basis = Basis.find(params[:id])
-    raise AuthorizationError unless @basis.may_destroy? current_user
     @basis.destroy
 
     respond_to do |format|
@@ -91,6 +82,21 @@ class BasesController < ApplicationController
       format.html { redirect_to(organization_bases_url(@basis.organization)) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def initialize_context
+    @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @basis = Basis.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @bases = @organization.bases
+  end
+
+  def new_basis_from_params
+    @basis = @organization.bases.build( params[:basis] )
   end
 end
 

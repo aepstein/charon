@@ -4,38 +4,61 @@ Feature: Manage bases
   I want to manage bases
 
   Background:
-    Given a structure: "test" exists with name: "test"
-    And a framework: "safc" exists with name: "safc"
-    And a framework: "gpsafc" exists with name: "gpsafc"
-    And a structure: "annual" exists with name: "annual"
-    And a structure: "semester" exists with name: "semester"
-    And an organization: "organization_1" exists with last_name: "organization 1"
-    And a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
+    And an organization: "source" exists with last_name: "Funding Source"
 
+  # TODO: should not show bases that open in the future to unprivileged users
   Scenario Outline: Test permissions for basis controller actions
-    Given a basis: "basic" exists with organization: organization "organization_1"
-    And I am logged in as "<user>" with password "secret"
-    And I am on the new basis page for organization: "organization_1"
-    Then I should <create>
-    Given I post on the bases page for organization: "organization_1"
-    Then I should <create>
-    And I am on the edit page for basis: "basic"
-    Then I should <update>
-    Given I put on the page for basis: "basic"
-    Then I should <update>
-    Given I am on the page for basis: "basic"
-    Then I should <show>
-    Given I delete on the page for basis: "basic"
-    Then I should <destroy>
+    Given an organization: "applicant" exists with last_name: "Applicant"
+    And an organization: "observer" exists with last_name: "Observer"
+    And a manager_role: "manager" exists
+    And a requestor_role: "requestor" exists
+    And a reviewer_role: "reviewer" exists
+    And a user: "source_manager" exists
+    And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
+    And a user: "source_reviewer" exists
+    And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
+    And a user: "applicant_requestor" exists
+    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
+    And a user: "observer_requestor" exists
+    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
+    And a user: "regular" exists
+    And a basis: "current" exists with name: "Current", organization: organization "source"
+    And a request exists with basis: the basis, organization: organization "applicant"
+    And I log in as user: "<user>"
+    And I am on the page for the basis: "current"
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the bases page for organization: "source"
+    Then I should <show> "Current"
+    And I should <create> "New basis"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Given I am on the new basis page for organization: "source"
+    Then I should <create> authorized
+    Given I post on the bases page for organization: "source"
+    Then I should <create> authorized
+    And I am on the edit page for basis: "current"
+    Then I should <update> authorized
+    Given I put on the page for basis: "current"
+    Then I should <update> authorized
+    Given I delete on the page for basis: "current"
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user               | create  | update  | destroy  | show    |
+      | admin              | see     | see     | see      | see     |
+      | source_manager     | see     | see     | see      | see     |
+      | source_reviewer    | not see | not see | not see  | see     |
+      | observer_requestor | not see | not see | not see  | see     |
+      | regular            | not see | not see | not see  | see     |
 
   Scenario: Register new basis and update
-    Given I am logged in as "admin" with password "secret"
-    And I am on the new basis page for organization: "organization_1"
+    Given a structure exists with name: "annual"
+    And a structure exists with name: "semester"
+    And a framework exists with name: "safc"
+    And a framework exists with name: "gpsafc"
+    And I log in as user: "admin"
+    And I am on the new basis page for organization: "source"
     When I fill in "Name" with "Annual SAFC"
     And I select "annual" from "Structure"
     And I select "safc" from "Framework"
@@ -79,12 +102,12 @@ Feature: Manage bases
     And I should see "Closed at: 2009-10-21 12:00:00"
 
   Scenario: Delete basis
-    Given a basis exists with organization: organization "organization_1", name: "basis 4"
-    And a basis exists with organization: organization "organization_1", name: "basis 3"
-    And a basis exists with organization: organization "organization_1", name: "basis 2"
-    And a basis exists with organization: organization "organization_1", name: "basis 1"
-    And I am logged in as "admin" with password "secret"
-    When I delete the 3rd basis for organization: "organization_1"
+    Given a basis exists with organization: organization "source", name: "basis 4"
+    And a basis exists with organization: organization "source", name: "basis 3"
+    And a basis exists with organization: organization "source", name: "basis 2"
+    And a basis exists with organization: organization "source", name: "basis 1"
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd basis for organization: "source"
     Then I should see the following bases:
       | Name    |
       | basis 1 |

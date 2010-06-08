@@ -16,6 +16,7 @@ Feature: Manage approvers
     And I log in as user: "<user>"
     Given I am on the page for approver: "basic"
     Then I should <show> authorized
+    And I should <update> "Edit"
     Given I am on the approvers page for framework: "safc"
     Then I should <show> "president"
     And I should <create> "New approver"

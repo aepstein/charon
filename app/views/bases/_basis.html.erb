@@ -2,8 +2,8 @@
     <td><%=h basis.name %></td>
     <td><%=h basis.open_at %></td>
     <td><%=h basis.closed_at %></td>
-    <td><%= link_to_if basis.may_see?(current_user), 'Show', basis %></td>
-    <td><%= link_to_if basis.may_update?(current_user), 'Edit', edit_basis_path(basis) %></td>
-    <td><%= link_to_if basis.may_destroy?(current_user), 'Destroy', basis, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Show', basis %></td>
+    <td><%= link_to( 'Edit', edit_basis_path(basis) ) if permitted_to?( :edit, basis ) %></td>
+    <td><%= link_to( 'Destroy', basis, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, basis ) %></td>
   <% end %>
 
