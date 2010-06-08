@@ -1,6 +1,4 @@
 class Framework < ActiveRecord::Base
-  include GlobalModelAuthorization
-
   default_scope :order => 'frameworks.name ASC'
 
   has_many :approvers
