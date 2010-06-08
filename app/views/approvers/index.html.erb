@@ -5,6 +5,6 @@
 <br />
 
 <p>
-<%= link_to 'New approver', new_framework_approver_path( @framework ) %>
+<%= link_to( 'New approver', new_framework_approver_path( @framework ) ) if permitted_to?( :create, @framework.approvers.build ) %>
 </p>
 
