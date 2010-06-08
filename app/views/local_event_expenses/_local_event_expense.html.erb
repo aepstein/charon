@@ -15,23 +15,23 @@
   </p>
 
   <p>
-    Anticipated Number of Attendees: <%= local_event_expense.number_of_attendees %>
+    Anticipated number of attendees: <%= local_event_expense.number_of_attendees %>
   </p>
 
   <p>
-    Admission Charge Per Attendee: <%= number_to_currency(local_event_expense.price_per_attendee) %>
+    Admission charge per attendee: <%= number_to_currency(local_event_expense.price_per_attendee) %>
   </p>
 
   <p>
-    Number of Publicity Copies: <%= local_event_expense.copies_quantity %>
+    Number of publicity copies: <%= local_event_expense.copies_quantity %>
   </p>
 
   <p>
-    Rental Equipment, Services, and Intellectual Property Use Fees: <%= number_to_currency(local_event_expense.services_cost) %>
+    Rental equipment, services, and intellectual property use fees: <%= number_to_currency(local_event_expense.services_cost) %>
   </p>
 
   <p>
-    Use of University Property Form required: <%= local_event_expense.uup_required ? 'Yes' : 'No' %>
+    Use of University Property form required? <%= local_event_expense.uup_required? ? 'Yes' : 'No' %>
   </p>
 
 <%= render :partial => "local_event_expenses/calculation", :object => local_event_expense %>
