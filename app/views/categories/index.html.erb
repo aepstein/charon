@@ -5,6 +5,8 @@
 <br />
 
 <p>
+<% if permitted_to? :create, Category.new -%>
 <%= link_to 'New category', new_category_path %>
+<% end -%>
 </p>
 

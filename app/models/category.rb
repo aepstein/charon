@@ -6,8 +6,6 @@ class Category < ActiveRecord::Base
 
   default_scope :order => "categories.name ASC"
 
-  include GlobalModelAuthorization
-
   def to_s; name; end
 end
 

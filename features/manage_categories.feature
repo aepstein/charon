@@ -4,31 +4,38 @@ Feature: Manage categories
   I want to create and delete categories
 
   Background:
-    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
 
   Scenario Outline: Test permissions for categories controller actions
-    Given an category: "basic" exists
-    And I am logged in as "<user>" with password "secret"
-    And I am on the new category page
-    Then I should <create>
+    Given a user: "regular" exists
+    And a category exists with name: "Durable Goods"
+    And I log in as user: "<user>"
+    And I am on the page for the category
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the categories page
+    Then I should <show> authorized
+    And I should <show> "Durable Goods"
+    And I should <create> "New category"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Given I am on the new category page
+    Then I should <create> authorized
     Given I post on the categories page
-    Then I should <create>
-    And I am on the edit page for category: "basic"
-    Then I should <update>
-    Given I put on the page for category: "basic"
-    Then I should <update>
-    Given I am on the page for category: "basic"
-    Then I should <show>
-    Given I delete on the page for category: "basic"
-    Then I should <destroy>
+    Then I should <create> authorized
+    And I am on the edit page for the category
+    Then I should <update> authorized
+    Given I put on the page for the category
+    Then I should <update> authorized
+    Given I delete on the page for the category
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user    | create  | update  | destroy | show    |
+      | admin   | see     | see     | see     | see     |
+      | regular | not see | not see | not see | see     |
 
   Scenario: Register new category and update
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And I am on the new category page
     When I fill in "Name" with "local event"
     And I press "Create"
@@ -45,8 +52,8 @@ Feature: Manage categories
     And a category exists with name: "category 3"
     And a category exists with name: "category 2"
     And a category exists with name: "category 1"
-    And I am logged in as "admin" with password "secret"
-    When I delete the 3rd category
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd category
     Then I should see the following categories:
       |Name      |
       |category 1|
