@@ -1,8 +1,14 @@
 class RegistrationCriterionsController < ApplicationController
+  before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_registration_criterion_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
+
   # GET /registration_criterions
   # GET /registration_criterions.xml
   def index
-    @registration_criterions = RegistrationCriterion.all
+    @registration_criterions = @registration_criterions.paginate( :page => params[:page] )
 
     respond_to do |format|
       format.html # index.html.erb
@@ -13,9 +19,6 @@ class RegistrationCriterionsController < ApplicationController
   # GET /registration_criterions/1
   # GET /registration_criterions/1.xml
   def show
-    @registration_criterion = RegistrationCriterion.find(params[:id])
-    raise AuthorizationError unless @registration_criterion.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @registration_criterion }
@@ -25,9 +28,6 @@ class RegistrationCriterionsController < ApplicationController
   # GET /registration_criterions/new
   # GET /registration_criterions/new.xml
   def new
-    @registration_criterion = RegistrationCriterion.new
-    raise AuthorizationError unless @registration_criterion.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @registration_criterion }
@@ -36,16 +36,14 @@ class RegistrationCriterionsController < ApplicationController
 
   # GET /registration_criterions/1/edit
   def edit
-    @registration_criterion = RegistrationCriterion.find(params[:id])
-    raise AuthorizationError unless @registration_criterion.may_update? current_user
+    respond_to do |format|
+      format.html # edit.html.erb
+    end
   end
 
   # POST /registration_criterions
   # POST /registration_criterions.xml
   def create
-    @registration_criterion = RegistrationCriterion.new(params[:registration_criterion])
-    raise AuthorizationError unless @registration_criterion.may_create? current_user
-
     respond_to do |format|
       if @registration_criterion.save
         flash[:notice] = 'RegistrationCriterion was successfully created.'
@@ -61,9 +59,6 @@ class RegistrationCriterionsController < ApplicationController
   # PUT /registration_criterions/1
   # PUT /registration_criterions/1.xml
   def update
-    @registration_criterion = RegistrationCriterion.find(params[:id])
-    raise AuthorizationError unless @registration_criterion.may_update? current_user
-
     respond_to do |format|
       if @registration_criterion.update_attributes(params[:registration_criterion])
         flash[:notice] = 'RegistrationCriterion was successfully updated.'
@@ -79,14 +74,26 @@ class RegistrationCriterionsController < ApplicationController
   # DELETE /registration_criterions/1
   # DELETE /registration_criterions/1.xml
   def destroy
-    @registration_criterion = RegistrationCriterion.find(params[:id])
-    raise AuthorizationError unless @registration_criterion.may_destroy? current_user
     @registration_criterion.destroy
 
     respond_to do |format|
       format.html { redirect_to(registration_criterions_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def initialize_context
+    @registration_criterion = RegistrationCriterion.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @registration_criterions = RegistrationCriterion
+  end
+
+  def new_registration_criterion_from_params
+    @registration_criterion = RegistrationCriterion.new( params[:registration_criterion] )
   end
 end
 

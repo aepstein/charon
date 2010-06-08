@@ -33,17 +33,6 @@ class Node < ActiveRecord::Base
   validates_inclusion_of :requestable_type, :in => Node::ALLOWED_TYPES.values, :allow_blank => true
   validates_presence_of :category
 
-  delegate :may_update?, :to => :structure
-  delegate :may_see?, :to => :structure
-
-  def may_create?(user)
-    may_update? user
-  end
-
-  def may_destroy?(user)
-    may_update? user
-  end
-
   def to_s; name; end
 
 end
