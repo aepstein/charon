@@ -3,18 +3,23 @@ authorization do
     has_permission_on [ :addresses, :agreements, :approvals, :approvers,
       :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
       :items, :nodes, :organizations, :permissions, :registration_criterions,
-      :registrations, :requests, :roles, :users ], :to => [ :manage ]
+      :registrations, :requests, :roles, :users, :user_status_criterions ], :to => [ :manage ]
     has_permission_on [ :organizations, :requests, :items, :editions ], :to => [ :request, :review ]
     has_permission_on [ :requests, :agreements ], :to => [ :approve, :unapprove ]
     has_permission_on :authorization_rules, :to => :read
   end
   role :user do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
-      :frameworks, :fulfillments, :nodes, :organizations, :registration_criterions,
-      :roles ], :to => [ :show ]
+      :frameworks, :nodes, :organizations, :registration_criterions,
+      :roles, :user_status_criterions ], :to => [ :show ]
 
-    has_permission_on [ :users ], :to => [ :edit, :update ] do
+    has_permission_on [ :users ], :to => [ :show, :edit, :update ] do
       if_attribute :id => is { user.id }
+    end
+
+    has_permission_on [ :fulfillments ], :to => :show do
+      if_attribute :fulfiller_type => is { 'Organization' }
+      if_attribute :fulfiller_type => is { 'User' }, :fulfiller_id => is { user.id }
     end
 
     has_permission_on [ :organizations ], :to => [ :show ]

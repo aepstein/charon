@@ -1,6 +1,10 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :user_status_criterions
-  map.resources :registration_criterions
+  map.resources :user_status_criterions do |user_status_criterion|
+    user_status_criterion.resources :fulfillments, :only => [:index]
+  end
+  map.resources :registration_criterions do |registration_criterion|
+    registration_criterion.resources :fulfillments, :only => [:index]
+  end
   map.resources :categories
   map.resources :requests, :only => [ :index ]
   map.resources :users, :shallow => true do |user|
@@ -10,6 +14,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :approvals, :only => [ :show ]
   map.resources :agreements, :shallow => true do |agreement|
     agreement.resources :approvals, :only => [ :create, :destroy, :index, :new ]
+    agreement.resources :fulfillments, :only => [ :index ]
   end
   map.resources :documents, :only => [ :show ]
   map.resources :document_types

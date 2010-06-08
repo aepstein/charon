@@ -17,10 +17,10 @@ for <%=h @fulfillable %>
 
 <p>
 <% if @fulfiller %>
-<%= link_to 'Back', @fulfiller %>
+<%= link_to "Back to #{@fulfiller}", @fulfiller %>
 <% end %>
 <% if @fulfillable %>
-<%= link_to 'Back', @fulfillable %>
+<%= link_to "Back to #{@fulfillable}", @fulfillable %>
 <% end %>
 </p>
 

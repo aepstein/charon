@@ -1,5 +1,11 @@
 class FulfillmentsController < ApplicationController
+  before_filter :require_user
   before_filter :initialize_contexts
+  filter_access_to :index do
+    permitted_to!( :show, @fulfiller ) if @fulfiller
+    permitted_to!( :show, @fulfillable ) if @fulfillable
+    permitted_to!( :index )
+  end
 
   # GET /fulfillments
   # GET /fulfillments.xml
@@ -8,13 +14,15 @@ class FulfillmentsController < ApplicationController
     @fulfillments = @fulfillable.fulfillments if @fulfillable
     @fulfillments ||= Fulfillment
 
-    @fulfillments = @fulfillments.paginate(:page => params[:page])
+    @fulfillments = @fulfillments.with_permissions_to(:show).paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @fulfillments }
     end
   end
+
+  private
 
   def initialize_contexts
     @fulfiller = User.find params[:user_id] if params[:user_id]

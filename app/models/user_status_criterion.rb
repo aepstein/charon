@@ -1,5 +1,5 @@
 class UserStatusCriterion < ActiveRecord::Base
-  include GlobalModelAuthorization, Fulfillable
+  include Fulfillable
 
   validates_numericality_of :statuses_mask, :only_integer => true, :greater_than => 0
   validates_uniqueness_of :statuses_mask
@@ -23,5 +23,7 @@ class UserStatusCriterion < ActiveRecord::Base
       "IN (#{status_list})"
     )
   end
+
+  def to_s; statuses.join ', '; end
 end
 
