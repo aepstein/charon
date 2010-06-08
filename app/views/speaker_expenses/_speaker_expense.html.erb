@@ -1,5 +1,5 @@
 <p>
-  Name of Speaker, Performer, or Group: <%=h speaker_expense.title %>
+  Name of speaker, performer, or group: <%=h speaker_expense.title %>
 </p>
 
 <p>
@@ -19,7 +19,7 @@
 </p>
 
 <p>
-  Dignitary: <%= speaker_expense.dignitary? ? 'Yes' : 'No' %>
+  Dignitary? <%= speaker_expense.dignitary? ? 'Yes' : 'No' %>
 </p>
 
 <%= render :partial => "speaker_expenses/calculation", :object => speaker_expense %>
