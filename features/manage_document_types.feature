@@ -4,31 +4,37 @@ Feature: Manage document_types
   I want to create manage and delete document types
 
   Background:
-    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
+    And a user: "regular" exists
 
   Scenario Outline: Test permissions for document types controller actions
     Given an document_type: "basic" exists
-    And I am logged in as "<user>" with password "secret"
-    And I am on the new document_type page
-    Then I should <create>
+    And I log in as user: "<user>"
+    And I am on the page for document_type: "basic"
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the document_types page
+    Then I should <show> authorized
+    And I should <create> "New document type"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Given I am on the new document_type page
+    Then I should <create> authorized
     Given I post on the document_types page
-    Then I should <create>
+    Then I should <create> authorized
     And I am on the edit page for document_type: "basic"
-    Then I should <update>
+    Then I should <update> authorized
     Given I put on the page for document_type: "basic"
-    Then I should <update>
-    Given I am on the page for document_type: "basic"
-    Then I should <show>
+    Then I should <update> authorized
     Given I delete on the page for document_type: "basic"
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user    | create  | update  | destroy | show    |
+      | admin   | see     | see     | see     | see     |
+      | regular | not see | not see | not see | see     |
 
   Scenario: Register new document_type and update
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And I am on the new document_type page
     When I fill in "Name" with "documentation"
     And I fill in "Max size quantity" with "10"
@@ -51,8 +57,8 @@ Feature: Manage document_types
     And a document_type exists with name: "document type 3"
     And a document_type exists with name: "document type 2"
     And a document_type exists with name: "document type 1"
-    And I am logged in as "admin" with password "secret"
-    When I delete the 3rd document_type
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd document_type
     Then I should see the following document_types:
       | Name           |
       | document type 1|

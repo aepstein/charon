@@ -3,8 +3,6 @@ class DocumentType < ActiveRecord::Base
 
   default_scope :order => 'document_types.name ASC'
 
-  include GlobalModelAuthorization
-
   has_and_belongs_to_many :nodes
   has_many :documents
 

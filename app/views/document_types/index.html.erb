@@ -5,6 +5,8 @@
 <br />
 
 <p>
-<%= link_to 'New document_type', new_document_type_path %>
+<% if permitted_to? :create, DocumentType.new -%>
+<%= link_to 'New document type', new_document_type_path %>
+<% end -%>
 </p>
 
