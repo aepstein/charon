@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
 
   attr_protected :admin
+  attr_readonly :net_id
 
   default_scope :order => 'users.last_name ASC, users.first_name ASC, users.middle_name ASC, users.net_id ASC'
   named_scope :approved, lambda { |approvable|
@@ -9,6 +10,7 @@ class User < ActiveRecord::Base
       :conditions => [ 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',
       approvable.class.to_s, approvable.id ] }
   }
+  scope_procedure :name_like, lambda { |name| first_name_or_middle_name_or_last_name_or_net_id_like(name) }
 
   acts_as_authentic do |c|
     c.login_field = 'net_id'
@@ -67,31 +69,10 @@ class User < ActiveRecord::Base
     [:user]
   end
 
-  def may_create?(user)
-    return false unless user
-    user.admin?
-  end
+  def to_s; name; end
 
-  def may_update?(user)
-    return false unless user
-    user.admin? || user == self
-  end
+  protected
 
-  def may_destroy?(user)
-    return false unless user
-    user.admin?
-  end
-
-  def may_see?(user)
-    return false unless user
-    user.admin? || user == self
-  end
-
-  def to_s
-    name
-  end
-
-protected
   def extract_email
     self.email = "#{net_id}@cornell.edu" if net_id && net_id_changed? && ( email.nil? || email.blank? )
   end

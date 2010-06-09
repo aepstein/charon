@@ -1,14 +1,13 @@
 class UsersController < ApplicationController
-
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_user_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
 
   def index
-    page = params[:page] ? params[:page] : 1
-    if params[:search]
-      @users = User.first_name_or_middle_name_or_last_name_or_net_id_like("%#{params[:search][:q]}%").paginate(:page => page)
-    else
-      @users = User.paginate(:page => page)
-    end
+    @search = @users.with_permissions_to(:show).searchlogic( params[:search] )
+    @users = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
       format.html # index.html.erb
@@ -17,9 +16,6 @@ class UsersController < ApplicationController
   end
 
   def new
-   @user = User.new
-   raise AuthorizationError unless @user.may_create?(current_user)
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user }
@@ -27,8 +23,6 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params[:user])
-    raise AuthorizationError unless @user.may_create?(current_user)
     @user.admin = params[:user][:admin] if current_user.admin? && params[:user] && params[:user][:admin]
 
     respond_to do |format|
@@ -44,9 +38,6 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
-    raise AuthorizationError unless @user.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user }
@@ -58,13 +49,10 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find(params[:id])
-    raise AuthorizationError unless @user.may_update?(current_user)
+    # edit.html.erb
   end
 
   def update
-    @user = User.find(params[:id])
-    raise AuthorizationError unless @user.may_update?(current_user)
     @user.admin = params[:user][:admin] if current_user.admin? && params[:user] && params[:user][:admin]
 
     respond_to do |format|
@@ -82,8 +70,6 @@ class UsersController < ApplicationController
   # DELETE /users/:id
   # DELETE /users/:id.xml
   def destroy
-    @user = User.find(params[:id])
-    raise AuthorizationError unless @user.may_destroy?(current_user)
     @user.destroy
 
     respond_to do |format|
@@ -91,6 +77,20 @@ class UsersController < ApplicationController
       format.html { redirect_to(users_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def initialize_context
+    @user = User.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @users = User
+  end
+
+  def new_user_from_params
+    @user = User.new( params[:user] )
   end
 end
 

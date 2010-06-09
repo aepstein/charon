@@ -4,7 +4,7 @@
     <td><%=h user.email %></td>
     <td><%=h user.date_of_birth %></td>
     <td><%= link_to_if user.may_see?(current_user), 'Show', user %></td>
-    <td><%= link_to_if user.may_update?(current_user), 'Edit', edit_user_path(user) %></td>
-    <td><%= link_to_if user.may_destroy?(current_user), 'Destroy', user_path(user), :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to( 'Edit', edit_user_path(user) ) if permitted_to? :edit, user %></td>
+    <td><%= link_to( 'Destroy', user_path(user), :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, user %></td>
   <% end %>
 
