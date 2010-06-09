@@ -1,23 +1,17 @@
 class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   default_scope :order => "registrations.name ASC, registrations.parent_id DESC"
-  named_scope :active,
-              :joins => 'LEFT JOIN registrations AS r ON registrations.id = r.parent_id',
-              :conditions => 'r.id IS NULL'
-  named_scope :unmatched,
-              :conditions => { :organization_id => nil }
-  named_scope :named,
-              lambda { |name|
-                { :conditions => [ "registrations.name LIKE '%?%'", name ] }
-              }
-  named_scope :min_percent_members_of_type,
-              lambda { |percent, type|
-                { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
-                                   "number_of_undergrads + number_of_grads + " +
-                                   "number_of_staff + number_of_faculty + " +
-                                   "number_of_others ) )", percent.to_i] }
-              }
-
+  named_scope :active, :joins => 'LEFT JOIN registrations AS r ON registrations.id = r.parent_id',
+   :conditions => 'r.id IS NULL'
+  named_scope :unmatched, :conditions => { :organization_id => nil }
+  named_scope :named, lambda { |name|
+    { :conditions => [ "registrations.name LIKE '%?%'", name ] }
+  }
+  named_scope :min_percent_members_of_type, lambda { |percent, type|
+    { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
+        "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + " +
+        "number_of_others ) )", percent.to_i] }
+  }
 
   acts_as_tree
 
@@ -176,15 +170,7 @@ class Registration < ActiveRecord::Base
                       'officer' => Role.find_or_create_by_name('officer') }
   end
 
-  def may_see?(user)
-    return false unless user
-    return true if user.admin?
-    users.include? user
-  end
-
-  def to_s
-    name
-  end
+  def to_s; name; end
 
 end
 

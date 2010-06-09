@@ -17,6 +17,10 @@ authorization do
       if_attribute :id => is { user.id }
     end
 
+    has_permission_on [ :registrations ], :to => [ :show ] do
+      if_attribute :memberships => { :user_id => is { user.id } }
+    end
+
     has_permission_on [ :fulfillments ], :to => :show do
       if_attribute :fulfiller_type => is { 'Organization' }
       if_attribute :fulfiller_type => is { 'User' }, :fulfiller_id => is { user.id }
