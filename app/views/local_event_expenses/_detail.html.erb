@@ -1,0 +1,36 @@
+  <p>
+    Date: <%= detail.date %>
+  </p>
+
+  <p>
+    Title: <%= detail.title %>
+  </p>
+
+  <p>
+    Location: <%= detail.location %>
+  </p>
+
+  <p>
+    Purpose: <%= detail.purpose %>
+  </p>
+
+  <p>
+    Anticipated number of attendees: <%= detail.number_of_attendees %>
+  </p>
+
+  <p>
+    Admission charge per attendee: <%= number_to_currency(detail.price_per_attendee) %>
+  </p>
+
+  <p>
+    Number of publicity copies: <%= detail.copies_quantity %>
+  </p>
+
+  <p>
+    Rental equipment, services, and intellectual property use fees: <%= number_to_currency(detail.services_cost) %>
+  </p>
+
+  <p>
+    Use of University Property form required? <%= detail.uup_required? ? 'Yes' : 'No' %>
+  </p>
+

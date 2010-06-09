@@ -11,6 +11,9 @@
 </p>
 
 <p>
-<%= link_to 'Back', polymorphic_path( [@approval.approvable,:approvals] ) %>
+<% if permitted_to? :show, @approval.user -%>
+<%= link_to "Back to #{@approval.user} approvals", user_approvals_path( @approval.user ) %> |
+<% end -%>
+<%= link_to "Back to #{@approval.approvable} approvals", polymorphic_path( [ @approval.approvable, :approvals ] ) %>
 </p>
 

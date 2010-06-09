@@ -1,0 +1,20 @@
+<p>
+  Anticipated expenses: <%= number_to_currency detail.anticipated_expenses %>
+</p>
+
+<p>
+  Anticipated income: <%= number_to_currency detail.anticipated_income %>
+</p>
+
+<p>
+  Current assets: <%= number_to_currency detail.current_assets %>
+</p>
+
+<p>
+  Current liabilities: <%= number_to_currency detail.current_liabilities %>
+</p>
+
+<p>
+  Participants receive academic credit? <%= detail.academic_credit? ? 'Yes' : 'No' %>
+</p>
+

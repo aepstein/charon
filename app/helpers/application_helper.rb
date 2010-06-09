@@ -1,36 +1,5 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
-  def new_addressable_address_path(addressable)
-    case addressable.class.to_s
-    when "User"
-      new_user_address_path(addressable)
-    else
-      raise "Class #{addressable.class} not supported"
-    end
-  end
-
-  def addressable_addresses_url(addressable)
-    case addressable.class.to_s
-    when "User"
-      user_addresses_url(addressable)
-    else
-      raise "Class #{addressable.class} not supported"
-    end
-  end
-
-  def addressable_addresses_path(addressable)
-    case addressable.class.to_s
-    when "User"
-      user_addresses_path(addressable)
-    else
-      raise "Class #{addressable.class} not supported"
-    end
-  end
-
-  def render_requestable_detail(requestable)
-    render :partial => "#{requestable.class.to_s.underscore.pluralize}/#{requestable.class.to_s.underscore}",
-           :object => requestable
-  end
 
   def table_row_tag(increment=true, &block)
     content_tag = content_tag 'tr', capture(&block), :class => table_row_class(increment)

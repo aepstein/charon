@@ -7,7 +7,8 @@
   Please review the document below and click "Confirm Approval" at the bottom if you approve.
   </p>
 
-  <%= render_approvable @approval.approvable %>
+  <%= render :partial => "#{@approval.approvable_type.underscore.pluralize}/detail",
+    :object => @approval.approvable %>
 
   <% f.inputs do %>
     <%= f.input :as_of, :as => :hidden %>

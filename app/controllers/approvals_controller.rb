@@ -1,12 +1,22 @@
 class ApprovalsController < ApplicationController
-
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_approval_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :new, :create, :destroy, :attribute_check => true
+  filter_access_to :show do
+    permitted_to!( :show, @approval.approvable )
+  end
+  filter_access_to :index do
+    permitted_to!( :show, @user ) if @user
+    permitted_to!( :show, @approvable ) if @approvable
+  end
 
   # GET /:approvable_class/:approvable_id/approvals
   # GET /:approvable_class/:approvable_id/approvals.xml
   def index
-    raise AuthorizationError unless approvable.may_see? current_user
-    @approvals = approvable.approvals
+    @search = @approvals.searchlogic( params[:search] )
+    @approvals = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
       format.html # index.html.erb
@@ -17,9 +27,6 @@ class ApprovalsController < ApplicationController
   # GET /approvals/1
   # GET /approvals/1.xml
   def show
-    @approval = Approval.find(params[:id])
-    raise AuthorizationError unless @approval.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @approval }
@@ -29,10 +36,7 @@ class ApprovalsController < ApplicationController
   # GET /:approvable_class/:approvable_id/approvals/new
   # GET /:approvable_class/:approvable_id/approvals/new.xml
   def new
-    @approval = approvable.approvals.build
-    @approval.as_of = approvable.updated_at
-    @approval.user = current_user
-    raise AuthorizationError unless @approval.may_create? current_user
+    @approval.as_of = @approval.approvable.updated_at
 
     respond_to do |format|
       format.html # new.html.erb
@@ -43,17 +47,13 @@ class ApprovalsController < ApplicationController
   # POST /:approvable_class/:approvable_id/approvals
   # POST /:approvable_class/:approvable_id/approvals.xml
   def create
-    @approval = approvable.approvals.build(params[:approval])
-    @approval.user = current_user
-    raise AuthorizationError unless @approval.may_create? current_user
-
     respond_to do |format|
       if @approval.save
         flash[:notice] = 'Approval was successfully created.'
         format.html { redirect_to(@approval.approvable) }
         format.xml  { render :xml => @approval, :status => :created, :location => @approval }
       else
-        @approval.as_of = approvable.updated_at
+        @approval.as_of = @approval.approvable.updated_at
         format.html { render :action => 'new' }
         format.xml  { render :xml => @approval.errors, :status => :unprocessable_entity }
       end
@@ -63,27 +63,36 @@ class ApprovalsController < ApplicationController
   # DELETE /approvals/1
   # DELETE /approvals/1.xml
   def destroy
-    @approval = Approval.find(params[:id])
-    raise AuthorizationError unless @approval.may_destroy? current_user
     @approval.destroy
 
     respond_to do |format|
-      format.html {
-        if current_user == @approval.user
-          redirect_to @approval.approvable
-        else
-          redirect_to polymorphic_url [ @approval.approvable, :approvals ]
-        end }
+      format.html { redirect_to @approval.approvable }
       format.xml  { head :ok }
     end
   end
 
-private
-  def approvable
-    @approvable ||= case
-    when params[:request_id] then Request.find(params[:request_id])
-    when params[:agreement_id] then Agreement.find(params[:agreement_id])
+  private
+
+  def initialize_context
+    @approval = Approval.find params[:id] if params[:id]
+    @approvable = case
+      when params[:request_id] then Request.find(params[:request_id])
+      when params[:agreement_id] then Agreement.find(params[:agreement_id])
     end
+    @user = User.find params[:user_id] if params[:user_id]
+  end
+
+  def initialize_index
+    @approvals = Approval
+    @approvals = @approvals.scoped( :conditions => { :approvable_type => @approvable.class.to_s,
+      :approvable_id => @approvable.id } ) if @approvable
+    @approvals = @approvals.scoped( :conditions => { :user_id => @user.id } ) if @user
+    @approvals = @approvals.with_permissions_to(:show) unless @approvable && @approvable.class == Request
+  end
+
+  def new_approval_from_params
+    @approval = @approvable.approvals.build( params[:approval] )
+    @approval.user = current_user
   end
 end
 

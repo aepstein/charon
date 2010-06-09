@@ -16,7 +16,20 @@ class User < ActiveRecord::Base
     c.login_field = 'net_id'
   end
 
-  has_many :approvals
+  has_many :approvals do
+    def agreements
+      self.select { |approval| approval.approvable_type == 'Agreement' }
+    end
+    def requests
+      self.select { |approval| approval.approvable_type == 'Request' }
+    end
+    def agreement_ids
+      self.agreements.map(&:approvable_id)
+    end
+    def request_ids
+      self.requests.map(&:approvable_id)
+    end
+  end
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
   has_many :memberships, :dependent => :destroy
   has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do

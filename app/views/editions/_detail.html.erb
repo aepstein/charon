@@ -1,0 +1,27 @@
+<% unless (detail.item.node.item_amount_limit == 0.0) -%>
+<p>
+  <b>Maximum request:</b> <%= number_to_currency detail.max_request -%>
+</p>
+
+<p>
+  <b><%= detail.perspective.titleize %> amount:</b> <%=h number_to_currency(detail.amount) %>
+</p>
+
+<% end -%>
+<p>
+  <b><%= detail.perspective.titleize %> comment:</b>
+</p>
+
+<%=markdown detail.comment %>
+
+<% if detail.requestable %>
+<%= render :partial => "#{detail.requestable.class.to_s.tableize}/detail",
+  :object => detail.requestable %>
+<%= render :partial => "#{detail.requestable.class.to_s.tableize}/calculation",
+  :object => detail.requestable %>
+<% end %>
+
+<% unless detail.documents.empty? %>
+  <%= render :partial => 'documents/documents', :object => detail.documents %>
+<% end %>
+

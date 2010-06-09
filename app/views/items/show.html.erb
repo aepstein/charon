@@ -6,17 +6,8 @@
   </p>
 
 <% end -%>
-<p>
-  <b>Node:</b> <%=h @item.node %>
-</p>
 
-<% if permitted_to?( :review, @item ) -%>
-  <p>
-    <b>Amount:</b> <%= number_to_currency @item.amount %>
-  </p>
-
-<% end -%>
-<%= render :partial => 'editions/edition', :collection => @item.editions.with_permissions_to(:show) %>
+<%= render :partial => "items/detail", :object => @item %>
 
 <p>
 <%= link_to 'Edit', edit_item_path(@item) %> |

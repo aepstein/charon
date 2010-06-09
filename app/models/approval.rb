@@ -48,12 +48,20 @@ class Approval < ActiveRecord::Base
   end
 
   def approve_approvable
-    approvable.approve
+    begin
+      approvable.approve
+    rescue AASM::InvalidTransition
+      return false
+    end
     approvable.save if approvable.changed?
   end
 
   def unapprove_approvable
-    approvable.unapprove
+    begin
+      approvable.unapprove
+    rescue AASM::InvalidTransition
+      return false
+    end
     approvable.save if approvable.changed?
   end
 

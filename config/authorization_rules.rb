@@ -1,12 +1,12 @@
 authorization do
   role :admin do
-    has_permission_on [ :addresses, :agreements, :approvals, :approvers,
+    has_permission_on [ :addresses, :agreements, :approvers,
       :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
       :items, :nodes, :organizations, :permissions, :registration_criterions,
       :registrations, :requests, :roles, :structures, :users, :user_status_criterions ],
       :to => [ :manage ]
-    has_permission_on [ :organizations, :requests, :items, :editions ], :to => [ :request, :review ]
-    has_permission_on [ :requests, :agreements ], :to => [ :approve, :unapprove ]
+    has_permission_on [ :approvals ], :to => [ :show, :destroy ]
+    has_permission_on [ :requests, :agreements ], :to => [ :unapprove ]
     has_permission_on :authorization_rules, :to => :read
   end
   role :user do
@@ -67,6 +67,9 @@ authorization do
       if_permitted_to :request, :organization
       if_attribute :status => is_in { %w( started completed ) }
     end
+    has_permission_on [ :requests ], :to => :unapprove do
+      if_attribute :status => is_in { %w( started completed ) }
+    end
     has_permission_on [ :requests ], :to => :update, :join_by => :and do
       if_permitted_to :review, :basis
       if_attribute :status => is_in { %w( accepted ) }
@@ -115,8 +118,17 @@ authorization do
       if_permitted_to :show, :edition
     end
 
-    has_permission_on [ :approvals ], :to => [ :new, :create ] do
+    has_permission_on [ :agreements ], :to => :approve
+
+    has_permission_on [ :approvals ], :to => [ :new, :create ], :join_by => :and do
       if_permitted_to :approve, :approvable
+      if_attribute :user_id => is { user.id }
+      if_attribute :approvable_type => is { 'Agreement' }, :approvable_id => is_not_in { user.approvals.agreement_ids }
+    end
+    has_permission_on [ :approvals ], :to => [ :new, :create ], :join_by => :and do
+      if_permitted_to :approve, :approvable
+      if_attribute :user_id => is { user.id }
+      if_attribute :approvable_type => is { 'Request' }, :approvable_id => is_not_in { user.approvals.request_ids }
     end
     has_permission_on [ :approvals ], :to => [ :destroy ], :join_by => :and do
       if_permitted_to :unapprove, :approvable
@@ -124,6 +136,10 @@ authorization do
     end
     has_permission_on [ :approvals ], :to => [ :destroy ] do
       if_permitted_to :manage, :approvable
+    end
+    has_permission_on [ :approvals ], :to => [ :show ] do
+      if_attribute :user_id => is { user.id }
+      if_attribute :approvable_type => is { 'Request' }
     end
   end
   role :guest do
@@ -139,9 +155,6 @@ privileges do
     includes :show
   end
   privilege :approve do
-    includes :show
-  end
-  privilege :unapprove do
     includes :show
   end
   privilege :manage do

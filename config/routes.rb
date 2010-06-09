@@ -10,6 +10,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :users, :shallow => true do |user|
     user.resources :addresses
     user.resources :fulfillments, :only => [ :index ]
+    user.resources :approvals, :only => [ :index ]
   end
   map.resources :approvals, :only => [ :show ]
   map.resources :agreements, :shallow => true do |agreement|

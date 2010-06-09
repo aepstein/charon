@@ -1,0 +1,24 @@
+<p>
+  Name of speaker, performer, or group: <%=h detail.title %>
+</p>
+
+<p>
+  Travel distance: <%= detail.distance %> miles round trip
+</p>
+
+<p>
+  Number of travelers: <%= detail.number_of_travelers %>
+</p>
+
+<p>
+  Nights of lodging: <%= detail.nights_of_lodging %>
+</p>
+
+<p>
+  Engagement fee: <%= number_to_currency(detail.engagement_fee) %>
+</p>
+
+<p>
+  Dignitary? <%= detail.dignitary? ? 'Yes' : 'No' %>
+</p>
+
