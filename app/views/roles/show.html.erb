@@ -2,7 +2,8 @@
   <b>Name:</b> <%=h @role.name %>
 </p>
 
-
+<% if permitted_to? :edit, @role -%>
 <%= link_to 'Edit', edit_role_path(@role) %> |
+<% end -%>
 <%= link_to 'Back', roles_path %>
 
