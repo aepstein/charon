@@ -1,11 +1,15 @@
+  <% label = ( form.object.label? ? "#{form.object.label.titleize}" : false ) -%>
   <%= form.error_messages %>
   <% form.inputs do %>
-  <%= form.input :label %>
-  <%= form.input :street %>
-  <%= form.input :city %>
-  <%= form.input :state %>
-  <%= form.input :zip %>
-  <%= form.input :on_campus, :as => :radio %>
+    <% if form.object.new_record? -%>
+      <%= form.input :label %>
+    <% end -%>
+    <%= form.input :street, :label => ( label ? "#{label} street" : "Street" ) %>
+    <%= form.input :city, :label => ( label ? "#{label} city" : "City" ) %>
+    <%= form.input :state, :label => ( label ? "#{label} state" : "State" ) %>
+    <%= form.input :zip, :label => ( label ? "#{label} zip" : "Zip" ) %>
+    <%= form.input :on_campus, :label => ( label ? "#{label} is" : "Is" ),
+      :as => :radio, :collection => { "on campus" => true, "off campus" => false },
+      :hint => 'Indicate whether campus mail delivers to this address.' %>
   <% end %>
-  <%= form.buttons %>
 

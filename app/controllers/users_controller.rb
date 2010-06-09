@@ -3,6 +3,7 @@ class UsersController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_user_from_params, :only => [ :new, :create ]
+  before_filter :add_blank_address, :only => [ :new, :edit ]
   filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
 
   def index
@@ -91,6 +92,10 @@ class UsersController < ApplicationController
 
   def new_user_from_params
     @user = User.new( params[:user] )
+  end
+
+  def add_blank_address
+    @user.addresses.build
   end
 end
 

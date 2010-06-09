@@ -40,11 +40,15 @@ class User < ActiveRecord::Base
     end
   end
 
+  accepts_nested_attributes_for :addresses, :allow_destroy => true,
+     :reject_if => proc { |address| address[:street].blank? }
+
   validates_presence_of     :net_id
   validates_uniqueness_of   :net_id
   before_validation_on_create :extract_email
   validates_inclusion_of    :status, :in => STATUSES
   before_validation :import_simple_ldap_attributes
+  before_validation_on_create { |user| user.addresses.each { |address| address.addressable = user } }
   after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self'
 
