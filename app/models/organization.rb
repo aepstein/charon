@@ -77,19 +77,6 @@ class Organization < ActiveRecord::Base
     true
   end
 
-  # TODO is this sufficient?
-  def may_update?(user)
-    user.admin?
-  end
-
-  def may_create?(user)
-    user.admin? && new_record?
-  end
-
-  def may_destroy?(user)
-    user.admin?
-  end
-
   def to_s
     name
   end

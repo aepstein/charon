@@ -1,5 +1,5 @@
 class Agreement < ActiveRecord::Base
-  include GlobalModelAuthorization, Fulfillable
+  include Fulfillable
 
   default_scope :order => 'agreements.name ASC'
 

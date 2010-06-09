@@ -38,20 +38,5 @@ class Membership < ActiveRecord::Base
     ) unless registration || organization
   end
 
-  def may_see?( user )
-    user.admin? || self.user == user
-  end
-
-  def may_update?( user )
-    user.admin?
-  end
-
-  def may_create?( user )
-    user.admin?
-  end
-
-  def may_destroy?( user )
-    user.admin?
-  end
 end
 

@@ -1,6 +1,4 @@
 class Fulfillment < ActiveRecord::Base
-  include GlobalModelAuthorization
-
   FULFILLABLE_TYPES = {
     'User' => %w( Agreement UserStatusCriterion ),
     'Organization' => %w( RegistrationCriterion )

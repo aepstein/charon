@@ -9,16 +9,6 @@ Feature: Manage organizations
     And a user: "global" exists with net_id: "global", password: "secret", admin: false
     And a role: "allowed" exists with name: "allowed"
     And a framework: "safc" exists with name: "safc"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "create", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "update", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "destroy", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "started", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "completed", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "submitted", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "accepted", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "reviewed", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "certified", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", role: role "allowed", status: "released", action: "see", perspective: "requestor"
     And an organization: "organization_1" exists with last_name: "Org1"
     And a basis: "basis_1" exists with framework: framework "safc", name: "basis 1"
     And a membership exists with user: user "allowed_user", organization: organization "organization_1", role: role "allowed"
@@ -46,7 +36,7 @@ Feature: Manage organizations
       | qualified    | not see |
       | unqualified  | see     |
 
-  Scenario Outline: Test permissions for agreements controller actions
+  Scenario Outline: Test permissions for organizations controller
     Given I am logged in as "<user>" with password "secret"
     And I am on the new organization page
     Then I should <create>
