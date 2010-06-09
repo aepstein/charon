@@ -5,6 +5,8 @@
 <br />
 
 <p>
-<%= link_to 'New structure', new_structure_path %>
+<% if permitted_to? :create, Structure.new -%>
+  <%= link_to 'New structure', new_structure_path %>
+<% end -%>
 </p>
 

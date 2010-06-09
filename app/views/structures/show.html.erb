@@ -9,7 +9,9 @@
 </p>
 
 <p>
-<%= link_to 'Edit', edit_structure_path(@structure) %> |
+<% if permitted_to? :edit, @structure -%>
+  <%= link_to 'Edit', edit_structure_path(@structure) %> |
+<% end -%>
 <%= link_to 'List nodes', structure_nodes_path(@structure) %> |
 <%= link_to 'Back', structures_path %>
 </p>

@@ -1,10 +1,14 @@
 class StructuresController < ApplicationController
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_structure_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
 
   # GET /structures
   # GET /structures.xml
   def index
-    @structures = Structure.all
+    @structures = @structures.paginate( :page => params[:page] )
 
     respond_to do |format|
       format.html # index.html.erb
@@ -15,9 +19,6 @@ class StructuresController < ApplicationController
   # GET /structures/1
   # GET /structures/1.xml
   def show
-    @structure = Structure.find(params[:id])
-    raise AuthorizationError unless @structure.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @structure }
@@ -27,9 +28,6 @@ class StructuresController < ApplicationController
   # GET /structures/new
   # GET /structures/new.xml
   def new
-    @structure = Structure.new
-    raise AuthorizationError unless @structure.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @structure }
@@ -38,16 +36,14 @@ class StructuresController < ApplicationController
 
   # GET /structures/1/edit
   def edit
-    @structure = Structure.find(params[:id])
-    raise AuthorizationError unless @structure.may_update? current_user
+    respond_to do |format|
+      format.html # edit.html.erb
+    end
   end
 
   # POST /structures
   # POST /structures.xml
   def create
-    @structure = Structure.new(params[:structure])
-    raise AuthorizationError unless @structure.may_create? current_user
-
     respond_to do |format|
       if @structure.save
         flash[:notice] = 'Structure was successfully created.'
@@ -63,9 +59,6 @@ class StructuresController < ApplicationController
   # PUT /structures/1
   # PUT /structures/1.xml
   def update
-    @structure = Structure.find(params[:id])
-    raise AuthorizationError unless @structure.may_update? current_user
-
     respond_to do |format|
       if @structure.update_attributes(params[:structure])
         flash[:notice] = 'Structure was successfully updated.'
@@ -81,8 +74,6 @@ class StructuresController < ApplicationController
   # DELETE /structures/1
   # DELETE /structures/1.xml
   def destroy
-    @structure = Structure.find(params[:id])
-    raise AuthorizationError unless @structure.may_destroy? current_user
     @structure.destroy
 
     respond_to do |format|
@@ -90,5 +81,20 @@ class StructuresController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+  def initialize_context
+    @structure = Structure.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @structures = Structure
+  end
+
+  def new_structure_from_params
+    @structure = Structure.new( params[:structure] )
+  end
+
 end
 
