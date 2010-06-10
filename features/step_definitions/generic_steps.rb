@@ -61,6 +61,16 @@ Given(/^#{capture_model} is alone (?:in|one of|amongst) the (\w+) of #{capture_m
   model(owner).send(association) << model(target)
 end
 
+# assert model is in another model's has_many assoc
+Then(/^#{capture_model} should be (?:in|one of|amongst) the (\w+) of #{capture_model}$/) do |target, association, owner|
+  model(owner).send(association).should include(model(target))
+end
+
+# assert model is NOT in another model's has_many assoc
+Then(/^#{capture_model} should not be (?:in|one of|amongst) the (\w+) of #{capture_model}$/) do |target, association, owner|
+  model(owner).send(association).should_not include(model(target))
+end
+
 Then /^I should see the following entries in "(.+)":$/ do |table_id, expected_approvals_table|
   expected_approvals_table.diff!(table_at("##{table_id}").to_a)
 end

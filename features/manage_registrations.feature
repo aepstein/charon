@@ -47,15 +47,3 @@ Feature: Manage registrations
       | Name                     |
       | Ski Racing Organization  |
 
-  Scenario: Create organization from registration
-    Given a registration exists with name: "Accounting Club, Cornell"
-    And I log in as user: "admin"
-    And I am on the registrations page
-    When I follow "New Organization"
-    And I press "Create"
-    Then I should see "Organization was successfully created."
-    Given I am on the organizations page
-    Then I should see the following organizations:
-      | Name                    |
-      | Cornell Accounting Club |
-
