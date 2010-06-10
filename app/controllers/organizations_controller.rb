@@ -1,15 +1,15 @@
 class OrganizationsController < ApplicationController
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_organization_from_params, :only => [ :new, :create ]
+  filter_access_to :new, :create, :edit, :update, :destroy, :attribute_check => true
 
   # GET /organizations
   # GET /organizations.xml
   def index
-    page = params[:page] ? params[:page] : 1
-    if params[:search]
-      @organizations = Organization.first_name_or_last_name_like("%#{params[:search][:q]}%").paginate(:page => page)
-  else
-      @organizations = Organization.paginate(:page => page)
-    end
+    @search = @organizations.searchlogic( params[:search] )
+    @organizations = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
       format.html # index.html.erb
@@ -20,9 +20,6 @@ class OrganizationsController < ApplicationController
   # GET /organizations/1
   # GET /organizations/1.xml
   def show
-    @organization = Organization.find(params[:id])
-    raise AuthorizationError unless @organization.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @organization }
@@ -32,13 +29,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations/1/profile
   # GET /organizations/1/profile.xml
   def profile
-    @organization = Organization.find(params[:id])
-    raise AuthorizationError unless @organization.may_see?(current_user)
-
-    respond_to do |format|
-      format.html # profile.html.erb
-      format.xml  { render :xml => @organization }
-    end
+    # profile.html.erb
   end
 
   # GET /organizations/new
@@ -46,14 +37,6 @@ class OrganizationsController < ApplicationController
   # GET /registrations/:registration_id/organizations/new
   # GET /registrations/:registration_id/organizations/new.xml
   def new
-    if params[:registration_id]
-      @registration = Registration.find(params[:registration_id])
-      @organization = @registration.find_or_build_organization
-    else
-      @organization = Organization.new
-    end
-    raise AuthorizationError unless @organization.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @organization }
@@ -62,8 +45,7 @@ class OrganizationsController < ApplicationController
 
   # GET /organizations/1/edit
   def edit
-    @organization = Organization.find(params[:id])
-    raise AuthorizationError unless @organization.may_update? current_user
+    # edit.html.erb
   end
 
   # POST /organizations
@@ -71,15 +53,6 @@ class OrganizationsController < ApplicationController
   # POST /registrations/:registration_id/organization
   # POST /registrations/:registration_id/organization.xml
   def create
-    if params[:registration_id]
-      @registration = Registration.find(params[:registration_id])
-      @organization = @registration.find_or_build_organization(params[:organization])
-      raise 'Cannot create an organization for a registration that is matched to an existing organization' unless @organization.new_record?
-    else
-      @organization = Organization.new(params[:organization])
-    end
-    raise AuthorizationError unless @organization.may_create? current_user
-
     respond_to do |format|
       if @organization.save
         @organization.registrations << @registration if @registration
@@ -96,9 +69,6 @@ class OrganizationsController < ApplicationController
   # PUT /organizations/1
   # PUT /organizations/1.xml
   def update
-    @organization = Organization.find(params[:id])
-    raise AuthorizationError unless @organization.may_update? current_user
-
     respond_to do |format|
       if @organization.update_attributes(params[:organization])
         flash[:notice] = 'Organization was successfully updated.'
@@ -114,8 +84,6 @@ class OrganizationsController < ApplicationController
   # DELETE /organizations/1
   # DELETE /organizations/1.xml
   def destroy
-    @organization = Organization.find(params[:id])
-    raise AuthorizationError unless @organization.may_destroy? current_user
     @organization.destroy
 
     respond_to do |format|
@@ -123,5 +91,22 @@ class OrganizationsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+  def initialize_context
+    @organization = Organization.find params[:id] if params[:id]
+    @registration = Registration.find params[:registration_id] if params[:registration_id]
+  end
+
+  def initialize_index
+    @organizations = Organization
+  end
+
+  def new_organization_from_params
+    @organization = @registration.find_or_build_organization( params[:organization] ) if @registration
+    @organization ||= Organization.new( params[:organization] )
+  end
+
 end
 

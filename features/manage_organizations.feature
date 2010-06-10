@@ -37,29 +37,46 @@ Feature: Manage organizations
       | unqualified  | see     |
 
   Scenario Outline: Test permissions for organizations controller
-    Given I am logged in as "<user>" with password "secret"
+    Given an organization exists with last_name: "Focus Organization"
+    And a manager_role exists
+    And a user: "manager" exists
+    And a membership exists with organization: the organization, user: user "manager", role: the manager_role
+    And a requestor_role exists
+    And a user: "requestor" exists
+    And a membership exists with organization: the organization, user: user "requestor", role: the requestor_role
+    And a reviewer_role exists
+    And a user: "reviewer" exists
+    And a membership exists with organization: the organization, user: user "reviewer", role: the reviewer_role
+    And I log in as user: "<user>"
+    Given I am on the page for the organization
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the organizations page
+    Then I should <show> "Focus Organization"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    And I should <create> "New organization"
     And I am on the new organization page
-    Then I should <create>
+    Then I should <create> authorized
     Given I post on the organizations page
-    Then I should <create>
-    And I am on the edit page for organization: "organization_1"
-    Then I should <update>
-    Given I put on the page for organization: "organization_1"
-    Then I should <update>
-    Given I am on the page for organization: "organization_1"
-    Then I should <show>
-    Given I delete on the page for organization: "organization_1"
-    Then I should <destroy>
+    Then I should <create> authorized
+    And I am on the edit page for the organization
+    Then I should <update> authorized
+    Given I put on the page for the organization
+    Then I should <update> authorized
+    Given I delete on the page for the organization
+    Then I should <destroy> authorized
     Examples:
-      | user           | create                 | update                 | destroy                | show                   |
-      | admin          | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | allowed_user   | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
-      | global         | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
-
+      | user      | create  | update  | destroy | show |
+      | admin     | see     | see     | see     | see  |
+      | manager   | not see | see     | see     | see  |
+      | requestor | not see | not see | not see | see  |
+      | reviewer  | not see | not see | not see | see  |
+#TODO move to requests
   Scenario Outline: Show headings for requests appropriately based on requests status
     Given a request exists with basis: basis "basis_1", status: "<status>"
     And organization: "organization_1" is amongst the organizations of the request
-    And I am logged in as "<user>" with password "secret"
+    And I log in as user: "<user>"
     And I am on the profile page for organization: "organization_1"
     Then I should <creatable> "Bases for you to make new requests"
     And I should <started> "Requests you have started"

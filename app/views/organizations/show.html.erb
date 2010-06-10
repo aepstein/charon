@@ -27,7 +27,9 @@
 <% end %>
 
 <p>
+<% if permitted_to? :edit, @organization -%>
 <%= link_to 'Edit', edit_organization_path(@organization) %> |
+<% end -%>
 <%= link_to 'List bases', organization_bases_path(@organization) %> |
 <%= link_to 'List fulfillments', organization_fulfillments_path(@organization) %> |
 <%= link_to 'Back', organizations_path %>
