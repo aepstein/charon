@@ -23,7 +23,7 @@ Feature: Manage request mailers
     And a membership exists with organization: organization "requestor", role: role "treasurer", user: user "treasurer", active: true
     And a membership exists with organization: organization "requestor", role: role "officer", user: user "officer", active: true
     And an approval exists with approvable: request "completed", user: user "president"
-@wip
+
   Scenario: Send notice regarding a started request
     Given a started reminder email is sent for request: "started"
     Then "president@example.com" should receive an email with subject "Request of Money Taking Club from Money Taking Fund needs attention"
@@ -33,7 +33,7 @@ Feature: Manage request mailers
     And they should see "Jane Doe" in the email body
     And they should see "John Doe" in the email body
     And they should not see "Alpha Beta" in the email body
-
+@wip
   Scenario: Send notice regarding a completed request
     Given a completed reminder email is sent for request: "completed"
     Then "president@example.com" should receive an email with subject "Request of Money Taking Club from Money Taking Fund needs approval"

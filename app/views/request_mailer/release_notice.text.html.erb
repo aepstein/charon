@@ -1,4 +1,8 @@
 <p>
+Dear Officers of <%= @request.organization %>,
+</p>
+
+<p>
 This email is to inform you that your <%=h @request %> has been processed and
 released for you to review.  To see it, please go to: &lt;<%= link_to request_url(@request), request_url(@request) %>&gt;.
 </p>

@@ -46,7 +46,11 @@ class Request < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
-  has_many :users, :through => :approvals
+  has_many :users, :through => :approvals do
+    def for_perspective(perspective)
+      User.memberships_active.memberships_role_name_like_any( Role::REQUESTOR ).memberships_organization_id_equals( proxy_owner.send(perspective).id )
+    end
+  end
   has_many :items, :dependent => :destroy, :order => 'items.position ASC' do
     def children_of(parent_item)
       self.select { |item| item.parent_id == parent_item.id }
@@ -151,6 +155,9 @@ class Request < ActiveRecord::Base
   aasm_event :release do
     transitions :to => :released, :from => :certified
   end
+
+  alias :requestor :organization
+  def reviewer; basis ? basis.organization : nil; end
 
   def approvable?
     case status
