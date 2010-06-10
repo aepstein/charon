@@ -14,7 +14,7 @@
   <% end %>
   <% if request.new_record? -%>
   <td>
-    <% form_for :request, request, :url => organization_requests_path(request.organizations.first) do |f| %>
+    <% form_for :request, request, :url => organization_requests_path(request.organization) do |f| %>
       <%= f.hidden_field :basis_id %>
       <%= f.submit 'Create' %>
     <% end %>

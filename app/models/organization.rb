@@ -1,4 +1,6 @@
 class Organization < ActiveRecord::Base
+  include Fulfiller
+
   has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
   has_many :registrations do
     def current
@@ -26,25 +28,6 @@ class Organization < ActiveRecord::Base
 
   validates_presence_of :last_name
   validates_uniqueness_of :last_name, :scope => :first_name
-
-  def permissions
-    Permission.role_id_equals_any(role_ids)
-  end
-
-  def unfulfilled_permissions
-    Permission.requirements_unfulfilled.requirements_with_fulfillments.requirements_fulfillable_type_equals_any(
-    Fulfillment::FULFILLABLE_TYPES['Organization']).memberships_organization_id_eq(id)
-  end
-
-  def unfulfilled_requirements
-    requirements = Requirement.unfulfilled.with_fulfillments.fulfillable_type_equals_any(
-    Fulfillment::FULFILLABLE_TYPES['Organization']).permission_memberships_organization_id_eq(id)
-    fulfillables = requirements.all.inject([]) do |memo, requirement|
-      memo << [ requirement.fulfillable_type, requirement.fulfillable_id ]
-      memo
-    end
-    fulfillables.uniq.map { |f| f.first.constantize.find f.last }
-  end
 
   def registration_criterions
     return [] unless registrations.current

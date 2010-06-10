@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  include Fulfiller
+
   STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
 
   attr_protected :admin
@@ -30,7 +32,15 @@ class User < ActiveRecord::Base
       self.requests.map(&:approvable_id)
     end
   end
-  has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
+  has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all do
+    def requirements_sql
+      fragments = inject([]) do |memo, fulfillment|
+        memo << "(requirements.fulfillable_id = #{fulfillment.fulfillable_id} AND " +
+        "requirements.fulfillable_type = #{connection.quote fulfillment.fulfillable_type})"
+      end
+      fragments.join ' OR '
+    end
+  end
   has_many :memberships, :dependent => :destroy
   has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
     def in(organizations)

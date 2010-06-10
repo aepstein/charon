@@ -77,7 +77,7 @@ Factory.define :registration_criterion do |f|
 end
 
 Factory.define :requirement do |f|
-  f.association :permission
+  f.association :framework
   f.fulfillable { |r| r.fulfillable = Factory(:agreement) }
 end
 

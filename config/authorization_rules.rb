@@ -47,14 +47,27 @@ authorization do
     # TODO Should only show bases that are open as of current date
     has_permission_on [ :bases ], :to => :show
 
+    has_permission_on [ :requests ], :to => :show do
+      if_permitted_to :request, :organization
+    end
+    has_permission_on [ :requests ], :to => :show do
+      if_permitted_to :review, :basis
+    end
+    has_permission_on [ :requests ], :to => :show do
+      if_permitted_to :manage, :basis
+    end
     has_permission_on [ :requests ], :to => :allocate do
       if_permitted_to :manage, :basis
     end
-    has_permission_on [ :requests ], :to => :request do
+    has_permission_on [ :requests ], :to => :request, :join_by => :and do
       if_permitted_to :request, :organization
+      if_attribute :organization => { :framework_id => is_in { object.organization.frameworks( Edition::PERSPECTIVES.first ) } }
+      if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.first ) } }
     end
-    has_permission_on [ :requests ], :to => :review do
+    has_permission_on [ :requests ], :to => :review, :join_by => :and do
       if_permitted_to :review, :basis
+      if_attribute :basis => { :framework_id => is_in { object.basis.organization.frameworks( Edition::PERSPECTIVES.last ) } }
+      if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.last ) } }
     end
     has_permission_on [ :requests ], :to => :manage do
       if_permitted_to :manage, :basis
@@ -149,16 +162,16 @@ end
 
 privileges do
   privilege :request do
-    includes :show
+    includes :profile
   end
   privilege :review do
-    includes :show
+    includes :profile
   end
   privilege :approve do
     includes :show
   end
   privilege :manage do
-    includes :create, :update, :destroy, :show
+    includes :create, :update, :destroy, :show, :profile
   end
   privilege :create do
     includes :new

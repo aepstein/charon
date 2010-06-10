@@ -1,17 +1,6 @@
 <h2><%=h @organization %> Profile</h2>
 
-<% unless @organization.unfulfilled_requirements.length == 0 %>
-<p>The organization has unfulfilled requirements that <i>may</i> limit what it is able to do:</p>
-<ul>
-<% @organization.unfulfilled_requirements.each do |requirement| %>
-<li>The organization <%= unfulfilled_requirement requirement, @organization %></li>
-<% end %>
-</ul>
-<% end %>
-
-
-
-<% unless @organization.requests.creatable.select { |r| r.may_create? current_user }.empty? %>
+<% unless @organization.requests.creatable.empty? %>
 <h3>Bases for you to make new requests</h3>
 
 <p>Choose a new request you would like to create and get started on:</p>
@@ -21,7 +10,7 @@
 } %>
 <% end %>
 
-<% unless @organization.requests.started.select { |r| r.may_see? current_user }.empty? %>
+<% unless @organization.requests.started.empty? %>
 <h3>Requests you have started</h3>
 
 <p>Choose a request below to examine and modify its items:</p>
@@ -31,7 +20,7 @@
 } %>
 <% end %>
 
-<% unless @organization.requests.completed.select { |r| r.may_see? current_user }.empty? %>
+<% unless @organization.requests.completed.empty? %>
 <h3>Requests you have completed, but are still awaiting approvals</h3>
 
 <p>If you need to make changes, each person who has approved the request must unapprove it.</p>
@@ -41,7 +30,7 @@
 } %>
 <% end %>
 
-<% unless @organization.requests.submitted.select { |r| r.may_see? current_user }.empty? %>
+<% unless @organization.requests.submitted.empty? %>
 <h3>Requests you have submitted and are waiting to be accepted</h3>
 
 <p>You may view details of any of the following requests, although reviews have not yet been released:</p>
@@ -51,7 +40,7 @@
 } %>
 <% end %>
 
-<% unless @organization.requests.status_equals_any('accepted','reviewed','certified').select { |r| r.may_see? current_user }.empty? %>
+<% unless @organization.requests.status_equals_any('accepted','reviewed','certified').empty? %>
 <h3>Requests that have been accepted for review</h3>
 
 <p>You may view details of any of the following requests, although reviews have not yet been released:</p>
@@ -60,7 +49,7 @@
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.released.select { |r| r.may_see? current_user }.empty? %>
+<% unless @organization.requests.released.empty? %>
 <h3>Requests that have been released</h3>
 
 <p>Results are available for the following requests:</p>

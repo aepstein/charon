@@ -3,7 +3,7 @@ class OrganizationsController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_organization_from_params, :only => [ :new, :create ]
-  filter_access_to :new, :create, :edit, :update, :destroy, :attribute_check => true
+  filter_access_to :new, :create, :edit, :update, :destroy, :profile, :attribute_check => true
 
   # GET /organizations
   # GET /organizations.xml
