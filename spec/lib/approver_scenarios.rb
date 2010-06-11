@@ -27,6 +27,8 @@ module SpecApproverScenarios
   def all_fulfilled_scenario
     half_fulfilled_scenario
     Factory(:approval, :approvable => @request, :user => @all_unfulfilled)
+    @request.status = 'completed'
+    @request.save!
   end
 
 end
