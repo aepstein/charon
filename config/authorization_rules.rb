@@ -27,7 +27,6 @@ authorization do
       if_attribute :fulfiller_type => is { 'User' }, :fulfiller_id => is { user.id }
     end
 
-    has_permission_on [ :organizations ], :to => [ :show ]
     has_permission_on [ :organizations ], :to => :request do
       if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::REQUESTOR } } }
     end
@@ -162,7 +161,7 @@ authorization do
     end
     has_permission_on [ :approvals ], :to => [ :show ] do
       if_attribute :user_id => is { user.id }
-      if_attribute :approvable_type => is { 'Request' }
+      if_attribute :approvable_id => is_in { user.request_ids }, :approvable_type => is { 'Request' }
     end
   end
   role :guest do

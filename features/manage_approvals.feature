@@ -7,7 +7,7 @@ Feature: Manage approvals
     Given a user: "admin" exists with admin: true
     And a user: "regular" exists
     And a user: "owner" exists with last_name: "Focus User"
-
+@wip
   Scenario Outline: Test permissions for approvals of agreements
     Given an agreement exists
     And an approval exists with user: user "owner", approvable: the agreement

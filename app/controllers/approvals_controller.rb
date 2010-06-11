@@ -4,9 +4,6 @@ class ApprovalsController < ApplicationController
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_approval_from_params, :only => [ :new, :create ]
   filter_access_to :show, :new, :create, :destroy, :attribute_check => true
-  filter_access_to :show do
-    permitted_to!( :show, @approval.approvable )
-  end
   filter_access_to :index do
     permitted_to!( :show, @user ) if @user
     permitted_to!( :show, @approvable ) if @approvable

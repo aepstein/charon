@@ -75,6 +75,10 @@ class User < ActiveRecord::Base
   after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self'
 
+  def requests; Request.organization_id_equals_any( organization_ids ); end
+
+  def request_ids; requests.map(&:id); end
+
   def user_status_criterions
     UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
   end
