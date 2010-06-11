@@ -1,4 +1,6 @@
 class Approver < ActiveRecord::Base
+  STATUSES = { 'completed' => 'requestor', 'reviewed' => 'reviewer' }
+
   belongs_to :framework
   belongs_to :role
 
@@ -8,8 +10,25 @@ class Approver < ActiveRecord::Base
   validates_inclusion_of :perspective, :in => Edition::PERSPECTIVES
   validates_uniqueness_of :role_id, :scope => [ :framework_id, :status, :perspective ]
 
-  default_scope :include => [:role], :order => 'status ASC, perspective ASC, roles.name ASC'
-  named_scope :status, lambda { |status| { :conditions => { :status => status } } }
+  default_scope :include => [:role], :order => 'roles.name ASC'
+
+  named_scope :with_approvals_for, lambda { |request|
+    { :joins => "LEFT JOIN memberships ON approvers.role_id = memberships.role_id " +
+        "AND ( (memberships.organization_id = #{request.organization.id} AND approvers.perspective = 'requestor') OR " +
+        "(memberships.organization_id = #{request.basis.organization.id} AND approvers.perspective = 'reviewer') ) " +
+        "LEFT JOIN approvals ON memberships.user_id = approvals.user_id AND " +
+        "approvals.approvable_type = #{connection.quote 'Request'} AND " +
+        "approvals.approvable_id = #{request.id}",
+      :group => 'approvers.id',
+      :conditions => [ 'approvers.framework_id = ? AND approvers.status = ?',
+        request.basis.framework_id, request.status ] }
+  }
+  named_scope :satisfied, :having => 'COUNT(approvals.user_id) >= approvers.quantity OR ' +
+    '(approvers.quantity IS NULL AND COUNT(approvals.user_id) >= COUNT(memberships.user_id) )'
+  named_scope :unsatisfied, :having => '( COUNT(approvals.user_id) < approvers.quantity ) OR ' +
+    '(approvers.quantity IS NULL AND COUNT(approvals.user_id) < COUNT(memberships.user_id) )'
+  scope_procedure :fulfilled_for, lambda { |request| satisfied.with_approvals_for( request ) }
+  scope_procedure :unfulfilled_for, lambda { |request| unsatisfied.with_approvals_for( request ) }
 
 end
 

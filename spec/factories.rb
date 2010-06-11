@@ -20,7 +20,7 @@ Factory.define :approver do |f|
   f.association :framework
   f.association :role
   f.status 'submitted'
-  f.perspective 'requestor'
+  f.perspective Edition::PERSPECTIVES.first
 end
 
 Factory.define :category do |f|

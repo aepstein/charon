@@ -40,28 +40,49 @@ describe Approver do
     second.save.should == false
   end
 
-  it "should have may_create? that returns framework.may_update?" do
-    approver = Factory.build(:approver)
-    approver.framework.stub!(:may_update?).and_return('may_update')
-    approver.may_create?(nil).should == 'may_update'
+  it 'should have an unfulfilled_for scope that returns unfulfilled approver conditions' do
+    setup_approvers_scenario
+    scope = Approver.unfulfilled_for( @request )
+    scope.length.should eql 1
+    scope.should include @all
+    Factory(:approval, :approvable => @request, :user => @all_unfulfilled)
+    scope.reload
+    scope.length.should eql 0
+    Approval.delete_all
+    scope.reload
+    scope.length.should eql 2
+    scope.should include @quota
   end
 
-  it "should have may_update? that returns framework.may_update?" do
-    approver = Factory(:approver)
-    approver.framework.stub!(:may_update?).and_return('may_update')
-    approver.may_update?(nil).should == 'may_update'
+  it 'should have an fulfilled_for scope that returns unfulfilled approver conditions' do
+    setup_approvers_scenario
+    scope = Approver.fulfilled_for( @request )
+    scope.length.should eql 1
+    scope.should include @quota
+    Factory(:approval, :approvable => @request, :user => @all_unfulfilled)
+    scope.reload
+    scope.length.should eql 2
+    scope.should include @all
+    Approval.delete_all
+    scope.reload
+    scope.length.should eql 0
   end
 
-  it "should have may_destroy? that returns framework.may_update?" do
-    approver = Factory(:approver)
-    approver.framework.stub!(:may_update?).and_return('may_update')
-    approver.may_destroy?(nil).should == 'may_update'
+  def setup_approvers_scenario
+    @framework = Factory(:framework)
+    quota_required = Factory(:role, :name => Role::REQUESTOR.first )
+    all_required = Factory(:role, :name => Role::REQUESTOR.last )
+    @quota = Factory(:approver, :framework => @framework, :role => quota_required, :quantity => 1, :status => 'completed')
+    @all = Factory(:approver, :framework => @framework, :role => all_required, :status => 'completed')
+    @request = Factory(:request, :basis => Factory(:basis, :framework => @framework), :status => 'completed' )
+    requestor = @request.organization
+    @quota_fulfilled = Factory(:membership, :role => quota_required, :organization => requestor).user
+    @quota_unfulfilled = Factory(:membership, :role => quota_required, :organization => requestor).user
+    @all_fulfilled = Factory(:membership, :role => all_required, :organization => requestor).user
+    @all_unfulfilled = Factory(:membership, :role => all_required, :organization => requestor).user
+    Factory(:approval, :approvable => @request, :user => @quota_fulfilled )
+    Factory(:approval, :approvable => @request, :user => @all_fulfilled )
   end
 
-  it "should have a may_see? that returns framework.may_see?" do
-    approver = Factory(:approver)
-    approver.framework.stub!(:may_see?).and_return('may_see')
-    approver.may_see?(nil).should == 'may_see'
-  end
 end
 

@@ -6,17 +6,17 @@ class Request < ActiveRecord::Base
   has_many :approvers, :through => :approvals, :source => :user do
     def empty_for_status?( status=nil )
       status ||= proxy_owner.status
-      proxy_owner.framework.approvers.status(status).map { |a| actual_for(a) }.flatten.empty?
+      proxy_owner.framework.approvers.status_equals(status).map { |a| actual_for(a) }.flatten.empty?
     end
     def fulfill_status?( status=nil )
       status ||= proxy_owner.status
-      proxy_owner.framework.approvers.status(status).each do |approver|
+      proxy_owner.framework.approvers.status_equals(status).each do |approver|
         return false unless fulfill?( approver )
       end
       true
     end
     def required_for_status( status )
-      approvers = proxy_owner.framework.approvers.status(status).select { |a| a.quantity.nil? }
+      approvers = proxy_owner.framework.approvers.status_equals(status).select { |a| a.quantity.nil? }
       approvers.map { |a| potential_for(a) }.flatten.uniq
     end
     def unfulfilled_for_status( status )
@@ -47,8 +47,15 @@ class Request < ActiveRecord::Base
     end
   end
   has_many :users, :through => :approvals do
-    def for_perspective(perspective)
+    def for_perspective( perspective )
       User.memberships_active.memberships_role_name_like_any( Role::REQUESTOR ).memberships_organization_id_equals( proxy_owner.send(perspective).id )
+    end
+    def unfulfilled( approvers = Approver )
+      return Array.new unless Approver::STATUSES.keys.include?( proxy_owner.status )
+      approvers = approvers.unfulfilled_for(proxy_owner)
+      return Array.new if approvers.length == 0
+      proxy_owner.send( Approver::STATUSES[status] ).users.scoped(
+        :conditions => ['memberships.role_id IN (?)', approvers.map(&:role_id) ] ).all - self
     end
   end
   has_many :items, :dependent => :destroy, :order => 'items.position ASC' do
