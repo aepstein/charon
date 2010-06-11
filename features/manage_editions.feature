@@ -3,8 +3,3 @@ Feature: Manage editions
   As a requestor or reviewer
   I want to create, update, and show editions
 
-  Background:
-
-
-  Scenario Outline: Test permissions for editions controller actions
-
