@@ -33,11 +33,11 @@ Feature: Manage request mailers
     And they should see "Jane Doe" in the email body
     And they should see "John Doe" in the email body
     And they should not see "Alpha Beta" in the email body
-@wip
+
   Scenario: Send notice regarding a completed request
     Given a completed reminder email is sent for request: "completed"
-    Then "president@example.com" should receive an email with subject "Request of Money Taking Club from Money Taking Fund needs approval"
-    When "president@example.com" opens the email with subject "Request of Money Taking Club from Money Taking Fund needs approval"
+    Then "treasurer@example.com" should receive an email with subject "Request of Money Taking Club from Money Taking Fund needs your approval"
+    When "treasurer@example.com" opens the email with subject "Request of Money Taking Club from Money Taking Fund needs your approval"
     Then they should see "Dear Officers of Money Taking Club," in the email body
     And they should see "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been completed, but requires further action before it will be considered submitted." in the email body
     And they should see "Jane Doe" in the email body

@@ -8,7 +8,7 @@ class RequestMailer < ActionMailer::Base
   end
 
   def completed_reminder(request)
-    recipients  request.approvers.required_for_status('completed').map { |u| "#{u.name} <#{u.email}>" }
+    recipients  request.users.unfulfilled(Approver.quantity_null).map { |u| "#{u.name} <#{u.email}>" }
     from        "#{request.contact_name} <#{request.contact_email}>"
     subject     "#{request} needs your approval"
     sent_on     Time.now
