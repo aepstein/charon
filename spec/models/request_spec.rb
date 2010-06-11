@@ -56,14 +56,10 @@ describe Request do
   it "should call deliver_release_notice and set released_at on entering the released state" do
     @request.status = 'certified'
     @request.save
-    m = Factory(:membership, :registration => nil, :organization => @request.organization)
-    p = @request.framework.permissions.create( :role => m.role, :status => 'released',
-      :action => 'review', :perspective => 'requestor')
-    p.id.should_not be_nil
+    m = Factory(:membership, :organization => @request.organization, :role => Factory(:requestor_role))
     @request.should_receive(:deliver_release_notice)
     @request.released_at.should be_nil
     @request.release.should == true
-    @request.requestors.may('review').should include(m.user)
     @request.released_at.should_not be_nil
     @request.status.should == 'released'
   end
@@ -77,8 +73,7 @@ describe Request do
   end
 
   it "should have items.allocate which enforces caps" do
-    first_expense = Factory(:administrative_expense)
-    first_edition = first_expense.edition
+    first_edition = Factory(:edition)
     first_edition.amount = 100.0
     first_edition.save
     first_item = first_edition.item
@@ -87,19 +82,21 @@ describe Request do
     second_item = first_item.clone
     second_item.position = nil
     second_item.save
-    second_item.editions.create( Factory.attributes_for(:edition, :amount => 100.0, :administrative_expense_attributes => Factory.attributes_for(:administrative_expense) ) )
-    first_item.editions.next.save.should == true
-    second_item.editions.next.save.should == true
+    second_item.editions.create!( Factory.attributes_for(:edition, :amount => 100.0 ) )
+    first_item.reload
+    first_item.editions.next.save!
+    second_item.reload
+    second_item.editions.next.save!
     request = first_item.request
     request.items.allocate(150.0)
-    request.items.first.amount.should == 100.0
-    request.items.last.amount.should == 50.0
+    request.items.first.amount.should eql 100
+    request.items.last.amount.should eql 50
     request.items.allocate(nil)
-    request.items.first.amount.should == 100.0
-    request.items.last.amount.should == 100.0
+    request.items.first.amount.should eql 100
+    request.items.last.amount.should eql 100
     request.items.allocate(0.0)
-    request.items.first.amount.should == 0.0
-    request.items.last.amount.should == 0.0
+    request.items.first.amount.should eql 0
+    request.items.last.amount.should eql 0
   end
 
   it 'should have an incomplete_for_perspective scope that returns requests that are incomplete for a perspective' do
