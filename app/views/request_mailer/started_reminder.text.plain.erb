@@ -6,7 +6,7 @@ You may make changes to the request here <<%= request_items_url(@request) %>>.
 
 When the request is ready for submission, any of the following may approve it here <<%= new_polymorphic_url([@request, 'approval']) %>>:
 
-<% @request.approvers.unfulfilled_for_status('completed').each do |user| -%>
+<% @request.users.required_for_status('completed').each do |user| -%>
  * <%= user.name %>
 <% end -%>
 

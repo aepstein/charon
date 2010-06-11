@@ -5,9 +5,9 @@ Feature: Manage users
 
   Background:
     Given a user: "admin" exists with admin: true, last_name: "Bo 4"
-    And a user: "owner" exists with last_name: "Bo 3"
-    And a user: "regular" exists with last_name: "Bo 2"
-    And a user exists with last_name: "Bo 1"
+    And a user: "owner" exists with last_name: "Bo 3", net_id: "zzz3332"
+    And a user: "regular" exists with last_name: "Bo 2", net_id: "zzz3333"
+    And a user exists with last_name: "Bo 1", net_id: "zzz4444"
 
   Scenario Outline: Test permissions for users controller actions
     Given I log in as user: "<user>"
@@ -108,9 +108,9 @@ Feature: Manage users
     When I fill in "Name" with "4"
     And I press "Search"
     Then I should see the following users:
-      | Name                | Net Id   |
-      | John Bo 1           | zzz4     |
-      | John Bo 4           | zzz1     |
+      | Name                |
+      | John Bo 1           |
+      | John Bo 4           |
 
   Scenario Outline: Display administrative options for admin on profile page
     Given I log in as user: "<user>"

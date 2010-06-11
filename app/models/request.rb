@@ -18,6 +18,9 @@ class Request < ActiveRecord::Base
     def unfulfilled( approvers = Approver )
       approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
     end
+    def required_for_status( status )
+      approvers_to_users( Approver.framework_id_equals( proxy_owner.basis.framework_id ).status_equals( status ).quantity_null )
+    end
     protected
     def after_checkpoint
       all( :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint] )

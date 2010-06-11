@@ -11,7 +11,7 @@ The following people must <%= link_to 'approve the request', new_polymorphic_url
 </p>
 
 <ul>
-<% @request.approvers.unfulfilled_for_status('completed').each do |user| -%>
+<% @request.users.unfulfilled( Approver.quantity_null ).each do |user| -%>
 <li><%= user.name %></li>
 <% end -%>
 </ul>

@@ -1,1 +1,1 @@
-features/manage_items_with_document.feature:14 features/manage_registrations.feature:27 features/manage_request_mailers.feature:27:37 features/manage_user_sessions.feature:9 features/manage_users.feature:99
+

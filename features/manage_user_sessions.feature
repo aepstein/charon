@@ -8,7 +8,7 @@ Feature: Manage user sessions
 
   Scenario: Login an exisiting user
     Given I am on the login page
-    When I fill in "Net" with "aa1"
+    When I fill in "Net" with "zzz999"
     And I fill in "Password" with "secret"
     And I press "Login"
     Then I should see "You logged in successfully."
