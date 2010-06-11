@@ -82,10 +82,6 @@ authorization do
     has_permission_on [ :requests ], :to => :unapprove do
       if_attribute :status => is_in { %w( started completed ) }
     end
-    has_permission_on [ :requests ], :to => :update, :join_by => :and do
-      if_permitted_to :review, :basis
-      if_attribute :status => is_in { %w( accepted ) }
-    end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
       if_permitted_to :review, :basis
       if_attribute :status => is_in { %w( accepted reviewed ) }
@@ -107,8 +103,9 @@ authorization do
     has_permission_on [ :items ], :to => :review do
       if_permitted_to :review, :request
     end
-    has_permission_on [ :items ], :to => :update do
-      if_permitted_to :update, :request
+    has_permission_on [ :items ], :to => :update, :join_by => :and do
+      if_permitted_to :review, :request
+      if_attribute :request => { :status => is { 'accepted' } }
     end
     has_permission_on [ :items ], :to => :show do
       if_permitted_to :show, :request

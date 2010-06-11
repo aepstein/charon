@@ -6,26 +6,26 @@ Feature: Manage organizations
   Background:
     Given a user: "admin" exists with admin: true
     And a user: "regular" exists
-
-  Scenario Outline: Show unfulfilled requirements for organization in profile
-    Given a role exists
-    And a framework exists with name: "SAFC"
-    And a registration_criterion exists with must_register: true, minimal_percentage: 10, type_of_member: "staff"
-    And a requirement exists with permission: permission "first", fulfillable: the registration_criterion
-    And a requirement exists with permission: permission "second", fulfillable: the registration_criterion
-    And an organization: "qualified" exists
-    And a registration exists with organization: organization "qualified", number_of_staff: 10, registered: true
-    And an organization: "unqualified" exists
-    And a membership exists with active: true, organization: organization "qualified", role: the role
-    And a membership exists with active: true, organization: organization "unqualified", role: the role
-    And I am logged in as "admin" with password "secret"
-    And I am on the profile page for organization: "<organization>"
-    Then I should <see> "The organization has unfulfilled requirements that may limit what it is able to do:"
-    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration in order to create, update SAFC requests. Click here to update the registration."
-    Examples:
-      | organization | see     |
-      | qualified    | not see |
-      | unqualified  | see     |
+# TODO provide way for users to find out what criteria are not met in a framework context
+#  Scenario Outline: Show unfulfilled requirements for organization in profile
+#    Given a role exists
+#    And a framework exists with name: "SAFC"
+#    And a registration_criterion exists with must_register: true, minimal_percentage: 10, type_of_member: "staff"
+#    And a requirement exists with permission: permission "first", fulfillable: the registration_criterion
+#    And a requirement exists with permission: permission "second", fulfillable: the registration_criterion
+#    And an organization: "qualified" exists
+#    And a registration exists with organization: organization "qualified", number_of_staff: 10, registered: true
+#    And an organization: "unqualified" exists
+#    And a membership exists with active: true, organization: organization "qualified", role: the role
+#    And a membership exists with active: true, organization: organization "unqualified", role: the role
+#    And I am logged in as "admin" with password "secret"
+#    And I am on the profile page for organization: "<organization>"
+#    Then I should <see> "The organization has unfulfilled requirements that may limit what it is able to do:"
+#    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration in order to create, update SAFC requests. Click here to update the registration."
+#    Examples:
+#      | organization | see     |
+#      | qualified    | not see |
+#      | unqualified  | see     |
 
   Scenario Outline: Test permissions for organizations controller
     Given an organization exists with last_name: "Focus Organization"
