@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec/lib/approver_scenarios'
 
 describe Request do
+
+  include SpecApproverScenarios
+
   before(:each) do
     @request = Factory.build(:request)
     #@request.organizations << Factory(:organization)

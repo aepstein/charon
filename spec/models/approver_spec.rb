@@ -45,31 +45,23 @@ describe Approver do
   end
 
   it 'should have an unfulfilled_for scope that returns unfulfilled approver conditions' do
-    setup_approvers_scenario
-    scope = Approver.unfulfilled_for( @request )
-    scope.length.should eql 1
-    scope.should include @all
-    Factory(:approval, :approvable => @request, :user => @all_unfulfilled)
-    scope.reload
-    scope.length.should eql 0
-    Approval.delete_all
-    scope.reload
-    scope.length.should eql 2
-    scope.should include @quota
+    { 0 => 'all', 1 => 'half', 2 => 'no' }.each do |quantity, scenario|
+      send("#{scenario}_fulfilled_scenario")
+      scope = Approver.unfulfilled_for( @request )
+      scope.length.should eql quantity
+      scope.should include @quota if quantity == 2
+      scope.should include @all if quantity > 0
+    end
   end
 
   it 'should have an fulfilled_for scope that returns fulfilled approver conditions' do
-    setup_approvers_scenario
-    scope = Approver.fulfilled_for( @request )
-    scope.length.should eql 1
-    scope.should include @quota
-    Factory(:approval, :approvable => @request, :user => @all_unfulfilled)
-    scope.reload
-    scope.length.should eql 2
-    scope.should include @all
-    Approval.delete_all
-    scope.reload
-    scope.length.should eql 0
+    { 0 => 'no', 1 => 'half', 2 => 'all' }.each do |quantity, scenario|
+      send("#{scenario}_fulfilled_scenario")
+      scope = Approver.fulfilled_for( @request )
+      scope.length.should eql quantity
+      scope.should include @all if quantity == 2
+      scope.should include @quota if quantity > 0
+    end
   end
 
 end
