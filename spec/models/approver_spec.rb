@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec/lib/approver_scenarios'
 
 describe Approver do
+
+  include SpecApproverScenarios
+
   before(:each) do
   end
 
@@ -54,7 +58,7 @@ describe Approver do
     scope.should include @quota
   end
 
-  it 'should have an fulfilled_for scope that returns unfulfilled approver conditions' do
+  it 'should have an fulfilled_for scope that returns fulfilled approver conditions' do
     setup_approvers_scenario
     scope = Approver.fulfilled_for( @request )
     scope.length.should eql 1
@@ -66,22 +70,6 @@ describe Approver do
     Approval.delete_all
     scope.reload
     scope.length.should eql 0
-  end
-
-  def setup_approvers_scenario
-    @framework = Factory(:framework)
-    quota_required = Factory(:role, :name => Role::REQUESTOR.first )
-    all_required = Factory(:role, :name => Role::REQUESTOR.last )
-    @quota = Factory(:approver, :framework => @framework, :role => quota_required, :quantity => 1, :status => 'completed')
-    @all = Factory(:approver, :framework => @framework, :role => all_required, :status => 'completed')
-    @request = Factory(:request, :basis => Factory(:basis, :framework => @framework), :status => 'completed' )
-    requestor = @request.organization
-    @quota_fulfilled = Factory(:membership, :role => quota_required, :organization => requestor).user
-    @quota_unfulfilled = Factory(:membership, :role => quota_required, :organization => requestor).user
-    @all_fulfilled = Factory(:membership, :role => all_required, :organization => requestor).user
-    @all_unfulfilled = Factory(:membership, :role => all_required, :organization => requestor).user
-    Factory(:approval, :approvable => @request, :user => @quota_fulfilled )
-    Factory(:approval, :approvable => @request, :user => @all_fulfilled )
   end
 
 end
