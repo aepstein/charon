@@ -16,7 +16,7 @@ class Request < ActiveRecord::Base
       approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpont
     end
     def unfulfilled( approvers = Approver )
-      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - after_checkpoint
+      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - self.all
     end
     protected
     def after_checkpoint
