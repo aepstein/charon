@@ -51,11 +51,19 @@ class Request < ActiveRecord::Base
       User.memberships_active.memberships_role_name_like_any( Role::REQUESTOR ).memberships_organization_id_equals( proxy_owner.send(perspective).id )
     end
     def unfulfilled( approvers = Approver )
-      return Array.new unless Approver::STATUSES.keys.include?( proxy_owner.status )
-      approvers = approvers.unfulfilled_for(proxy_owner)
+      approvers = approvers.unfulfilled_for(proxy_owner).inject({}) do |memo, approver|
+        memo[approver.perspective] ||= Array.new
+        memo[approver.perspective] << approver.role_id
+        memo
+      end
+      approvers_fragments = Array.new
+      approvers.each do |perspective, role_ids|
+        approvers_fragments << ( "( memberships.organization_id = #{proxy_owner.send(perspective).id} " +
+          "AND memberships.role_id IN (#{role_ids.join(',')}) )" )
+      end
       return Array.new if approvers.length == 0
-      proxy_owner.send( Approver::STATUSES[status] ).users.scoped(
-        :conditions => ['memberships.role_id IN (?)', approvers.map(&:role_id) ] ).all - self
+      User.all( :joins => [:memberships], :conditions => approvers_fragments.join(' OR ') +
+        " AND memberships.active = #{connection.quote true}" ) - self
     end
   end
   has_many :items, :dependent => :destroy, :order => 'items.position ASC' do

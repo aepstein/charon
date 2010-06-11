@@ -1,6 +1,4 @@
 class Approver < ActiveRecord::Base
-  STATUSES = { 'completed' => 'requestor', 'reviewed' => 'reviewer' }
-
   belongs_to :framework
   belongs_to :role
 
@@ -13,7 +11,7 @@ class Approver < ActiveRecord::Base
   default_scope :include => [:role], :order => 'roles.name ASC'
 
   named_scope :with_approvals_for, lambda { |request|
-    { :joins => "LEFT JOIN memberships ON approvers.role_id = memberships.role_id " +
+    { :joins => "LEFT JOIN memberships ON approvers.role_id = memberships.role_id AND memberships.active = #{connection.quote true} " +
         "AND ( (memberships.organization_id = #{request.organization.id} AND approvers.perspective = 'requestor') OR " +
         "(memberships.organization_id = #{request.basis.organization.id} AND approvers.perspective = 'reviewer') ) " +
         "LEFT JOIN approvals ON memberships.user_id = approvals.user_id AND " +
