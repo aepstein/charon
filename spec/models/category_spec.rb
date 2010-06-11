@@ -20,9 +20,5 @@ describe Category do
     duplicate.save.should == false
   end
 
-  it "should include the GlobalModelAuthorization module" do
-    Category.included_modules.should include(GlobalModelAuthorization)
-  end
-
 end
 

@@ -28,9 +28,6 @@ describe Agreement do
 
   it "should have authorization methods for approvable" do
     agreement = Factory(:agreement)
-    agreement.may_approve?(nil).should eql false
-    agreement.may_unapprove?(nil).should eql false
-    agreement.may_unapprove_other?(nil).should eql false
     agreement.approve.should eql true
     agreement.unapprove.should eql true
   end
@@ -47,10 +44,6 @@ describe Agreement do
     approval = Factory(:approval, :approvable => agreement)
     approval.destroy
     approval.user.fulfillments.size.should eql 0
-  end
-
-  it "should include the GlobalModelAuthorization module" do
-    Agreement.included_modules.should include(GlobalModelAuthorization)
   end
 
   xit "should delete associated approvals if content is changed" do

@@ -30,26 +30,6 @@ describe Approval do
     @approval.save.should == false
   end
 
-  it "should have a may_create? which returns approvable.may_approve?" do
-    @approval.approvable.stub!(:may_approve?).and_return(true)
-    @approval.may_create?(nil).should == true
-    @approval.approvable.stub!(:may_approve?).and_return(false)
-    @approval.may_create?(nil).should == false
-  end
-
-  it "should have a may_destroy? which returns approvable.may_unapprove? for matching user otherwise may_unapprove_other?" do
-    approval = Factory(:approval)
-    other = Factory(:user)
-    approval.approvable.stub!(:may_unapprove?).and_return(true)
-    approval.may_destroy?(approval.user).should == true
-    approval.approvable.stub!(:may_unapprove?).and_return(false)
-    approval.may_destroy?(approval.user).should == false
-    approval.approvable.stub!(:may_unapprove_other?).and_return(true)
-    approval.may_destroy?(other).should == true
-    approval.approvable.stub!(:may_unapprove_other?).and_return(false)
-    approval.may_destroy?(other).should == false
-  end
-
   it "should have agreeements named scope that returns only agreements" do
     request_approval = Factory(:approval, {:approvable => Factory(:request)})
     agreement_approval = Factory(:approval, {:approvable => Factory(:agreement)})

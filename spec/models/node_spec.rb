@@ -32,30 +32,6 @@ describe Node do
     node.save.should == false
   end
 
-  it "should have may_create? that returns structure.may_update?" do
-    node = Factory.build(:node)
-    node.structure.stub!(:may_update?).and_return('may_update')
-    node.may_create?(nil).should == 'may_update'
-  end
-
-  it "should have may_update? that returns structure.may_update?" do
-    node = Factory(:node)
-    node.structure.stub!(:may_update?).and_return('may_update')
-    node.may_update?(nil).should == 'may_update'
-  end
-
-  it "should have may_destroy? that returns structure.may_update?" do
-    node = Factory(:node)
-    node.structure.stub!(:may_update?).and_return('may_update')
-    node.may_destroy?(nil).should == 'may_update'
-  end
-
-  it "should have a may_see? that returns structure.may_see?" do
-    node = Factory(:node)
-    node.structure.stub!(:may_see?).and_return('may_see')
-    node.may_see?(nil).should == 'may_see'
-  end
-
   it 'should not save with a duplicate name for a certain structure' do
     duplicate = Factory(:node)
     duplicate.name = @node.name

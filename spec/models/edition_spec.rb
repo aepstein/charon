@@ -55,70 +55,14 @@ describe Edition do
   end
 
   it "should not save with an amount higher than original edition amount" do
-    detail = Factory(:administrative_expense)
-    original = detail.edition
-    review = original.item.editions.next( :administrative_expense_attributes => Factory.attributes_for(:administrative_expense),
-      :amount => (original.amount + 1.0) )
-    review.perspective.should == 'reviewer'
+    original = Factory(:edition)
+    original.item.reload
+    review = original.item.editions.next( :amount => (original.amount + 1.0) )
+    review.perspective.should eql 'reviewer'
     review.amount.should > original.amount
-    review.save.should == false
-    review.errors.first.to_s.should == "amount is greater than original request amount."
+    review.save.should eql false
+    review.errors.first.to_s.should eql "amount is greater than original request amount."
     review.max_request.should eql original.amount
-  end
-
-  it "should have may_create? which is true if request.may_revise? and in review stage" do
-    @edition.request.stub!(:may_revise?).and_return(true)
-    @edition.perspective = 'reviewer'
-    @edition.may_create?(nil).should == true
-    @edition.perspective = 'requestor'
-    @edition.may_create?(nil).should == false
-    @edition.request.stub!(:may_revise?).and_return(false)
-    @edition.may_create?(nil).should == false
-  end
-
-  it "should have may_update? which is true if request.may_update? and in request stage or
-      if request.may_revise? and in review stage" do
-    @edition.perspective = 'requestor'
-    @edition.request.stub!(:may_update?).and_return(true)
-    @edition.may_update?(nil).should == true
-    @edition.request.stub!(:may_update?).and_return(false)
-    @edition.may_update?(nil).should == false
-    @edition.perspective = 'reviewer'
-    @edition.request.stub!(:may_revise?).and_return(true)
-    @edition.may_update?(nil).should == true
-    @edition.request.stub!(:may_revise?).and_return(false)
-    @edition.may_update?(nil).should == false
-  end
-
-  it "should have may_destroy? which is false" do
-    @edition.perspective = 'requestor'
-    @edition.may_destroy?(nil).should == false
-    @edition.perspective = 'reviewer'
-    @edition.may_destroy?(nil).should == false
-  end
-
-  it "should have may_see? which is true if request.may_see? and in request stage or
-      if (request.may_revise? or request.may_review?) and in review stage" do
-    @edition.perspective = 'requestor'
-    @edition.request.stub!(:may_see?).and_return(true)
-    @edition.may_see?(nil).should == true
-    @edition.request.stub!(:may_see?).and_return(false)
-    @edition.may_see?(nil).should == false
-    @edition.perspective = 'reviewer'
-    @edition.request.stub!(:may_revise?).and_return(false)
-    @edition.request.stub!(:may_review?).and_return(false)
-    @edition.may_see?(nil).should == false
-    @edition.request.stub!(:may_revise?).and_return(true)
-    @edition.may_see?(nil).should == true
-    @edition.request.stub!(:may_review?).and_return(true)
-    @edition.may_see?(nil).should == true
-    @edition.request.stub!(:may_revise?).and_return(false)
-    @edition.may_see?(nil).should == true
-  end
-
-  it "should item.touch on save" do
-    @edition.should_receive(:belongs_to_touch_after_save_or_destroy_for_item)
-    @edition.save
   end
 
   it "should have a title method that returns the requestable title if defined, nil otherwise" do

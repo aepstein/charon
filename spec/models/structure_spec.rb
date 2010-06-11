@@ -15,9 +15,5 @@ describe Structure do
     structure.save.should == false
   end
 
-  it "should use global model authorization" do
-    Structure.included_modules.should include(GlobalModelAuthorization)
-  end
-
 end
 

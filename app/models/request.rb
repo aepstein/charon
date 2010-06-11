@@ -13,10 +13,10 @@ class Request < ActiveRecord::Base
       User.memberships_active.memberships_role_name_like_any( Role::REQUESTOR ).memberships_organization_id_equals( proxy_owner.send(perspective).id )
     end
     def fulfilled( approvers = Approver )
-      approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpont
+      approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
     end
     def unfulfilled( approvers = Approver )
-      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - self.all
+      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
     end
     protected
     def after_checkpoint
