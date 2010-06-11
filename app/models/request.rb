@@ -3,44 +3,6 @@ class Request < ActiveRecord::Base
     :order => 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC'
 
   belongs_to :basis
-  has_many :approvers, :through => :approvals, :source => :user do
-    def empty_for_status?( status=nil )
-      status ||= proxy_owner.status
-      proxy_owner.framework.approvers.status_equals(status).map { |a| actual_for(a) }.flatten.empty?
-    end
-    def fulfill_status?( status=nil )
-      status ||= proxy_owner.status
-      proxy_owner.framework.approvers.status_equals(status).each do |approver|
-        return false unless fulfill?( approver )
-      end
-      true
-    end
-    def required_for_status( status )
-      approvers = proxy_owner.framework.approvers.status_equals(status).select { |a| a.quantity.nil? }
-      approvers.map { |a| potential_for(a) }.flatten.uniq
-    end
-    def unfulfilled_for_status( status )
-      required_for_status( status ) - self
-    end
-    def fulfill?( approver )
-      if approver.quantity
-        actual_for(approver).size >= approver.quantity
-      else
-        ( potential_for( approver ) - actual_for( approver )  ).empty?
-      end
-    end
-    def actual_for( approver )
-      potential_for( approver ) & self.find(:all, :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint.utc ] )
-    end
-    def potential_for( approver )
-      User.all( :conditions => [
-        "users.id IN (SELECT user_id FROM memberships WHERE organization_id = ? AND active = ? AND role_id = ?)",
-        ( (approver.perspective == Edition::PERSPECTIVES.first) ? proxy_owner.organization_id : proxy_owner.basis.organization.id ),
-        true,
-        approver.role_id
-      ] )
-    end
-  end
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
     def existing
       self.reject { |approval| approval.new_record? }
@@ -50,14 +12,24 @@ class Request < ActiveRecord::Base
     def for_perspective( perspective )
       User.memberships_active.memberships_role_name_like_any( Role::REQUESTOR ).memberships_organization_id_equals( proxy_owner.send(perspective).id )
     end
+    def fulfilled( approvers = Approver )
+      approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpont
+    end
     def unfulfilled( approvers = Approver )
-      approvers = approvers.unfulfilled_for(proxy_owner).inject({}) do |memo, approver|
+      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - after_checkpoint
+    end
+    protected
+    def after_checkpoint
+      all( :conditions => ['approvals.created_at >= ?', proxy_owner.approval_checkpoint] )
+    end
+    def approvers_to_users(approvers)
+      approvers_organized = approvers.inject({}) do |memo, approver|
         memo[approver.perspective] ||= Array.new
         memo[approver.perspective] << approver.role_id
         memo
       end
       approvers_fragments = Array.new
-      approvers.each do |perspective, role_ids|
+      approvers_organized.each do |perspective, role_ids|
         approvers_fragments << ( "( memberships.organization_id = #{proxy_owner.send(perspective).id} " +
           "AND memberships.role_id IN (#{role_ids.join(',')}) )" )
       end
@@ -206,31 +178,16 @@ class Request < ActiveRecord::Base
     self.released_at = DateTime.now
   end
 
-  def reviewers
-    return Array.new unless basis.organization
-    [ basis.organization ]
-  end
-
-  def reviewer_ids
-    return reviewers.map { |r| r.id }
-  end
-
-  def perspective_ids
-    Edition::PERSPECTIVES.inject([]) do |memo, perspective|
-      memo << send(perspective + "_ids").unshift(perspective)
-    end
-  end
-
   def approvals_fulfilled?
-    approvers.fulfill_status?
+    users.unfulfilled.length == 0
   end
 
   def approvals_unfulfilled?
-    approvers.empty_for_status?
+    users.fulfilled.length == 0
   end
 
   def set_approval_checkpoint(datetime=nil)
-    self.approval_checkpoint = ( datetime.nil? ? DateTime.now : datetime )
+    self.approval_checkpoint = ( datetime.nil? ? Time.zone.now : datetime )
   end
 
   def reset_approval_checkpoint

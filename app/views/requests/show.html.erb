@@ -62,11 +62,11 @@ This request is now submitted for review.
 <%= render :partial => 'items/detailed', :collection => @request.items.root,
   :locals => { :level => 4 } %>
 
-<% unless @request.approvers.unfulfilled_for_status(@request.status).empty? -%>
+<% unless @request.users.unfulfilled(Approver.quantity_null).length == 0 -%>
 <h2>Who must approve</h2>
 <p>The following users must approve before the request may be considered submitted.</p>
 <ul>
-  <% @request.approvers.unfulfilled_for_status(@request.status).each do |user| -%>
+  <% @request.users.unfulfilled(Approver.quantity_null).each do |user| -%>
   <li><%=h user %></li>
   <% end -%>
 </ul>
