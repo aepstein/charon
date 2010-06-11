@@ -129,7 +129,7 @@ describe Request do
 
   it 'should have users.unfulfilled method that returns users eligible towards current unfulfilled approver conditions' do
     { 0 => 'all', 4 => 'no', 1 => 'half' }.each do |quantity, scenario|
-      send("#{scenario}_fulfilled_scenario")
+      send("#{scenario}_approvers_scenario",true)
       scope = @request.users.unfulfilled
       scope.length.should eql quantity
       scope.should include @quota_fulfilled if quantity == 4

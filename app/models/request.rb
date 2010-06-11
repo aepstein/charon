@@ -155,13 +155,9 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def requestor_ids
-    organization_ids
-  end
-
   def deliver_required_approval_notice
-    approvals = approvers.unfulfilled_for_status(status).map { |a| Approval.new( :user => a, :approvable => self ) }
-    approvals.each do |approval|
+    needed_approvals = users.unfulfilled(Approver.quantity_null).map { |u| approvals.build( :user => u )  }
+    needed_approvals.each do |approval|
       ApprovalMailer.deliver_request_notice(approval)
     end
   end
@@ -171,11 +167,11 @@ class Request < ActiveRecord::Base
   end
 
   def set_accepted_at
-    self.accepted_at = DateTime.now
+    self.accepted_at = Time.zone.now
   end
 
   def set_released_at
-    self.released_at = DateTime.now
+    self.released_at = Time.zone.now
   end
 
   def approvals_fulfilled?
@@ -186,8 +182,8 @@ class Request < ActiveRecord::Base
     users.fulfilled.length == 0
   end
 
-  def set_approval_checkpoint(datetime=nil)
-    self.approval_checkpoint = ( datetime.nil? ? Time.zone.now : datetime )
+  def set_approval_checkpoint
+    self.approval_checkpoint = Time.zone.now
   end
 
   def reset_approval_checkpoint
