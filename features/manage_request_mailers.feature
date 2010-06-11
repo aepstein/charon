@@ -13,7 +13,7 @@ Feature: Manage request mailers
     And an approver exists with framework: the framework, role: role "treasurer", perspective: "requestor", status: "completed"
     And an organization: "requestor" exists with last_name: "Money Taking Club"
     And an organization: "reviewer" exists with last_name: "Money Giving Club"
-    And a basis exists with framework: the framework, organization: organization "reviewer", name: "Money Taking Fund"
+    And a basis exists with framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized release message."
     And a request: "started" exists with basis: the basis, organization: organization "requestor"
     And a request: "completed" exists with basis: the basis, status: "completed", organization: organization "requestor"
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
@@ -43,4 +43,15 @@ Feature: Manage request mailers
     And they should see "Jane Doe" in the email body
     And they should not see "John Doe" in the email body
     And they should not see "Alpha Beta" in the email body
+
+  Scenario: Send notice regarding a released request
+    Given request: "completed" has status: "released"
+    And a release notice email is sent for request: "completed"
+    Then "president@example.com" should receive an email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
+    And "treasurer@example.com" should receive an email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
+    And "officer@example.com" should receive an email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
+    When "president@example.com" opens the email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
+    Then they should see "Dear Officers of Money Taking Club," in the email body
+    And they should see "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been processed and released for you to review." in the email body
+    And they should see "A customized release message." in the email body
 
