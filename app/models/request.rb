@@ -20,7 +20,7 @@ class Request < ActiveRecord::Base
     end
     protected
     def after_checkpoint
-      all( :conditions => ['approvals.created_at >= ?', proxy_owner.approval_checkpoint] )
+      all( :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint] )
     end
     def approvers_to_users(approvers)
       approvers_organized = approvers.inject({}) do |memo, approver|

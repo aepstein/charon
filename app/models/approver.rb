@@ -16,7 +16,8 @@ class Approver < ActiveRecord::Base
         "(memberships.organization_id = #{request.basis.organization.id} AND approvers.perspective = 'reviewer') ) " +
         "LEFT JOIN approvals ON memberships.user_id = approvals.user_id AND " +
         "approvals.approvable_type = #{connection.quote 'Request'} AND " +
-        "approvals.approvable_id = #{request.id}",
+        "approvals.approvable_id = #{request.id} AND approvals.created_at > " +
+        "#{connection.quote request.approval_checkpoint}",
       :group => 'approvers.id',
       :conditions => [ 'approvers.framework_id = ? AND approvers.status = ?',
         request.basis.framework_id, request.status ] }

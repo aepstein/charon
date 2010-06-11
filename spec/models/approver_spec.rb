@@ -45,22 +45,27 @@ describe Approver do
   end
 
   it 'should have an unfulfilled_for scope that returns unfulfilled approver conditions' do
-    { 0 => 'all', 1 => 'half', 2 => 'no' }.each do |quantity, scenario|
-      send("#{scenario}_fulfilled_scenario")
+    [ [0,'all'], [1,'half'], [2,'no'], [1,'no_reviewed'], [0, 'all_reviewed'] ].each do |s|
+      quantity, scenario = *s
+      send("#{scenario}_approvers_scenario",true)
+      %w( completed reviewed ).should include @request.status
       scope = Approver.unfulfilled_for( @request )
       scope.length.should eql quantity
-      scope.should include @quota if quantity == 2
-      scope.should include @all if quantity > 0
+      scope.should include @quota if quantity == 2 && @request.status == 'completed'
+      scope.should include @all if quantity > 0 && @request.status == 'completed'
+      scope.should include @review if quantity > 0 && @request.status == 'reviewed'
     end
   end
 
   it 'should have an fulfilled_for scope that returns fulfilled approver conditions' do
-    { 0 => 'no', 1 => 'half', 2 => 'all' }.each do |quantity, scenario|
-      send("#{scenario}_fulfilled_scenario")
+    [ [0,'no'], [1,'half'], [2,'all'], [0,'no_reviewed'], [1,'all_reviewed'] ].each do |s|
+      quantity, scenario = *s
+      send("#{scenario}_approvers_scenario",true)
       scope = Approver.fulfilled_for( @request )
       scope.length.should eql quantity
-      scope.should include @all if quantity == 2
-      scope.should include @quota if quantity > 0
+      scope.should include @all if quantity == 2 && @request.status == 'completed'
+      scope.should include @quota if quantity > 0 && @request.status == 'completed'
+      scope.should include @review if quantity > 0 && @request.status == 'reviewed'
     end
   end
 
