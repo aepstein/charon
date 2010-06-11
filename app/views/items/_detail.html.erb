@@ -10,6 +10,7 @@
 
 <% end -%>
 
-<%= render :partial => 'editions/detailed', :collection => detail.editions.with_permissions_to(:show),
+<%= render :partial => 'editions/detailed',
+  :collection => detail.editions.select { |edition| permitted_to? :show, edition },
   :locals => { :level => level + 1 } %>
 

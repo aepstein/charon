@@ -111,6 +111,9 @@ authorization do
     has_permission_on [ :items ], :to => :update do
       if_permitted_to :update, :request
     end
+    has_permission_on [ :items ], :to => :show do
+      if_permitted_to :show, :request
+    end
 
     has_permission_on [ :editions ], :to => :manage, :join_by => :and do
       if_permitted_to :update, :item
@@ -122,6 +125,13 @@ authorization do
     end
     has_permission_on [ :editions ], :to => :manage, :join_by => :and do
       if_permitted_to :allocate, :item
+    end
+    has_permission_on [ :editions ], :to => :show, :join_by => :and do
+      if_permitted_to :show, :item
+      if_attribute :perspective => is { Edition::PERSPECTIVES.first }
+    end
+    has_permission_on [ :editions ], :to => :show, :join_by => :and do
+      if_permitted_to :review, :item
     end
 
     has_permission_on [ :documents ], :to => :manage do
