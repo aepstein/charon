@@ -60,12 +60,12 @@ authorization do
     end
     has_permission_on [ :requests ], :to => :request, :join_by => :and do
       if_permitted_to :request, :organization
-      if_attribute :organization => { :framework_id => is_in { object.organization.frameworks( Edition::PERSPECTIVES.first ) } }
+      if_attribute :organization => { :framework_id => is_in { object.organization.frameworks( Edition::PERSPECTIVES.first ).map(&:id) } }
       if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.first ) } }
     end
     has_permission_on [ :requests ], :to => :review, :join_by => :and do
       if_permitted_to :review, :basis
-      if_attribute :basis => { :framework_id => is_in { object.basis.organization.frameworks( Edition::PERSPECTIVES.last ) } }
+      if_attribute :basis => { :framework_id => is_in { object.basis.organization.frameworks( Edition::PERSPECTIVES.last ).map(&:id) } }
       if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.last ) } }
     end
     has_permission_on [ :requests ], :to => :manage do
@@ -105,7 +105,7 @@ authorization do
     end
     has_permission_on [ :items ], :to => :update, :join_by => :and do
       if_permitted_to :review, :request
-      if_attribute :request => { :status => is { 'accepted' } }
+      if_attribute :request => { :status => is_in { %w( accepted ) } }
     end
     has_permission_on [ :items ], :to => :show do
       if_permitted_to :show, :request
