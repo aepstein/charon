@@ -5,7 +5,7 @@ Feature: Manage items
 
   Background:
     Given a user: "admin" exists with admin: true
-
+@wip
   Scenario Outline: Test permissions for items controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"

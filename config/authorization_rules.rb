@@ -109,6 +109,7 @@ authorization do
     end
     has_permission_on [ :items ], :to => :show do
       if_permitted_to :show, :request
+      if_permitted_to :review, :request
     end
 
     has_permission_on [ :editions ], :to => :manage, :join_by => :and do
@@ -158,7 +159,10 @@ authorization do
     end
     has_permission_on [ :approvals ], :to => [ :show ] do
       if_attribute :user_id => is { user.id }
+    end
+    has_permission_on [ :approvals ], :to => [ :show ], :join_by => :and do
       if_permitted_to :show, :approvable
+      if_attribute :approvable_type => is { 'Request' }
     end
   end
   role :guest do
