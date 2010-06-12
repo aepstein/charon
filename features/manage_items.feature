@@ -127,6 +127,27 @@ Feature: Manage items
       | other   | New         | Root Item            | Root Item | not see |
       | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
 
+  Scenario Outline: Prevent unauthorized user from updating an unauthorized edition
+    Given an organization exists with last_name: "Applicant"
+    And a request exists with organization: the organization
+    And an item exists with request: the request
+    And an edition exists with item: the item, perspective: "requestor"
+    And an edition exists with item: the item, perspective: "reviewer"
+    And a user exists with admin: true
+    And a requestor_role exists
+    And a membership exists with user: the user, role: the requestor_role, organization: the organization
+    And I log in as the user
+    When I am on the edit page for the item
+    And I fill in "Requestor amount" with "100"
+    And I fill in "Reviewer amount" with "200"
+    Given the user has admin: <admin>
+    When I press "Update Item"
+    Then I should <update> authorized
+    Examples:
+      | admin | update  |
+      | true  | see     |
+      | false | not see |
+
   Scenario Outline: Move items among priorities
     Given a structure exists
     And a node: "1" exists with structure: the structure, name: "node 1"

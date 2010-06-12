@@ -40,6 +40,11 @@ class ItemsController < ApplicationController
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
+    @item.editions.each do |edition|
+      if edition.perspective != Edition::PERSPECTIVES.first
+        raise Authorization::NotAuthorized, "not authorized to create #{edition.perspective} edition"
+      end
+    end
     respond_to do |format|
       if @item.save
         flash[:notice] = 'Item was successfully created.'
@@ -63,8 +68,11 @@ class ItemsController < ApplicationController
   # PUT /items/1
   # PUT /items/1.xml
   def update
+    @item.editions.each do |edition|
+      return permission_denied if edition.changed? && !permitted_to?( :update, edition )
+    end
     respond_to do |format|
-      if @item.update_attributes(params[:item])
+      if @item.save
         flash[:notice] = 'Item was successfully updated.'
         format.html { redirect_to @item }
         format.xml  { head :ok }
@@ -93,6 +101,7 @@ class ItemsController < ApplicationController
   def initialize_context
     @request = Request.find params[:request_id] if params[:request_id]
     @item = Item.find params[:id] if params[:id]
+    @item.attributes = params[:item] if params[:item]
   end
 
   def initialize_index
