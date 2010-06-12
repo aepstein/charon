@@ -84,7 +84,7 @@ class ApprovalsController < ApplicationController
     @approvals = @approvals.scoped( :conditions => { :approvable_type => @approvable.class.to_s,
       :approvable_id => @approvable.id } ) if @approvable
     @approvals = @approvals.scoped( :conditions => { :user_id => @user.id } ) if @user
-    @approvals = @approvals.with_permissions_to(:show) unless @approvable && @approvable.class == Request
+    @approvals = @approvals
   end
 
   def new_approval_from_params

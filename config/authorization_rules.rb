@@ -158,7 +158,7 @@ authorization do
     end
     has_permission_on [ :approvals ], :to => [ :show ] do
       if_attribute :user_id => is { user.id }
-      if_attribute :approvable_id => is_in { user.request_ids }, :approvable_type => is { 'Request' }
+      if_permitted_to :show, :approvable
     end
   end
   role :guest do
