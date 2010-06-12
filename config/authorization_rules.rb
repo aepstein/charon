@@ -65,6 +65,7 @@ authorization do
     end
     has_permission_on [ :requests ], :to => :review, :join_by => :and do
       if_permitted_to :review, :basis
+      if_attribute :organization_id => is_not_in { user.organization_ids }
       if_attribute :basis => { :framework_id => is_in { object.basis.organization.frameworks( Edition::PERSPECTIVES.last ).map(&:id) } }
       if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.last ) } }
     end
@@ -129,6 +130,10 @@ authorization do
     end
     has_permission_on [ :editions ], :to => :show, :join_by => :and do
       if_permitted_to :review, :item
+    end
+    has_permission_on [ :editions ], :to => :show, :join_by => :and do
+      if_permitted_to :show, :item
+      if_attribute :item => { :request => { :status => is { 'released' } } }
     end
 
     has_permission_on [ :documents ], :to => :manage do

@@ -21,6 +21,9 @@ Feature: Manage items
     And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
     And a user: "observer_requestor" exists
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
+    And a user: "conflictor" exists
+    And a membership exists with user: user "conflictor", organization: organization "source", role: role "reviewer"
+    And a membership exists with user: user "conflictor", organization: organization "applicant", role: role "requestor"
     And a user: "regular" exists
     And a structure exists
     And a node: "root" exists with structure: the structure, name: "Root"
@@ -49,42 +52,49 @@ Feature: Manage items
       | started   | source_manager      | see     | see     | see     | see     |
       | started   | source_reviewer     | not see | not see | see     | not see |
       | started   | applicant_requestor | see     | see     | see     | see     |
+      | started   | conflictor          | see     | see     | see     | see     |
       | started   | observer_requestor  | not see | not see | not see | not see |
       | started   | regular             | not see | not see | not see | not see |
       | completed | admin               | see     | see     | see     | see     |
       | completed | source_manager      | see     | see     | see     | see     |
       | completed | source_reviewer     | not see | not see | see     | not see |
       | completed | applicant_requestor | not see | not see | see     | not see |
+      | completed | conflictor          | not see | not see | see     | not see |
       | completed | observer_requestor  | not see | not see | not see | not see |
       | completed | regular             | not see | not see | not see | not see |
       | submitted | admin               | see     | see     | see     | see     |
       | submitted | source_manager      | see     | see     | see     | see     |
       | submitted | source_reviewer     | not see | not see | see     | not see |
       | submitted | applicant_requestor | not see | not see | see     | not see |
+      | submitted | conflictor          | not see | not see | see     | not see |
       | submitted | observer_requestor  | not see | not see | not see | not see |
       | submitted | regular             | not see | not see | not see | not see |
       | accepted  | admin               | see     | see     | see     | see     |
       | accepted  | source_manager      | see     | see     | see     | see     |
       | accepted  | source_reviewer     | not see | see     | see     | not see |
       | accepted  | applicant_requestor | not see | not see | see     | not see |
+      | accepted  | conflictor          | not see | not see | see     | not see |
       | accepted  | observer_requestor  | not see | not see | not see | not see |
       | accepted  | regular             | not see | not see | not see | not see |
       | reviewed  | admin               | see     | see     | see     | see     |
       | reviewed  | source_manager      | see     | see     | see     | see     |
       | reviewed  | source_reviewer     | not see | not see | see     | not see |
       | reviewed  | applicant_requestor | not see | not see | see     | not see |
+      | reviewed  | conflictor          | not see | not see | see     | not see |
       | reviewed  | observer_requestor  | not see | not see | not see | not see |
       | reviewed  | regular             | not see | not see | not see | not see |
       | certified | admin               | see     | see     | see     | see     |
       | certified | source_manager      | see     | see     | see     | see     |
       | certified | source_reviewer     | not see | not see | see     | not see |
       | certified | applicant_requestor | not see | not see | see     | not see |
+      | certified | conflictor          | not see | not see | see     | not see |
       | certified | observer_requestor  | not see | not see | not see | not see |
       | certified | regular             | not see | not see | not see | not see |
       | released  | admin               | see     | see     | see     | see     |
       | released  | source_manager      | see     | see     | see     | see     |
       | released  | source_reviewer     | not see | not see | see     | not see |
       | released  | applicant_requestor | not see | not see | see     | not see |
+      | released  | conflictor          | not see | not see | see     | not see |
       | released  | observer_requestor  | not see | not see | not see | not see |
       | released  | regular             | not see | not see | not see | not see |
 
