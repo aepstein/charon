@@ -101,7 +101,7 @@ class ItemsController < ApplicationController
   def initialize_context
     @request = Request.find params[:request_id] if params[:request_id]
     @item = Item.find params[:id] if params[:id]
-    @item.attributes = params[:item] if params[:item]
+    @item.attributes = params[:item] if @item && params[:item]
   end
 
   def initialize_index
