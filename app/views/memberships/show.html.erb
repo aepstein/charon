@@ -1,23 +1,32 @@
 <p>
-  <b>Group:</b>
-  <%=h @membership.group_id %>
+  <b>Organization:</b>
+  <%=h @membership.organization %>
 </p>
 
 <p>
-  <b>Person:</b>
-  <%=h @membership.person_id %>
+  <b>User:</b>
+  <%=h @membership.user %>
 </p>
 
 <p>
   <b>Registration:</b>
-  <%=h @membership.registration_id %>
+  <%=h @membership.registration %>
 </p>
 
 <p>
   <b>Role:</b>
-  <%=h @membership.role_id %>
+  <%=h @membership.role %>
 </p>
 
 
-<%= link_to 'Edit', edit_membership_path(@membership) %> |
-<%= link_to 'Back', memberships_path %>
+<p>
+<%= link_to( 'Edit', edit_membership_path(@membership) ) if permitted_to? :edit, @membership %> |
+<%= link_to "Back to #{@membership.user} memberships", polymorphic_path( [ @membership.user, :memberships ] ) %>
+<% if @membership.organization -%>
+ | <%= link_to "Back to #{@membership.organization} memberships", polymorphic_path( [ @membership.organization, :memberships ] ) %>
+<% end -%>
+<% if @membership.registration -%>
+ | <%= link_to "Back to #{@membership.registration} memberships", polymorphic_path( [ @membership.registration, :memberships ] ) %>
+<% end -%>
+</p>
+

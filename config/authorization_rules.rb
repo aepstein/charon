@@ -7,12 +7,20 @@ authorization do
       :to => [ :manage ]
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
     has_permission_on [ :requests, :agreements ], :to => [ :unapprove ]
+    has_permission_on [ :memberships ], :to => :manage do
+      if_attribute :registration_id => is { nil }
+    end
     has_permission_on :authorization_rules, :to => :read
   end
   role :user do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
       :frameworks, :nodes, :organizations, :registration_criterions,
       :roles, :structures, :user_status_criterions ], :to => [ :show ]
+
+    has_permission_on [ :memberships ], :to => :show do
+      if_attribute :user_id => is { user.id }
+      if_attribute :organization_id => is_in { user.organization_ids }
+    end
 
     has_permission_on [ :users ], :to => [ :show, :edit, :update ] do
       if_attribute :id => is { user.id }

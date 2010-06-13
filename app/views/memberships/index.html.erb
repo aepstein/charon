@@ -15,8 +15,8 @@
     <td><%=h membership.registration_id %></td>
     <td><%=h membership.role_id %></td>
     <td><%= link_to 'Show', membership %></td>
-    <td><%= link_to 'Edit', edit_membership_path(membership) %></td>
-    <td><%= link_to 'Destroy', membership, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to( 'Edit', edit_membership_path(membership) ) if permitted_to?( :edit, membership ) %></td>
+    <td><%= link_to( 'Destroy', membership, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, membership ) %></td>
   <% end %>
 <% end %>
 </table>
@@ -24,6 +24,8 @@
 <br />
 
 <p>
-<%= link_to 'New membership', new_membership_path %>
+<% if permitted_to? :create, @context.memberships.build %>
+  <%= link_to "New membership for #{@context}", new_polymorphic_path( [ @context, :membership ] ) %>
+<% end %>
 </p>
 
