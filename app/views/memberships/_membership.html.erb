@@ -1,0 +1,16 @@
+<% organization ||= false %>
+<% user ||= false %>
+  <% table_row_tag do %>
+    <% unless organization -%>
+    <td><%=h membership.organization %></td>
+    <% end -%>
+    <% unless user -%>
+    <td><%=h membership.user %></td>
+    <% end -%>
+    <td><%=h membership.registration_id? ? 'Yes' : 'No' %></td>
+    <td><%=h membership.role %></td>
+    <td><%= link_to 'Show', membership %></td>
+    <td><%= link_to( 'Edit', edit_membership_path(membership) ) if permitted_to?( :edit, membership ) %></td>
+    <td><%= link_to( 'Destroy', membership, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, membership ) %></td>
+  <% end %>
+

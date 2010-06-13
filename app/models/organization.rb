@@ -43,8 +43,13 @@ class Organization < ActiveRecord::Base
     registrations.current.registered?
   end
 
-  def name
-    ( first_name.nil? || first_name.empty? ) ? last_name : "#{first_name} #{last_name}"
+  def name(format=nil)
+    case format
+    when :last_first
+      "#{last_name}, #{first_name}"
+    else
+      first_name.blank? ? last_name : "#{first_name} #{last_name}"
+    end
   end
 
   def format_name

@@ -107,7 +107,7 @@ class Registration < ActiveRecord::Base
   end
 
   def update_organization
-    organization.update_attributes(attributes_for_organization) if organization_id? && active?
+    organization.update_attributes( name.to_organization_name_attributes ) if organization_id? && active?
   end
 
   # Synchronizes memberships associated with this registration
@@ -122,15 +122,6 @@ class Registration < ActiveRecord::Base
                                role )
     end
     parent.touch if parent_id? && parent.memberships.active.size > 0
-  end
-
-  def attributes_for_organization
-    names = name.split(',')
-    if names.size > 1
-      { :first_name => names.pop.strip, :last_name => names.join(',') }
-    else
-      { :first_name => '', :last_name => names.pop }
-    end
   end
 
   def percent_members_of_type(type)
@@ -155,7 +146,7 @@ class Registration < ActiveRecord::Base
   def find_or_build_organization( params=nil )
     return organization unless organization.nil?
     params = Hash.new if params.nil?
-    build_organization( params.merge( attributes_for_organization ) )
+    build_organization( params.merge( name.to_organization_name_attributes ) )
   end
 
   def active?

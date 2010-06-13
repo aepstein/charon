@@ -1,21 +1,21 @@
 <p>
-  <b>Organization:</b>
-  <%=h @membership.organization %>
+  <b>Organization:</b> <%=h @membership.organization %>
 </p>
 
 <p>
-  <b>User:</b>
-  <%=h @membership.user %>
+  <b>User:</b> <%=h @membership.user %>
 </p>
 
 <p>
-  <b>Registration:</b>
-  <%=h @membership.registration %>
+  <b>Registration:</b> <%=h @membership.registration %>
 </p>
 
 <p>
-  <b>Role:</b>
-  <%=h @membership.role %>
+  <b>Active?</b> <%= @membership.active? ? 'Yes' : 'No' %>
+</p>
+
+<p>
+  <b>Role:</b> <%=h @membership.role %>
 </p>
 
 

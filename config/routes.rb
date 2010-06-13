@@ -11,6 +11,7 @@ ActionController::Routing::Routes.draw do |map|
     user.resources :addresses
     user.resources :fulfillments, :only => [ :index ]
     user.resources :approvals, :only => [ :index ]
+    user.resources :memberships, :only => [ :index, :new, :create ]
   end
   map.resources :approvals, :only => [ :show ]
   map.resources :agreements, :shallow => true do |agreement|

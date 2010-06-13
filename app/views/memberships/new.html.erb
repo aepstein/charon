@@ -1,7 +1,8 @@
 <h2>New membership</h2>
 
 <% semantic_form_for( :membership, @membership, :url => polymorphic_path( [ @context, :memberships ] ) ) do |f| %>
-  <%= render :partial => 'form', :object => f %>
+  <%= render :partial => 'form', :object => f, :locals => { :organization => @context.class == Organization,
+    :user => @context.class == User } %>
 <% end %>
 
 <p>

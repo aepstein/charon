@@ -6,6 +6,9 @@
 
 <p>
 <%= link_to 'Show', @membership %> |
-<%= link_to 'Back', memberships_path %>
+<%= link_to "Back to #{@membership.user} memberships", user_memberships_path( @membership.user ) %>
+<% if @membership.organization -%>
+ | <%= link_to "Back to #{@membership.organization} memberships", organization_memberships_path( @membership.organization ) %>
+<% end -%>
 </p>
 

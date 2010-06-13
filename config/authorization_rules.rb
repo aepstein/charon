@@ -18,11 +18,13 @@ authorization do
       :roles, :structures, :user_status_criterions ], :to => [ :show ]
 
     has_permission_on [ :memberships ], :to => :show do
-      if_attribute :user_id => is { user.id }
-      if_attribute :organization_id => is_in { user.organization_ids }
+      if_permitted_to :show, :user
     end
 
-    has_permission_on [ :users ], :to => [ :show, :edit, :update ] do
+    has_permission_on [ :users ], :to => [ :show ] do
+      if_attribute :organizations => intersects_with { user.organizations }
+    end
+    has_permission_on [ :users ], :to => [ :edit, :update ] do
       if_attribute :id => is { user.id }
     end
 

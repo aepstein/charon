@@ -1,3 +1,5 @@
+require 'factory_girl'
+
 Factory.define :address do |f|
   f.association :addressable, :factory => :user
   f.sequence(:label) { |n| "Address #{n}" }

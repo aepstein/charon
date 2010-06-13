@@ -8,6 +8,9 @@ class MembershipsController < ApplicationController
   # GET /organizations/:organization_id/memberships
   # GET /organizations/:organization_id/memberships.xml
   def index
+    @search = @memberships.searchlogic( params[:search] )
+    @memberships = @search.paginate( :page => params[:page] )
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @memberships }
@@ -73,7 +76,7 @@ class MembershipsController < ApplicationController
     @membership.destroy
 
     respond_to do |format|
-      format.html { redirect_to(memberships_url) }
+      format.html { redirect_to user_memberships_url @membership.user }
       format.xml  { head :ok }
     end
   end
@@ -82,15 +85,15 @@ class MembershipsController < ApplicationController
 
   def initialize_context
     @membership = Membership.find params[:id] if params[:id]
-    @context = @organization = Organization.find params[:organization_id] if params[:organization_id]
-    @context = @user = User.find params[:user_id] if params[:user_id]
+    @context = Organization.find params[:organization_id] if params[:organization_id]
+    @context = User.find params[:user_id] if params[:user_id]
   end
 
   def initialize_index
     @memberships = Membership
-    @memberships = @memberships.scoped( :organization_id => @organization.id ) if @organization
-    @memberships = @memberships.scoped( :user_id => @user.id ) if @user.id
-    @memberships.with_permissions_to( :show )
+    @memberships = @memberships.scoped( :conditions => { :organization_id => @context.id } ) if @context && @context.class == Organization
+    @memberships = @memberships.scoped( :conditions => { :user_id => @context.id } ) if @context && @context.class == User
+    @memberships = @memberships.with_permissions_to( :show )
   end
 
   def new_membership_from_params
