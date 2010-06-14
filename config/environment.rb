@@ -55,6 +55,7 @@ Rails::Initializer.run do |config|
   config.gem 'validation_reflection'
   config.gem 'formtastic', :source => 'http://gemcutter.org'
   config.gem 'declarative_authorization'
+  config.gem 'sqlite3-ruby', :version => '!= 1.3.0', :lib => 'sqlite3'
 
   config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
 end

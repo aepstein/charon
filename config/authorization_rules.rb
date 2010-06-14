@@ -24,7 +24,7 @@ authorization do
     has_permission_on [ :users ], :to => [ :show ] do
       if_attribute :organizations => intersects_with { user.organizations }
     end
-    has_permission_on [ :users ], :to => [ :edit, :update ] do
+    has_permission_on [ :users ], :to => [ :show, :edit, :update ] do
       if_attribute :id => is { user.id }
     end
 
