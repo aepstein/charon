@@ -56,10 +56,8 @@ Rails::Initializer.run do |config|
   config.gem 'formtastic', :source => 'http://gemcutter.org'
   config.gem 'declarative_authorization'
   config.gem 'sqlite3-ruby', :version => '!= 1.3.0', :lib => 'sqlite3'
+  config.gem 'composite_primary_keys'
 
   config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
 end
-
-CalendarDateSelect.format = :hyphen_ampm
-Formtastic::SemanticFormHelper.builder = CustomFormBuilder
 

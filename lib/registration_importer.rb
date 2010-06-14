@@ -92,5 +92,6 @@ module RegistrationImporter
     end
 
   end
+
 end
 
