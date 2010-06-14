@@ -1,5 +1,6 @@
 class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
+  FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
   default_scope :order => "registrations.name ASC, registrations.parent_id DESC"
   named_scope :active, :joins => 'LEFT JOIN registrations AS r ON registrations.id = r.parent_id',
    :conditions => 'r.id IS NULL'
@@ -16,6 +17,7 @@ class Registration < ActiveRecord::Base
   acts_as_tree
 
   belongs_to :organization
+  belongs_to :registration_term, :foreign_key => :external_term_id, :primary_key => :external_id
   has_many :memberships, :dependent => :destroy do
     def with_role(role)
       self.select { |membership| membership.role_id == role.id }
@@ -98,6 +100,14 @@ class Registration < ActiveRecord::Base
   def percent_members_of_type(type)
     ( send('number_of_' + type) * 100.0 ) / ( number_of_undergrads +
       number_of_grads + number_of_staff + number_of_faculty + number_of_others )
+  end
+
+  def funding_sources
+    FUNDING_SOURCES.reject { |s| ((funding_sources_mask || 0) & 2**FUNDING_SOURCES.index(s)).zero? }
+  end
+
+  def funding_sources=(sources)
+    self.funding_sources_mask = (FUNDING_SOURCES & sources).map { |s| 2**FUNDING_SOURCES.index(s) }.sum
   end
 
   # Eliminates reference to parent registration if registration is not in

@@ -30,7 +30,7 @@ production:
 
 external_registrations:
   adapter: mysql
-  database: sao_test
+  database: new_sao
   username: root
   host: localhost
 
