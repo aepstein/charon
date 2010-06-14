@@ -75,7 +75,7 @@ Feature: Manage memberships
       | user         | Focus organization, | Organization |
       | organization | John Doe (zzz333)   | User         |
 
-  Scenario: Delete and list nodes
+  Scenario: Delete and list memberships
     Given a user: "a" exists with last_name: "Alpha"
     And a user: "b" exists with last_name: "Beta"
     And a user: "c" exists with last_name: "Camma"
