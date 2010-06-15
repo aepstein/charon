@@ -20,9 +20,11 @@ class RemoveContactsFromRegistration < ActiveRecord::Migration
     remove_column :registrations, :adv_last_name
     remove_column :registrations, :adv_email
     remove_column :registrations, :adv_net_id
+    remove_column :registrations, :adv_address
   end
 
   def self.down
+    add_column :registrations, :adv_address, :string
     add_column :registrations, :adv_net_id, :string
     add_column :registrations, :adv_email, :string
     add_column :registrations, :adv_last_name, :string
@@ -45,3 +47,4 @@ class RemoveContactsFromRegistration < ActiveRecord::Migration
     add_column :registrations, :pre_first_name, :string
   end
 end
+

@@ -1,5 +1,6 @@
 module RegistrationImporter
   class ExternalRegistration < ActiveRecord::Base
+
     include RegistrationImporter
 
     MAP = {
@@ -23,10 +24,10 @@ module RegistrationImporter
       :membership_ugrad, :membership_grad, :membership_faculty, :membership_staff,
       :membership_alumni, :membership_noncornell, :updated_time ]
 
-    establish_connection :external_registrations
+    establish_connection "external_registrations_#{RAILS_ENV}".to_sym
     set_table_name "orgs"
     set_primary_keys :org_id, :term_id
-    default_scope :select => MAP.keys.join(', ')
+    default_scope :select => MAP.keys.join(', '), :include => [ :contacts ]
 
     named_scope :importable, lambda {
       max_registration = Registration.find(:first, :conditions => 'when_updated IS NOT NULL', :order => 'when_updated DESC')
@@ -38,7 +39,7 @@ module RegistrationImporter
     }
 
     has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
-      def find_or_create_users
+      def users
         m = self.inject([]) do |memo, contact|
           contact.net_ids.inject(memo) do |memberships, net_id|
             memberships << [ contact.contacttype,
@@ -68,28 +69,37 @@ module RegistrationImporter
     end
 
     def import_contacts( destination )
-      users = source.contacts.users
-      deletes = destination.memberships.reject { |m| users.include?( [m.role, m.user] ) }
+      deletes = destination.memberships.reject { |m| contacts.users.include?( [m.role, m.user] ) }
       destination.memberships.delete deletes
-      adds = users.reject { |u| destination.memberships.users.include?( u ) }
+      adds = contacts.users.reject { |u| destination.memberships.users.include?( u ) }
       adds.inject([]) do |memo, (role, user)|
-        destination.memberships.create( :role => role, :user => user, :active => term.current )
+        destination.memberships.create( :role => role, :user => user, :active => term.current? )
       end
       return (deletes + adds).length > 0
     end
 
-    # Returns number of records imported
-    def self.import
-      ExternalRegistration.importable.find_each do |source|
-        destination = Registration.find_or_initialize_by_external_id_and_external_term_id( source.org_id, source.term_id )
-        destination.attributes = source.import_attributes( REGISTRATION_ATTRIBUTES )
-        destination.save
-        source.import_contacts( destination )
-      end
+    # Returns array of information about records affected by update
+    def self.import( set = :latest )
+      adds, changes, deletes, starts = 0, 0, 0, Time.now
       ExternalTerm.all.each do |term|
-        Registration.external_term_id_equals( term.term_id ).all(
-          :conditions => ['registrations.external_id NOT IN (?)',term.registrations.map(&:org_id)] ).map(&:destroy)
+        registrations = case set
+        when :latest
+          term.registrations.latest
+        else
+          term.registrations
+        end
+        registrations.ascend_by_updated_time.all.each do |source|
+          destination = Registration.find_or_initialize_by_external_id_and_external_term_id( source.org_id, source.term_id )
+          destination.attributes = source.import_attributes( REGISTRATION_ATTRIBUTES )
+          changed = destination.changed?
+          adds += 1 if destination.new_record?
+          destination.save if changed
+          changes += 1 if source.import_contacts( destination ) || changed
+        end
+        deletes += Registration.external_term_id_equals( term.term_id ).all(
+          :conditions => ['registrations.external_id NOT IN (?)',term.registrations.map(&:org_id)] ).map(&:destroy).length
       end
+      [adds, (changes - adds), deletes, ( Time.now - starts )]
     end
 
   end

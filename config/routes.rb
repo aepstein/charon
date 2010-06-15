@@ -43,8 +43,10 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   map.resources :roles
-  map.resources :registrations, :shallow => true do |registration|
-    registration.resource :organization, :only => [ :new, :create ]
+  map.resources :registration_terms, :shallow => true do |term|
+    term.resources :registrations, :only => [ :index, :show ] do |registration|
+      registration.resource :organization, :only => [ :new, :create ]
+    end
   end
   map.login 'login', :controller => 'user_sessions', :action => 'new'
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'

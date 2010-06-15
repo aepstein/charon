@@ -3,7 +3,8 @@ authorization do
     has_permission_on [ :addresses, :agreements, :approvers,
       :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
       :items, :nodes, :organizations, :permissions, :registration_criterions,
-      :registrations, :requests, :roles, :structures, :users, :user_status_criterions ],
+      :registrations, :registration_terms, :requests, :roles, :structures, :users,
+      :user_status_criterions ],
       :to => [ :manage ]
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
     has_permission_on [ :requests, :agreements ], :to => [ :unapprove ]
@@ -15,7 +16,8 @@ authorization do
   role :user do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
       :frameworks, :nodes, :organizations, :registration_criterions,
-      :roles, :structures, :user_status_criterions ], :to => [ :show ]
+      :registration_terms, :roles, :structures, :user_status_criterions ],
+      :to => [ :show ]
 
     has_permission_on [ :memberships ], :to => :show do
       if_permitted_to :show, :user

@@ -12,11 +12,12 @@ class RegistrationCriterion < ActiveRecord::Base
   after_update 'Fulfillment.unfulfill self'
 
   def organization_ids
-    # TODO a registration will be considered current/active IFF external_id is set -- correct?
+    registration_term_ids = RegistrationTerm.current.map(&:external_id)
+    return [] if registration_term_ids.empty?
     connection.select_values(
       "SELECT DISTINCT organizations.id FROM organizations INNER JOIN registrations " +
       "WHERE organizations.id = registrations.organization_id AND " +
-      "registrations.external_id IS NOT NULL AND " +
+      "registrations.external_term_id IN (#{registration_term_ids.join ','}) AND " +
       (must_register? ? "registrations.registered = #{connection.quote true} AND " : "") +
       "#{minimal_percentage} <= ( number_of_#{type_of_member} * 100.0 / ( " +
       "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + number_of_others ) )"

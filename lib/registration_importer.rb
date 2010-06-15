@@ -6,8 +6,8 @@ module RegistrationImporter
   module InstanceMethods
 
     def import_attributes( set )
-      set.inject({}) do |memo, ( source, destination )|
-        memo[destination] = send(source) if send("#{source}?")
+      set.inject({}) do |memo, source|
+        memo[ self.class::MAP[source] ] = send(source) if send("#{source}?")
         memo
       end
     end

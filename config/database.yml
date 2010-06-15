@@ -28,9 +28,21 @@ production:
   pool: 5
   timeout: 5000
 
-external_registrations:
+external_registrations_development:
   adapter: mysql
   database: new_sao
+  username: root
+  host: localhost
+
+external_registrations_test:
+  adapter: mysql
+  database: sao_test
+  username: root
+  host: localhost
+
+external_registrations_production:
+  adapter: mysql
+  database: sao_test
   username: root
   host: localhost
 
