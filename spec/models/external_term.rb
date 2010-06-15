@@ -1,8 +1,12 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec/lib/importer_tests'
 
 describe RegistrationImporter::ExternalTerm do
+
+  include SpecImporterTests
+
   before(:each) do
-    RegistrationImporter::ExternalTerm.delete_all
+    clean_external_registrations_db
     @term = Factory(:external_term)
   end
 
@@ -28,19 +32,6 @@ describe RegistrationImporter::ExternalTerm do
     import_result_test RegistrationImporter::ExternalTerm.import, [ 0, 1, 0 ]
     @term.destroy
     import_result_test RegistrationImporter::ExternalTerm.import, [ 0, 0, 1 ]
-  end
-
-  def getter_tests(object,tests)
-    tests.each do |parameters|
-      object.send(:write_attribute, parameters[0], parameters[1])
-      object.send(parameters[0]).should parameters[2]
-    end
-  end
-
-  def import_result_test(actual,expected)
-    expected.each_index do |i|
-      actual[ i ].should eql expected[ i ]
-    end
   end
 
 end
