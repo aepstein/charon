@@ -3,9 +3,9 @@ module RegistrationImporter
     MAP = {
       :org_id      => :external_id,
       :term_id     => :external_term_id,
-      :contacttype => :role_id,
+      :contacttype => :role,
       :title       => :title,
-      :net_id       => :net_id,
+      :netid       => :net_id,
       :email       => :email,
       :firstname   => :first_name,
       :lastname    => :last_name
@@ -40,8 +40,7 @@ module RegistrationImporter
 
     def contacttype
       role = Role.find_or_create_by_name ROLE_MAP[ read_attribute(:contacttype) ]
-      return nil if role.new_record?
-      role.id
+      role.new_record? ? nil : role
     end
 
     def net_ids

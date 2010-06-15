@@ -19,6 +19,10 @@ module RegistrationImporter
       :membership_noncornell => :number_of_others,
       :updated_time          => :when_updated
     }
+    REGISTRATION_ATTRIBUTES = [ :name, :purpose, :orgtype, :reg_approved, :funding,
+      :membership_ugrad, :membership_grad, :membership_faculty, :membership_staff,
+      :membership_alumni, :membership_noncornell, :updated_time ]
+
     establish_connection :external_registrations
     set_table_name "orgs"
     set_primary_keys :org_id, :term_id
@@ -35,17 +39,17 @@ module RegistrationImporter
 
     has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
       def find_or_create_users
-        inject({}) do |memo, contact|
-          memo[ contact.contacttype ] ||= Array.new
-          memo[ contact.contacttype ] << contact.net_ids.inject( [] ) do |users, net_id|
-            users << User.find_or_create_by_net_id( net_id, contact.import_attributes_for_user )
+        m = self.inject([]) do |memo, contact|
+          contact.net_ids.inject(memo) do |memberships, net_id|
+            memberships << [ contact.contacttype,
+              User.find_or_create_by_net_id( net_id, contact.import_attributes(
+                RegistrationImporter::ExternalContact::USER_ATTRIBUTES ) ) ]
           end
         end
+        m.uniq
       end
     end
     belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => [ :term_id ]
-
-    def self.import_class; Registration; end
 
     def registration_approved
       read_attribute(:reg_approved) == 'Yes'
@@ -63,40 +67,29 @@ module RegistrationImporter
       Time.zone.at read_attribute(:updated_time)
     end
 
-    # Returns number of records imported
-    def self.import(registrations = nil)
-      registrations ||= ExternalRegistration.importable
-      count, destroy_count = 0, 0
-      Registration.transaction do
-        registrations.each do |external|
-          registration = Registration.find_or_initialize_by_external_id( external.org_id, :external_term_id => external.term_id )
-          registration.attributes = external.import_attributes
-          registration.save
-          external_contacts.find_or_create_users.inject([]) do |memberships, ( role, users )|
-            users.each do |user|
-              registration.memberships.find_or_create( :role => role, :user => user, :active => external.term )
-            end
-          end
-          external.external_contacts.each do |contact|
-            users = contact.net_ids.inject([]) do |memo, net_id|
-              memo << User.find_or_create_by_net_id( net_id, contact.import_attributes_for_user )
-            end
-            users.inject([]) do |memo, user|
-              registration.memberships.find_or_create( :user_id => user.id, :role_id =>  )
-            end
-          end
-
-#          count += 1 if changed
-        end
-        ExternalTerm.all( :include => [ :external_registrations ] ).each do |term|
-          Registration.external_term_id_equals( term.id ).all( :conditions => [
-            'registrations.external_id NOT IN (?)',
-            term.external_registrations.map(&:org_id) ] ).each do |registration|
-            registration.destroy && destroy_count += 1
-          end
-        end
+    def import_contacts( destination )
+      users = source.contacts.users
+      deletes = destination.memberships.reject { |m| users.include?( [m.role, m.user] ) }
+      destination.memberships.delete deletes
+      adds = users.reject { |u| destination.memberships.users.include?( u ) }
+      adds.inject([]) do |memo, (role, user)|
+        destination.memberships.create( :role => role, :user => user, :active => term.current )
       end
-      [count, destroy_count]
+      return (deletes + adds).length > 0
+    end
+
+    # Returns number of records imported
+    def self.import
+      ExternalRegistration.importable.find_each do |source|
+        destination = Registration.find_or_initialize_by_external_id_and_external_term_id( source.org_id, source.term_id )
+        destination.attributes = source.import_attributes( REGISTRATION_ATTRIBUTES )
+        destination.save
+        source.import_contacts( destination )
+      end
+      ExternalTerm.all.each do |term|
+        Registration.external_term_id_equals( term.term_id ).all(
+          :conditions => ['registrations.external_id NOT IN (?)',term.registrations.map(&:org_id)] ).map(&:destroy)
+      end
     end
 
   end

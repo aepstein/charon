@@ -5,12 +5,11 @@ module RegistrationImporter
 
   module InstanceMethods
 
-    def import_attributes_for_local
-      out = Hash.new
-      MAP.each_pair do |key, value|
-        out[value] = send(key) if send("#{key}?")
+    def import_attributes( set )
+      set.inject({}) do |memo, ( source, destination )|
+        memo[destination] = send(source) if send("#{source}?")
+        memo
       end
-      out
     end
 
   end

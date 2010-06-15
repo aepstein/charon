@@ -7,6 +7,9 @@ module RegistrationImporter
       :reg_start_time => :starts_at,
       :reg_end_time   => :ends_at
     }
+    REGISTRATION_TERM_ATTRIBUTES = [ :term_ldescr, :current, :reg_start_time, :reg_end_time ]
+
+    include RegistrationImporter
 
     establish_connection :external_registrations
     set_table_name "terms"
@@ -30,9 +33,12 @@ module RegistrationImporter
     end
 
     def self.import
-      ExternalTerm.all.each do |term|
-
+      ExternalTerm.all.each do |source|
+        destination = RegistrationTerm.find_or_initialize_by_external_id( source.term_id )
+        destination.attributes = source.import_attributes( REGISTRATION_TERM_ATTRIBUTES )
+        destination.save
       end
+      RegistrationTerm.all( :conditions => ['external_id NOT IN (?)', ExternalTerm.all.map(&:term_id)] ).map(&:destroy)
     end
 
   end

@@ -19,65 +19,11 @@ class Registration < ActiveRecord::Base
   belongs_to :organization
   belongs_to :registration_term, :foreign_key => :external_term_id, :primary_key => :external_id
   has_many :memberships, :dependent => :destroy do
-    def with_role(role)
-      self.select { |membership| membership.role_id == role.id }
-    end
-    # Synchronizes relational memberships with flat record
-    # users is an array of users who should be in the role
-    # role is a Role object
-    def synchronize(users,role)
-      self.with_role(role).each do |membership|
-        if users.include?(membership.user)
-          users.delete membership.user
-          membership.organization = proxy_owner.organization if proxy_owner.organization_id_changed?
-          membership.active = proxy_owner.active?
-          membership.save if membership.changed?
-        else
-          self.delete membership
-        end
-      end
-      users.each do |user|
-        self.create( :user => user,
-                     :role => role,
-                     :organization => proxy_owner.organization,
-                     :active => proxy_owner.active? )
-      end
+    def users
+      self.map { |membership| [ membership.role, membership.user ] }
     end
   end
-  has_many :users, :through => :memberships, :uniq => true do
-    # Creates User records for each user identified for a particular prefix
-    # in the flat records
-    def for_prefix(prefix)
-      users = Array.new
-      net_ids_for_prefix(prefix).each do |net_id|
-        user = User.find_or_initialize_by_net_id(net_id)
-        if user.new_record?
-          user.attributes = attributes_for_prefix(prefix)
-          user.save
-        end
-        users << user
-      end
-      users
-    end
-
-    def attributes_for_prefix(prefix)
-      { :first_name => proxy_owner.send("#{prefix}_first_name") || '',
-        :last_name => proxy_owner.send("#{prefix}_last_name") || '',
-        :password => 'secret',
-        :password_confirmation => 'secret' }
-    end
-
-    def net_ids_for_prefix(prefix)
-      net_ids = Array.new
-      %w( email net_id ).each do |value|
-        if proxy_owner.send("#{prefix}_#{value}?")
-          net_ids += proxy_owner.send("#{prefix}_#{value}").to_net_ids
-        end
-      end
-      net_ids.uniq
-    end
-
-  end
+  has_many :users, :through => :memberships, :uniq => true
 
   validates_uniqueness_of :id
 
@@ -120,32 +66,9 @@ class Registration < ActiveRecord::Base
     organization.update_attributes( name.to_organization_name_attributes ) if organization_id? && active?
   end
 
-  # Synchronizes memberships associated with this registration
-  # Eliminates memberships no longer asserted by the registration
-  # Adds new memberships asserted by the registration
-  # Touches parent if it still has active memberships
-  # TODO: Keep in mind that as presently structured, each prefix must correspond
-  # to a different role or some records will not be correctly synchronized.
-  def synchronize_memberships
-    Registration.prefix_map.each do |prefix, role|
-      memberships.synchronize( users.for_prefix(prefix),
-                               role )
-    end
-    parent.touch if parent_id? && parent.memberships.active.size > 0
-  end
-
   def percent_members_of_type(type)
     self.send("number_of_#{type.to_s}") * 100.0 / ( number_of_undergrads +
       number_of_grads + number_of_staff + number_of_faculty + number_of_others )
-  end
-
-  def eligible_for?(framework)
-    return false unless registered?
-    if framework.member_percentage
-      return percent_members_of_type(framework.member_percentage_type) >= framework.member_percentage
-    else
-      true
-    end
   end
 
   def self.find_or_create_by_external_registration( e )
@@ -166,18 +89,6 @@ class Registration < ActiveRecord::Base
     return organization unless organization.nil?
     params = Hash.new if params.nil?
     build_organization( params.merge( name.to_organization_name_attributes ) )
-  end
-
-  def active?
-    children.empty?
-  end
-
-  def self.prefix_map
-    @@prefix_map ||= {'pre' =>     Role.find_or_create_by_name('president'),
-                      'vpre' =>    Role.find_or_create_by_name('vice-president'),
-                      'tre' =>     Role.find_or_create_by_name('treasurer'),
-                      'adv' =>     Role.find_or_create_by_name('advisor'),
-                      'officer' => Role.find_or_create_by_name('officer') }
   end
 
   def to_s; name; end
