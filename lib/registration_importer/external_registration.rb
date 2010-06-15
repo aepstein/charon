@@ -11,6 +11,7 @@ module RegistrationImporter
       :purpose               => :purpose,
       :orgtype               => :independent,
       :reg_approved          => :registered,
+      :sports_club           => :sports_club,
       :funding               => :funding_sources,
       :membership_ugrad      => :number_of_undergrads,
       :membership_grad       => :number_of_grads,
@@ -20,9 +21,9 @@ module RegistrationImporter
       :membership_noncornell => :number_of_others,
       :updated_time          => :when_updated
     }
-    REGISTRATION_ATTRIBUTES = [ :name, :purpose, :orgtype, :reg_approved, :funding,
-      :membership_ugrad, :membership_grad, :membership_faculty, :membership_staff,
-      :membership_alumni, :membership_noncornell, :updated_time ]
+    REGISTRATION_ATTRIBUTES = [ :name, :purpose, :orgtype, :reg_approved, :sports_club,
+      :funding, :membership_ugrad, :membership_grad, :membership_faculty,
+      :membership_staff, :membership_alumni, :membership_noncornell, :updated_time ]
 
     establish_connection "external_registrations_#{RAILS_ENV}".to_sym
     set_table_name "orgs"
@@ -40,28 +41,29 @@ module RegistrationImporter
 
     has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
       def users
-        m = self.inject([]) do |memo, contact|
-          contact.net_ids.inject(memo) do |memberships, net_id|
-            memberships << [ contact.contacttype,
-              User.find_or_create_by_net_id( net_id, contact.import_attributes(
-                RegistrationImporter::ExternalContact::USER_ATTRIBUTES ) ) ]
-          end
+        all.inject([]) do |memo, contact|
+          contact.users.each { |user| memo << user }
+          memo.uniq
         end
-        m.uniq
       end
     end
     belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => [ :term_id ]
 
-    def registration_approved
-      read_attribute(:reg_approved) == 'Yes'
+    def reg_approved
+      read_attribute(:reg_approved) == 'YES'
     end
 
     def funding
+      return [] unless funding?
       read_attribute(:funding).downcase.split(',')
     end
 
     def orgtype
       read_attribute(:orgtype) == 'CIO'
+    end
+
+    def sports_club
+      read_attribute(:sports_club) == 'YES'
     end
 
     def updated_time

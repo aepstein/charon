@@ -9,13 +9,15 @@ end
 
 Factory.define :external_registration, :class => RegistrationImporter::ExternalRegistration do |f|
   f.association :term, :factory => :external_term
+  f.sequence(:org_id) { |n| n }
   f.sequence(:name) { |n| "External registration #{n}" }
   f.orgtype 'CIO'
+  f.reg_approved 'YES'
+  f.sports_club 'YES'
 end
 
 Factory.define :external_contact, :class => RegistrationImporter::ExternalContact do |f|
-  f.association :organization, :factory => :external_registration
-  f.term { |c| c.organization.term }
+  f.association :registration, :factory => :external_registration
   f.contacttype RegistrationImporter::ExternalContact::ROLE_MAP.keys.first
 end
 

@@ -14,8 +14,6 @@ class Registration < ActiveRecord::Base
         "number_of_others ) )", percent.to_i] }
   }
 
-  acts_as_tree
-
   belongs_to :organization
   belongs_to :registration_term, :foreign_key => :external_term_id, :primary_key => :external_id
   has_many :memberships, :dependent => :destroy do

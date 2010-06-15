@@ -13,7 +13,7 @@ module RegistrationImporter
       :firstname   => :first_name,
       :lastname    => :last_name
     }
-    USER_ATTRIBUTES = [ :email, :firstname, :lastname ]
+    USER_ATTRIBUTES = [ :firstname, :lastname ]
     MEMBERSHIP_ATTRIBUTES = [ :contacttype ]
     ROLE_MAP = {
       'PRES' => 'president',
@@ -31,16 +31,14 @@ module RegistrationImporter
     belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
     belongs_to :registration, :class_name => 'ExternalRegistration', :foreign_key => [ :org_id, :term_id ]
 
-    def import_attributes_for( set )
-      MAP.inject({}) do |memo, (external, local)|
-        memo[ local ] = send(external) if set.include?( external ) && send("#{external}?")
-        memo
+    def users
+      net_ids.inject([]) do |memo, net_id|
+        user = User.find_or_initialize_by_net_id( net_id )
+        user.attributes = import_attributes( USER_ATTRIBUTES )
+        user.save!
+        memo << [ contacttype, user ]
       end
     end
-
-    def import_attributes_for_user; import_attributes_for( USER_ATTRIBUTES ); end
-
-    def import_attributes_for_membership; import_attributes_for( MEMBERSHIP_ATTRIBUTES ); end
 
     def contacttype
       role = Role.find_or_create_by_name ROLE_MAP[ read_attribute(:contacttype) ]

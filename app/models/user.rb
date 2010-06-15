@@ -16,6 +16,7 @@ class User < ActiveRecord::Base
 
   acts_as_authentic do |c|
     c.login_field = 'net_id'
+    c.validate_email_field = false
   end
 
   has_many :approvals do
@@ -66,9 +67,11 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :addresses, :allow_destroy => true,
      :reject_if => proc { |address| address[:street].blank? }
 
-  validates_presence_of     :net_id
-  validates_uniqueness_of   :net_id
-  before_validation_on_create :extract_email
+  validates_presence_of :net_id
+  validates_uniqueness_of :net_id
+  validates_format_of :email, :with => Authlogic::Regex.email
+
+  before_validation_on_create :extract_email, :initialize_password
   validates_inclusion_of    :status, :in => STATUSES
   before_validation :import_simple_ldap_attributes
   before_validation_on_create { |user| user.addresses.each { |address| address.addressable = user } }
@@ -78,6 +81,10 @@ class User < ActiveRecord::Base
   def requests; Request.organization_id_equals_any( organization_ids ); end
 
   def request_ids; requests.map(&:id); end
+
+  def initialize_password
+    reset_password if password.blank?
+  end
 
   def user_status_criterions
     UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
