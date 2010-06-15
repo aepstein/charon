@@ -148,6 +148,15 @@ class Registration < ActiveRecord::Base
     end
   end
 
+  def self.find_or_create_by_external_registration( e )
+    registration = external_id_equals( e.org_id ).external_term_id_equals( e.term_id ).first || Registration.new
+    unless registration.new_record?
+      registration.organization = Organization.registration_external_id_equals( e.org_id ).first
+    end
+    registration.attributes = e.import_attributes_for_local
+    registration
+  end
+
   def find_or_create_organization( params=nil )
     find_or_build_organization( params ).save if organization.nil? || organization.new_record?
     organization

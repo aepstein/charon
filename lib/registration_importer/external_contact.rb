@@ -5,12 +5,12 @@ module RegistrationImporter
       :term_id     => :external_term_id,
       :contacttype => :role_id,
       :title       => :title,
-      :netid       => :net_id,
+      :net_id       => :net_id,
       :email       => :email,
       :firstname   => :first_name,
       :lastname    => :last_name
     }
-    USER_ATTRIBUTES = [ :netid, :firstname, :lastname ]
+    USER_ATTRIBUTES = [ :email, :firstname, :lastname ]
     MEMBERSHIP_ATTRIBUTES = [ :contacttype ]
     ROLE_MAP = {
       'PRES' => 'president',
@@ -25,12 +25,27 @@ module RegistrationImporter
     set_primary_keys :org_id, :term_id, :contacttype
     default_scope :select => MAP.keys.join(', ')
 
-    belongs_to :external_registration, :foreign_key => [ :org_id, :term_id ]
+    belongs_to :registration, :class_name => 'ExternalRegistration', :foreign_key => [ :org_id, :term_id ]
+
+    def import_attributes_for( set )
+      MAP.inject({}) do |memo, (external, local)|
+        memo[ local ] = send(external) if set.include?( external ) && send("#{external}?")
+        memo
+      end
+    end
+
+    def import_attributes_for_user; import_attributes_for( USER_ATTRIBUTES ); end
+
+    def import_attributes_for_membership; import_attributes_for( MEMBERSHIP_ATTRIBUTES ); end
 
     def contacttype
       role = Role.find_or_create_by_name ROLE_MAP[ read_attribute(:contacttype) ]
       return nil if role.new_record?
       role.id
+    end
+
+    def net_ids
+      "#{netid} #{email}".to_net_ids
     end
 
   end

@@ -13,9 +13,7 @@ module RegistrationImporter
     set_primary_key :term_id
     default_scope :select => MAP.keys.join(', ')
 
-    has_many :orgs, :class_name => 'ExternalRegistration', :foreign_key => :term_id
-
-    def self.import_class; RegistrationTerm; end
+    has_many :registrations, :class_name => 'ExternalRegistration', :foreign_key => :term_id
 
     def current
       read_attribute( :current ) == 'YES'
@@ -29,6 +27,12 @@ module RegistrationImporter
     def reg_end_time
       return nil if read_attribute(:reg_end_time).blank?
       Time.zone.at read_attribute(:reg_end_time)
+    end
+
+    def self.import
+      ExternalTerm.all.each do |term|
+
+      end
     end
 
   end

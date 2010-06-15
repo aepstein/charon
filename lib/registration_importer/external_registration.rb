@@ -30,11 +30,20 @@ module RegistrationImporter
       { :conditions => ["updated_time > ?", max_registration.when_updated.to_i ] }
       else
       { }
-      end.merge( { :order => :updated_time, :include => [ :external_contacts ] } )
+      end.merge( { :order => :updated_time, :include => [ :contacts ] } )
     }
 
-    has_many :external_contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ]
-    belongs_to :external_term, :class_name => 'ExternalTerm', :foreign_key => [ :term_id ]
+    has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
+      def find_or_create_users
+        inject({}) do |memo, contact|
+          memo[ contact.contacttype ] ||= Array.new
+          memo[ contact.contacttype ] << contact.net_ids.inject( [] ) do |users, net_id|
+            users << User.find_or_create_by_net_id( net_id, contact.import_attributes_for_user )
+          end
+        end
+      end
+    end
+    belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => [ :term_id ]
 
     def self.import_class; Registration; end
 
@@ -60,14 +69,29 @@ module RegistrationImporter
       count, destroy_count = 0, 0
       Registration.transaction do
         registrations.each do |external|
-          registration = Registration.find_or_initialize_by_external_id( external.org_id, external.term_id )
-          registration.attributes = external.import_attributes_for_local
-          registration.save && count += 1 if registration.changed?
+          registration = Registration.find_or_initialize_by_external_id( external.org_id, :external_term_id => external.term_id )
+          registration.attributes = external.import_attributes
+          registration.save
+          external_contacts.find_or_create_users.inject([]) do |memberships, ( role, users )|
+            users.each do |user|
+              registration.memberships.find_or_create( :role => role, :user => user, :active => external.term )
+            end
+          end
+          external.external_contacts.each do |contact|
+            users = contact.net_ids.inject([]) do |memo, net_id|
+              memo << User.find_or_create_by_net_id( net_id, contact.import_attributes_for_user )
+            end
+            users.inject([]) do |memo, user|
+              registration.memberships.find_or_create( :user_id => user.id, :role_id =>  )
+            end
+          end
+
+#          count += 1 if changed
         end
-        ExternalTerm.each do |term|
+        ExternalTerm.all( :include => [ :external_registrations ] ).each do |term|
           Registration.external_term_id_equals( term.id ).all( :conditions => [
             'registrations.external_id NOT IN (?)',
-            ExternalRegistration.term_id_equals( term.id ).map(&:org_id) ] ).each do |registration|
+            term.external_registrations.map(&:org_id) ] ).each do |registration|
             registration.destroy && destroy_count += 1
           end
         end
