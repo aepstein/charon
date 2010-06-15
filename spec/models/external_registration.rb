@@ -48,8 +48,11 @@ describe RegistrationImporter::ExternalRegistration do
   it 'should manage contacts for an imported record correctly' do
     @contact = Factory(:external_contact, :registration => @registration, :netid => 'zzz999', :contacttype => 'PRES')
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 1, 0, 0 ]
-    import = Registration.first
-    import.users.size.should eql 1
+    import = Registration.external_id_equals(@contact.org_id).external_term_id_equals(@contact.term_id).first
+    Membership.all.each do |m|
+      puts "Membership: #{m.registration} #{m.user} #{m.role}"
+    end
+    import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz999'
   end
 
