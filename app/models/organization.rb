@@ -8,7 +8,11 @@ class Organization < ActiveRecord::Base
     end
   end
   has_many :memberships
-  has_many :roles, :through => :memberships
+  has_many :roles, :through => :memberships do
+    def user_id_equals( id )
+      scoped( :conditions => [ 'memberships.user_id = ?', id ] )
+    end
+  end
   has_many :bases do
     def requestable
       Basis.open.no_draft_request_for( proxy_owner )

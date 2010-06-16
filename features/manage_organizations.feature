@@ -97,7 +97,7 @@ Feature: Manage organizations
       | requestor | released  | see       | not see | not see   | not see   | not see  | see      |
 
   Scenario Outline: Register a new organization and edit
-    Given a registration exists with name: "Cornell Club", registered: true
+    Given a current_registration exists with name: "Cornell Club", registered: true
     And I log in as user: "admin"
     And I am on the new organization <context>
     When I fill in "First name" with "Cornell"
@@ -122,7 +122,6 @@ Feature: Manage organizations
       | context                   | registered |
       | page                      | No         |
       | page for the registration | Yes        |
-
 
   Scenario: Search organizations
     Given there are no organizations

@@ -124,12 +124,12 @@ Feature: Manage users
   Scenario: Show organizations and unmatched registrations for the current user
     Given a role: "president" exists with name: "president"
     And a role: "allowed" exists with name: "allowed"
-    And an organization: "matched" exists with last_name: "matched organization"
+    And a organization: "matched" exists with last_name: "matched organization"
     And an organization: "unregistered" exists with last_name: "unregistered organization"
     And an organization: "irrelevant" exists with last_name: "irrelevant organization"
-    And a registration: "matched" exists with organization: organization "matched"
-    And a registration: "unmatched" exists with name: "unmatched organization"
-    And a registration: "irrelevant registration" exists with name: "irrelevant registration"
+    And a current_registration: "matched" exists with organization: organization "matched"
+    And a current_registration: "unmatched" exists with name: "unmatched organization"
+    And a current_registration: "irrelevant registration" exists with name: "irrelevant registration"
     And a membership exists with user: user "owner", role: role "allowed", registration: registration "matched"
     And a membership exists with user: user "owner", role: role "allowed", registration: registration "unmatched"
     And a membership exists with user: user "owner", role: role "allowed", organization: organization "unregistered", active: true

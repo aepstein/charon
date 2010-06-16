@@ -43,6 +43,9 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   map.resources :roles
+  map.resources :registrations, :only => [ :index ] do |registration|
+    registration.resources :memberships, :only => [ :index ]
+  end
   map.resources :registration_terms, :shallow => true do |term|
     term.resources :registrations, :only => [ :index, :show ] do |registration|
       registration.resource :organization, :only => [ :new, :create ]
