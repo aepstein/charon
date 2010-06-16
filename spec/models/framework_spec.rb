@@ -28,24 +28,24 @@ describe Framework do
     setup_requirements_scenario
     no_requirements_framework = Factory(:framework)
     @fulfillers.keys.each do |fulfiller|
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should include @framework
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should include no_requirements_framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should_not include @framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should_not include no_requirements_framework
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should include @framework
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should include no_requirements_framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should_not include @framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should_not include no_requirements_framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should include @framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should include no_requirements_framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should_not include @framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should_not include no_requirements_framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should include @framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should include no_requirements_framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should_not include @framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should_not include no_requirements_framework
     end
     @unfulfillers.values.each do |fulfiller|
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should_not include @framework
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should include no_requirements_framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should include @framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first ).should_not include no_requirements_framework
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should include @framework
-      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should include no_requirements_framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should_not include @framework
-      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last ).should_not include no_requirements_framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should_not include @framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should include no_requirements_framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should include @framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.first, nil ).should_not include no_requirements_framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should include @framework
+      Framework.fulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should include no_requirements_framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should_not include @framework
+      Framework.unfulfilled_for( fulfiller, Edition::PERSPECTIVES.last, nil ).should_not include no_requirements_framework
     end
   end
 

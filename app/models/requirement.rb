@@ -1,6 +1,7 @@
 class Requirement < ActiveRecord::Base
   belongs_to :framework
   belongs_to :fulfillable, :polymorphic => true
+  belongs_to :role
 
   validates_presence_of :framework
   validates_presence_of :fulfillable
