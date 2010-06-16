@@ -74,8 +74,8 @@ module RegistrationImporter
       deletes = destination.memberships.reject { |m| contacts.users.include?( [m.role, m.user] ) }
       destination.memberships.delete deletes unless deletes.empty?
       adds = contacts.users.reject { |u| destination.memberships.users.include? u }
-      adds.inject([]) do |memo, (role, user)|
-        destination.memberships.create( :role => role, :user => user )
+      adds.each do |pair|
+        destination.memberships.create( :role => pair.first, :user => pair.last )
       end
       return (deletes + adds).length > 0
     end

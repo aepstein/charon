@@ -59,8 +59,16 @@ class Registration < ActiveRecord::Base
     registration_term.current?
   end
 
+  # Auto discover organization association through the external_id
+  # Update associate organizations
   def update_organization
-    organization.update_attributes( name.to_organization_name_attributes ) if organization_id? && current?
+    if organization.blank?
+      organizations = Registration.external_id_equals( external_id ).organization_id_not_null.all(:include => :organization).map(&:organization).uniq
+      self.organization = organizations.first if organizations.length == 1
+    end
+    if organization && current?
+      organization.update_attributes( name.to_organization_name_attributes )
+    end
   end
 
   def percent_members_of_type(type)

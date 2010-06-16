@@ -5,9 +5,7 @@ class Membership < ActiveRecord::Base
   default_scope :include => [ :user, :organization ],
     :order => 'organizations.last_name, organizations.first_name, users.last_name, users.first_name, users.net_id'
   named_scope :active, :conditions => { :active => true }
-  named_scope :in, lambda { |organization_ids|
-    { :conditions => { :organization_id => organization_ids } }
-  }
+  named_scope :inactive, :conditions => [ 'memberships.active IS NULL or memberships.active = ?', false ]
 
   belongs_to :user
   belongs_to :role
@@ -21,10 +19,10 @@ class Membership < ActiveRecord::Base
   validate :must_have_registration_or_organization
 
   def set_organization_from_registration
-    if registration && ( organization != registration.organization ) then
-      self.organization = registration.organization
+    unless registration.blank?
+      self.active = registration.active?
+      self.organization = registration.organization unless registration.organization.blank?
     end
-    self.active = registration.active? if registration
   end
 
   def must_have_registration_or_organization

@@ -49,11 +49,18 @@ describe RegistrationImporter::ExternalRegistration do
     @contact = Factory(:external_contact, :registration => @registration, :netid => 'zzz999', :contacttype => 'PRES')
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 1, 0, 0 ]
     import = Registration.external_id_equals(@contact.org_id).external_term_id_equals(@contact.term_id).first
-    Membership.all.each do |m|
-      puts "Membership: #{m.registration} #{m.user} #{m.role}"
-    end
     import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz999'
+    @contact.netid = 'zzz998'
+    @contact.save
+    import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 1, 0 ]
+    import.reload
+    import.users.length.should eql 1
+    import.users.first.net_id.should eql 'zzz998'
+    @contact.destroy
+    import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 1, 0 ]
+    import.reload
+    import.users.should be_empty
   end
 
 end
