@@ -72,7 +72,7 @@ module RegistrationImporter
 
     def import_contacts( destination )
       deletes = destination.memberships.reject { |m| contacts.users.include?( [m.role, m.user] ) }
-      destination.memberships.delete deletes unless deletes.empty?
+      destination.memberships.delete( deletes ) unless deletes.empty?
       adds = contacts.users.reject { |u| destination.memberships.users.include? u }
       adds.each do |pair|
         destination.memberships.create( :role => pair.first, :user => pair.last )
