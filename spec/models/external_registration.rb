@@ -54,6 +54,7 @@ describe RegistrationImporter::ExternalRegistration do
     @contact.netid = 'zzz998'
     @contact.save
     import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 1, 0 ]
+    import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 0, 0 ]
     import.reload
     import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz998'
