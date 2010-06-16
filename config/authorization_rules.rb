@@ -73,13 +73,13 @@ authorization do
     has_permission_on [ :requests ], :to => :request, :join_by => :and do
       if_permitted_to :request, :organization
       if_attribute :basis => { :framework_id => is_in { object.organization.frameworks( Edition::PERSPECTIVES.first ).map(&:id) } }
-      if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.first ) } }
+      if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.first, object.organization.roles.ids_for_user( user ) ) } }
     end
     has_permission_on [ :requests ], :to => :review, :join_by => :and do
       if_permitted_to :review, :basis
       if_attribute :organization_id => is_not_in { user.organization_ids }
       if_attribute :basis => { :framework_id => is_in { object.basis.organization.frameworks( Edition::PERSPECTIVES.last ).map(&:id) } }
-      if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.last ) } }
+      if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.last, object.basis.organization.roles.ids_for_user( user ) ) } }
     end
     has_permission_on [ :requests ], :to => :manage do
       if_permitted_to :manage, :basis

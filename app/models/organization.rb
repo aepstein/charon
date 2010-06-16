@@ -12,6 +12,9 @@ class Organization < ActiveRecord::Base
     def user_id_equals( id )
       scoped( :conditions => [ 'memberships.user_id = ?', id ] )
     end
+    def ids_for_user( user )
+      user_id_equals( user.id ).all.map(&:id)
+    end
   end
   has_many :bases do
     def requestable
