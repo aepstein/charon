@@ -34,15 +34,16 @@ describe RegistrationImporter::ExternalRegistration do
 
   it 'should import a new record successfully' do
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 1, 0, 0 ]
-    @registration.reg_approved.should be_true
-    @registration.reg_approved = 'NO'
-    @registration.save
-    @registration.reload
-    @registration.reg_approved.should be_false
+    import = Registration.first
+    import.registered?.should be_true
+    @registration.update_attribute :reg_approved, 'NO'
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 1, 0 ]
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 0, 0 ]
+    import.reload
+    import.registered?.should be_false
     @registration.destroy
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 0, 1 ]
+    Registration.all.should be_empty
   end
 
   it 'should manage contacts for an imported record correctly' do
@@ -51,8 +52,7 @@ describe RegistrationImporter::ExternalRegistration do
     import = Registration.external_id_equals(@contact.org_id).external_term_id_equals(@contact.term_id).first
     import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz999'
-    @contact.netid = 'zzz998'
-    @contact.save
+    @contact.update_attribute :netid, 'zzz998'
     import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 1, 0 ]
     import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 0, 0 ]
     import.reload
