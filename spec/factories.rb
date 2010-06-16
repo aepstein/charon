@@ -66,6 +66,10 @@ Factory.define :organization do |f|
   f.sequence(:last_name) { |n| "Organization #{n}"}
 end
 
+Factory.define :registered_organization, :parent => :organization do |f|
+  f.registrations { |o| [ o.association(:current_registration, :registered => true) ] }
+end
+
 Factory.define :framework do |f|
   f.sequence(:name) { |n| "Sequence #{n}" }
 end
@@ -91,6 +95,20 @@ Factory.define :registration do |f|
   f.sequence(:name) { |n| "Registered Organization #{n}" }
   f.sequence(:external_id) { |i| i }
   f.number_of_undergrads 1
+end
+
+Factory.define :current_registration, :parent => :registration do |f|
+  f.association :registration_term, :factory => :current_registration_term
+end
+
+Factory.define :registration_term do |f|
+  f.sequence(:external_id) { |i| i }
+  f.sequence(:description) { |n| "Registration term #{n}" }
+  f.current false
+end
+
+Factory.define :current_registration_term, :parent => :registration_term do |f|
+  f.current true
 end
 
 Factory.define :registration_criterion do |f|

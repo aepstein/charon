@@ -4,7 +4,7 @@ class Organization < ActiveRecord::Base
   has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
   has_many :registrations do
     def current
-      active.first
+      self.active.first
     end
   end
   has_many :memberships
@@ -39,7 +39,7 @@ class Organization < ActiveRecord::Base
   end
 
   def registered?
-    return false unless registrations.current
+    return false if registrations.current.blank?
     registrations.current.registered?
   end
 

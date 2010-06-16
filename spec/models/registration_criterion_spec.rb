@@ -35,9 +35,9 @@ describe RegistrationCriterion do
   end
 
   it 'should correctly fulfill organizations on create and update' do
-    members_and_registration_ok = Factory(:registration, :organization => Factory(:organization), :number_of_others => 50, :registered => true )
-    members_only_ok = Factory(:registration, :organization => Factory(:organization), :number_of_others => 50 )
-    neither_ok = Factory(:registration, :organization => Factory(:organization), :number_of_undergrads => 50 )
+    members_and_registration_ok = Factory(:current_registration, :organization => Factory(:organization), :number_of_others => 50, :registered => true )
+    members_only_ok = Factory(:current_registration, :organization => Factory(:organization), :number_of_others => 50 )
+    neither_ok = Factory(:current_registration, :organization => Factory(:organization), :number_of_undergrads => 50 )
     criterion = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'others', :must_register => true)
     criterion.fulfillments.size.should eql 1
     criterion.fulfillments.first.fulfiller_id.should eql members_and_registration_ok.organization_id

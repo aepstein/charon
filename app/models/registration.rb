@@ -15,7 +15,7 @@ class Registration < ActiveRecord::Base
   }
 
   belongs_to :organization
-  belongs_to :registration_term, :foreign_key => :external_term_id, :primary_key => :external_id
+  belongs_to :registration_term
   has_many :memberships, :dependent => :destroy do
     def users
       self.map { |membership| [ membership.role, membership.user ] }
@@ -25,7 +25,7 @@ class Registration < ActiveRecord::Base
 
   validates_uniqueness_of :id
 
-  before_save :update_organization
+  before_save :adopt_registration_term, :update_organization
   after_save 'Fulfillment.fulfill organization if organization && active?'
   after_update 'Fulfillment.unfulfill organization if organization && active?'
 
@@ -59,6 +59,8 @@ class Registration < ActiveRecord::Base
     registration_term.current?
   end
 
+  alias :current? :active?
+
   # Auto discover organization association through the external_id
   # Update associate organizations
   def update_organization
@@ -68,6 +70,15 @@ class Registration < ActiveRecord::Base
     end
     if organization && current?
       organization.update_attributes( name.to_organization_name_attributes )
+    end
+  end
+
+  def adopt_registration_term
+    if external_term_id? && ( registration_term.blank? || registration_term.external_id != external_term_id )
+      self.registration_term = RegistrationTerm.find_by_external_id( external_term_id )
+    end
+    if external_term_id.blank? && registration_term && registration_term.external_id?
+      self.external_term_id = registration_term.external_id
     end
   end
 

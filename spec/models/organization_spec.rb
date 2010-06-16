@@ -3,8 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Organization do
   before(:each) do
     @organization = Factory(:organization)
-    @registered_organization = Factory(:organization)
-    @registered_organization.registrations << Factory(:registration, { :registered => true, :number_of_undergrads => 10 })
+    @registered_organization = Factory(:registered_organization)
   end
 
   it "should create a new instance given valid attributes" do
@@ -60,8 +59,13 @@ describe Organization do
   end
 
   it "should have a registered? method that checks whether the current registration is approved" do
-    @registered_organization.registered?.should == true
-    Factory(:organization).registered?.should == false
+    @registered_organization.registrations.first.current?.should be_true
+    @registered_organization.registrations.first.registered?.should be_true
+    @registered_organization.registrations.count.should eql 1
+    Registration.active.count.should eql 1
+    @registered_organization.registrations.current.should_not be_nil
+    @registered_organization.registered?.should be_true
+    Factory(:organization).registered?.should be_false
   end
 
 end
