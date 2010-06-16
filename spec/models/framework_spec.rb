@@ -49,5 +49,36 @@ describe Framework do
     end
   end
 
+  it 'should have a fulfilled_for/unfulfilled_for scope that can be role-limited' do
+    setup_requirements_role_limited_scenario
+    Framework.fulfilled_for( @all, Edition::PERSPECTIVES.first, [] ).should include @framework
+    Framework.unfulfilled_for( @all, Edition::PERSPECTIVES.first, [] ).should_not include @framework
+    Framework.fulfilled_for( @all, Edition::PERSPECTIVES.first, [@limited_role.id] ).should include @framework
+    Framework.unfulfilled_for( @all, Edition::PERSPECTIVES.first, [@limited_role.id] ).should_not include @framework
+    Framework.fulfilled_for( @all, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should include @framework
+    Framework.unfulfilled_for( @all, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should_not include @framework
+
+    Framework.fulfilled_for( @limited, Edition::PERSPECTIVES.first, [] ).should_not include @framework
+    Framework.unfulfilled_for( @limited, Edition::PERSPECTIVES.first, [] ).should include @framework
+    Framework.fulfilled_for( @limited, Edition::PERSPECTIVES.first, [@limited_role.id] ).should_not include @framework
+    Framework.unfulfilled_for( @limited, Edition::PERSPECTIVES.first, [@limited_role.id] ).should include @framework
+    Framework.fulfilled_for( @limited, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should_not include @framework
+    Framework.unfulfilled_for( @limited, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should include @framework
+
+    Framework.fulfilled_for( @unlimited, Edition::PERSPECTIVES.first, [] ).should include @framework
+    Framework.unfulfilled_for( @unlimited, Edition::PERSPECTIVES.first, [] ).should_not include @framework
+    Framework.fulfilled_for( @unlimited, Edition::PERSPECTIVES.first, [@limited_role.id] ).should_not include @framework
+    Framework.unfulfilled_for( @unlimited, Edition::PERSPECTIVES.first, [@limited_role.id] ).should include @framework
+    Framework.fulfilled_for( @unlimited, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should include @framework
+    Framework.unfulfilled_for( @unlimited, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should_not include @framework
+
+    Framework.fulfilled_for( @no, Edition::PERSPECTIVES.first, [] ).should_not include @framework
+    Framework.unfulfilled_for( @no, Edition::PERSPECTIVES.first, [] ).should include @framework
+    Framework.fulfilled_for( @no, Edition::PERSPECTIVES.first, [@limited_role.id] ).should_not include @framework
+    Framework.unfulfilled_for( @no, Edition::PERSPECTIVES.first, [@limited_role.id] ).should include @framework
+    Framework.fulfilled_for( @no, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should_not include @framework
+    Framework.unfulfilled_for( @no, Edition::PERSPECTIVES.first, [@unlimited_role.id] ).should include @framework
+  end
+
 end
 
