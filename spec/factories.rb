@@ -122,6 +122,14 @@ Factory.define :requirement do |f|
   f.fulfillable { |r| r.fulfillable = Factory(:agreement) }
 end
 
+Factory.define :requestor_requirement, :parent => :requirement do |f|
+  f.perspectives [ Edition::PERSPECTIVES.first ]
+end
+
+Factory.define :reviewer_requirement, :parent => :requirement do |f|
+  f.perspectives [ Edition::PERSPECTIVES.last ]
+end
+
 Factory.define :safc_eligible_registration, :parent => :registration do |f|
   f.registered true
   f.number_of_undergrads 50

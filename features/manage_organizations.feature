@@ -98,6 +98,9 @@ Feature: Manage organizations
 
   Scenario Outline: Register a new organization and edit
     Given a current_registration exists with name: "Cornell Club", registered: true
+    And a framework exists with name: "Budget Requests"
+    And a registration_criterion exists with type_of_member: "undergrads", minimal_percentage: 0, must_register: true
+    And a requestor_requirement exists with fulfillable: the registration_criterion, framework: the framework
     And I log in as user: "admin"
     And I am on the new organization <context>
     When I fill in "First name" with "Cornell"
@@ -117,11 +120,12 @@ Feature: Manage organizations
     And I should see "First name: The Cornell"
     And I should see "Last name: Night Club"
     And I should see "Club sport? No"
-    And I should see "Registered? <registered>"
+    And I should <registered> "Budget Requests"
+    And I should <registered> "Registered? Yes"
     Examples:
-      | context                   | registered |
-      | page                      | No         |
-      | page for the registration | Yes        |
+      | context                           | registered |
+      | page                              | not see    |
+      | page for the current_registration | see        |
 
   Scenario: Search organizations
     Given there are no organizations

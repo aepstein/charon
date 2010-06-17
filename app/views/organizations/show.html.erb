@@ -13,6 +13,14 @@
 </p>
 
 <p>
+  <b><%= Edition::PERSPECTIVES.first.capitalize %> frameworks:</b>
+  <% @organization.frameworks( Edition::PERSPECTIVES.first ).each do |framework| %>
+  <li><%=h framework %></li>
+  <% end %>
+  </ul>
+</p>
+
+<p>
   <b>Registered?</b> <%= @organization.registered? ? 'Yes' : 'No' %>
 </p>
 
