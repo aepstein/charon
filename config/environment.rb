@@ -49,11 +49,11 @@ Rails::Initializer.run do |config|
   config.gem 'searchlogic', :source => 'http://gemcutter.org'
   config.gem 'whenever', :source => 'http://gemcutter.org'
   config.gem 'bluecloth', :source => 'http://gemcutter.org'
-  config.gem 'fastercsv', :source => 'http://gemcutter.org'
   config.gem 'cornell_netid', :source => 'http://gemcutter.org'
   config.gem 'cornell_ldap', :source => 'http://gemcutter.org'
   config.gem 'validation_reflection'
   config.gem 'formtastic', :source => 'http://gemcutter.org'
+  config.gem 'sqlite3-ruby', :lib => 'sqlite3', :version => '!= 1.3.0'
 
   config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
 end

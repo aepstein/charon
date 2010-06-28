@@ -8,7 +8,7 @@ class LocalEventExpensesController < ApplicationController
     respond_to do |format|
       format.html { @events = @events.paginate( :page => page ) }
       format.csv do
-        csv_string = FasterCSV.generate do |csv|
+        csv_string = CSV.generate do |csv|
           csv << %w( date title location uup purpose organizers contacts )
           @events.each do |event|
             csv << ( [ event.date,

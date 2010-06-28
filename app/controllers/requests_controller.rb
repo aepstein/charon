@@ -25,7 +25,7 @@ class RequestsController < ApplicationController
     respond_to do |format|
       format.html { @requests = @requests.paginate(:page => page) } # index.html.erb
       format.csv do
-        csv_string = FasterCSV.generate do |csv|
+        csv_string = CSV.generate do |csv|
           csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
           @requests.each do |request|
             next unless request.may_review? current_user
