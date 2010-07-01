@@ -17,27 +17,8 @@ class RequestsController < ApplicationController
     @requests = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
-<<<<<<< HEAD:app/controllers/requests_controller.rb
-      format.html { @requests = @requests.paginate(:page => page) } # index.html.erb
-      format.csv do
-        csv_string = CSV.generate do |csv|
-          csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
-          @requests.each do |request|
-            next unless request.may_review? current_user
-            csv << ( [ request.organizations.map { |o| o.name }.join(', '),
-                     request.organizations.map { |o| o.club_sport? ? 'Y' : 'N' }.join(', '),
-                     request.status,
-                     "$#{request.editions.perspective_equals('requestor').sum('amount')}",
-                     "$#{request.editions.perspective_equals('reviewer').sum('amount')}",
-                     "$#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "$#{request.items.allocation_for_category(c)}" } )
-          end
-        end
-        send_data csv_string, :disposition => "attachment; filename=requests.csv"
-      end
-=======
       format.html { render :action => 'index' }
       format.csv { csv_index }
->>>>>>> declarative_authorization:app/controllers/requests_controller.rb
       format.xml  { render :xml => @requests }
     end
   end
