@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy
   has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
     def in(organizations)
-      proxy_owner.memberships.active.organization_id_equals_any( organizations.map(&:id) ).map(&:role)
+      Membership.user_id_equals(proxy_owner.id).active.organization_id_equals_any( organizations.map(&:id) ).map(&:role)
     end
   end
   has_many :organizations, :through => :memberships, :conditions => [ 'memberships.active = ?', true ]
