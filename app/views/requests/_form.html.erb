@@ -1,1 +1,8 @@
+<%= form.error_messages %>
+<% form.inputs do %>
+  <% if form.object.new_record? -%>
+  <%= form.input :basis, :collection => form.object.organization.bases.requestable %>
+  <% end -%>
+<% end %>
+<%= form.buttons %>
 

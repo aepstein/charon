@@ -3,8 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Organization do
   before(:each) do
     @organization = Factory(:organization)
-    @registered_organization = Factory(:organization)
-    @registered_organization.registrations << Factory(:registration, { :registered => true, :number_of_undergrads => 10 })
+    @registered_organization = Factory(:registered_organization)
   end
 
   it "should create a new instance given valid attributes" do
@@ -18,7 +17,7 @@ describe Organization do
 
   it "should have a requests.creatable method that returns requests that can be made" do
     basis = Factory(:basis)
-    started_request = Factory(:request, :organizations => [@organization])
+    started_request = Factory(:request, :organization => @organization)
     closed_basis = Factory(:basis, :open_at => DateTime.now - 1.year, :closed_at => DateTime.now - 1.day)
     requests = @organization.requests.creatable
     requests.length.should == 1
@@ -27,19 +26,17 @@ describe Organization do
   end
 
   it "should have a requests.started method that returns started requests" do
-    request = Factory.build(:request)
-    request.organizations << @registered_organization
-    request.save.should == true
+    request = Factory.build(:request, :organization => @registered_organization)
+    request.save.should be_true
     @registered_organization.requests.should include(request)
-    @registered_organization.requests.started.empty?.should == false
+    @registered_organization.requests.started.empty?.should be_false
   end
 
   it "should have a requests.released method that returns released requests" do
-    request = Factory.build(:request, { :status => "released" })
-    request.organizations << @registered_organization
-    request.save.should == true
+    request = Factory.build(:request, :status => "released", :organization => @registered_organization)
+    request.save.should be_true
     @registered_organization.requests.should include(request)
-    @registered_organization.requests.released.empty?.should == false
+    @registered_organization.requests.released.empty?.should be_false
   end
 
   it "should reformat last_name of organizations such that An|A|The|Cornell are moved to first_name" do
@@ -62,37 +59,14 @@ describe Organization do
   end
 
   it "should have a registered? method that checks whether the current registration is approved" do
-    @registered_organization.registered?.should == true
-    Factory(:organization).registered?.should == false
+    @registered_organization.registrations.first.current?.should be_true
+    @registered_organization.registrations.first.registered?.should be_true
+    @registered_organization.registrations.count.should eql 1
+    Registration.active.count.should eql 1
+    @registered_organization.registrations.current.should_not be_nil
+    @registered_organization.registered?.should be_true
+    Factory(:organization).registered?.should be_false
   end
 
-  it 'should have unfulfilled_permissions method that returns organization does not have because of unfulfilled requirements' do
-    setup_permission_scenario
-    permissions = @membership.organization.unfulfilled_permissions
-    permissions.length.should eql 1
-    permissions.should include @unfulfilled_permission_organization
-  end
-
-  it 'should have unfulfilled_requirements method that returns array of requirements organization has not fulfilled' do
-    setup_permission_scenario
-    requirements = @membership.organization.unfulfilled_requirements
-    requirements.length.should eql 1
-    requirements.should include @organization_requirement
-  end
-
-  def setup_permission_scenario
-    Permission.delete_all
-    @membership = Factory(:membership)
-    @fulfilled_permission = Factory(:permission, :role => @membership.role)
-    @unfulfilled_permission_organization = Factory(:permission, :role => @membership.role)
-    @organization_requirement = Factory(:registration_criterion)
-    Factory(:requirement, :fulfillable => @organization_requirement, :permission => @unfulfilled_permission_organization)
-    @membership.organization.fulfillments.should be_empty
-    @unfulfilled_permission_user = Factory(:permission, :role => @membership.role)
-    @user_requirement = Factory(:user_status_criterion, :statuses => ['temporary'])
-    @user_requirement.id.should_not be_nil
-    Factory(:requirement, :fulfillable => @user_requirement, :permission => @unfulfilled_permission_user )
-    @membership.user.fulfillments.should be_empty
-  end
 end
 

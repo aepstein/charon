@@ -1,8 +1,9 @@
 <h2><%=h @request %></h2>
 
+<p>Basis: <%=h @request.basis %></p>
 <p>Status: <%=h @request.status %></p>
 <p>Requestor total: <%= number_to_currency @request.editions.perspective_equals('requestor').sum('editions.amount') %></p>
-<% if @request.may_review? current_user %>
+<% if permitted_to? :review -%>
 <p>Reviewer total: <%= number_to_currency @request.editions.perspective_equals('reviewer').sum('editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
 <table>
@@ -13,17 +14,17 @@
   </tr>
   </thead>
   <tbody>
-  <% @request.basis.structure.categories.each do |category| %>
-  <% table_row_tag do %>
+  <% @request.basis.structure.categories.each do |category| -%>
+  <% table_row_tag do -%>
     <td><%=h category.name %></td>
     <td><%= number_to_currency @request.items.allocation_for_category(category) %></td>
-  <% end %>
-  <% end %>
+  <% end -%>
+  <% end -%>
   </tbody>
 </table>
 
 <p>Note: Higher priority items are allocated before lower priorities until the allocation cap is reached.</p>
-<% end %>
+<% end -%>
 
 <% if @request.status == 'started' %>
 <p>
@@ -43,50 +44,48 @@ Its status will advance to <em>submitted</em> once all required approvals are
 registered.
 </p>
 <% else %>
-<% if @request.may_review? current_user %>
-<% if @request.status == 'accepted' %>
+<% if permitted_to? :review -%>
+<% if @request.status == 'accepted' -%>
 <p>
 This request is accepted for review by the commission.
 </p>
-<% end %>
-<% else %>
+<% end -%>
+<% else -%>
 <p>
 This request is now submitted for review.
 </p>
-<% end %>
-<% end %>
+<% end -%>
+<% end -%>
 
 <h3>Items</h3>
 
-<%= render :partial => 'items/items', :object => @request.items.root,
-      :locals => { :read_only => true, :show_detail => true } %>
+<%= render :partial => 'items/detailed', :collection => @request.items.root,
+  :locals => { :level => 4 } %>
 
-<% unless @request.approvers.unfulfilled_for_status(@request.status).empty? %>
+<% unless @request.users.unfulfilled(Approver.quantity_null).length == 0 -%>
 <h2>Who must approve</h2>
 <p>The following users must approve before the request may be considered submitted.</p>
 <ul>
-  <% @request.approvers.unfulfilled_for_status(@request.status).each do |user| %>
+  <% @request.users.unfulfilled(Approver.quantity_null).each do |user| -%>
   <li><%=h user %></li>
-  <% end %>
+  <% end -%>
 </ul>
-<% end %>
 
-<% @request.organizations.each do |organization| %>
-<% if organization.registrations.current %>
+<% end -%>
+<% if @request.organization.registrations.current -%>
 <h3>Membership information for <%=h organization %></h3>
 <dl>
 <%= render :partial => 'registrations/membership', :object => organization.registrations.current %>
 </dl>
-<% end %>
-<% end %>
 
+<% end -%>
 <h3>Who has approved</h3>
 
 <%= render :partial => 'approvals/approvals', :object => @request.approvals.all(:include => :user),
            :locals => { :user => true, :approvable => false } %>
 
 <p>
-<%= link_to_request_organization_profiles @request %> |
+<%= link_to h("Back to #{@request.organization}"), @request.organization %> |
 <%= link_to 'Edit', edit_request_path(@request) %>
 </p>
 

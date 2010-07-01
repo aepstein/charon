@@ -4,35 +4,41 @@ Feature: Manage approvers
   I want to specify approvers for certain request states
 
   Background:
-    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
+    And a user: "regular" exists
     And a framework: "safc" exists with name: "safc"
     And a framework: "gpsafc" exists with name: "gpsafc"
     And a role: "president" exists with name: "president"
     And a role: "treasurer" exists with name: "treasurer"
 
   Scenario Outline: Test permissions for approver controller actions
-    Given an approver: "basic" exists with framework: framework "safc"
-    And I am logged in as "<user>" with password "secret"
-    And I am on the new approver page for framework: "safc"
-    Then I should <create>
-    Given I post on the approvers page for framework: "safc"
-    Then I should <create>
-    And I am on the edit page for approver: "basic"
-    Then I should <update>
-    Given I put on the page for approver: "basic"
-    Then I should <update>
+    Given an approver: "basic" exists with framework: framework "safc", role: role "president"
+    And I log in as user: "<user>"
     Given I am on the page for approver: "basic"
-    Then I should <show>
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the approvers page for framework: "safc"
+    Then I should <show> "president"
+    And I should <create> "New approver"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Given I am on the new approver page for framework: "safc"
+    Then I should <create> authorized
+    Given I post on the approvers page for framework: "safc"
+    Then I should <create> authorized
+    And I am on the edit page for approver: "basic"
+    Then I should <update> authorized
+    Given I put on the page for approver: "basic"
+    Then I should <update> authorized
     Given I delete on the page for approver: "basic"
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user    | create  | update  | destroy  | show |
+      | admin   | see     | see     | see      | see  |
+      | regular | not see | not see | not see  | see  |
 
   Scenario: Register new approver and update
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And I am on the new approver page for framework: "safc"
     When I select "requestor" from "Perspective"
     And I select "president" from "Role"
@@ -61,8 +67,8 @@ Feature: Manage approvers
     And an approver exists with framework: framework "safc", role: role "treasurer", status: "completed", perspective: "requestor"
     And an approver exists with framework: framework "safc", role: role "president", status: "completed", perspective: "requestor"
     And an approver exists with framework: framework "safc", role: role "advisor", status: "completed", perspective: "requestor"
-    And I am logged in as "admin" with password "secret"
-    When I delete the 3rd approver for framework: "safc"
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd approver for framework: "safc"
     Then I should see the following approvers:
       | Perspective | Role           | Status    |
       | requestor   | advisor        | completed |

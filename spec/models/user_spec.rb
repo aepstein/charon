@@ -19,34 +19,6 @@ describe User do
     user.organizations.should_not include(inactive.organization)
   end
 
-  it "should have a may_create? which only allows admin" do
-    owner = Factory.build(:user)
-    owner.may_create?(@admin).should == true
-    owner.may_create?(owner).should == false
-    owner.may_create?(@regular).should == false
-  end
-
-  it "should have a may_see? which allows admin or owner" do
-    owner = Factory(:user)
-    owner.may_see?(@admin).should == true
-    owner.may_see?(@regular).should == false
-    owner.may_see?(owner).should == true
-  end
-
-  it "should have a may_update? which allows admin or owner" do
-    owner = Factory(:user)
-    owner.may_update?(@admin).should == true
-    owner.may_update?(@regular).should == false
-    owner.may_update?(owner).should == true
-  end
-
-  it "should have a may_destroy? which only allows admin" do
-    owner = Factory(:user)
-    owner.may_destroy?(@admin).should == true
-    owner.may_destroy?(@regular).should == false
-    owner.may_destroy?(owner).should == false
-  end
-
   it 'should automatically fulfill user status criterions on create and update' do
     criterion = Factory(:user_status_criterion, :statuses => %w( staff faculty ) )
     criterion2 = Factory(:user_status_criterion, :statuses => %w( temporary ) )
@@ -57,37 +29,6 @@ describe User do
     user.save.should be_true
     user.fulfillments.size.should eql 1
     user.fulfillments.first.fulfillable.should eql criterion2
-  end
-
-  it 'should have unfulfilled_permissions method that returns permissions the user cannot have because of missing requirements' do
-    setup_permission_scenario
-    permissions = @membership.user.unfulfilled_permissions
-    permissions.length.should eql 1
-    permissions.should include @unfulfilled_permission_user
-  end
-
-  it 'should have unfulfilled_requirements method that returns hash of unfulfilled requirements and associated permissions' do
-    setup_permission_scenario
-    requirements = @membership.user.unfulfilled_requirements
-    requirements.length.should eql 1
-    requirements.should include @user_requirement
-  end
-
-  def setup_permission_scenario
-    Permission.delete_all
-    @membership = Factory(:membership)
-    @fulfilled_permission = Factory(:permission, :role => @membership.role)
-    @fulfilled_requirement = Factory(:requirement, :permission => @fulfilled_permission, :fulfillable => Factory(:agreement) )
-    Factory(:fulfillment, :fulfiller => @membership.user, :fulfillable => @fulfilled_requirement.fulfillable)
-    @unfulfilled_permission_organization = Factory(:permission, :role => @membership.role)
-    @organization_requirement = Factory(:registration_criterion)
-    Factory(:requirement, :fulfillable => @organization_requirement, :permission => @unfulfilled_permission_organization)
-    @membership.organization.fulfillments.should be_empty
-    @unfulfilled_permission_user = Factory(:permission, :role => @membership.role)
-    @user_requirement = Factory(:user_status_criterion, :statuses => ['temporary'])
-    @user_requirement.id.should_not be_nil
-    Factory(:requirement, :fulfillable => @user_requirement, :permission => @unfulfilled_permission_user )
-    @membership.user.fulfillments.length.should eql 1
   end
 
 end

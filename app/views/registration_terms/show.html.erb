@@ -1,0 +1,10 @@
+<h2><%=h @registration_term %></h2>
+
+<%= render :partial => 'registration_terms/detail', :object => @registration_term %>
+
+<p>
+<%= link_to 'Edit', edit_registration_term_path(@registration_term) %> |
+<%= link_to 'List Registrations', registration_term_registrations_path(@registration_term) %> |
+<%= link_to 'Back', registration_terms_path %>
+</p>
+

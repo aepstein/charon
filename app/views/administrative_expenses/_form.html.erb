@@ -1,7 +1,12 @@
-  <%= form.input :copies, :label => 'Number of copies' %>
-  <%= form.input :chalk, :label => 'Number of buckets of chalk' %>
-  <%= form.input :sun_ads, :label => 'Amount for Daily Sun Ads' %>
-  <%= form.input :repairs_restocking, :label => 'Repairs and Restocking' %>
-  <%= form.input :mailbox_wsh, :label => 'Mailbox at Willard Straight Hall ($25 renew, $40 new)',
-    :as => :radio, :collection => [ %w($25 25), %w($40 40) ] %>
+  <%= form.input :copies, :label => 'Number of copies',
+    :hint => 'How many impressions do you anticipate making during the budget period?' %>
+  <%= form.input :chalk, :label => 'Number of buckets of chalk',
+    :hint => 'How many buckets of chalk do you anticipate consuming during the budget period?' %>
+  <%= form.input :sun_ads, :label => 'Amount for advertisements',
+    :hint => 'How much do you anticipate spending on Cornell Daily Sun advertisements?' %>
+  <%= form.input :repairs_restocking, :label => 'Amount for repairs and restocking',
+    :hint => 'How much do you anticipate spending on repairs and restocking equipment?' %>
+  <%= form.input :mailbox_wsh, :label => 'Amount for mailbox at Willard Straight Hall',
+    :as => :select, :collection => AdministrativeExpense::MAILBOX_OPTIONS,
+    :hint => 'How much do you anticipate spending on a mailbox rental at Willard Straight Hall?' %>
 

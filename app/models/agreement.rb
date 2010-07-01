@@ -1,5 +1,5 @@
 class Agreement < ActiveRecord::Base
-  include GlobalModelAuthorization, Fulfillable
+  include Fulfillable
 
   default_scope :order => 'agreements.name ASC'
 
@@ -31,21 +31,6 @@ class Agreement < ActiveRecord::Base
 
   def approvals_fulfilled?
     true
-  end
-
-  def may_approve?(user)
-    return true if user
-    false
-  end
-
-  def may_unapprove?(user)
-    return true if user && user.admin?
-    false
-  end
-
-  def may_unapprove_other?(user)
-    return true if user && user.admin?
-    false
   end
 
   def to_s; name; end

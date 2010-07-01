@@ -5,6 +5,8 @@
 <br />
 
 <p>
+<% if permitted_to? :create, Role.new -%>
 <%= link_to 'New role', new_role_path %>
+<% end -%>
 </p>
 

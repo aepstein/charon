@@ -2,9 +2,9 @@
 
 <% form_for :search, :url => users_path, :html => { :method => :get } do |f| %>
   <p>
-    <%= f.label :q, 'Search' %>
-    <%= f.text_field :q %>
-    <%= f.submit 'Go' %>
+    <%= f.label :name_like, 'Name' %>
+    <%= f.text_field :name_like %>
+    <%= f.submit 'Search' %>
   </p>
 <% end %>
 
@@ -17,6 +17,8 @@
 <br />
 
 <p>
+<% if permitted_to? :create, User.new -%>
 <%= link_to 'New user', new_user_path %>
+<% end -%>
 </p>
 

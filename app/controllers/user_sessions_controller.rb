@@ -2,8 +2,8 @@ class UserSessionsController < ApplicationController
   before_filter :require_no_user, :only => [:new, :create]
   before_filter :require_user, :only => :destroy
 
-  LOGIN_NOTICE = "Login successful!"
-  LOGOUT_NOTICE = "Logout successful!"
+  LOGIN_NOTICE = "You logged in successfully."
+  LOGOUT_NOTICE = "You logged out successfully."
 
   # GET /login
   def new

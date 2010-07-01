@@ -3,7 +3,7 @@ class Item < ActiveRecord::Base
 
   belongs_to :node
   belongs_to :request, :touch => true
-  has_many :editions, :autosave => true do
+  has_many :editions do
     def for_perspective( perspective )
       self.each do |v|
         return v if v.perspective == perspective
@@ -25,6 +25,7 @@ class Item < ActiveRecord::Base
       previous_attributes ||= Hash.new
       previous_requestable_attributes ||= Hash.new
       edition = build
+      edition.item = proxy_owner if proxy_owner.new_record?
       edition.build_requestable( previous_requestable_attributes )
       edition.attributes = attributes.merge( { :perspective => perspective } )
       edition
@@ -36,6 +37,10 @@ class Item < ActiveRecord::Base
   acts_as_list :scope => :parent_id
   acts_as_tree
 
+  attr_readonly :node_id
+  attr_readonly :parent_id
+  attr_readonly :perspective
+
   accepts_nested_attributes_for :editions
 
   delegate :requestors, :to => :request
@@ -45,9 +50,12 @@ class Item < ActiveRecord::Base
   validates_presence_of :request
   validates_numericality_of :amount, :greater_than_or_equal_to => 0.0
   validate_on_create :node_must_be_allowed
-  validate_on_update :node_must_not_change
 
-  before_validation_on_create :set_title
+  before_validation_on_create { |item| item.editions.each { |edition| edition.item = item } }
+  before_validation :set_title
+  after_save :move_to_new_position
+
+  attr_accessor :new_position
 
   def initialize_next_edition
     children.each { |item| item.initialize_next_edition }
@@ -55,7 +63,11 @@ class Item < ActiveRecord::Base
   end
 
   def set_title
-    self.title = node.name if (title.nil? || title.blank?) && node
+    if editions.first && editions.first.title?
+      self.title = editions.first.title
+    elsif title.blank? && node
+      self.title = node.name
+    end
   end
 
   def allowed_nodes
@@ -67,28 +79,16 @@ class Item < ActiveRecord::Base
     errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
   end
 
-  def node_must_not_change
-    errors.add( :node_id, "must not change." ) if node_id_changed?
+  def to_s; title; end
+
+  private
+
+  def move_to_new_position
+    unless new_position.blank? || ( (np = new_position.to_i) == position )
+      self.new_position = nil
+      insert_at np
+    end
   end
 
-  def may_create?(user)
-    request.may_update?(user)
-  end
-
-  def may_update?(user)
-    request.may_update?(user)
-  end
-
-  def may_destroy?(user)
-    request.may_update?(user)
-  end
-
-  def may_see?(user)
-    request.may_see?(user)
-  end
-
-  def to_s
-    title
-  end
 end
 

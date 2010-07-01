@@ -1,0 +1,9 @@
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :description %>
+  <%= form.input :current, :as => :radio %>
+  <%= form.input :starts_at %>
+  <%= form.input :ends_at %>
+  <% end %>
+  <%= form.buttons %>
+

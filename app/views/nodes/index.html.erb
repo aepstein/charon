@@ -4,6 +4,8 @@
 <br />
 
 <p>
-<%= link_to 'New node', new_structure_node_path(@structure.id) %>
+<% if permitted_to? :create, @structure.nodes.build -%>
+<%= link_to 'New node', new_structure_node_path(@structure) %>
+<% end -%>
 </p>
 

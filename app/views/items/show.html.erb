@@ -1,17 +1,16 @@
-<h2><%= @item %></h2>
+<h2><%=h @item %> of <%=h @item.request %></h2>
 
-<p>
-  <strong>Requestable type:</strong> <%=h @item.node.requestable_type %>
-</p>
+<% if @item.parent -%>
+  <p>
+    <b>Parent:</b> <%=h @item.parent %>
+  </p>
 
-<p>
-  <strong>Request node:</strong> <%=h @item.node.name %>
-</p>
+<% end -%>
 
-<%= render :partial => 'editions/edition', :collection => @item.editions %>
+<%= render :partial => "items/detail", :object => @item %>
 
 <p>
 <%= link_to 'Edit', edit_item_path(@item) %> |
-<%= link_to 'Back', request_items_path(@item.request_id) %>
+<%= link_to h("Back to #{@item.request}"), request_items_path(@item.request) %>
 </p>
 

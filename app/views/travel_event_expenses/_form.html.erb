@@ -1,8 +1,8 @@
   <%= form.input :date, :as => :ft_calendar_date_select, :html_options => { :time => false },
-    :label => 'Event Date' %>
-  <%= form.input :title, :label => 'Event Title' %>
-  <%= form.input :location, :label => 'Event Location' %>
-  <%= form.input :purpose, :label => 'Event Purpose' %>
+    :hint => 'On what date will the event occur?  Specify the first date if the event spans multiple dates.' %>
+  <%= form.input :title, :hint => 'What is the title of the event?' %>
+  <%= form.input :location, :hint => 'Where (city, state/province, and country if not US) will the event be held?' %>
+  <%= form.input :purpose, :hint => 'What is the purpose of the event?' %>
   <%= form.input :travelers_per_group, :label => 'Number of travelers per group or team' %>
   <%= form.input :number_of_groups, :label => 'Number of groups or teams' %>
   <%= form.input :distance, :label => 'Travel distance' %>

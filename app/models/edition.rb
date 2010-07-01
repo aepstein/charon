@@ -1,6 +1,6 @@
 class Edition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
-  belongs_to :item, :touch => true
+  belongs_to :item
   has_one :administrative_expense
   has_one :local_event_expense
   has_one :speaker_expense
@@ -13,8 +13,10 @@ class Edition < ActiveRecord::Base
       self.map { |d| d.document_type }.include?( document_type )
     end
     def populate
+      return if proxy_owner.item.nil? || proxy_owner.item.node.nil?
       proxy_owner.node.document_types.each do |document_type|
-        self.build(:document_type => document_type) if self.select { |d| d.document_type == document_type }.empty?
+        document = self.build(:document_type => document_type) if self.select { |d| d.document_type == document_type }.empty?
+        document.edition = proxy_owner if proxy_owner.new_record?
       end
     end
   end
@@ -25,7 +27,7 @@ class Edition < ActiveRecord::Base
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
   accepts_nested_attributes_for :external_equity_report
-  accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['attached'].nil? || attributes['attached'].original_filename.blank? }
+  accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['attached'].blank? || attributes['attached'].original_filename.blank? }
 
   validates_presence_of :item
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
@@ -42,20 +44,12 @@ class Edition < ActiveRecord::Base
   before_validation_on_create :initialize_requestable
   after_save :set_item_title
 
-  def set_item_title
-    if title.nil?
-      item.touch
-      item.request.touch
-    else
-      item.title = title
-      item.save
-    end
+  def title
+    return requestable.title if requestable
+    nil
   end
 
-  def title
-    return nil unless requestable
-    requestable.title
-  end
+  def title?; !title.blank?; end
 
   def initialize_documents
     documents.each { |document| document.edition = self }
@@ -67,7 +61,7 @@ class Edition < ActiveRecord::Base
 
   def max_request
     amounts = []
-    amounts << item.node.item_amount_limit if item
+    amounts << item.node.item_amount_limit if item && item.node
     amounts << requestable.max_request if requestable
     unless perspective.blank? || perspective == Edition::PERSPECTIVES.first
       amounts << item.editions.perspective_equals( Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first.amount
@@ -97,44 +91,23 @@ class Edition < ActiveRecord::Base
   end
 
   def requestable(force_reload=false)
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}",force_reload)
   end
 
   def build_requestable(attributes={})
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("build_#{item.node.requestable_type.underscore}",attributes)
   end
 
   def create_requestable(attributes={})
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("create_#{item.node.requestable_type.underscore}",attributes)
   end
 
   def requestable=(requestable)
-    return nil if item.nil? || item.node.requestable_type.blank?
+    return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}=",requestable)
-  end
-
-  def may_create?(user)
-    return request.may_revise?(user) if perspective == 'reviewer'
-    request.may_update?(user) if perspective == 'requestor'
-  end
-
-  def may_update?(user)
-    return request.may_revise?(user) if perspective == 'reviewer'
-    request.may_update?(user)
-  end
-
-  def may_destroy?(user)
-    may_update? user
-  end
-
-  def may_see?(user)
-    if perspective == 'reviewer'
-      return request.may_revise?(user) || request.may_review?(user)
-    end
-    request.may_see?(user)
   end
 
   def previous
@@ -143,5 +116,19 @@ class Edition < ActiveRecord::Base
   end
 
   def to_s; "#{perspective} edition of #{item}"; end
+
+  private
+
+  # Use an instance variable to prevent infinite recursion
+  def set_item_title
+    return if @set_item_title
+    if title? && ( perspective == PERSPECTIVES.first )
+      item.title = title if title? && item.title != title
+      @set_item_title = true
+      item.save
+      @set_item_title = false
+    end
+  end
+
 end
 

@@ -4,6 +4,7 @@ doc/api
 doc/app
 *~
 db/*.sqlite3
+db/*.sqlite*-journal
 db/*.sql
 db/schema.rb
 db/uploads

@@ -1,0 +1,16 @@
+<% level ||= 2 %>
+<p>
+  <b>Node:</b> <%=h detail.node %>
+</p>
+
+<% if permitted_to?( :review, detail ) -%>
+  <p>
+    <b>Amount:</b> <%= number_to_currency detail.amount %>
+  </p>
+
+<% end -%>
+
+<%= render :partial => 'editions/detailed',
+  :collection => detail.editions.select { |edition| permitted_to? :show, edition },
+  :locals => { :level => level + 1 } %>
+

@@ -1,0 +1,31 @@
+<h2> Registration for <%=h @registration.name %></h2>
+
+<dl>
+  <dt>Purpose</dt>
+  <dd><%=h @registration.purpose %></dd>
+
+  <dt>Organization</dt>
+  <dd><%=h @registration.organization %></dd>
+
+  <dt>When Updated</dt>
+  <dd><%=h @registration.when_updated %></dd>
+
+  <dt>Funding sources</dt>
+  <dd><%=h @registration.funding_sources.join ', ' %></dd>
+
+  <dt>Active?</dt>
+  <dd><%=h @registration.active? ? 'Yes' : 'No' %></dd>
+
+  <dt>Independent?</dt>
+  <dd><%= @registration.independent? ? 'Yes' : 'No' %></dd>
+
+  <dt>Registered?</dt>
+  <dd><%=h @registration.registered? ? 'Yes' : 'No' %></dd>
+</dl>
+
+<p>
+<%= link_to "Back to #{@registration.registration_term} registrations",
+  registration_term_registrations_path( @registration.registration_term ) %> |
+<%= link_to 'List memberships', registration_memberships_path( @registration ) %>
+</p>
+

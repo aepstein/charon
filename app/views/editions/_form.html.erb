@@ -1,6 +1,9 @@
   <%= form.error_messages %>
 
   <% form.inputs :name => 'Basic Information' do %>
+    <% if form.object.new_record? -%>
+      <%= form.input :perspective, :as => :hidden %>
+    <% end -%>
     <% if form.object.requestable %>
     <% form.semantic_fields_for form.object.requestable.class.to_s.underscore.to_sym do |requestable_form| %>
       <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form", :object => requestable_form %>
@@ -27,7 +30,7 @@
   <% end %>
 
   <% form.inputs :name => 'Funding Amount and Comments' do %>
-  <% if form.object.item.node.item_amount_limit == 0 %>
+  <% if form.object.item.node.nil? || ( form.object.item.node.item_amount_limit == 0 ) %>
   <% form.object.amount = 0.0 %>
   <%= form.input :amount, :as => :hidden %>
   <li>

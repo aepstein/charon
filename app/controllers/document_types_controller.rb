@@ -1,5 +1,9 @@
 class DocumentTypesController < ApplicationController
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_document_type_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :edit, :update, :new, :create, :destroy, :attribute_check => true
 
   # GET /document_types
   # GET /document_types.xml
@@ -15,9 +19,6 @@ class DocumentTypesController < ApplicationController
   # GET /document_types/1
   # GET /document_types/1.xml
   def show
-    @document_type = DocumentType.find(params[:id])
-    raise AuthorizationError unless @document_type.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @document_type }
@@ -27,9 +28,6 @@ class DocumentTypesController < ApplicationController
   # GET /document_types/new
   # GET /document_types/new.xml
   def new
-    @document_type = DocumentType.new
-    raise AuthorizationError unless @document_type.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @document_type }
@@ -38,16 +36,14 @@ class DocumentTypesController < ApplicationController
 
   # GET /document_types/1/edit
   def edit
-    @document_type = DocumentType.find(params[:id])
-    raise AuthorizationError unless @document_type.may_update? current_user
+    respond_to do |format|
+      format.html # edit.html.erb
+    end
   end
 
   # POST /document_types
   # POST /document_types.xml
   def create
-    @document_type = DocumentType.new(params[:document_type])
-    raise AuthorizationError unless @document_type.may_create? current_user
-
     respond_to do |format|
       if @document_type.save
         flash[:notice] = 'Document type was successfully created.'
@@ -63,9 +59,6 @@ class DocumentTypesController < ApplicationController
   # PUT /document_types/1
   # PUT /document_types/1.xml
   def update
-    @document_type = DocumentType.find(params[:id])
-    raise AuthorizationError unless @document_type.may_update? current_user
-
     respond_to do |format|
       if @document_type.update_attributes(params[:document_type])
         flash[:notice] = 'Document type was successfully updated.'
@@ -81,8 +74,6 @@ class DocumentTypesController < ApplicationController
   # DELETE /document_types/1
   # DELETE /document_types/1.xml
   def destroy
-    @document_type = DocumentType.find(params[:id])
-    raise AuthorizationError unless @document_type.may_destroy? current_user
     @document_type.destroy
 
     respond_to do |format|
@@ -90,5 +81,20 @@ class DocumentTypesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+  def initialize_context
+    @document_type = DocumentType.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @document_types = DocumentType
+  end
+
+  def new_document_type_from_params
+    @document_type = DocumentType.new( params[:document_type] )
+  end
+
 end
 

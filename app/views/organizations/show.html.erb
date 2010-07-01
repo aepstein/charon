@@ -9,7 +9,15 @@
 </p>
 
 <p>
-  <b>Club sport:</b> <%= @organization.club_sport? ? 'Yes' : 'No' %>
+  <b>Club sport?</b> <%= @organization.club_sport? ? 'Yes' : 'No' %>
+</p>
+
+<p>
+  <b><%= Edition::PERSPECTIVES.first.capitalize %> frameworks:</b>
+  <% @organization.frameworks( Edition::PERSPECTIVES.first ).each do |framework| %>
+  <li><%=h framework %></li>
+  <% end %>
+  </ul>
 </p>
 
 <p>
@@ -27,7 +35,9 @@
 <% end %>
 
 <p>
+<% if permitted_to? :edit, @organization -%>
 <%= link_to 'Edit', edit_organization_path(@organization) %> |
+<% end -%>
 <%= link_to 'List bases', organization_bases_path(@organization) %> |
 <%= link_to 'List fulfillments', organization_fulfillments_path(@organization) %> |
 <%= link_to 'Back', organizations_path %>

@@ -1,9 +1,14 @@
 class CategoriesController < ApplicationController
+  before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_category_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :destroy, :new, :create, :edit, :update, :attribute_check => true
+
   # GET /categories
   # GET /categories.xml
   def index
-    @categories = Category.all
-
+    @categories = @categories.paginate( :page => params[:page] )
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }
@@ -13,9 +18,6 @@ class CategoriesController < ApplicationController
   # GET /categories/1
   # GET /categories/1.xml
   def show
-    @category = Category.find(params[:id])
-    raise AuthorizationError unless @category.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @category }
@@ -25,9 +27,6 @@ class CategoriesController < ApplicationController
   # GET /categories/new
   # GET /categories/new.xml
   def new
-    @category = Category.new
-    raise AuthorizationError unless @category.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @category }
@@ -36,16 +35,14 @@ class CategoriesController < ApplicationController
 
   # GET /categories/1/edit
   def edit
-    @category = Category.find(params[:id])
-    raise AuthorizationError unless @category.may_update? current_user
+    respond_to do |format|
+      format.html # edit.html.erb
+    end
   end
 
   # POST /categories
   # POST /categories.xml
   def create
-    @category = Category.new(params[:category])
-    raise AuthorizationError unless @category.may_create? current_user
-
     respond_to do |format|
       if @category.save
         flash[:notice] = 'Category was successfully created.'
@@ -61,9 +58,6 @@ class CategoriesController < ApplicationController
   # PUT /categories/1
   # PUT /categories/1.xml
   def update
-    @category = Category.find(params[:id])
-    raise AuthorizationError unless @category.may_update? current_user
-
     respond_to do |format|
       if @category.update_attributes(params[:category])
         flash[:notice] = 'Category was successfully updated.'
@@ -79,14 +73,26 @@ class CategoriesController < ApplicationController
   # DELETE /categories/1
   # DELETE /categories/1.xml
   def destroy
-    @category = Category.find(params[:id])
-    raise AuthorizationError unless @category.may_destroy? current_user
     @category.destroy
 
     respond_to do |format|
       format.html { redirect_to(categories_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def initialize_context
+    @category = Category.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @categories = Category
+  end
+
+  def new_category_from_params
+    @category = Category.new( params[:category] )
   end
 end
 

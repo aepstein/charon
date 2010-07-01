@@ -1,0 +1,10 @@
+<h2>New registration term</h2>
+
+<% semantic_form_for(@registration_term) do |f| %>
+  <%= render :partial => 'form', :object => f %>
+<% end %>
+
+<p>
+<%= link_to 'Back', registration_terms_path %>
+</p>
+

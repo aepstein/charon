@@ -4,158 +4,223 @@ Feature: Manage items
   I want request item form
 
   Background:
-    Given an organization: "club" exists with last_name: "our club"
-    And an organization: "commission" exists with last_name: "undergraduate commission"
-    And a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "president" exists with net_id: "president", password: "secret", admin: false
-    And a user: "commissioner" exists with net_id: "commissioner", password: "secret", admin: false
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
-    And a role: "president" exists with name: "president"
-    And a role: "commissioner" exists with name: "commissioner"
-    And a membership exists with organization: organization "club", role: role "president", user: user "president"
-    And a membership exists with organization: organization "commission", role: role "commissioner", user: user "commissioner"
-    And a structure: "annual" exists with name: "budget"
-    And a node: "administrative" exists with structure: structure "annual", requestable_type: "AdministrativeExpense", name: "administrative expense"
-    And a node: "local" exists with structure: structure "annual", requestable_type: "LocalEventExpense", name: "local event expense"
-    And a node: "travel" exists with structure: structure "annual", requestable_type: "TravelEventExpense", name: "travel event expense"
-    And a node: "durable" exists with structure: structure "annual", requestable_type: "DurableGoodExpense", name: "durable good expense"
-    And a node: "publication" exists with structure: structure "annual", requestable_type: "PublicationExpense", name: "publication expense"
-    And a node: "speaker" exists with structure: structure "annual", requestable_type: "SpeakerExpense", name: "speaker expense"
-    And a framework: "safc" exists with name: "undergrad"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "see", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "create", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "update", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "president", action: "destroy", perspective: "requestor"
-    And a permission exists with framework: framework "safc", status: "started", role: role "commissioner", action: "see", perspective: "reviewer"
-    And a basis: "annual_safc" exists with name: "annual budget", structure: structure "annual", framework: framework "safc", organization: organization "commission"
-    And a request exists with status: "started", basis: basis "annual_safc"
-    And organization: "club" is amongst the organizations of the request
+    Given a user: "admin" exists with admin: true
 
-  Scenario Outline: Test permissions for items controller actions
-    Given an item exists with request: the request, node: node "administrative"
-    And I am logged in as "<user>" with password "secret"
+  Scenario Outline: Test permissions for items controller
+    Given an organization: "source" exists with last_name: "Funding Source"
+    And an organization: "applicant" exists with last_name: "Applicant"
+    And an organization: "observer" exists with last_name: "Observer"
+    And a manager_role: "manager" exists
+    And a requestor_role: "requestor" exists
+    And a reviewer_role: "reviewer" exists
+    And a user: "source_manager" exists
+    And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
+    And a user: "source_reviewer" exists
+    And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
+    And a user: "applicant_requestor" exists
+    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
+    And a user: "observer_requestor" exists
+    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
+    And a user: "conflictor" exists
+    And a membership exists with user: user "conflictor", organization: organization "source", role: role "reviewer"
+    And a membership exists with user: user "conflictor", organization: organization "applicant", role: role "requestor"
+    And a user: "regular" exists
+    And a structure exists
+    And a node: "root" exists with structure: the structure, name: "Root"
+    And a basis exists with name: "Annual", organization: organization "source", structure: the structure
+    And a request exists with basis: the basis, organization: organization "applicant", status: "<status>"
+    And an item: "root" exists with request: the request, node: node "root"
+    And an edition exists with item: item "root", perspective: "requestor"
+    And I log in as user: "<user>"
     And I am on the new item page for the request
-    Then I should <create>
+    Then I should <create> authorized
     Given I post on the items page for the request
-    Then I should <create>
+    Then I should <create> authorized
     And I am on the edit page for the item
-    Then I should <update>
+    Then I should <update> authorized
     Given I put on the page for the item
-    Then I should <update>
+    Then I should <update> authorized
     Given I am on the page for the item
-    Then I should <show>
+    Then I should <show> authorized
+    Given I am on the items page for the request
+    Then I should <show> "Root"
     Given I delete on the page for the item
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user        | create                 | update                 | destroy                | show                   |
-      | admin       | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | president   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | commissioner| see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
-      | regular     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     |
+      | status    | user                | create  | update  | show    | destroy |
+      | started   | admin               | see     | see     | see     | see     |
+      | started   | source_manager      | see     | see     | see     | see     |
+      | started   | source_reviewer     | not see | not see | see     | not see |
+      | started   | applicant_requestor | see     | see     | see     | see     |
+      | started   | conflictor          | see     | see     | see     | see     |
+      | started   | observer_requestor  | not see | not see | not see | not see |
+      | started   | regular             | not see | not see | not see | not see |
+      | completed | admin               | see     | see     | see     | see     |
+      | completed | source_manager      | see     | see     | see     | see     |
+      | completed | source_reviewer     | not see | not see | see     | not see |
+      | completed | applicant_requestor | not see | not see | see     | not see |
+      | completed | conflictor          | not see | not see | see     | not see |
+      | completed | observer_requestor  | not see | not see | not see | not see |
+      | completed | regular             | not see | not see | not see | not see |
+      | submitted | admin               | see     | see     | see     | see     |
+      | submitted | source_manager      | see     | see     | see     | see     |
+      | submitted | source_reviewer     | not see | not see | see     | not see |
+      | submitted | applicant_requestor | not see | not see | see     | not see |
+      | submitted | conflictor          | not see | not see | see     | not see |
+      | submitted | observer_requestor  | not see | not see | not see | not see |
+      | submitted | regular             | not see | not see | not see | not see |
+      | accepted  | admin               | see     | see     | see     | see     |
+      | accepted  | source_manager      | see     | see     | see     | see     |
+      | accepted  | source_reviewer     | not see | see     | see     | not see |
+      | accepted  | applicant_requestor | not see | not see | see     | not see |
+      | accepted  | conflictor          | not see | not see | see     | not see |
+      | accepted  | observer_requestor  | not see | not see | not see | not see |
+      | accepted  | regular             | not see | not see | not see | not see |
+      | reviewed  | admin               | see     | see     | see     | see     |
+      | reviewed  | source_manager      | see     | see     | see     | see     |
+      | reviewed  | source_reviewer     | not see | not see | see     | not see |
+      | reviewed  | applicant_requestor | not see | not see | see     | not see |
+      | reviewed  | conflictor          | not see | not see | see     | not see |
+      | reviewed  | observer_requestor  | not see | not see | not see | not see |
+      | reviewed  | regular             | not see | not see | not see | not see |
+      | certified | admin               | see     | see     | see     | see     |
+      | certified | source_manager      | see     | see     | see     | see     |
+      | certified | source_reviewer     | not see | not see | see     | not see |
+      | certified | applicant_requestor | not see | not see | see     | not see |
+      | certified | conflictor          | not see | not see | see     | not see |
+      | certified | observer_requestor  | not see | not see | not see | not see |
+      | certified | regular             | not see | not see | not see | not see |
+      | released  | admin               | see     | see     | see     | see     |
+      | released  | source_manager      | see     | see     | see     | see     |
+      | released  | source_reviewer     | not see | not see | see     | not see |
+      | released  | applicant_requestor | not see | not see | see     | not see |
+      | released  | conflictor          | not see | not see | see     | not see |
+      | released  | observer_requestor  | not see | not see | not see | not see |
+      | released  | regular             | not see | not see | not see | not see |
 
-  Scenario: Create new item and edition
-    Given I am logged in as "president" with password "secret"
-    And I am on the items page for the request
-    And I select "administrative expense" from "Add New Item"
-    And I press "Add"
-    Then I should see "Item was successfully created."
-
-  Scenario Outline: Create new item only if admin or may update request
-    Given I am logged in as "<user>" with password "secret"
+  Scenario Outline: Create or update an item with embedded edtion
+    Given an organization exists with last_name: "Applicant"
+    And a structure exists
+    And a node: "new" exists with name: "New", structure: the structure
+    And a node: "existing" exists with name: "Existing", structure: the structure
+    And a node: "subordinate" exists with name: "Subordinate", structure: the structure, parent: node "existing"
+    And a basis exists with structure: the structure
+    And a request: "other" exists with basis: the basis
+    And a request: "focus" exists with basis: the basis, organization: the organization
+    And an item exists with node: node "existing", request: request "<request>"
+    And I log in as user: "admin"
     When I am on the items page for the request
-    Then I should <should>
+    Then I should not see "Reviewer"
+    When I select "<node>" from "Add New <box>"
+    And I press "Add <button>"
+    And I fill in "Requestor Amount" with "100"
+    And I fill in "Requestor Comment" with "This is *important*."
+    And I press "Create Item"
+    Then I should see "Item was successfully created."
+    And I should <parent> "Parent: Existing"
+    And I should see "Node: <node>"
+    And I should see "Requestor amount: $100.00"
+    And I should see "This is important."
+    When I follow "Edit"
+    And I fill in "Requestor Amount" with "200"
+    And I fill in "Requestor Comment" with "Different comment."
+    And I fill in "Reviewer Amount" with "100"
+    And I fill in "Reviewer Comment" with "Final comment."
+    And I press "Update Item"
+    Then I should see "Item was successfully updated."
+    And I should see "Requestor amount: $200.00"
+    And I should see "Different comment."
+    And I should see "Reviewer amount: $100.00"
+    And I should see "Final comment."
     Examples:
-      | user         | should                 |
-      | admin        | see "Add New Item"     |
-      | president    | see "Add New Item"     |
-      | commissioner | not see "Add New Item" |
+      | request | node        | box                  | button    | parent  |
+      | other   | New         | Root Item            | Root Item | not see |
+      | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
 
-  Scenario: Move an item
-    Given an item exists with request: the request, node: node "administrative"
-    And an item exists with request: the request, node: node "durable"
-    And an item exists with request: the request, node: node "publication"
-    And an item exists with request: the request, node: node "travel"
-    And I am logged in as "president" with password "secret"
-    And I am on the items page for the request
-    When I move the 1st item
-    And I select "publication expense" from "Move to priority of"
-    And I press "Move"
-    Then I should see "Item was successfully moved."
-    And I should see the following items:
-      | Perspective            |
-      | durable good expense   |
-      | Requestor edition      |
-      | publication expense    |
-      | Requestor edition      |
-      | administrative expense |
-      | Requestor edition      |
-      | travel event expense   |
-      | Requestor edition      |
+  Scenario Outline: Prevent unauthorized user from updating an unauthorized edition
+    Given an organization exists with last_name: "Applicant"
+    And a request exists with organization: the organization
+    And an item exists with request: the request
+    And an edition exists with item: the item, perspective: "requestor"
+    And an edition exists with item: the item, perspective: "reviewer"
+    And a user exists with admin: true
+    And a requestor_role exists
+    And a membership exists with user: the user, role: the requestor_role, organization: the organization
+    And I log in as the user
+    When I am on the edit page for the item
+    And I fill in "Requestor amount" with "100"
+    And I fill in "Reviewer amount" with "200"
+    Given the user has admin: <admin>
+    When I press "Update Item"
+    Then I should <update> authorized
+    Examples:
+      | admin | update  |
+      | true  | see     |
+      | false | not see |
 
-  Scenario: Move an item (with parent)
-    Given a node: "top" exists with structure: structure "annual", name: "top"
-    And a node: "administrative_n" exists with structure: structure "annual", requestable_type: "AdministrativeExpense", name: "child administrative expense", parent: node "top"
-    And a node: "travel_n" exists with structure: structure "annual", requestable_type: "TravelEventExpense", name: "child travel event expense", parent: node "top"
-    And a node: "durable_n" exists with structure: structure "annual", requestable_type: "DurableGoodExpense", name: "child durable good expense", parent: node "top"
-    And a node: "publication_n" exists with structure: structure "annual", requestable_type: "PublicationExpense", name: "child publication expense", parent: node "top"
-    And an item: "top" exists with request: the request, node: node "top"
-    And an item exists with request: the request, node: node "administrative_n", parent: item "top"
-    And an item exists with request: the request, node: node "durable_n", parent: item "top"
-    And an item exists with request: the request, node: node "publication_n", parent: item "top"
-    And an item exists with request: the request, node: node "travel_n", parent: item "top"
-    And I am logged in as "president" with password "secret"
-    And I am on the items page for the request
-    When I move the 2nd item
-    And I select "child publication expense" from "Move to priority of"
-    And I press "Move"
-    Then I should see "Item was successfully moved."
-    And I should see the following items:
-      | Perspective                  |
-      | top                          |
-      | Requestor edition            |
-      | child durable good expense   |
-      | Requestor edition            |
-      | child publication expense    |
-      | Requestor edition            |
-      | child administrative expense |
-      | Requestor edition            |
-      | child travel event expense   |
-      | Requestor edition            |
-
-  Scenario: Delete an item
-    Given an item exists with request: the request, node: node "administrative"
-    And an item exists with request: the request, node: node "durable"
-    And an item exists with request: the request, node: node "publication"
-    And an item exists with request: the request, node: node "travel"
-    And I am logged in as "president" with password "secret"
-    When I delete the 5th item for the request
-    Then I should see "Item was successfully destroyed."
-    And I should see the following items:
-      | Perspective            |
-      | administrative expense |
-      | Requestor edition      |
-      | durable good expense   |
-      | Requestor edition      |
-      | travel event expense   |
-      | Requestor edition      |
-
-  Scenario: Show correct add edition links
-    Given an item: "administrative" exists with request: the request, node: node "administrative"
-    And an item: "durable" exists with request: the request, node: node "durable"
-    And an item exists with request: the request, node: node "publication"
-    And an edition exists with item: item "administrative", perspective: "requestor"
-    And an edition exists with item: item "administrative", perspective: "reviewer"
-    And an edition exists with item: item "durable", perspective: "requestor"
-    And I am logged in as "admin" with password "secret"
+  Scenario Outline: Move items among priorities
+    Given a structure exists
+    And a node: "1" exists with structure: the structure, name: "node 1"
+    And a node: "2" exists with structure: the structure, parent: node "1", name: "node 2"
+    And a node: "3" exists with structure: the structure, parent: node "1", name: "node 3"
+    And a node: "4" exists with structure: the structure, name: "node 4"
+    And a basis exists with structure: the structure
+    And a request exists with basis: the basis
+    And an item: "1" exists with request: the request, node: node "1"
+    And edition exists with item: the item
+    And an item: "2" exists with request: the request, node: node "2", parent: item "1"
+    And edition exists with item: the item
+    And an item: "3" exists with request: the request, node: node "3", parent: item "1"
+    And edition exists with item: the item
+    And an item: "4" exists with request: the request, node: node "4"
+    And edition exists with item: the item
+    And I log in as user: "admin"
     When I am on the items page for the request
     Then I should see the following items:
-      | Perspective            | Amount         |
-      | administrative expense | Move           |
-      | Requestor edition      | $0.00          |
-      | Reviewer edition       | $0.00          |
-      | durable good expense   | Move           |
-      | Requestor edition      | $0.00          |
-      | Reviewer edition       | None yet.      |
-      | publication expense    | Move           |
-      | Requestor edition      | None yet.      |
+      | Title  |
+      | node 1 |
+      | node 2 |
+      | node 3 |
+      | node 4 |
+    When I follow "Edit" for the <old> item for the request
+    And I select "<new>" from "Move to priority of"
+    And I press "Update Item"
+    Then I should see "Item was successfully updated."
+    When I am on the items page for the request
+    Then I should see the following items:
+      | Title  |
+      | <new1> |
+      | <new2> |
+      | <new3> |
+      | <new4> |
+    Examples:
+      | old | new    | new1   | new2   | new3   | new4   |
+      | 4th | node 1 | node 4 | node 1 | node 2 | node 3 |
+      | 3rd | node 2 | node 1 | node 3 | node 2 | node 4 |
+      | 2nd | node 3 | node 1 | node 3 | node 2 | node 4 |
+      | 1st | node 4 | node 4 | node 1 | node 2 | node 3 |
+
+  Scenario: List and delete items
+    Given a structure exists
+    And a node: "1" exists with structure: the structure, name: "node 1"
+    And a node: "2" exists with structure: the structure, parent: node "1", name: "node 2"
+    And a node: "3" exists with structure: the structure, parent: node "1", name: "node 3"
+    And a node: "4" exists with structure: the structure, name: "node 4"
+    And a basis exists with structure: the structure
+    And a request exists with basis: the basis
+    And an item: "1" exists with request: the request, node: node "1"
+    And an item: "2" exists with request: the request, node: node "2", parent: item "1"
+    And an item: "3" exists with request: the request, node: node "3", parent: item "1"
+    And an item: "4" exists with request: the request, node: node "4"
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd item for the request
+    Then I should see the following items:
+      | Title  |
+      | node 1 |
+      | node 2 |
+      | node 4 |
+    When I follow "Destroy" for the 1st item for the request
+    Then I should see the following items:
+      | Title  |
+      | node 4 |
 

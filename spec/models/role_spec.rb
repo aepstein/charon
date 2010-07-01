@@ -20,8 +20,5 @@ describe Role do
     duplicate_role.save.should == false
   end
 
-  it "should include the GlobalModelAuthorization module" do
-    Role.included_modules.should include(GlobalModelAuthorization)
-  end
 end
 

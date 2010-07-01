@@ -2,32 +2,30 @@
 <% basis ||= false %>
 <% organization ||= false %>
 
-<% if request.may_see?(current_user) %>
-    <% table_row_tag do %>
-      <% unless basis %>
-      <td><%=h request.basis.name %></td>
-      <% end %>
-      <% unless organization %>
-      <td><%=h request.organizations %></td>
-      <% end %>
-      <% unless status %>
-      <td><%= request.status %></td>
-      <% end %>
-      <% if request.new_record? %>
-      <td>
-        <% form_for :request, request, :url => organization_requests_path(request.organizations.first) do |f| %>
-          <%= f.hidden_field :basis_id %>
-          <%= f.submit 'Create' %>
-        <% end %>
-      </td>
-      <% else %>
-      <td/>
-      <td><%= link_to_if(request.may_see?(current_user), 'Show Detail', request) %></td>
-      <td><%= link_to_if(request.may_see?(current_user), 'Manage Items', request_items_path(request) ) %></td>
-      <td><%= link_to_if(request.may_destroy?(current_user), 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) { "" } %></td>
-      <td><%= link_to_if(request.may_approve?(current_user) && request.approvals.user_id_equals(current_user.id).empty?, 'Approve', new_request_approval_path( request ) ) { "" } %></td>
-      <td><%= link_to_unapprove_request(request) %></td>
-      <% end %>
+<% table_row_tag do %>
+  <% unless basis %>
+  <td><%=h request.basis.name %></td>
+  <% end %>
+  <% unless organization %>
+  <td><%=h request.organization %></td>
+  <% end %>
+  <% unless status %>
+  <td><%= request.status %></td>
+  <% end %>
+  <% if request.new_record? -%>
+  <td>
+    <% form_for :request, request, :url => organization_requests_path(request.organization) do |f| %>
+      <%= f.hidden_field :basis_id %>
+      <%= f.submit 'Create' %>
     <% end %>
+  </td>
+  <% else -%>
+  <td/>
+  <td><%= link_to 'Show Detail', request %></td>
+  <td><%= link_to 'Manage Items', request_items_path(request) %></td>
+  <td><%= link_to( 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) if permitted_to? :destroy, request %></td>
+  <td><%= link_to( 'Approve', new_request_approval_path( request ) ) if permitted_to?( :approve, request ) && request.approvals.user_id_equals(current_user.id).empty? %></td>
+  <td><%= link_to_unapprove_request(request) %></td>
+  <% end -%>
 <% end %>
 

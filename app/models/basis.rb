@@ -1,6 +1,4 @@
 class Basis < ActiveRecord::Base
-  include GlobalModelAuthorization
-
   default_scope :order => 'bases.name ASC'
 
   named_scope :closed, lambda {
@@ -13,11 +11,9 @@ class Basis < ActiveRecord::Base
     { :conditions => [ 'open_at > ?', DateTime.now.utc ] }
   }
   named_scope :no_draft_request_for, lambda { |organization|
-    { :include => [ :structure ],
-      :conditions => [
-      'bases.id NOT IN (SELECT basis_id FROM requests, organizations_requests ' +
-      'WHERE requests.id=organizations_requests.request_id AND ' +
-      "requests.status IN (?) AND organizations_requests.organization_id = ? )",
+    { :conditions => [
+      'bases.id NOT IN (SELECT basis_id FROM requests ' +
+      'WHERE requests.status IN (?) AND requests.organization_id = ? )',
       %w( started completed ), organization.id ] }
   }
 

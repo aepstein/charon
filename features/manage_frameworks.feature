@@ -4,31 +4,38 @@ Feature: Manage frameworks
   I want to create, show, delete, and list frameworks
 
   Background:
-    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
+    And a user: "regular" exists
 
   Scenario Outline: Test permissions for frameworks controller actions
-    Given an framework: "basic" exists
-    And I am logged in as "<user>" with password "secret"
-    And I am on the new framework page
-    Then I should <create>
+    Given an framework: "basic" exists with name: "SAFC"
+    And I log in as user: "<user>"
+    And I am on the page for framework: "basic"
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    And I am on the frameworks page
+    Then I should <show> authorized
+    And I should <show> "SAFC"
+    And I should <create> "New framework"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Given I am on the new framework page
+    Then I should <create> authorized
     Given I post on the frameworks page
-    Then I should <create>
+    Then I should <create> authorized
     And I am on the edit page for framework: "basic"
-    Then I should <update>
+    Then I should <update> authorized
     Given I put on the page for framework: "basic"
-    Then I should <update>
-    Given I am on the page for framework: "basic"
-    Then I should <show>
+    Then I should <update> authorized
     Given I delete on the page for framework: "basic"
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user    | create  | update  | destroy | show    |
+      | admin   | see     | see     | see     | see     |
+      | regular | not see | not see | not see | see     |
 
   Scenario: Register new framework and edit
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And I am on the new framework page
     When I fill in "Name" with "safc framework"
     And I press "Create"
@@ -45,8 +52,8 @@ Feature: Manage frameworks
     And a framework exists with name: "framework 3"
     And a framework exists with name: "framework 2"
     And a framework exists with name: "framework 1"
-    And I am logged in as "admin" with password "secret"
-    When I delete the 3rd framework
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd framework
     Then I should see the following frameworks:
       |Name       |
       |framework 1|

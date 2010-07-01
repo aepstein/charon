@@ -1,0 +1,20 @@
+<p>
+  <b><%=h address_detail.label.titleize %> street:</b> <%=h address_detail.street %>
+</p>
+
+<p>
+  <b><%=h address_detail.label.titleize %> city:</b> <%=h address_detail.city %>
+</p>
+
+<p>
+  <b><%=h address_detail.label.titleize %> state:</b> <%=h address_detail.state %>
+</p>
+
+<p>
+  <b><%=h address_detail.label.titleize %> zip:</b> <%=h address_detail.zip %>
+</p>
+
+<p>
+  <b><%=h address_detail.label.titleize %> is on campus?</b> <%= address_detail.on_campus? ? 'Yes' : 'No' %>
+</p>
+

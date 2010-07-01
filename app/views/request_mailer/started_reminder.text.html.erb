@@ -1,5 +1,5 @@
 <p>
-Dear Officers of <%= @request.organizations.map { |o| o.to_s }.join(', ') %>,
+Dear Officers of <%= @request.organization %>,
 </p>
 
 <p>
@@ -15,7 +15,7 @@ When the request is ready for submission, any of the following <%= link_to 'may 
 </p>
 
 <ul>
-<% @request.approvers.unfulfilled_for_status('completed').each do |user| -%>
+<% @request.users.required_for_status('completed').each do |user| -%>
 <li><%= user.name %></li>
 <% end -%>
 </ul>

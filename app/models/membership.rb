@@ -1,20 +1,16 @@
 class Membership < ActiveRecord::Base
+  include UserNameLookup
+  include OrganizationNameLookup
+
+  default_scope :include => [ :user, :organization ],
+    :order => 'organizations.last_name, organizations.first_name, users.last_name, users.first_name, users.net_id'
   named_scope :active, :conditions => { :active => true }
-  named_scope :in, lambda { |organization_ids|
-    { :conditions => { :organization_id => organization_ids } }
-  }
-  scope_procedure :for_fulfiller, lambda { |fulfiller|
-    send fulfiller.fulfiller_type.underscore + "_id_eq", fulfiller.id
-  }
-  scope_procedure :unfulfilled_for, lambda { |fulfiller|
-    permissions_unsatisfied.for_fulfiller fulfiller
-  }
+  named_scope :inactive, :conditions => [ 'memberships.active IS NULL or memberships.active = ?', false ]
 
   belongs_to :user
   belongs_to :role
   belongs_to :registration
   belongs_to :organization
-  has_many :permissions, :primary_key => :role_id, :foreign_key => :role_id
 
   before_validation :set_organization_from_registration
 
@@ -22,37 +18,16 @@ class Membership < ActiveRecord::Base
   validates_presence_of :role
   validate :must_have_registration_or_organization
 
-  def fulfiller_name( fulfillable )
-    return unless user_id && organization_id
-    send(fulfillable.fulfiller_type.underscore).name
-  end
-
   def set_organization_from_registration
-    if registration && ( organization != registration.organization ) then
-      self.organization = registration.organization
+    unless registration.blank?
+      self.active = registration.active?
+      self.organization = registration.organization unless registration.organization.blank?
     end
-    active = registration.active? if registration
   end
 
   def must_have_registration_or_organization
-    errors.add_to_base( 'Must have a registration or organization.'
-    ) unless registration || organization
+    errors.add_to_base( 'Must have a registration or organization.' ) unless (registration || organization)
   end
 
-  def may_see?( user )
-    user.admin? || self.user == user
-  end
-
-  def may_update?( user )
-    user.admin?
-  end
-
-  def may_create?( user )
-    user.admin?
-  end
-
-  def may_destroy?( user )
-    user.admin?
-  end
 end
 

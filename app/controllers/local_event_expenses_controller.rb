@@ -1,7 +1,11 @@
 class LocalEventExpensesController < ApplicationController
+  before_filter :require_user
+  filter_access_to :index do
+    current_user.admin?
+  end
 
   def index
-    @events = LocalEventExpense.find( :all, :include => { :edition => { :item => { :request => { :organizations => :users } } } },
+    @events = LocalEventExpense.find( :all, :include => { :edition => { :item => { :request => { :organization => :users } } } },
       :conditions => ['editions.perspective = ? AND local_event_expenses.date >= ?', 'reviewer', Date.today - 1.weeks],
       :order => 'local_event_expenses.date ASC' )
     page = params[:page] ? params[:page] : 1
@@ -9,15 +13,15 @@ class LocalEventExpensesController < ApplicationController
       format.html { @events = @events.paginate( :page => page ) }
       format.csv do
         csv_string = CSV.generate do |csv|
-          csv << %w( date title location uup purpose organizers contacts )
+          csv << %w( date title location uup purpose organizer contacts )
           @events.each do |event|
             csv << ( [ event.date,
                        event.title,
                        event.location,
                        event.uup_required? ? 'Y' : 'N',
                        event.purpose,
-                       event.requestors.map { |r| r.name }.join(", "),
-                       event.requestors.map { |r| r.users }.flatten.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
+                       event.requestor.name,
+                       event.requestor.users.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
           end
         end
         send_data csv_string, :disposition => "attachment; filename=local_events.csv"

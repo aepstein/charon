@@ -36,8 +36,5 @@ describe DocumentType do
     duplicate.save.should == true
   end
 
-  it "should include GlobalModelAuthorization module" do
-    DocumentType.included_modules.should include( GlobalModelAuthorization )
-  end
 end
 

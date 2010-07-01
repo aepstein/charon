@@ -14,6 +14,8 @@
 <br />
 
 <p>
+<% if permitted_to? :create, Framework.new -%>
 <%= link_to 'New framework', new_framework_path %>
+<% end -%>
 </p>
 

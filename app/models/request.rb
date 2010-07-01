@@ -1,55 +1,45 @@
 class Request < ActiveRecord::Base
-  ACTIONS = %w( create update destroy see approve unapprove unapprove_other accept revise review release )
+  default_scope :include => [ :organization, :basis ],
+    :order => 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC'
 
   belongs_to :basis
-  has_many :approvers, :through => :approvals, :source => :user do
-    def empty_for_status?( status=nil )
-      status ||= proxy_owner.status
-      proxy_owner.framework.approvers.status(status).map { |a| actual_for(a) }.flatten.empty?
-    end
-    def fulfill_status?( status=nil )
-      status ||= proxy_owner.status
-      proxy_owner.framework.approvers.status(status).each do |approver|
-        return false unless fulfill?( approver )
-      end
-      true
-    end
-    def required_for_status( status )
-      approvers = proxy_owner.framework.approvers.status(status).select { |a| a.quantity.nil? }
-      approvers.map { |a| potential_for(a) }.flatten.uniq
-    end
-    def unfulfilled_for_status( status )
-      required_for_status( status ) - self
-    end
-    def fulfill?( approver )
-      if approver.quantity
-        actual_for(approver).size >= approver.quantity
-      else
-        ( potential_for( approver ) - actual_for( approver )  ).empty?
-      end
-    end
-    def actual_for( approver )
-      potential_for( approver ) & self.find(:all, :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint.utc ] )
-    end
-    def potential_for( approver )
-      sql = case approver.perspective
-      when 'requestor'
-        "memberships INNER JOIN organizations_requests WHERE memberships.organization_id = " +
-        "organizations_requests.organization_id AND request_id = :request_id"
-      when 'reviewer'
-        "memberships WHERE organization_id = :organization_id"
-      end
-      conditions = [
-        "users.id IN (SELECT user_id FROM #{sql} AND active = :true AND role_id = :role_id)",
-        { :request_id => proxy_owner.id, :role_id => approver.role_id, :true => true,
-          :organization_id => proxy_owner.basis.organization_id }
-      ]
-      User.find( :all, :conditions => conditions )
-    end
-  end
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
     def existing
       self.reject { |approval| approval.new_record? }
+    end
+  end
+  has_many :users, :through => :approvals do
+    def for_perspective( perspective )
+      Membership.active.role_name_like_any( Role::REQUESTOR ).organization_id_equals(
+      proxy_owner.send(perspective).id ).all( :include => [ :user ] ).map(&:user)
+    end
+    def fulfilled( approvers = Approver )
+      approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
+    end
+    def unfulfilled( approvers = Approver )
+      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
+    end
+    def required_for_status( status )
+      approvers_to_users( Approver.framework_id_equals( proxy_owner.basis.framework_id ).status_equals( status ).quantity_null )
+    end
+    protected
+    def after_checkpoint
+      all( :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint] )
+    end
+    def approvers_to_users(approvers)
+      approvers_organized = approvers.inject({}) do |memo, approver|
+        memo[approver.perspective] ||= Array.new
+        memo[approver.perspective] << approver.role_id
+        memo
+      end
+      approvers_fragments = Array.new
+      approvers_organized.each do |perspective, role_ids|
+        approvers_fragments << ( "( memberships.organization_id = #{proxy_owner.send(perspective).id} " +
+          "AND memberships.role_id IN (#{role_ids.join(',')}) )" )
+      end
+      return Array.new if approvers.length == 0
+      User.all( :joins => [:memberships], :conditions => approvers_fragments.join(' OR ') +
+        " AND memberships.active = #{connection.quote true}" ) - self
     end
   end
   has_many :items, :dependent => :destroy, :order => 'items.position ASC' do
@@ -92,22 +82,13 @@ class Request < ActiveRecord::Base
     end
   end
   has_many :editions, :through => :items
-  has_and_belongs_to_many :organizations do
-    def may(action)
-      self.map { |o| o.users }.flatten.select { |u| proxy_owner.send("may_#{action}?", u) }.uniq
-    end
-    def to_s
-      self.join ', '
-    end
-  end
+  belongs_to :organization
 
-  named_scope :organization_like, lambda { |name|
-    { :include => :organizations,
-      :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ],
-      :order => 'organizations.last_name ASC, organizations.first_name ASC' }
+  named_scope :organization_name_like, lambda { |name|
+    { :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ] }
   }
-  named_scope :basis_like, lambda { |name|
-    { :include => :basis, :order => 'bases.name ASC', :conditions => ['bases.name LIKE ?', "%#{name}%"] }
+  named_scope :basis_name_like, lambda { |name|
+    { :conditions => ['bases.name LIKE ?', "%#{name}%"] }
   }
   named_scope :incomplete_for_perspective, lambda { |perspective|
     { :conditions => [ "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
@@ -123,16 +104,12 @@ class Request < ActiveRecord::Base
 
   before_validation_on_create :set_approval_checkpoint
 
-  validate :must_have_eligible_organizations
+  validates_presence_of :organization
   validates_datetime :approval_checkpoint
+  validates_presence_of :basis
 
   def must_have_open_basis
     errors.add( :basis_id, 'must be an open basis.' ) unless basis.open?
-  end
-  def must_have_eligible_organizations
-    if organizations.empty?
-      errors.add_to_base( "Must have at least one organization associated with request." )
-    end
   end
 
   attr_readonly :basis_id
@@ -170,7 +147,8 @@ class Request < ActiveRecord::Base
     transitions :to => :released, :from => :certified
   end
 
-  alias :requestors :organizations
+  alias :requestor :organization
+  def reviewer; basis ? basis.organization : nil; end
 
   def approvable?
     case status
@@ -181,13 +159,9 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def requestor_ids
-    organization_ids
-  end
-
   def deliver_required_approval_notice
-    approvals = approvers.unfulfilled_for_status(status).map { |a| Approval.new( :user => a, :approvable => self ) }
-    approvals.each do |approval|
+    needed_approvals = users.unfulfilled(Approver.quantity_null).map { |u| approvals.build( :user => u )  }
+    needed_approvals.each do |approval|
       ApprovalMailer.deliver_request_notice(approval)
     end
   end
@@ -197,80 +171,23 @@ class Request < ActiveRecord::Base
   end
 
   def set_accepted_at
-    self.accepted_at = DateTime.now
+    self.accepted_at = Time.zone.now
   end
 
   def set_released_at
-    self.released_at = DateTime.now
-  end
-
-  def reviewers
-    return Array.new unless basis.organization
-    [ basis.organization ]
-  end
-
-  def reviewer_ids
-    return reviewers.map { |r| r.id }
-  end
-
-  def perspective_ids
-    Edition::PERSPECTIVES.inject([]) do |memo, perspective|
-      memo << send(perspective + "_ids").unshift(perspective)
-    end
-  end
-
-  # Lists actions available to user on the request
-  def may(user)
-    return Array.new if user.nil?
-    return ACTIONS if user.admin?
-    permissions = Permission.satisfied.framework_id_eq(basis.framework_id
-      ).status_eq(status).perspectives_in(perspective_ids).memberships_user_id_eq(user.id)
-    Edition::PERSPECTIVES.each do |perspective|
-      values = permissions.select { |p| p.perspective == perspective }
-      return values.map { |v| v.action }.uniq unless values.empty?
-    end
-    Array.new
-  end
-
-  # Creates permission checking methods
-  # May need to override some to provide additional logic (experiment with super)
-  ACTIONS.each do |action|
-    define_method("may_#{action}?") do |user|
-      # may need to override with custom methods for some actions
-      # return false if basis.closed?
-      return true if may(user).include?(action)
-      false
-    end
-  end
-
-  def may_create?(user)
-    return false if user.nil?
-    return true if user.admin? || ( may(user).include?('create') && basis.open? )
-    false
-  end
-
-  def may_destroy?(user)
-    return false if user.nil?
-    return true if user.admin? || ( may(user).include?('destroy') && basis.open? )
-    false
-  end
-
-  def may_update?(user)
-    return false if user.nil?
-    return true if user.admin? || ( may(user).include?('update') && basis.open? )
-    false
+    self.released_at = Time.zone.now
   end
 
   def approvals_fulfilled?
-    approvers.fulfill_status?
+    users.unfulfilled.length == 0
   end
 
   def approvals_unfulfilled?
-    approvers.empty_for_status?
+    users.fulfilled.length == 0
   end
 
-  def set_approval_checkpoint(datetime=nil)
-    self.approval_checkpoint = ( datetime.nil? ? DateTime.now : datetime )
+  def set_approval_checkpoint
+    self.approval_checkpoint = Time.zone.now
   end
 
   def reset_approval_checkpoint
@@ -283,7 +200,7 @@ class Request < ActiveRecord::Base
   end
 
   def to_s
-    "Request of #{organizations.join(", ")} from #{basis}"
+    "Request of #{organization} from #{basis}"
   end
 end
 

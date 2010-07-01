@@ -1,29 +1,18 @@
 <h2>Listing memberships</h2>
 
-<table>
-  <tr>
-    <th>Group</th>
-    <th>Person</th>
-    <th>Registration</th>
-    <th>Role</th>
-  </tr>
+<%= will_paginate @memberships %>
 
-<% @memberships.each do |membership| %>
-  <% table_row_tag do %>
-    <td><%=h membership.group_id %></td>
-    <td><%=h membership.person_id %></td>
-    <td><%=h membership.registration_id %></td>
-    <td><%=h membership.role_id %></td>
-    <td><%= link_to 'Show', membership %></td>
-    <td><%= link_to 'Edit', edit_membership_path(membership) %></td>
-    <td><%= link_to 'Destroy', membership, :confirm => 'Are you sure?', :method => :delete %></td>
-  <% end %>
-<% end %>
-</table>
+<%= render :partial => "memberships", :object => @memberships, :locals => {
+  :organization => @context.class == Organization, :user => @context.class == User
+} %>
+
+<%= will_paginate @memberships %>
 
 <br />
 
 <p>
-<%= link_to 'New membership', new_membership_path %>
+<% if permitted_to? :create, @context.memberships.build %>
+  <%= link_to "New membership for #{@context}", new_polymorphic_path( [ @context, :membership ] ) %>
+<% end %>
 </p>
 

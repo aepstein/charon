@@ -1,5 +1,7 @@
 class Role < ActiveRecord::Base
-  include GlobalModelAuthorization
+  MANAGER = %w( staff )
+  REVIEWER = %w( member )
+  REQUESTOR =  %w( president vice-president treasurer officer advisor )
 
   default_scope :order => 'roles.name ASC'
 
@@ -7,10 +9,7 @@ class Role < ActiveRecord::Base
   validates_uniqueness_of :name
 
   has_many :memberships, :dependent => :destroy
-  has_many :permissions, :dependent => :destroy
 
-  def to_s
-    name
-  end
+  def to_s; name; end
 end
 

@@ -4,31 +4,38 @@ Feature: Manage structures
   I want a structure form
 
   Background:
-    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
+    And a user: "regular" exists
 
   Scenario Outline: Test permissions for structures controller actions
-    Given an structure: "basic" exists
-    And I am logged in as "<user>" with password "secret"
-    And I am on the new structure page
-    Then I should <create>
+    Given an structure: "basic" exists with name: "SAFC"
+    And I log in as user: "<user>"
+    And I am on the page for structure: "basic"
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the structures page
+    Then I should <show> authorized
+    And I should <show> "SAFC"
+    And I should <create> "New structure"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Given I am on the new structure page
+    Then I should <create> authorized
     Given I post on the structures page
-    Then I should <create>
+    Then I should <create> authorized
     And I am on the edit page for structure: "basic"
-    Then I should <update>
+    Then I should <update> authorized
     Given I put on the page for structure: "basic"
-    Then I should <update>
-    Given I am on the page for structure: "basic"
-    Then I should <show>
+    Then I should <update> authorized
     Given I delete on the page for structure: "basic"
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user    | create  | update  | destroy | show    |
+      | admin   | see     | see     | see     | see     |
+      | regular | not see | not see | not see | see     |
 
   Scenario: Register new structure and edit
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And I am on the new structure page
     When I fill in "Name" with "safc semester"
     And I fill in "Maximum requestors" with "1"
@@ -53,8 +60,8 @@ Feature: Manage structures
     And a structure exists with name: "structure 3"
     And a structure exists with name: "structure 2"
     And a structure exists with name: "structure 1"
-    And I am logged in as "admin" with password "secret"
-    When I delete the 3rd structure
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd structure
     Then I should see the following structures:
       | Name        |
       | structure 1 |

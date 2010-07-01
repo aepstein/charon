@@ -4,11 +4,11 @@ Feature: Manage agreements
   I want to create, edit, destroy, show, and list agreements
 
   Background:
-    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
+    And a user: "regular" exists
 
   Scenario: Register new agreement
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And I am on the new agreement page
     When I fill in "Name" with "Ethical Conduct Agreement"
     And I fill in "Content" with "I *agree* to behave ethically."
@@ -32,31 +32,31 @@ Feature: Manage agreements
 
   Scenario Outline: Test permissions for agreements controller actions
     Given an agreement: "basic" exists
-    And I am logged in as "<user>" with password "secret"
+    And I log in as user: "<user>"
     And I am on the new agreement page
-    Then I should <create>
+    Then I should <create> authorized
     Given I post on the agreements page
-    Then I should <create>
+    Then I should <create> authorized
     And I am on the edit page for agreement: "basic"
-    Then I should <update>
+    Then I should <update> authorized
     Given I put on the page for agreement: "basic"
-    Then I should <update>
+    Then I should <update> authorized
     Given I am on the page for agreement: "basic"
-    Then I should <show>
+    Then I should <show> authorized
     Given I delete on the page for agreement: "basic"
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user    | create  | update  | destroy | show    |
+      | admin   | see     | see     | see     | see     |
+      | regular | not see | not see | not see | see     |
 
   Scenario: Delete agreement
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And an agreement exists with name: "name 4", content: "content"
     And an agreement exists with name: "name 3", content: "content"
     And an agreement exists with name: "name 2", content: "content"
     And an agreement exists with name: "name 1", content: "content"
-    When I delete the 3rd agreement
+    When I follow "Destroy" for the 3rd agreement
     Then I should see the following agreements:
       |Name  |
       |name 1|

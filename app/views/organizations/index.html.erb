@@ -2,9 +2,9 @@
 
 <% form_for :search, :url => organizations_path, :html => { :method => :get } do |f| %>
   <p>
-    <%= f.label :q, 'Search' %>
-    <%= f.text_field :q %>
-    <%= f.submit 'Go' %>
+    <%= f.label :name_like, 'Name' %>
+    <%= f.text_field :name_like %>
+    <%= f.submit 'Search' %>
   </p>
 <% end %>
 
@@ -17,6 +17,8 @@
 <%= will_paginate @organizations %>
 
 <p>
+<% if permitted_to? :create, Organization.new -%>
 <%= link_to 'New organization', new_organization_path %>
+<% end -%>
 </p>
 

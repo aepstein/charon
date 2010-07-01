@@ -1,0 +1,24 @@
+  <p>
+    Title: <%=h detail.title %>
+  </p>
+
+  <p>
+    Number of issues: <%= detail.number_of_issues %>
+  </p>
+
+  <p>
+    Number of copies per issue: <%= detail.copies_per_issue %>
+  </p>
+
+  <p>
+    Purchase price per copy: <%= number_to_currency(detail.price_per_copy) %>
+  </p>
+
+  <p>
+    Cost of publication per issue: <%= number_to_currency(detail.cost_per_issue) %>
+  </p>
+
+  <p>
+    Revenue: <%= number_to_currency(detail.revenue) %>
+  </p>
+

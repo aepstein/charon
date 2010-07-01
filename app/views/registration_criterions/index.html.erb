@@ -5,6 +5,8 @@
 <br />
 
 <p>
-<%= link_to 'New registration_criterion', new_registration_criterion_path %>
+<% if permitted_to? :create, RegistrationCriterion.new -%>
+<%= link_to 'New registration criterion', new_registration_criterion_path %>
+<% end -%>
 </p>
 

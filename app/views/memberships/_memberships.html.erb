@@ -1,0 +1,21 @@
+<% organization ||= false -%>
+<% user ||= false -%>
+<table>
+<thead>
+  <tr>
+    <% unless organization %>
+    <th>Organization</th>
+    <% end %>
+    <% unless user %>
+    <th>User</th>
+    <% end %>
+    <th>Registration?</th>
+    <th>Role</th>
+  </tr>
+</thead>
+<tbody>
+<%= render :partial => "memberships/membership", :collection => memberships,
+  :locals => { :organization => organization, :user => user } %>
+</tbody>
+</table>
+

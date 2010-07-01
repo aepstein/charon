@@ -28,24 +28,5 @@ describe Address do
     duplicate.save.should == false
   end
 
-  it "should have may_create/update/destroy? that returns addressable.may_create?" do
-    address = Factory(:address)
-    address.addressable.stub!(:may_update?).and_return(true)
-    address.may_create?(nil).should == true
-    address.may_update?(nil).should == true
-    address.may_destroy?(nil).should == true
-    address.addressable.stub!(:may_update?).and_return(false)
-    address.may_create?(nil).should == false
-    address.may_update?(nil).should == false
-    address.may_destroy?(nil).should == false
-  end
-
-  it "should have may_see? that returns addressable.may_see?" do
-    address = Factory(:address)
-    address.addressable.stub!(:may_see?).and_return(true)
-    address.may_see?(nil).should == true
-    address.addressable.stub!(:may_see?).and_return(false)
-    address.may_see?(nil).should == false
-  end
 end
 

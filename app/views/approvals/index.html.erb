@@ -1,10 +1,12 @@
-<h2>Listing approvals</h2>
+<h2>Listing approvals for <%= @approvable ? @approvable : @user %></h2>
 
 <%= render :partial => "approvals", :object => @approvals,
   :locals => { :user => true, :approvable => true } %>
 <br />
 
 <p>
+<% if @approvable && !@approvable.users.include?(current_user) && permitted_to?( :create, @approvable.approvals.build( :user => current_user ) ) -%>
 <%= link_to 'New approval', new_polymorphic_path( [ @approvable, :approval ] ) %>
+<% end -%>
 </p>
 

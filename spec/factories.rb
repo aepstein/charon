@@ -1,3 +1,26 @@
+require 'factory_girl'
+
+Factory.define :external_term, :class => RegistrationImporter::ExternalTerm do |f|
+  f.sequence(:term_id) { |n| n }
+  f.sequence(:term_sdescr) { |n| "ET #{n}" }
+  f.sequence(:term_ldescr) { |n| "External term #{n}" }
+  f.current 'YES'
+end
+
+Factory.define :external_registration, :class => RegistrationImporter::ExternalRegistration do |f|
+  f.association :term, :factory => :external_term
+  f.sequence(:org_id) { |n| n }
+  f.sequence(:name) { |n| "External registration #{n}" }
+  f.orgtype 'CIO'
+  f.reg_approved 'YES'
+  f.sports_club 'YES'
+end
+
+Factory.define :external_contact, :class => RegistrationImporter::ExternalContact do |f|
+  f.association :registration, :factory => :external_registration
+  f.contacttype RegistrationImporter::ExternalContact::ROLE_MAP.keys.first
+end
+
 Factory.define :address do |f|
   f.association :addressable, :factory => :user
   f.sequence(:label) { |n| "Address #{n}" }
@@ -20,7 +43,7 @@ Factory.define :approver do |f|
   f.association :framework
   f.association :role
   f.status 'submitted'
-  f.perspective 'requestor'
+  f.perspective Edition::PERSPECTIVES.first
 end
 
 Factory.define :category do |f|
@@ -43,6 +66,10 @@ Factory.define :organization do |f|
   f.sequence(:last_name) { |n| "Organization #{n}"}
 end
 
+Factory.define :registered_organization, :parent => :organization do |f|
+  f.registrations { |o| [ o.association(:current_registration, :registered => true) ] }
+end
+
 Factory.define :framework do |f|
   f.sequence(:name) { |n| "Sequence #{n}" }
 end
@@ -50,14 +77,6 @@ end
 Factory.define :fulfillment do |f|
   f.fulfiller { |r| r.association(:user) }
   f.fulfillable { |r| r.association(:agreement) }
-end
-
-Factory.define :permission do |f|
-  f.association :role
-  f.association :framework
-  f.perspective Edition::PERSPECTIVES.first
-  f.status { |r| Request.aasm_initial_state.to_s }
-  f.action Request::ACTIONS.first
 end
 
 Factory.define :safc_framework, :parent => :framework do |f|
@@ -78,6 +97,20 @@ Factory.define :registration do |f|
   f.number_of_undergrads 1
 end
 
+Factory.define :current_registration, :parent => :registration do |f|
+  f.association :registration_term, :factory => :current_registration_term
+end
+
+Factory.define :registration_term do |f|
+  f.sequence(:external_id) { |i| i }
+  f.sequence(:description) { |n| "Registration term #{n}" }
+  f.current false
+end
+
+Factory.define :current_registration_term, :parent => :registration_term do |f|
+  f.current true
+end
+
 Factory.define :registration_criterion do |f|
   f.must_register true
   f.minimal_percentage 10
@@ -85,8 +118,16 @@ Factory.define :registration_criterion do |f|
 end
 
 Factory.define :requirement do |f|
-  f.association :permission
-  f.fulfillable { |r| r.fulfillable = Factory(:agreement) }
+  f.association :framework
+  f.association :fulfillable, :factory => :agreement
+end
+
+Factory.define :requestor_requirement, :parent => :requirement do |f|
+  f.perspectives [ Edition::PERSPECTIVES.first ]
+end
+
+Factory.define :reviewer_requirement, :parent => :requirement do |f|
+  f.perspectives [ Edition::PERSPECTIVES.last ]
 end
 
 Factory.define :safc_eligible_registration, :parent => :registration do |f|
@@ -103,7 +144,7 @@ Factory.define :user do |f|
   f.first_name "John"
   f.sequence(:last_name) { |n| "Doe #{n}"}
   f.sequence(:net_id) { |n| "zzz#{n}"}
-  f.password "pjlmiok"
+  f.password "secret"
   f.password_confirmation { |u| u.password }
   f.status "undergrad"
   f.ldap_entry false
@@ -114,7 +155,19 @@ Factory.define :user_status_criterion do |f|
 end
 
 Factory.define :role do |f|
-  f.sequence(:name) { |n| "Role #{n}" }
+  f.sequence(:name) { |n| "role #{n}" }
+end
+
+Factory.define :requestor_role, :parent => :role do |f|
+  f.name Role::REQUESTOR.first
+end
+
+Factory.define :reviewer_role, :parent => :role do |f|
+  f.name Role::REVIEWER.first
+end
+
+Factory.define :manager_role, :parent => :role do |f|
+  f.name Role::MANAGER.first
 end
 
 Factory.define :membership do |f|
@@ -154,7 +207,7 @@ end
 
 Factory.define :request do |f|
   f.association :basis
-  f.organizations { |o| [ o.association(:organization) ] }
+  f.association :organization
 end
 
 Factory.define :item do |f|

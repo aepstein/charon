@@ -28,39 +28,12 @@ describe Item do
 
   it "should have a editions.perspectives method that returns perspectives of editions represented" do
     item = Factory(:item)
-    item.editions.next.perspective.should == 'requestor'
-    item = Factory(:administrative_expense).edition.item
-    item.editions.perspectives.size.should == 1
-    item.editions.perspectives.first.should == 'requestor'
-    item.editions.next.perspective.should == 'reviewer'
-  end
-
-  it "should have may_create? which returns same value as request.may_update?" do
-    @item.request.stub!(:may_update?).and_return(true)
-    @item.may_create?(nil).should == true
-    @item.request.stub!(:may_update?).and_return(false)
-    @item.may_create?(nil).should == false
-  end
-
-  it "should have may_update? which returns same value as request.may_update?" do
-    @item.request.stub!(:may_update?).and_return(true)
-    @item.may_update?(nil).should == true
-    @item.request.stub!(:may_update?).and_return(false)
-    @item.may_update?(nil).should == false
-  end
-
-  it "should have may_destroy? which returns same value as request.may_update?" do
-    @item.request.stub!(:may_update?).and_return(true)
-    @item.may_destroy?(nil).should == true
-    @item.request.stub!(:may_update?).and_return(false)
-    @item.may_destroy?(nil).should == false
-  end
-
-  it "should have may_see? which returns same value as request.may_see?" do
-    @item.request.stub!(:may_see?).and_return(true)
-    @item.may_see?(nil).should == true
-    @item.request.stub!(:may_see?).and_return(false)
-    @item.may_see?(nil).should == false
+    item.editions.next.perspective.should eql 'requestor'
+    item = Factory(:edition).item
+    item.reload
+    item.editions.perspectives.size.should eql 1
+    item.editions.perspectives.first.should eql 'requestor'
+    item.editions.next.perspective.should eql 'reviewer'
   end
 
   it "should set its title from the node" do

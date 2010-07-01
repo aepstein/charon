@@ -1,15 +1,11 @@
-<h2>Editing request for <%=h @request.organizations.first.name %></h2>
+<h2>Editing <%=h @request %></h2>
 
-<% form_for( @request ) do |f| %>
-
-  <%= f.error_messages %>
-  <%= render :partial => 'form',
-             :object => f %>
-  <p>
-    <%= f.submit 'Update' %>
-  </p>
+<% semantic_form_for( @request ) do |f| %>
+  <%= render :partial => 'form', :object => f %>
 <% end %>
 
+<p>
 <%= link_to 'Show', @request %> |
-<%= link_to 'Back', organization_requests_path( @request.organizations.first ) %>
+<%= link_to 'Back', organization_requests_path( @request.organization ) %>
+</p>
 

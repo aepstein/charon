@@ -1,17 +1,17 @@
-  <p>
-    <%= form.label :organization_id %><br />
-    <%= form.text_field :organization_id %>
-  </p>
-  <p>
-    <%= form.label :user_id %><br />
-    <%= form.text_field :user_id %>
-  </p>
-  <p>
-    <%= form.label :registration_id %><br />
-    <%= form.text_field :registration_id %>
-  </p>
-  <p>
-    <%= form.label :role_id %><br />
-    <%= form.text_field :role_id %>
-  </p>
+<% organization ||= false -%>
+<% user ||= false -%>
+  <%= form.error_messages %>
+  <% form.inputs do %>
+    <% if form.object.new_record? %>
+      <% unless organization %>
+        <%= form.input :organization_name, :label => 'Organization' %>
+      <% end %>
+      <% unless user %>
+        <%= form.input :user_name, :label => 'User' %>
+      <% end %>
+    <% end %>
+    <%= form.input :active, :label => "Active?", :as => :radio %>
+    <%= form.input :role %>
+  <% end %>
+  <%= form.buttons %>
 

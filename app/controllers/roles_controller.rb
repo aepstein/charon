@@ -1,11 +1,14 @@
 class RolesController < ApplicationController
-
   before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_role_from_params, :only => [ :new, :create ]
+  filter_access_to :show, :new, :create, :update, :edit, :update, :destroy, :attribute_check => true
 
   # GET /roles
   # GET /roles.xml
   def index
-    @roles = Role.all
+    @roles = @roles.paginate( :page => params[:page] )
 
     respond_to do |format|
       format.html # index.html.erb
@@ -16,9 +19,6 @@ class RolesController < ApplicationController
   # GET /roles/:id
   # GET /roles/:id.xml
   def show
-    @role = Role.find(params[:id])
-    raise AuthorizationError unless @role.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @role }
@@ -28,9 +28,6 @@ class RolesController < ApplicationController
   # GET /roles/new
   # GET /roles/new.xml
   def new
-    @role = Role.new
-    raise AuthorizationError unless @role.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @role }
@@ -39,16 +36,14 @@ class RolesController < ApplicationController
 
   # GET /roles/:id/edit
   def edit
-    @role = Role.find(params[:id])
-    raise AuthorizationError unless @role.may_update? current_user
+    respond_to do |format|
+      format.html # edit.html.erb
+    end
   end
 
   # POST /roles
   # POST /roles.xml
   def create
-    @role = Role.new(params[:role])
-    raise AuthorizationError unless @role.may_create? current_user
-
     respond_to do |format|
       if @role.save
         flash[:notice] = 'Role was successfully created.'
@@ -64,9 +59,6 @@ class RolesController < ApplicationController
   # PUT /roles/:id
   # PUT /roles/:id.xml
   def update
-    @role = Role.find(params[:id])
-    raise AuthorizationError unless @role.may_update? current_user
-
     respond_to do |format|
       if @role.update_attributes(params[:role])
         flash[:notice] = 'Role was successfully updated.'
@@ -82,8 +74,6 @@ class RolesController < ApplicationController
   # DELETE /roles/:id
   # DELETE /roles/:id.xml
   def destroy
-    @role = Role.find(params[:id])
-    raise AuthorizationError unless @role.may_destroy? current_user
     @role.destroy
 
     respond_to do |format|
@@ -91,5 +81,20 @@ class RolesController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+  def initialize_context
+    @role = Role.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @roles = Role
+  end
+
+  def new_role_from_params
+    @role = Role.new( params[:role] )
+  end
+
 end
 

@@ -1,4 +1,10 @@
 class AdministrativeExpense < ActiveRecord::Base
+  MAILBOX_OPTIONS = {
+    "$0 - no mailbox" => "0",
+    "$#{APP_CONFIG['expenses']['general']['mailbox']['existing']} - existing" => APP_CONFIG['expenses']['general']['mailbox']['existing'],
+    "$#{APP_CONFIG['expenses']['general']['mailbox']['new']} - new" => APP_CONFIG['expenses']['general']['mailbox']['new']
+  }
+
   belongs_to :edition
 
   validates_presence_of :edition

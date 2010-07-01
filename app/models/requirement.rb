@@ -1,21 +1,39 @@
 class Requirement < ActiveRecord::Base
-  belongs_to :permission
+  belongs_to :framework
   belongs_to :fulfillable, :polymorphic => true
+  belongs_to :role
 
-  validates_presence_of :permission
+  validates_presence_of :framework
   validates_presence_of :fulfillable
-  validates_uniqueness_of :permission_id, :scope => [ :fulfillable_id, :fulfillable_type ]
+  validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type ]
   validates_inclusion_of :fulfillable_type, :in => Fulfillment::FULFILLABLE_TYPES.values.flatten
 
-  # Must have memberships table related
-  named_scope :with_fulfillments, :joins => 'LEFT JOIN fulfillments ON ' +
-    'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
-    'requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
-    "( (fulfillments.fulfiller_type = 'Organization' AND fulfillments.fulfiller_id = memberships.organization_id) OR " +
-    "(fulfillments.fulfiller_type = 'User' AND fulfillments.fulfiller_id = memberships.user_id) )"
-  # Must have fulfillments table related
-  named_scope :fulfilled, :conditions => 'fulfillments.id IS NOT NULL'
-  named_scope :unfulfilled, :conditions => 'fulfillments.id IS NULL'
+  named_scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
+    { :joins => 'LEFT JOIN fulfillments ON requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
+        'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
+        "fulfillments.fulfiller_id = #{fulfiller.id}",
+      :group => 'requirements.id',
+      :conditions => "requirements.perspectives_mask & #{2**Edition::PERSPECTIVES.index(perspective)} > 0 " +
+      "AND requirements.fulfillable_type IN (#{Fulfillment.quoted_types_for(fulfiller)}) AND " +
+      ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
+      "requirements.role_id IN (#{role_ids.join ','}) )" : "requirements.role_id IS NULL" ) }
+  }
+  named_scope :fulfilled, :having => 'COUNT(requirements.id) <= COUNT(fulfillments.id)'
+  named_scope :unfulfilled, :having => 'COUNT(requirements.id) > COUNT(fulfillments.id)'
+  scope_procedure :fulfilled_for, lambda { |fulfiller, perspective, role_ids|
+    with_fulfillments_for(fulfiller, perspective, role_ids).fulfilled
+  }
+  scope_procedure :unfulfilled_for, lambda { |fulfiller, perspective, role_ids|
+    with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
+  }
+
+  def perspectives=(perspectives)
+    self.perspectives_mask = (perspectives & Edition::PERSPECTIVES).map { |p| 2**Edition::PERSPECTIVES.index(p) }.sum
+  end
+
+  def perspectives
+    Edition::PERSPECTIVES.reject { |p| ((perspectives_mask || 0) & 2**Edition::PERSPECTIVES.index(p)).zero? }
+  end
 
   def fulfiller_type; Fulfillment.fulfiller_type_for_fulfillable fulfillable_type; end
 

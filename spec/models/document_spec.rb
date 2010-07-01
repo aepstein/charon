@@ -30,30 +30,5 @@ describe Document do
     duplicate.save.should == false
   end
 
-  it "should have may_create? and may_update? that return edition.may_update?" do
-    document = Factory.build(:document)
-    document.edition.stub!(:may_update?).and_return(true)
-    document.may_create?(nil).should == true
-    document.may_update?(nil).should == true
-    document.edition.stub!(:may_update?).and_return(false)
-    document.may_create?(nil).should == false
-    document.may_update?(nil).should == false
-  end
-
-  it "should have may_destroy? that returns edition.may_destroy?" do
-    document = Factory(:document)
-    document.edition.stub!(:may_destroy?).and_return(true)
-    document.may_destroy?(nil) == true
-    document.edition.stub!(:may_destroy?).and_return(false)
-    document.may_destroy?(nil) == true
-  end
-
-  it "should have may_see? that returns edition.may_see?" do
-    document = Factory(:document)
-    document.edition.stub!(:may_see?).and_return(true)
-    document.may_see?(nil) == true
-    document.edition.stub!(:may_see?).and_return(false)
-    document.may_see?(nil) == true
-  end
 end
 

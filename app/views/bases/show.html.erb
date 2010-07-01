@@ -40,37 +40,43 @@
   <b>Closed at:</b> <%=h @basis.closed_at %>
 </p>
 
+<% if permitted_to? :review, @basis  -%>
 <p>
   <b>Release message:</b> (included in notices sent to requestor members when request is released)
 </p>
 
 <%= markdown @basis.release_message %>
 
-<h3>Requests overview</h3>
-<table>
-<thead>
-<tr>
-<th>Status</th>
-<th>Quantity</th>
-<th>Requestor Amount</th>
-<th>Reviewer Amount</th>
-<th>Allocation Amount</th>
-</thead>
-</tr>
-<% Request.aasm_state_names.each do |status| %>
-<% table_row_tag do %>
-<td><%=h status %></td>
-<td><%= @basis.requests.send(status).size %></td>
-<td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('requestor',status) ) %></td>
-<td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
-<td><%= number_to_currency( @basis.requests.item_amount_for_status(status) ) %></td>
-<% end %>
-<% end %>
-</table>
+  <h3>Requests overview</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Quantity</th>
+        <th>Requestor Amount</th>
+        <th>Reviewer Amount</th>
+        <th>Allocation Amount</th>
+      </tr>
+    </thead>
+    <% Request.aasm_state_names.each do |status| %>
+      <% table_row_tag do %>
+        <td><%=h status %></td>
+        <td><%= @basis.requests.send(status).size %></td>
+        <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('requestor',status) ) %></td>
+        <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
+        <td><%= number_to_currency( @basis.requests.item_amount_for_status(status) ) %></td>
+      <% end %>
+    <% end %>
+  </table>
 
+<% end -%>
 <p>
-<%= link_to 'Edit', edit_basis_path(@basis) %> |
+<% if permitted_to? :edit, @basis -%>
+<%= link_to( 'Edit', edit_basis_path(@basis) ) %> |
+<% end -%>
+<% if permitted_to? :review, @basis -%>
 <%= link_to 'List requests', basis_requests_path(@basis) %> |
+<% end -%>
 <%= link_to 'Back', organization_bases_path( @basis.organization ) %>
 </p>
 

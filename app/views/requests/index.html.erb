@@ -1,15 +1,25 @@
 <h2>Listing requests</h2>
 
-<% if @basis %>
-<% form_for :search, :url => basis_requests_path( @basis ), :html => { :method => :get } do |f| %>
+<% form_for :search, :url => polymorphic_path( [ @context, :requests ] ), :html => { :method => :get } do |f| %>
+  <% unless @basis -%>
   <p>
-    <%= f.label :q, 'Search' %>
-    <%= f.text_field :q %>
-    <%= f.label :status, 'Status' %>
-    <%= f.select :status, Request.aasm_state_names, { :include_blank => true } %>
-    <%= f.submit 'Go' %>
+    <%= f.label :basis_name_like, 'Basis' %>
+    <%= f.text_field :basis_name_like %>
   </p>
-<% end %>
+  <% end -%>
+  <% unless @organization -%>
+  <p>
+    <%= f.label :organization_name_like, 'Organization' %>
+    <%= f.text_field :organization_name_like %>
+  </p>
+  <% end -%>
+  <p>
+    <%= f.label :status_equals, 'Status' %>
+    <%= f.select :status_equals, Request.aasm_state_names, { :include_blank => true } %>
+  </p>
+  <p>
+    <%= f.submit 'Search' %>
+  </p>
 <% end %>
 
 <%= will_paginate @requests %>
@@ -21,4 +31,15 @@
 <hr/>
 
 <%= will_paginate @requests %>
+
+<hr/>
+
+<p>
+<% if @organization -%>
+<%= link_to h("Back to #{@organization}"), @organization %> |
+<% end -%>
+<% if @basis -%>
+<%= link_to h("Back to #{@basis}"), @basis %> |
+<% end -%>
+</p>
 

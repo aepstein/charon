@@ -1,14 +1,22 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :user_status_criterions
-  map.resources :registration_criterions
+  map.resources :user_status_criterions do |user_status_criterion|
+    user_status_criterion.resources :fulfillments, :only => [:index]
+  end
+  map.resources :registration_criterions do |registration_criterion|
+    registration_criterion.resources :fulfillments, :only => [:index]
+  end
   map.resources :categories
+  map.resources :requests, :only => [ :index ]
   map.resources :users, :shallow => true do |user|
     user.resources :addresses
     user.resources :fulfillments, :only => [ :index ]
+    user.resources :approvals, :only => [ :index ]
+    user.resources :memberships, :only => [ :index, :new, :create ]
   end
   map.resources :approvals, :only => [ :show ]
   map.resources :agreements, :shallow => true do |agreement|
     agreement.resources :approvals, :only => [ :create, :destroy, :index, :new ]
+    agreement.resources :fulfillments, :only => [ :index ]
   end
   map.resources :documents, :only => [ :show ]
   map.resources :document_types
@@ -35,8 +43,13 @@ ActionController::Routing::Routes.draw do |map|
     end
   end
   map.resources :roles
-  map.resources :registrations, :shallow => true do |registration|
-    registration.resource :organization, :only => [ :new, :create ]
+  map.resources :registrations, :only => [ :index ] do |registration|
+    registration.resources :memberships, :only => [ :index ]
+  end
+  map.resources :registration_terms, :shallow => true do |term|
+    term.resources :registrations, :only => [ :index, :show ] do |registration|
+      registration.resource :organization, :only => [ :new, :create ]
+    end
   end
   map.login 'login', :controller => 'user_sessions', :action => 'new'
   map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'

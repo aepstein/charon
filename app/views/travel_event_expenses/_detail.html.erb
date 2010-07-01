@@ -1,0 +1,40 @@
+<p>
+  Date: <%=h detail.date %>
+</p>
+
+<p>
+  Title: <%=h detail.title %>
+</p>
+
+<p>
+  Location: <%=h detail.location %>
+</p>
+
+<p>
+  Purpose: <%=h detail.purpose %>
+</p>
+
+<p>
+  Number of travelers per group or team: <%=h detail.travelers_per_group %>
+</p>
+
+<p>
+  Number of groups or teams: <%=h detail.number_of_groups %>
+</p>
+
+<p>
+  Travel distance: <%=h detail.distance %> miles round trip
+</p>
+
+<p>
+  Nights of lodging: <%=h detail.nights_of_lodging %>
+</p>
+
+<p>
+  Fees per person: <%= number_to_currency(detail.per_person_fees) %>
+</p>
+
+<p>
+  Fees per group or team: <%= number_to_currency(detail.per_group_fees) %>
+</p>
+

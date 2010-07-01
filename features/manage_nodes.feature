@@ -4,34 +4,41 @@ Feature: Manage nodes
   I want to create, list, and destroy nodes
 
   Background:
-    Given a user: "admin" exists with net_id: "admin", password: "secret", admin: true
-    And a user: "regular" exists with net_id: "regular", password: "secret", admin: false
+    Given a user: "admin" exists with admin: true
+    And a user: "regular" exists
     And a structure: "annual" exists with name: "annual"
     And a category: "simple" exists with name: "simple"
     And a category: "complex" exists with name: "complex"
 
   Scenario Outline: Test permissions for nodes controller actions
-    Given a node: "basic" exists with structure: structure "annual"
-    And I am logged in as "<user>" with password "secret"
-    And I am on the new node page for structure: "annual"
-    Then I should <create>
+    Given a node: "basic" exists with structure: structure "annual", name: "Basic"
+    And I log in as user: "<user>"
+    And I am on the page for node: "basic"
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the nodes page for structure: "annual"
+    Then I should <show> authorized
+    And I should <show> "Basic"
+    And I should <create> "New node"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Given I am on the new node page for structure: "annual"
+    Then I should <create> authorized
     Given I post on the nodes page for structure: "annual"
-    Then I should <create>
+    Then I should <create> authorized
     And I am on the edit page for node: "basic"
-    Then I should <update>
+    Then I should <update> authorized
     Given I put on the page for node: "basic"
-    Then I should <update>
-    Given I am on the page for node: "basic"
-    Then I should <show>
+    Then I should <update> authorized
     Given I delete on the page for node: "basic"
-    Then I should <destroy>
+    Then I should <destroy> authorized
     Examples:
-      | user    | create                 | update                 | destroy                | show                   |
-      | admin   | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" | not see "Unauthorized" |
-      | regular | see "Unauthorized"     | see "Unauthorized"     | see "Unauthorized"     | not see "Unauthorized" |
+      | user    | create  | update  | destroy | show    |
+      | admin   | see     | see     | see     | see     |
+      | regular | not see | not see | not see | see     |
 
   Scenario: Create new node and update
-    Given I am logged in as "admin" with password "secret"
+    Given I log in as user: "admin"
     And I am on the new node page for structure: "annual"
     When I fill in "Name" with "administrative expense"
     And I select "Administrative" from "node_requestable_type"
@@ -64,8 +71,8 @@ Feature: Manage nodes
     And a node exists with name: "node 3", structure: structure "annual"
     And a node exists with name: "node 2", structure: structure "annual"
     And a node exists with name: "node 1", structure: structure "annual"
-    And I am logged in as "admin" with password "secret"
-    When I delete the 3rd node for structure: "annual"
+    And I log in as user: "admin"
+    When I follow "Destroy" for the 3rd node for structure: "annual"
     Then I should see the following nodes:
       | Name   |
       | node 1 |

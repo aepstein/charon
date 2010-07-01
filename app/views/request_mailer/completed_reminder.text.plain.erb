@@ -1,10 +1,10 @@
-Dear Officers of <%= @request.organizations.map { |o| o.to_s }.join(', ') %>,
+Dear Officers of <%= @request.organization %>,
 
 This email is to inform you that your <%= @request %> has been completed, but requires further action before it will be considered submitted.
 
 The following people must approve the request before it is considered submitted:
 
-<% @request.approvers.unfulfilled_for_status('completed').each do |user| -%>
+<% @request.users.unfulfilled( Approver.quantity_null ).each do |user| -%>
  * <%= user.name %>
 <% end -%>
 

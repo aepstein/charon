@@ -1,6 +1,10 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec/lib/approver_scenarios'
 
 describe Approver do
+
+  include SpecApproverScenarios
+
   before(:each) do
   end
 
@@ -40,28 +44,30 @@ describe Approver do
     second.save.should == false
   end
 
-  it "should have may_create? that returns framework.may_update?" do
-    approver = Factory.build(:approver)
-    approver.framework.stub!(:may_update?).and_return('may_update')
-    approver.may_create?(nil).should == 'may_update'
+  it 'should have an unfulfilled_for scope that returns unfulfilled approver conditions' do
+    [ [0,'all'], [1,'half'], [2,'no'], [1,'no_reviewed'], [0, 'all_reviewed'] ].each do |s|
+      quantity, scenario = *s
+      send("#{scenario}_approvers_scenario",true)
+      %w( completed reviewed ).should include @request.status
+      scope = Approver.unfulfilled_for( @request )
+      scope.length.should eql quantity
+      scope.should include @quota if quantity == 2 && @request.status == 'completed'
+      scope.should include @all if quantity > 0 && @request.status == 'completed'
+      scope.should include @review if quantity > 0 && @request.status == 'reviewed'
+    end
   end
 
-  it "should have may_update? that returns framework.may_update?" do
-    approver = Factory(:approver)
-    approver.framework.stub!(:may_update?).and_return('may_update')
-    approver.may_update?(nil).should == 'may_update'
+  it 'should have an fulfilled_for scope that returns fulfilled approver conditions' do
+    [ [0,'no'], [1,'half'], [2,'all'], [0,'no_reviewed'], [1,'all_reviewed'] ].each do |s|
+      quantity, scenario = *s
+      send("#{scenario}_approvers_scenario",true)
+      scope = Approver.fulfilled_for( @request )
+      scope.length.should eql quantity
+      scope.should include @all if quantity == 2 && @request.status == 'completed'
+      scope.should include @quota if quantity > 0 && @request.status == 'completed'
+      scope.should include @review if quantity > 0 && @request.status == 'reviewed'
+    end
   end
 
-  it "should have may_destroy? that returns framework.may_update?" do
-    approver = Factory(:approver)
-    approver.framework.stub!(:may_update?).and_return('may_update')
-    approver.may_destroy?(nil).should == 'may_update'
-  end
-
-  it "should have a may_see? that returns framework.may_see?" do
-    approver = Factory(:approver)
-    approver.framework.stub!(:may_see?).and_return('may_see')
-    approver.may_see?(nil).should == 'may_see'
-  end
 end
 

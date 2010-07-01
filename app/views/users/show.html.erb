@@ -10,7 +10,9 @@
 
 <p>Date of birth: <%=h @user.date_of_birth.to_s(:long) if @user.date_of_birth %></p>
 
-<p>Admin: <%= @user.admin? ? 'Yes' : 'No' %></p>
+<p>Administrator? <%= @user.admin? ? 'Yes' : 'No' %></p>
+
+<%= render :partial => 'addresses/address_detail', :collection => @user.addresses %>
 
 <h3>Agreements approved by user</h3>
 
@@ -21,7 +23,9 @@
 </ul>
 
 <p>
+<% if permitted_to? :edit, @user -%>
 <%= link_to 'Edit', edit_user_path(@user) %> |
+<% end -%>
 <%= link_to 'List fulfillments', user_fulfillments_path(@user) %>
 </p>
 
