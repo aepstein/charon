@@ -38,4 +38,5 @@ config.gem 'selenium-client', :lib => false
 config.gem 'ruby-ldapserver', :lib => false
 config.gem 'spork', :lib => false
 config.gem 'email_spec'
+config.gem 'test-unit', :lib => "test/unit", :version => '=1.2.3'
 

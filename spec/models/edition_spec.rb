@@ -38,8 +38,8 @@ describe Edition do
 
   it "should not save with an amount higher than item.node.item_amount_limit" do
     @edition.amount = @edition.item.node.item_amount_limit + 1
-    @edition.save.should == false
-    @edition.errors.first.to_s.should == "amount is greater than maximum for #{@edition.item.node}."
+    @edition.save.should be_false
+    @edition.errors.first.should eql ["amount", " is greater than maximum for #{@edition.item.node}."]
     @edition.max_request.should eql @edition.item.node.item_amount_limit
   end
 
@@ -61,7 +61,7 @@ describe Edition do
     review.perspective.should eql 'reviewer'
     review.amount.should > original.amount
     review.save.should eql false
-    review.errors.first.to_s.should eql "amount is greater than original request amount."
+    review.errors.first.should eql ["amount", " is greater than original request amount."]
     review.max_request.should eql original.amount
   end
 

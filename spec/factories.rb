@@ -119,7 +119,7 @@ end
 
 Factory.define :requirement do |f|
   f.association :framework
-  f.fulfillable { |r| r.fulfillable = Factory(:agreement) }
+  f.association :fulfillable, :factory => :agreement
 end
 
 Factory.define :requestor_requirement, :parent => :requirement do |f|
