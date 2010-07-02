@@ -19,13 +19,13 @@ module RegistrationImporter
 
     has_many :registrations, :class_name => 'ExternalRegistration', :foreign_key => :term_id do
       def latest
-        latest = Registration.when_updated_not_null.descend_by_when_updated.first
+        latest = Registration.external_term_id_equals(proxy_owner.term_id).when_updated_not_null.descend_by_when_updated.first
         if latest
-          return self.scoped( :conditions => [
+          return scoped( :conditions => [
             'updated_time IS NULL OR updated_time >= ?',
             latest.when_updated.to_i ] )
         end
-        self.scoped
+        self.scoped( :conditions => { :term_id => proxy_owner.term_id } )
       end
     end
 

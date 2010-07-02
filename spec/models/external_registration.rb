@@ -39,6 +39,7 @@ describe RegistrationImporter::ExternalRegistration do
     @registration.update_attribute :reg_approved, 'NO'
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 1, 0 ]
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 0, 0 ]
+    import_result_test RegistrationImporter::ExternalRegistration.import(:latest), [ 0, 0, 0 ]
     import.reload
     import.registered?.should be_false
     @registration.destroy

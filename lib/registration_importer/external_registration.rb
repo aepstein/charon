@@ -88,7 +88,7 @@ module RegistrationImporter
         when :latest
           term.registrations.latest
         else
-          term.registrations.scoped
+          term.registrations
         end
         registrations.ascend_by_updated_time.all.each do |source|
           destination = Registration.find_or_initialize_by_external_id_and_external_term_id( source.org_id, source.term_id )
