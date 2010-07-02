@@ -33,8 +33,21 @@ class Organization < ActiveRecord::Base
   default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC'
   scope_procedure :name_like, lambda { |name| first_name_like_or_last_name_like( name ) }
 
+  after_save :update_registrations
+
   validates_presence_of :last_name
   validates_uniqueness_of :last_name, :scope => :first_name
+
+  # Adopt registrations (and consequently memberships where appropriate)
+  def update_registrations
+    unless registrations.length == 0
+      Registration.external_id_equals_any( registrations.map(&:external_id).uniq
+      ).organization_id_null.each do |registration|
+        registration.organization = self
+        registration.save
+      end
+    end
+  end
 
   def registration_criterions
     return [] unless registrations.current
