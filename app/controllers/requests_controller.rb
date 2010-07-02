@@ -107,7 +107,7 @@ class RequestsController < ApplicationController
     @requests = Request
     @requests = @requests.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
     @requests = @requests.scoped( :conditions => { :basis_id => @basis.id }) if @basis
-    @requests = @requests.with_permissions_to(:show)
+#    @requests = @requests.with_permissions_to(:show)
   end
 
   def new_request_from_params
