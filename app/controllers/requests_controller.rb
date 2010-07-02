@@ -15,7 +15,8 @@ class RequestsController < ApplicationController
   def index
     @search = @requests.searchlogic( params[:search] )
     @requests = @search.paginate( :page => params[:page], :include => {
-      :organization => [:memberships], :basis =>  { :organization => [:memberships] }, :approvals => []
+      :organization => [:memberships], :approvals => [],
+      :basis =>  { :organization => [:memberships], :framework => [] }
     } )
 
     respond_to do |format|
