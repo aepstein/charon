@@ -22,7 +22,6 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :document_types
   map.resources :requests, :only => [ :index ]
   map.resources :frameworks, :shallow => true do |framework|
-    framework.resources :permissions
     framework.resources :approvers
   end
   map.resources :structures, :shallow => true do |structure|

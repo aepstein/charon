@@ -24,6 +24,8 @@ class Framework < ActiveRecord::Base
     with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
   }
 
+  accepts_nested_attributes_for :requirements
+
   validates_presence_of :name
   validates_uniqueness_of :name
 
