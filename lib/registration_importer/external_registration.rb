@@ -28,7 +28,8 @@ module RegistrationImporter
     establish_connection "external_registrations_#{RAILS_ENV}".to_sym
     set_table_name "orgs"
     set_primary_keys :org_id, :term_id
-    default_scope :select => MAP.keys.join(', '), :include => [ :contacts ]
+    default_scope :select => MAP.keys.join(', '), :include => [ :contacts ],
+      :order => 'orgs.updated_time ASC'
 
     named_scope :importable, lambda {
       max_registration = Registration.find(:first, :conditions => 'when_updated IS NOT NULL', :order => 'when_updated DESC')
@@ -91,7 +92,7 @@ module RegistrationImporter
         else
           term.registrations
         end
-        registrations.ascend_by_updated_time.all.each do |source|
+        registrations.all.each do |source|
           destination = Registration.find_or_initialize_by_external_id_and_external_term_id( source.org_id, source.term_id )
           destination.attributes = source.import_attributes( REGISTRATION_ATTRIBUTES )
           changed = destination.changed?

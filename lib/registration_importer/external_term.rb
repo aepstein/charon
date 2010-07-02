@@ -25,7 +25,7 @@ module RegistrationImporter
             'updated_time >= ?',
             latest.when_updated.to_i ] )
         end
-        self
+        ExternalRegistration.scoped( :conditions => { :term_id => proxy_owner.term_id } )
       end
     end
 
