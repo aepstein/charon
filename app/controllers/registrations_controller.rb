@@ -26,10 +26,14 @@ class RegistrationsController < ApplicationController
 
   def initialize_context
     @registration = Registration.find params[:id] if params[:id]
+    @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @registration_term = RegistrationTerm.find params[:registration_term_id] if params[:registration_term_id]
   end
 
   def initialize_index
-    @registrations = Registration
+    @registrations = Registration.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
+    @registrations = Registration.scoped( :conditions => { :registration_term_id => @registration_term.id } ) @registration_term
+    @registrations ||= Registration
   end
 end
 

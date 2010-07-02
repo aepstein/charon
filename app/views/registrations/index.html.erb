@@ -1,4 +1,4 @@
-<h2>Listing registrations</h2>
+<h2>Listing registrations <%= @organization ? "for #{h @organization}" : "" %><%= @registration_term ? "for #{h @registration_term}" : "" %></h2>
 
 <% form_for :search, :url => registrations_path, :html => { :method => :get } do |f| %>
   <p>
