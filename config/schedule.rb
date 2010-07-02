@@ -20,6 +20,6 @@
 # Learn more: http://github.com/javan/whenever
 
 every 1.hours do
-#  rake 'external_registrations:import'
+  rake 'external_registrations:import:latest'
 end
 
