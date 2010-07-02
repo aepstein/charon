@@ -66,10 +66,10 @@ class Registration < ActiveRecord::Base
   def update_organization
     if organization.blank?
       organizations = Registration.external_id_equals( external_id ).organization_id_not_null.all(:include => :organization).map(&:organization).uniq
-      self.organization = organizations.first if organizations.length == 1
+      self.organization = organizations.first if organizations.length > 0
     end
     if organization && current?
-      organization.update_attributes( name.to_organization_name_attributes )
+      organization.update_attributes name.to_organization_name_attributes
     end
   end
 

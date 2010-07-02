@@ -32,6 +32,14 @@ describe RegistrationImporter::ExternalRegistration do
     getter_tests(@registration, tests)
   end
 
+  it 'should return appropriate values for updated_time' do
+    @registration.updated_time = nil
+    @registration.updated_time.to_i.should be_close( Time.zone.now.to_i, 5 )
+    existing = (Time.zone.now - 1.year).to_i
+    @registration.updated_time = existing
+    @registration.updated_time.to_i.should eql existing
+  end
+
   it 'should import a new record successfully' do
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 1, 0, 0 ]
     import = Registration.first

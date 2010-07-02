@@ -67,6 +67,7 @@ module RegistrationImporter
     end
 
     def updated_time
+      return Time.zone.now if read_attribute(:updated_time).blank?
       Time.zone.at read_attribute(:updated_time)
     end
 
