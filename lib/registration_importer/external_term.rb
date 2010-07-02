@@ -25,7 +25,7 @@ module RegistrationImporter
             'updated_time IS NULL OR updated_time >= ?',
             latest.when_updated.to_i ] )
         end
-        self
+        self.scoped
       end
     end
 
