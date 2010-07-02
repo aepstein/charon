@@ -25,9 +25,12 @@ class Registration < ActiveRecord::Base
 
   validates_uniqueness_of :id
 
+  attr_accessor :organization_id_previously_changed
+  alias :organization_id_previously_changed? :organization_id_previously_changed
+
   before_save :adopt_registration_term, :update_organization
   after_save 'Fulfillment.fulfill organization if organization && active?'
-  after_update 'Fulfillment.unfulfill organization if organization && active?'
+  after_update 'Fulfillment.unfulfill organization if organization && active?', :update_memberships
 
   def registration_criterions
     RegistrationCriterion.all.inject([]) do |memo, criterion|
@@ -68,8 +71,18 @@ class Registration < ActiveRecord::Base
       organizations = Registration.external_id_equals( external_id ).organization_id_not_null.all(:include => :organization).map(&:organization).uniq
       self.organization = organizations.first if organizations.length > 0
     end
+    self.organization_id_previously_changed = organization_id_changed?
     if organization && current?
       organization.update_attributes name.to_organization_name_attributes
+    end
+  end
+
+  def update_memberships
+    if organization_id_previously_changed?
+      Membership.update_all(
+        "organization_id = #{connection.quote organization_id} " +
+        "WHERE registration_id = #{id}"
+      )
     end
   end
 
