@@ -25,7 +25,7 @@ module RegistrationImporter
             'updated_time IS NULL OR updated_time >= ?',
             latest.when_updated.to_i ] )
         end
-        self.scoped( :conditions => { :term_id => proxy_owner.term_id } )
+        self
       end
     end
 
