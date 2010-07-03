@@ -29,6 +29,7 @@ ActionController::Routing::Routes.draw do |map|
   end
   map.resources :local_event_expenses, :only => [ :index ]
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
+    organization.resources :registrations, :only => [ :index ]
     organization.resources :fulfillments, :only => [ :index ]
     organization.resources :bases do |basis|
       basis.resources :requests
