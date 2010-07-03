@@ -32,7 +32,7 @@ class RegistrationsController < ApplicationController
 
   def initialize_index
     @registrations = Registration.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
-    @registrations = Registration.scoped( :conditions => { :registration_term_id => @registration_term.id } ) @registration_term
+    @registrations = Registration.scoped( :conditions => { :registration_term_id => @registration_term.id } ) if @registration_term
     @registrations ||= Registration
   end
 end
