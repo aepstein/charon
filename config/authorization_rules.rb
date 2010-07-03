@@ -11,7 +11,7 @@ authorization do
     has_permission_on [ :memberships ], :to => :manage do
       if_attribute :registration_id => is { nil }
     end
-    has_permission_on [ :registrations ], :to => [ :match ]
+    has_permission_on [ :registrations ], :to => [ :match ] do
       if_attribute :organization_id => is_not { nil }
     end
     has_permission_on :authorization_rules, :to => :read
