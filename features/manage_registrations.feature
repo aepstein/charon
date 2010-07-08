@@ -9,7 +9,9 @@ Feature: Manage registrations
 
   Scenario Outline: Test permissions for registrations controller actions
     Given a user: "requestor" exists
-    And a registration exists with name: "Cool Club"
+    And an organization exists with last_name: "Alternate Club"
+    And a registration_term exists
+    And a registration exists with name: "Cool Club", registration_term: the registration_term, organization: the organization
     And there are no roles
     And a requestor_role exists
     And a membership exists with registration: the registration, user: user "requestor", role: the requestor_role
@@ -17,6 +19,10 @@ Feature: Manage registrations
     Given I am on the page for the registration
     Then I should <show> authorized
     Given I am on the registrations page
+    Then I should <show> "Cool Club"
+    Given I am on the registrations page for the organization
+    Then I should <show> "Cool Club"
+    Given I am on the registrations page for the registration_term
     Then I should <show> "Cool Club"
     Examples:
       | user           | show    |
