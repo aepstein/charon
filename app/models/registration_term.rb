@@ -9,6 +9,8 @@ class RegistrationTerm < ActiveRecord::Base
   after_save :adopt_registrations
   after_update :update_dependencies
 
+  def to_s; description; end
+
   private
 
   def will_update_dependencies
