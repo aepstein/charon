@@ -5,7 +5,7 @@
 <br />
 
 <p>
-<% if @approvable && !@approvable.users.include?(current_user) && permitted_to?( :create, @approvable.approvals.build( :user => current_user ) ) -%>
+<% if permitted_to? :create, @approvable.approvals.build( :user => current_user ) -%>
 <%= link_to 'New approval', new_polymorphic_path( [ @approvable, :approval ] ) %>
 <% end -%>
 </p>

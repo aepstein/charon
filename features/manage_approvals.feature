@@ -85,14 +85,14 @@ Feature: Manage approvals
       | requestor | submitted | owner               | not see | not see | see     |
       | requestor | submitted | observer_requestor  | not see | not see | not see |
       | requestor | submitted | regular             | not see | not see | not see |
-      | requestor | accepted  | admin               | not see | see     | see     |
+      | requestor | accepted  | admin               | see     | see     | see     |
       | requestor | accepted  | source_manager      | not see | see     | see     |
       | requestor | accepted  | source_reviewer     | see     | not see | see     |
       | requestor | accepted  | applicant_requestor | not see | not see | see     |
       | requestor | accepted  | owner               | not see | not see | see     |
       | requestor | accepted  | observer_requestor  | not see | not see | not see |
       | requestor | accepted  | regular             | not see | not see | not see |
-      | requestor | reviewed  | admin               | not see | see     | see     |
+      | requestor | reviewed  | admin               | see     | see     | see     |
       | requestor | reviewed  | source_manager      | not see | see     | see     |
       | requestor | reviewed  | source_reviewer     | see     | not see | see     |
       | requestor | reviewed  | applicant_requestor | not see | not see | see     |
