@@ -11,7 +11,7 @@
 <br />
 
 <p>
-<% if permitted_to? :create, @context.memberships.build %>
+<% if @context && permitted_to?( :create, @context.memberships.build ) %>
   <%= link_to "New membership for #{@context}", new_polymorphic_path( [ @context, :membership ] ) %>
 <% end %>
 </p>
