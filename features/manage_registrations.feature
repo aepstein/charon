@@ -30,7 +30,7 @@ Feature: Manage registrations
       | requestor      | see     |
       | regular        | not see |
 
-  Scenario: Search organizations
+  Scenario: Search registrations
     Given a registration exists with name: "Accounting Club, Cornell"
     And a registration exists with name: "Outing Club, Cornell"
     And a registration exists with name: "Ski Racing Organization"

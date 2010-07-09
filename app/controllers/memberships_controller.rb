@@ -87,12 +87,16 @@ class MembershipsController < ApplicationController
     @membership = Membership.find params[:id] if params[:id]
     @context = Organization.find params[:organization_id] if params[:organization_id]
     @context = User.find params[:user_id] if params[:user_id]
+    @context = Registration.find params[:registration_id] if params[:registration_id]
   end
 
   def initialize_index
     @memberships = Membership
-    @memberships = @memberships.scoped( :conditions => { :organization_id => @context.id } ) if @context && @context.class == Organization
-    @memberships = @memberships.scoped( :conditions => { :user_id => @context.id } ) if @context && @context.class == User
+    if @context
+      @memberships = @memberships.scoped( :conditions => { :organization_id => @context.id } ) if @context.class == Organization
+      @memberships = @memberships.scoped( :conditions => { :user_id => @context.id } ) if @context.class == User
+      @memberships = @memberships.scoped( :conditions => { :registration_id => @context.id } ) if @context.class == Registration
+    end
   end
 
   def new_membership_from_params

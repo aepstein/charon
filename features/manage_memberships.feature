@@ -7,18 +7,43 @@ Feature: Manage memberships
     Given a user: "admin" exists with admin: true
     And a user: "regular" exists
 
+  Scenario Outline: Test permissions for memberships controller index actions for registrations
+    Given a current_registration: "focus" exists with name: "Focus registration"
+    And a user: "focus" exists with last_name: "Focus user"
+    And a user: "colleague" exists
+    And a membership: "focus" exists with user: user "focus", registration: current_registration "focus"
+    And a membership exists with user: user "colleague", registration: current_registration "focus"
+    And I log in as user: "<user>"
+    And I am on the page for membership: "focus"
+    Then I should <show> authorized
+    And I should <update> "Edit"
+    Given I am on the memberships page for <context>: "focus"
+    And I should <show> "Focus" within "table"
+    And I should <create> "New membership"
+    And I should <update> "Edit"
+    And I should <destroy> "Destroy"
+    Examples:
+      | context              | user      | create  | update  | destroy | show    |
+      | current_registration | admin     | not see | not see | not see | see     |
+      | current_registration | focus     | not see | not see | not see | see     |
+      | current_registration | colleague | not see | not see | not see | see     |
+      | current_registration | regular   | not see | not see | not see | not see |
+
   Scenario Outline: Test permissions for memberships controller actions
     Given an organization: "focus" exists with last_name: "Focus organization"
+    And a current_registration: "focus" exists with name: "Focus registration"
     And a user: "focus" exists with last_name: "Focus user"
     And a user: "colleague" exists
     And a membership: "focus" exists with organization: the organization, user: user "focus"
     And a membership exists with organization: the organization, user: user "colleague"
+    And a membership exists with organization: the organization, user: user "focus", registration: current_registration "focus"
+    And a membership exists with organization: the organization, user: user "colleague", registration: current_registration "focus"
     And I log in as user: "<user>"
-    And I am on the page for the membership
+    And I am on the page for membership: "focus"
     Then I should <show> authorized
     And I should <update> "Edit"
     Given I am on the memberships page for <context>: "focus"
-    And I should <show> "Focus"
+    And I should <show> "Focus" within "table"
     And I should <create> "New membership"
     And I should <update> "Edit"
     And I should <destroy> "Destroy"
@@ -26,22 +51,22 @@ Feature: Manage memberships
     Then I should <create> authorized
     Given I post on the memberships page for <context>: "focus"
     Then I should <create> authorized
-    And I am on the edit page for the membership
+    And I am on the edit page for membership: "focus"
     Then I should <update> authorized
-    Given I put on the page for the membership
+    Given I put on the page for membership: "focus"
     Then I should <update> authorized
-    Given I delete on the page for the membership
+    Given I delete on the page for membership: "focus"
     Then I should <destroy> authorized
     Examples:
-      | context      | user      | create  | update  | destroy | show    |
-      | organization | admin     | see     | see     | see     | see     |
-      | organization | focus     | not see | not see | not see | see     |
-      | organization | colleague | not see | not see | not see | see     |
-      | organization | regular   | not see | not see | not see | not see |
-      | user         | admin     | see     | see     | see     | see     |
-      | user         | focus     | not see | not see | not see | see     |
-      | user         | colleague | not see | not see | not see | see     |
-      | user         | regular   | not see | not see | not see | not see |
+      | context              | user      | create  | update  | destroy | show    |
+      | organization         | admin     | see     | see     | see     | see     |
+      | organization         | focus     | not see | not see | not see | see     |
+      | organization         | colleague | not see | not see | not see | see     |
+      | organization         | regular   | not see | not see | not see | not see |
+      | user                 | admin     | see     | see     | see     | see     |
+      | user                 | focus     | not see | not see | not see | see     |
+      | user                 | colleague | not see | not see | not see | see     |
+      | user                 | regular   | not see | not see | not see | not see |
 
   Scenario Outline: Create new membership and update
     Given a user exists with net_id: "zzz333", first_name: "Buzz", last_name: "Aldrin"
