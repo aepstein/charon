@@ -93,7 +93,6 @@ class MembershipsController < ApplicationController
     @memberships = Membership
     @memberships = @memberships.scoped( :conditions => { :organization_id => @context.id } ) if @context && @context.class == Organization
     @memberships = @memberships.scoped( :conditions => { :user_id => @context.id } ) if @context && @context.class == User
-    @memberships = @memberships.with_permissions_to( :show )
   end
 
   def new_membership_from_params
