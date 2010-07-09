@@ -45,7 +45,7 @@
 <%= content_tag 'li', link_to( 'my profile', profile_path ) %>
 <%= content_tag 'li', link_to( 'logout', logout_path ) %>
   <% if current_user.admin? %>
-  <%= %w( agreements categories document_types frameworks organizations registrations roles structures users ).map { |option|
+  <%= %w( agreements categories document_types frameworks organizations registration_terms roles structures users ).map { |option|
     content_tag 'li', link_to( option, send(option + '_path') )
   }.join("\n") %>
   <% end %>
