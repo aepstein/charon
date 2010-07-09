@@ -24,10 +24,14 @@ class Framework < ActiveRecord::Base
     with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
   }
 
-  accepts_nested_attributes_for :requirements
+  accepts_nested_attributes_for :requirements,
+    :reject_if => proc { |attributes| attributes['fulfillable_name'].blank? },
+    :allow_destroy => true
 
   validates_presence_of :name
   validates_uniqueness_of :name
+
+  before_validation_on_create { |f| f.requirements.each { |r| r.framework = f } }
 
   def to_s; name; end
 end

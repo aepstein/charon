@@ -4,6 +4,10 @@
   <strong>Name:</strong> <%=h @framework.name %>
 </p>
 
+<h3>Requirements</h3>
+
+<%= render :partial => 'requirements/requirements', :object => @framework.requirements %>
+
 <p>
 <% if permitted_to? :edit, @framework -%>
 <%= link_to 'Edit', edit_framework_path(@framework) %> |

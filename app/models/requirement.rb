@@ -27,6 +27,27 @@ class Requirement < ActiveRecord::Base
     with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
   }
 
+  def self.fulfillable_names
+    Fulfillment::FULFILLABLE_TYPES.inject({}) do |memo, (fulfiller, group)|
+      group.each do |member|
+        member.constantize.all.each { |m| memo["#{m}"] = "#{m.class}##{m.id}" }
+      end
+      memo
+    end
+  end
+
+  def fulfillable_name=(name)
+    self.fulfillable = nil unless name
+    parts = name.split('#')
+    raise ArgumentError, "#{name} must have Class#Id structure" if parts.length != 2
+    self.fulfillable = parts.first.constantize.find( parts.last.to_i )
+  end
+
+  def fulfillable_name
+    return nil unless fulfillable
+    "#{fulfillable_type}##{fulfillable_id}"
+  end
+
   def perspectives=(perspectives)
     self.perspectives_mask = (perspectives & Edition::PERSPECTIVES).map { |p| 2**Edition::PERSPECTIVES.index(p) }.sum
   end
@@ -39,6 +60,10 @@ class Requirement < ActiveRecord::Base
 
   def flat_fulfillable_id; "#{fulfillable_id}_#{fulfillable_type}"; end
 
-  def to_s; fulfillable.to_s; end
+  def to_s
+    "#{fulfillable} required for #{role ? role : 'everyone'} in " +
+    "#{perspectives.join ', '} organization."
+  end
+
 end
 

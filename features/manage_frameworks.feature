@@ -35,16 +35,25 @@ Feature: Manage frameworks
       | regular | not see | not see | not see | see     |
 
   Scenario: Register new framework and edit
-    Given I log in as user: "admin"
+    Given a registration_criterion exists with must_register: false, minimal_percentage: 1, type_of_member: "others"
+    And an agreement exists with name: "Key Agreement"
+    And a role exists with name: "President"
+    And I log in as user: "admin"
     And I am on the new framework page
     When I fill in "Name" with "safc framework"
+    And I select "Key Agreement" from "Criterion"
+    And I check "requestor"
+    And I select "President" from "Role"
     And I press "Create"
     Then I should see "Framework was successfully created."
     And I should see "Name: safc framework"
+    And I should see "Key Agreement required for President in requestor organization."
     When I follow "Edit"
     And I fill in "Name" with "gpsafc framework"
+    And I choose "Yes"
     And I press "Update"
     Then I should see "Framework was successfully updated."
+    And I should not see "Key Agreement required for President in requestor organization."
     And I should see "Name: gpsafc framework"
 
   Scenario: Delete framework
