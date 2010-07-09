@@ -5,7 +5,7 @@ class Requirement < ActiveRecord::Base
 
   validates_presence_of :framework
   validates_presence_of :fulfillable
-  validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type ]
+  validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type, :role_id ]
   validates_inclusion_of :fulfillable_type, :in => Fulfillment::FULFILLABLE_TYPES.values.flatten
 
   named_scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
