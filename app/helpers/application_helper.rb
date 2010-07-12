@@ -35,5 +35,17 @@ module ApplicationHelper
     end
     ''
   end
+
+  def nested_index(parent, children, views=[])
+    out = link_to( "List #{children}", polymorphic_path( [ parent, children ] ) )
+    if views.length > 0
+      out += ": " + views.inject([]) do |memo, view|
+        memo << link_to( h( view ), polymorphic_path( [ view, parent, children ] ) )
+        memo
+      end.join(', ')
+    end
+    out
+  end
+
 end
 
