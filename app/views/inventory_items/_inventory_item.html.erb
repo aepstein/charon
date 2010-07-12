@@ -1,0 +1,21 @@
+<% organization ||= false %>
+  <% table_row_tag do %>
+    <% unless organization -%>
+    <td><%=h inventory_item.organization %></td>
+    <% end -%>
+    <td><%=h inventory_item.identifier %></td>
+    <td><%=h inventory_item.description %></td>
+    <td><%=h number_to_currency inventory_item.purchase_price %></td>
+    <td><%=h number_to_currency inventory_item.current_value %></td>
+    <td><%=h inventory_item.usable? ? 'Yes' : 'No' %></td>
+    <td><%=h inventory_item.missing? ? 'Yes' : 'No' %></td>
+    <td><%=h inventory_item.acquired_on.to_formatted_s( :rfc822 ) %></td>
+    <td><%=h inventory_item.scheduled_retirement_on.to_formatted_s( :rfc822 ) %></td>
+    <td><%=h inventory_item.retired_on? ? inventory_item.retired_on( :rfc822 ) : "" %></td>
+    <td><%= link_to 'Show', inventory_item %></td>
+    <td><%= link_to( 'Edit', edit_inventory_item_path( inventory_item )
+      ) if permitted_to?( :edit, inventory_item ) %></td>
+    <td><%= link_to( 'Destroy', inventory_item, :confirm => 'Are you sure?',
+      :method => :delete ) if permitted_to?( :destroy, inventory_item ) %></td>
+  <% end %>
+

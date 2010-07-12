@@ -1,0 +1,33 @@
+<h2>Listing inventory items<%= @organization ? " for #{@organization}" : '' %></h2>
+
+<% form_for :search, :url => polymorphic_path( [ @context, :inventory_items ] ), :html => { :method => :get } do |f| %>
+  <% unless @organization -%>
+  <p>
+    <%= f.label :organization_name_like, 'Organization' %>
+    <%= f.text_field :organization_name_like %>
+  </p>
+  <% end -%>
+  <p>
+    <%= f.label :description_like, 'Description' %>
+    <%= f.text_field :description_like %>
+  </p>
+  <p>
+    <%= f.label :identifier_like, 'Identifier' %>
+    <%= f.text_field :identifier_like %>
+  </p>
+  <p>
+    <%= f.submit 'Search' %>
+  </p>
+<% end %>
+
+<%= render :partial => "inventory_items/inventory_items", :object => @inventory_items,
+  :locals => { :organization => @organization } %>
+
+<br />
+
+<p>
+<% if @organization && permitted_to?( :create, @organization.inventory_items.build ) -%>
+<%= link_to "New inventory item", new_organization_inventory_item_path %>
+<% end -%>
+</p>
+

@@ -1,7 +1,7 @@
 authorization do
   role :admin do
-    has_permission_on [ :addresses, :agreements, :approvers,
-      :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
+    has_permission_on [ :addresses, :agreements, :approvers, :bases, :categories,
+      :document_types, :editions, :frameworks, :fulfillments, :inventory_items,
       :items, :nodes, :organizations, :permissions, :registration_criterions,
       :registrations, :registration_terms, :requests, :roles, :structures, :users,
       :user_status_criterions ],
@@ -158,6 +158,10 @@ authorization do
     end
     has_permission_on [ :documents ], :to => :show do
       if_permitted_to :show, :edition
+    end
+
+    has_permission_on :inventory_items, :to => [ :show, :update ] do
+      if_permitted_to :request, :organization
     end
 
     has_permission_on [ :agreements ], :to => :approve

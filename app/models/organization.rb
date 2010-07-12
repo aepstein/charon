@@ -7,6 +7,7 @@ class Organization < ActiveRecord::Base
       self.active.first
     end
   end
+  has_many :inventory_items, :dependent => :destroy
   has_many :memberships
   has_many :roles, :through => :memberships do
     def user_id_equals( id )

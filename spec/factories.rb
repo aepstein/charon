@@ -305,3 +305,11 @@ Factory.define :external_equity_report do |f|
   f.association :edition, :factory => :external_equity_report_edition
 end
 
+Factory.define :inventory_item do |f|
+  f.association :organization
+  f.description "Boots"
+  f.acquired_on Date.today
+  f.scheduled_retirement_on { |r| r.acquired_on + 1.year }
+  f.purchase_price 100.0
+end
+

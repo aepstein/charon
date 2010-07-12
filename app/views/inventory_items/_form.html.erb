@@ -1,0 +1,18 @@
+  <%= form.error_messages %>
+  <% form.inputs do %>
+  <%= form.input :purchase_price, :hint => 'What was the purchase price of the item?' %>
+  <%= form.input :current_value, :hint => 'What is the estimated current value of the item?' %>
+  <%= form.input :description, :hint => 'Briefly describe what the item is.' %>
+  <%= form.input :identifier, :hint => 'Provide a unique identifier for the item.' %>
+  <%= form.input :usable, :as => :radio, :collection => { "Usable" => true, "Not usable" => false } %>
+  <%= form.input :missing, :as => :radio, :collection => { "Missing" => true, "Not missing" => false },
+    :hint => 'Missing items may have been lost or stolen.' %>
+  <%= form.input :acquired_on, :as => :ft_calendar_date_select %>
+  <%= form.input :scheduled_retirement_on, :as => :ft_calendar_date_select,
+    :hint => 'Until when is the item intended to be in service?' %>
+  <%= form.input :retired_on, :as => :ft_calendar_date_select,
+    :hint => 'If item is no longer in servcie, indicate the date it was retired from inventory.' %>
+  <%= form.input :comments, :hint => 'Provide any special notes about the item here.' %>
+  <% end %>
+  <%= form.buttons %>
+

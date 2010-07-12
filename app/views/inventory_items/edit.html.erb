@@ -1,0 +1,12 @@
+<h2>Editing inventory item</h2>
+
+<% semantic_form_for(@inventory_item) do |f| %>
+  <%= render :partial => "inventory_items/form", :object => f %>
+<% end %>
+
+<p>
+<%= link_to 'Show', @inventory_item %> |
+<%= link_to "List inventory items for #{@inventory_item.organization}",
+  organization_inventory_items_path( @inventory_item.organization ) %>
+</p>
+

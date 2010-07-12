@@ -1,0 +1,24 @@
+<% organization ||= false %>
+<table>
+<thead>
+  <tr>
+    <% unless organization %>
+    <th>Organization</th>
+    <% end %>
+    <th>Identifier</th>
+    <th>Description</th>
+    <th>Purchase price</th>
+    <th>Current value</th>
+    <th>Usable</th>
+    <th>Missing</th>
+    <th>Acquired on</th>
+    <th>Scheduled retirement on</th>
+    <th>Retired on</th>
+  </tr>
+</thead>
+<tbody>
+  <%= render :partial => "inventory_items/inventory_item", :collection => inventory_items,
+    :locals => { :organization => organization } %>
+</tbody>
+</table>
+
