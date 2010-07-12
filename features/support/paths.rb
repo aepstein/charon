@@ -10,12 +10,12 @@ module NavigationHelpers
 
     when /the homepage/
       '/'
-    when /the new request_mailer page/
-      new_request_mailer_path
 
-    when /the new fulfillment page/
-      new_fulfillment_path
+    when /the login page/
+      login_path
 
+    when /the logout page/
+      logout_path
 
     when /^the edit page for #{capture_model}$/
       edit_polymorphic_path( [model($1)] )
@@ -26,20 +26,14 @@ module NavigationHelpers
     when /^the new #{capture_factory} page for #{capture_model}$/
       new_polymorphic_path( [model($2), $1] )
 
-    when /^the #{capture_plural_factory} page$/
-      polymorphic_path( [$1] )
+    when /^the(?: (\w+))? #{capture_plural_factory} page$/
+      $1 ? polymorphic_path( [$1, $2] ) : polymorphic_path( [$2] )
 
-    when /^the #{capture_plural_factory} page for #{capture_model}$/
-      polymorphic_path( [model($2), $1] )
+    when /^the(?: (\w+))? #{capture_plural_factory} page for #{capture_model}$/
+      $1 ? polymorphic_path( [$1, model($3), $2] ) : polymorphic_path( [model($3), $2] )
 
-    when /^the page for #{capture_model}$/
-      polymorphic_path( [model($1)] )
-
-    when /^the profile page for #{capture_model}$/
-      polymorphic_path( [:profile,model($1)] )
-
-    when /the login page/
-      new_user_session_path
+    when /^the(?: (\w+))? page for #{capture_model}$/
+      polymorphic_path( [$1, model($2)] )
 
     when /the items page/
       request_items_path(Request.find(:first))

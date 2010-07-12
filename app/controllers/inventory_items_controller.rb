@@ -12,11 +12,13 @@ class InventoryItemsController < ApplicationController
   # GET /organizations/:organization_id/inventory_items/retired
   def retired
     @inventory_items = @inventory_items.retired
+    index
   end
 
   # GET /organizations/:organization_id/inventory_items/active
   def active
     @inventory_items = @inventory_items.active
+    index
   end
 
   # GET /organizations/:organization_id/inventory_items
@@ -26,7 +28,7 @@ class InventoryItemsController < ApplicationController
     @inventory_items = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { render :action => 'index' }
       format.xml  { render :xml => @inventory_items }
     end
   end

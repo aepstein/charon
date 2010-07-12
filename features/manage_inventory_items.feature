@@ -13,6 +13,7 @@ Feature: Manage requests
     And a membership exists with user: user "member", organization: the organization, role: the requestor_role
     And a user: "regular" exists
     And an inventory_item exists with description: "Boots", organization: the organization
+    And an inventory_item exists with description: "Socks", organization: the organization, acquired_on: "2010-01-01", retired_on: "2010-02-01"
     And I log in as user: "<user>"
     And I am on the new inventory_item page for the organization
     Then I should <create> authorized
@@ -29,6 +30,17 @@ Feature: Manage requests
     Then I should <show> "Boots"
     And I should <update> "Edit"
     And I should <destroy> "Destroy"
+    And I should <create> "New inventory item"
+    Given I am on the active inventory_items page for the organization
+    Then I should <show> "Boots"
+    Given I am on the retired inventory_items page for the organization
+    Then I should <show> "Socks"
+    Given I am on the inventory_items page
+    Then I should <show> "Boots"
+    Given I am on the active inventory_items page
+    Then I should <show> "Boots"
+    Given I am on the retired inventory_items page
+    Then I should <show> "Socks"
     Given I delete on the page for the inventory_item
     Then I should <destroy> authorized
     Examples:

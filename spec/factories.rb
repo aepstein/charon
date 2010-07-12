@@ -307,6 +307,7 @@ end
 
 Factory.define :inventory_item do |f|
   f.association :organization
+  f.sequence(:identifier) { |n| "id##{n}" }
   f.description "Boots"
   f.acquired_on Date.today
   f.scheduled_retirement_on { |r| r.acquired_on + 1.year }
