@@ -1,6 +1,7 @@
 class Organization < ActiveRecord::Base
   include Fulfiller
 
+  has_many :university_accounts, :dependent => :destroy
   has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
   has_many :registrations do
     def current
@@ -80,10 +81,6 @@ class Organization < ActiveRecord::Base
       self.first_name = "#{first_name} #{match[1]}".strip
       self.last_name = match[2]
     end
-  end
-
-  def may_see?(user)
-    true
   end
 
   def to_s

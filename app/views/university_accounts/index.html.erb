@@ -1,0 +1,34 @@
+<h2>Listing university accounts</h2>
+
+<% form_for :search, :url => polymorphic_path( [ @context, :university_accounts ] ), :html => { :method => :get } do |f| %>
+  <% unless @organization -%>
+  <p>
+    <%= f.label :organization_name_like, 'Organization' %>
+    <%= f.text_field :organization_name_like %>
+  </p>
+  <% end -%>
+  <p>
+    <%= f.label :department_code_like, 'Department code' %>
+    <%= f.text_field :department_code_like %>
+  </p>
+  <p>
+    <%= f.label :subledger_code_like, 'Subledger code' %>
+    <%= f.text_field :subledger_code_like %>
+  </p>
+  <p>
+    <%= f.submit 'Search' %>
+  </p>
+<% end %>
+
+
+<%= render :partial => "university_accounts/university_accounts",
+  :object => @university_accounts, :locals => { :organization => @organization } %>
+
+<br />
+
+<p>
+<% if @organization && permitted_to?( :create, @organization.university_accounts.build ) -%>
+<%= link_to 'New university account', new_organization_university_account_path %>
+<% end -%>
+</p>
+

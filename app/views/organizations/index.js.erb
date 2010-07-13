@@ -1,0 +1,6 @@
+<ul>
+<% @organizations.each do |organization| -%>
+<li><%= (params[:search] && params[:search][:name_like]) ? highlight(organization.name(:last_first), params[:search][:name_like]) : h(organization.name(:last_first) ) %></li>
+<% end -%>
+</ul>
+

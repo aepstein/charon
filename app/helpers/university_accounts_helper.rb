@@ -1,0 +1,2 @@
+module UniversityAccountsHelper
+end

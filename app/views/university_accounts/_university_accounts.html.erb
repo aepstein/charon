@@ -1,0 +1,17 @@
+<% organization ||= false %>
+<table>
+  <thead>
+    <tr>
+      <% unless organization -%>
+      <th>Organization</th>
+      <% end -%>
+      <th>Department code</th>
+      <th>Subledger code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= render :partial => "university_account", :collection => university_accounts,
+      :locals => { :organization => organization }  %>
+  </tbody>
+</table>
+

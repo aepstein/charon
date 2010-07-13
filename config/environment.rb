@@ -56,6 +56,7 @@ Rails::Initializer.run do |config|
   config.gem 'declarative_authorization'
   config.gem 'composite_primary_keys'
   config.gem 'sqlite3-ruby', :lib => 'sqlite3', :version => '!= 1.3.0'
+  config.gem 'repeated_auto_complete', :source => 'http://gemcutter.org'
 
   config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
 end

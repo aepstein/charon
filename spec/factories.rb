@@ -314,3 +314,9 @@ Factory.define :inventory_item do |f|
   f.purchase_price 100.0
 end
 
+Factory.define :university_account do |f|
+  f.association :organization
+  f.department_code 'S52'
+  f.sequence(:subledger_code) { |n| n.to_s.rjust( 4, '0' ) }
+end
+

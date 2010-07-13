@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :university_accounts, :except => [ :new, :create ]
   map.resources :user_status_criterions do |user_status_criterion|
     user_status_criterion.resources :fulfillments, :only => [:index]
   end
@@ -31,6 +32,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :inventory_items, :except => [ :new, :create ],
     :collection => { :retired => :get, :active => :get }
   map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
+    organization.resources :university_accounts, :only => [ :new, :create, :index ]
     organization.resources :inventory_items, :only => [ :index, :new, :create ],
       :collection => { :retired => :get, :active => :get }
     organization.resources :registrations, :only => [ :index ]
