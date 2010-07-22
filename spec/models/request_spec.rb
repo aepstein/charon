@@ -136,5 +136,24 @@ describe Request do
     end
   end
 
+  it 'should have a perspective_for method that identifies a user\'s perspective' do
+    requestor_role = Factory(:requestor_role)
+    reviewer_role = Factory(:reviewer_role)
+    requestor_organization = Factory(:organization)
+    reviewer_organization = Factory(:organization)
+    requestor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
+    conflictor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
+    Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization, :user => conflictor)
+    reviewer = Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization).user
+    basis = Factory(:basis, :organization => reviewer_organization)
+    request = Factory(:request, :basis => basis, :organization => requestor_organization)
+    [
+      [ requestor, 'requestor' ], [ conflictor, 'requestor' ], [ reviewer, 'reviewer' ],
+      [ requestor_organization, 'requestor' ], [ reviewer_organization, 'reviewer' ]
+    ].each do |scenario|
+      request.perspective_for( scenario.first ).should eql scenario.last
+    end
+  end
+
 end
 

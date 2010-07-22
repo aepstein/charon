@@ -47,6 +47,29 @@ class User < ActiveRecord::Base
     def in(organizations)
       Membership.user_id_equals(proxy_owner.id).active.organization_id_equals_any( organizations.map(&:id) ).map(&:role)
     end
+    def requestor_in?(organization)
+      requestor_in_ids( organization ).length > 0
+    end
+    def reviewer_in?(organization)
+      reviewer_in_ids( organization ).length > 0
+    end
+    def requestor_in_ids(organization)
+      ids_in_perspective organization, 'requestor'
+    end
+    def reviewer_in_ids(organization)
+      ids_in_perspective organization, 'reviewer'
+    end
+    def ids_in_perspective( organization, perspective )
+      names = case perspective
+      when 'requestor'
+        Role::REQUESTOR
+      when 'reviewer'
+        Role::REVIEWER
+      else
+        raise ArgumentError, 'perspective not allowed'
+      end
+      self.in( [organization] ).select { |r| names.include? r.name }.map(&:id)
+    end
   end
   has_many :organizations, :through => :memberships, :conditions => [ 'memberships.active = ?', true ]
   has_many :registrations, :through => :memberships

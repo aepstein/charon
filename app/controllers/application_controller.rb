@@ -11,6 +11,9 @@ protected
 
   def permission_denied
     flash[:error] = "You are not allowed to perform the requested action."
+    if @request
+      flash[:error] += " " + unfulfilled_requirements_for_request(@request)
+    end
     redirect_to profile_url
   end
 
@@ -20,6 +23,22 @@ protected
   end
 
   private
+  def unfulfilled_requirements_for_request(request)
+    perspective = request.perspective_for current_user
+    perspective ||= Edition::PERSPECTIVES.first
+    for_user = request.unfulfilled_requirements_for current_user
+    out = ""
+    unless for_user.empty?
+      out << "You must fulfill the following requirements: #{for_user.join '; '}."
+    end
+    organization = request.send(perspective)
+    for_organization = request.unfulfilled_requirements_for organization
+    unless for_organization.empty?
+      out << "#{organization} must fulfill the following requirements: #{for_organization.join '; '}."
+    end
+    out
+  end
+
   def check_authorization
     Authorization.current_user = current_user
   end

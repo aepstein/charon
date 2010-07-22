@@ -27,6 +27,10 @@ class Requirement < ActiveRecord::Base
     with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
   }
 
+  before_validation do |r|
+    r.role = nil unless Fulfillment::FULFILLABLE_TYPES['User'].include? r.fulfillable_type
+  end
+
   def self.fulfillable_names
     Fulfillment::FULFILLABLE_TYPES.inject({}) do |memo, (fulfiller, group)|
       group.each do |member|
@@ -49,6 +53,10 @@ class Requirement < ActiveRecord::Base
   end
 
   def perspectives=(perspectives)
+    if perspectives.blank?
+      self.perspectives_mask = 0
+      return []
+    end
     self.perspectives_mask = (perspectives & Edition::PERSPECTIVES).map { |p| 2**Edition::PERSPECTIVES.index(p) }.sum
   end
 
@@ -56,13 +64,18 @@ class Requirement < ActiveRecord::Base
     Edition::PERSPECTIVES.reject { |p| ((perspectives_mask || 0) & 2**Edition::PERSPECTIVES.index(p)).zero? }
   end
 
+  def perspective=(perspective); self.perspectives = [perspective]; end
+
+  def perspective; perspectives.first; end
+
   def fulfiller_type; Fulfillment.fulfiller_type_for_fulfillable fulfillable_type; end
 
   def flat_fulfillable_id; "#{fulfillable_id}_#{fulfillable_type}"; end
 
   def to_s
-    "#{fulfillable} required for #{role ? role : 'everyone'} in " +
-    "#{perspectives.join ', '} organization."
+    "#{fulfillable} required for " +
+    (Fulfillment::FULFILLABLE_TYPES['User'].include?(fulfillable_type) ? "#{role ? role : 'everyone'} in " : "") +
+    "#{perspectives.join ', '} organization"
   end
 
 end

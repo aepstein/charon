@@ -150,6 +150,34 @@ class Request < ActiveRecord::Base
   alias :requestor :organization
   def reviewer; basis ? basis.organization : nil; end
 
+  def perspective_for( fulfiller )
+    case fulfiller.class.to_s.to_sym
+    when :User
+      return 'requestor' if fulfiller.roles.requestor_in? organization
+      return 'reviewer' if basis && fulfiller.roles.reviewer_in?( basis.organization )
+    when :Organization
+      return 'requestor' if fulfiller == organization
+      return 'reviewer' if basis && ( fulfiller == basis.organization )
+    else
+      raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
+    end
+    nil
+  end
+
+  def unfulfilled_requirements_for( fulfiller )
+    perspective = perspective_for( fulfiller )
+    return [] unless perspective && basis
+    case fulfiller.class.to_s.to_sym
+    when :User
+      basis.framework.requirements.unfulfilled_for( fulfiller, perspective,
+        fulfiller.roles.ids_in_perspective( send(perspective), perspective ) )
+    when :Organization
+      basis.framework.requirements.unfulfilled_for( fulfiller, perspective, [] )
+    else
+      raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
+    end
+  end
+
   def approvable?
     case status
     when 'started'

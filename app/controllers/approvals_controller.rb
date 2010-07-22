@@ -72,10 +72,9 @@ class ApprovalsController < ApplicationController
 
   def initialize_context
     @approval = Approval.find params[:id] if params[:id]
-    @approvable = case
-      when params[:request_id] then Request.find(params[:request_id])
-      when params[:agreement_id] then Agreement.find(params[:agreement_id])
-    end
+    @request ||= Request.find(params[:request_id]) if params[:request_id]
+    @agreement ||= Agreement.find(params[:agreement_id]) if params[:agreement_id]
+    @approvable = @request || @agreement
     @user = User.find params[:user_id] if params[:user_id]
   end
 

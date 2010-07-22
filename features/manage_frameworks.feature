@@ -47,13 +47,13 @@ Feature: Manage frameworks
     And I press "Create"
     Then I should see "Framework was successfully created."
     And I should see "Name: safc framework"
-    And I should see "Key Agreement required for President in requestor organization."
+    And I should see "Key Agreement required for President in requestor organization"
     When I follow "Edit"
     And I fill in "Name" with "gpsafc framework"
     And I choose "Yes"
     And I press "Update"
     Then I should see "Framework was successfully updated."
-    And I should not see "Key Agreement required for President in requestor organization."
+    And I should not see "Key Agreement required for President in requestor organization"
     And I should see "Name: gpsafc framework"
 
   Scenario: Delete framework

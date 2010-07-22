@@ -63,16 +63,17 @@ authorization do
     # TODO Should only show bases that are open as of current date
     has_permission_on [ :bases ], :to => :show
 
-    has_permission_on [ :requests ], :to => :show do
+    has_permission_on [ :requests ], :to => :create, :join_by => :and do
       if_permitted_to :request, :organization
+      if_attribute :basis => is { nil }
     end
     has_permission_on [ :requests ], :to => :show do
-      if_permitted_to :review, :basis
+      if_permitted_to :request
     end
     has_permission_on [ :requests ], :to => :show do
-      if_permitted_to :manage, :basis
+      if_permitted_to :review
     end
-    has_permission_on [ :requests ], :to => :allocate do
+    has_permission_on [ :requests ], :to => [ :show, :allocate ] do
       if_permitted_to :manage, :basis
     end
     has_permission_on [ :requests ], :to => :request, :join_by => :and do
@@ -90,23 +91,23 @@ authorization do
       if_permitted_to :manage, :basis
     end
     has_permission_on [ :requests ], :to => :manage, :join_by => :and do
-      if_permitted_to :request, :organization
+      if_permitted_to :request
       if_attribute :status => is_in { %w( started ) }
     end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
-      if_permitted_to :request, :organization
+      if_permitted_to :request
       if_attribute :status => is_in { %w( started completed ) }
     end
     has_permission_on [ :requests ], :to => :unapprove do
-      if_attribute :status => is_in { %w( started completed ) }
+      if_attribute :approvals => { :user_id => is { user.id } }, :status => is_in { %w( started completed ) }
     end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
-      if_permitted_to :review, :basis
+      if_permitted_to :review
       if_attribute :status => is_in { %w( accepted reviewed ) }
     end
     has_permission_on [ :requests ], :to => :unapprove, :join_by => :and do
-      if_permitted_to :review, :basis
-      if_attribute :status => is_in { %w( completed reviewed ) }
+      if_permitted_to :review
+      if_attribute :approvals => { :user_id => is { user.id } }, :status => is_in { %w( completed reviewed ) }
     end
 
     has_permission_on [ :items ], :to => :allocate do

@@ -6,6 +6,37 @@ Feature: Manage requests
   Background:
     Given a user: "admin" exists with admin: true
 
+  Scenario Outline: Test how permissions failures are reported to the user
+    Given an organization: "reviewer" exists with last_name: "Funding Source"
+    And an organization: "requestor" exists with last_name: "Applicant"
+    And a requestor_role exists
+    And a reviewer_role exists
+    And a user: "requestor" exists with status: "grad"
+    And a user: "reviewer" exists with status: "grad"
+    And a membership exists with role: the requestor_role, active: true, organization: organization "requestor", user: user "requestor"
+    And a membership exists with role: the reviewer_role, active: true, organization: organization "reviewer", user: user "reviewer"
+    And a framework exists with name: "Annual"
+    And an agreement exists with name: "Key Agreement"
+    And a user_status_criterion exists
+    And a registration_criterion exists with must_register: true, minimal_percentage: 15, type_of_member: "undergrads"
+    And a requirement exists with framework: the framework, perspectives: nil, perspective: "<perspective>", role: the <perspective>_role, fulfillable: the <fulfillable>
+    And a basis exists with organization: organization "reviewer", framework: the framework
+    And a request exists with basis: the basis, organization: organization "requestor"
+    And I log in as user: "<user>"
+    When I am on the page for the request
+    Then I should <show> authorized
+    And I should <u_mesg> "You must fulfill the following requirements:"
+    And I should <status> "Status must be undergrad required for president in <perspective> organization."
+    And I should <agreement> "Key Agreement required for president in <perspective> organization."
+    And I should <o_mesg> "<o_name> must fulfill the following requirements:"
+    And I should <registration> "No less than 15 percent of members provided in the current registration must be undergrads and the registration must be approved required for <perspective> organization."
+    Examples:
+      | user      | perspective | fulfillable            | show    | u_mesg  | status  | agreement | o_mesg  | o_name    | registration |
+      | admin     | requestor   | user_status_criterion  | see     | not see | not see | not see   | not see | Applicant | not see      |
+      | requestor | requestor   | user_status_criterion  | not see | see     | see     | not see   | not see | Applicant | not see      |
+      | requestor | requestor   | agreement              | not see | see     | not see | see       | not see | Applicant | not see      |
+      | requestor | requestor   | registration_criterion | not see | not see | not see | not see   | see     | Applicant | see          |
+
   Scenario Outline: Test permissions for requests controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"

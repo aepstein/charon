@@ -24,6 +24,6 @@ class UserStatusCriterion < ActiveRecord::Base
     )
   end
 
-  def to_s; statuses.join ', '; end
+  def to_s; "Status must be #{statuses.join ', '}"; end
 end
 
