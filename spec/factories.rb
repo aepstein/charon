@@ -1,5 +1,15 @@
 require 'factory_girl'
 
+Factory.define :activity_report do |f|
+  f.association :organization
+  f.sequence( :description ) { |n| "activity #{n}" }
+  f.number_of_grads 10
+  f.number_of_undergrads 15
+  f.number_of_others 0
+  f.starts_on { |report| Date.today - 1.month }
+  f.ends_on { |report| report.starts_on + 1.day }
+end
+
 Factory.define :external_term, :class => RegistrationImporter::ExternalTerm do |f|
   f.sequence(:term_id) { |n| n }
   f.sequence(:term_sdescr) { |n| "ET #{n}" }

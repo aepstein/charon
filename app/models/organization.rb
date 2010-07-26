@@ -1,6 +1,7 @@
 class Organization < ActiveRecord::Base
   include Fulfiller
 
+  has_many :activity_reports, :dependent => :destroy
   has_many :university_accounts, :dependent => :destroy
   has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
   has_many :registrations do
