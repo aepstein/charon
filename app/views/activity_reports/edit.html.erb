@@ -1,0 +1,11 @@
+<h2>Editing <%=h @activity_report %></h2>
+
+<% semantic_form_for( @activity_report ) do |f| %>
+  <%= render :partial => 'form', :object => f %>
+<% end %>
+
+<p>
+<%= link_to 'Show', @activity_report %> |
+<%= link_to 'Back', organization_activity_reports_path( @activity_report.organization ) %>
+</p>
+

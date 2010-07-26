@@ -1,4 +1,10 @@
 class ActivityReport < ActiveRecord::Base
+  named_scope :past, lambda { { :conditions => ['activity_reports.ends_on < ?', Date.today] } }
+  named_scope :current, lambda { { :conditions => [
+    'activity_reports.starts_on <= :date AND activity_reports.ends_on >= :date',
+    { :date => Date.today } ] } }
+  named_scope :future, lambda { { :conditions => ['activity_reports.starts_on > ?', Date.today] } }
+
   belongs_to :organization
 
   validates_presence_of :organization

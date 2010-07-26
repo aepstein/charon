@@ -1,10 +1,10 @@
 authorization do
   role :admin do
-    has_permission_on [ :addresses, :agreements, :approvers, :bases, :categories,
-      :document_types, :editions, :frameworks, :fulfillments, :inventory_items,
-      :items, :nodes, :organizations, :permissions, :registration_criterions,
-      :registrations, :registration_terms, :requests, :roles, :structures,
-      :university_accounts, :users, :user_status_criterions ],
+    has_permission_on [ :activity_reports, :addresses, :agreements, :approvers,
+      :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
+      :inventory_items, :items, :nodes, :organizations, :permissions,
+      :registration_criterions, :registrations, :registration_terms, :requests,
+      :roles, :structures, :university_accounts, :users, :user_status_criterions ],
       :to => [ :manage ]
     has_permission_on [ :bases ], :to => [ :review ]
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
@@ -62,6 +62,10 @@ authorization do
     end
     # TODO Should only show bases that are open as of current date
     has_permission_on [ :bases ], :to => :show
+
+    has_permission_on [ :activity_reports ], :to => :manage do
+      if_permitted_to :request, :organization
+    end
 
     has_permission_on [ :requests ], :to => :create, :join_by => :and do
       if_permitted_to :request, :organization

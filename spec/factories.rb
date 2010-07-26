@@ -10,6 +10,14 @@ Factory.define :activity_report do |f|
   f.ends_on { |report| report.starts_on + 1.day }
 end
 
+Factory.define :current_activity_report, :parent => :activity_report do |f|
+  f.starts_on { |report| Date.today }
+end
+
+Factory.define :future_activity_report, :parent => :activity_report do |f|
+  f.starts_on { |report| Date.today + 1.month }
+end
+
 Factory.define :external_term, :class => RegistrationImporter::ExternalTerm do |f|
   f.sequence(:term_id) { |n| n }
   f.sequence(:term_sdescr) { |n| "ET #{n}" }

@@ -52,5 +52,31 @@ describe ActivityReport do
     end
   end
 
+  it 'should have a past scope' do
+    timing_scenario
+    scope = ActivityReport.past.all
+    scope.length.should eql 1
+    scope.should include @activity_report
+  end
+
+  it 'should have a current scope' do
+    timing_scenario
+    scope = ActivityReport.current.all
+    scope.length.should eql 1
+    scope.should include @current
+  end
+
+  it 'should have a future scope' do
+    timing_scenario
+    scope = ActivityReport.future.all
+    scope.length.should eql 1
+    scope.should include @future
+  end
+
+  def timing_scenario
+    @current = Factory(:current_activity_report)
+    @future = Factory(:future_activity_report)
+  end
+
 end
 

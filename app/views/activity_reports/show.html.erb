@@ -1,0 +1,7 @@
+<h2><%=h @activity_report %> for <%= @activity_report.organization %></h2>
+
+<p>
+<%= link_to h("Back to #{@activity_report.organization}"), @activity_report.organization %> |
+<%= link_to 'Edit', edit_activity_report_path(@activity_report) %>
+</p>
+

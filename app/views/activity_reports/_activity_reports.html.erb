@@ -1,0 +1,19 @@
+<% organization ||= false %>
+
+<table>
+<thead>
+  <tr>
+  <% unless organization -%>
+    <th>Organization</th>
+  <% end -%>
+    <th>Description</th>
+    <th>Starts on</th>
+    <th>Ends on</th>
+  </tr>
+</thead>
+<tbody>
+  <%= render :partial => 'activity_reports/activity_report',
+    :collection => activity_reports, :locals => { :organization => organization } %>
+</tbody>
+</table>
+

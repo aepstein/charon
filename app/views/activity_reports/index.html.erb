@@ -1,0 +1,37 @@
+<h2>Listing activity reports</h2>
+
+<% form_for :search, :url => polymorphic_path( [ @context, :activity_reports ] ), :html => { :method => :get } do |f| %>
+  <% unless @organization -%>
+  <p>
+    <%= f.label :organization_name_like, 'Organization' %>
+    <%= f.text_field :organization_name_like %>
+  </p>
+  <% end -%>
+  <p>
+    <%= f.submit 'Search' %>
+  </p>
+<% end %>
+
+<%= will_paginate @activity_reports %>
+
+<hr/>
+
+<%= render :partial => "activity_reports/activity_reports",
+  :object => @activity_reports, :locals => { :organization => @organization } %>
+
+<hr/>
+
+<%= will_paginate @activity_reports %>
+
+<hr/>
+
+<p>
+<% if @organization -%>
+<%= link_to h("Back to #{@organization}"), @organization %> |
+<% if permitted_to? :create, @organization.activity_reports.build %>
+<%= link_to h("New activity report for #{@organization}"),
+  new_organization_activity_report_path( @organization ) %>
+<% end %>
+<% end -%>
+</p>
+
