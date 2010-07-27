@@ -1,4 +1,16 @@
-<h2><%=h @activity_report %> for <%= @activity_report.organization %></h2>
+<h2>Activity report</h2>
+
+<p><b>Description:</b> <%=h @activity_report.description %></p>
+
+<p><b>Number of undergrads:</b> <%= @activity_report.number_of_undergrads %></p>
+
+<p><b>Number of grads:</b> <%= @activity_report.number_of_grads %></p>
+
+<p><b>Number of others:</b> <%= @activity_report.number_of_others %></p>
+
+<p><b>Starts on:</b> <%= @activity_report.starts_on.to_formatted_s :long_ordinal %></p>
+
+<p><b>Ends on:</b> <%= @activity_report.ends_on.to_formatted_s :long_ordinal %></p>
 
 <p>
 <%= link_to h("Back to #{@activity_report.organization}"), @activity_report.organization %> |

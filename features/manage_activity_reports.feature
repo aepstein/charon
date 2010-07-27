@@ -47,88 +47,73 @@ Feature: Manage requests
       | admin   | see     | see     | see     | see     |
       | member  | see     | see     | see     | see     |
       | regular | not see | not see | not see | not see |
-@wip
+
   Scenario: Create and update activity_reports
     Given an organization exists with last_name: "Spending Club"
     And I log in as user: "admin"
     And I am on the new activity_report page for the organization
-    When I fill in "Description" with "Boots"
-    And I fill in "Identifier" with "Boots-0001"
-    And I fill in "Comments" with "These come in *pairs*."
-    And I fill in "Purchase price" with "50"
-    And I fill in "Current value" with "25"
-    And I choose "Usable"
-    And I choose "Not missing"
-    And I fill in "Acquired on" with "2010-01-01"
-    And I fill in "Scheduled retirement on" with "2015-01-01"
+    When I fill in "Description" with "Concert"
+    And I fill in "Number of undergrads" with "10"
+    And I fill in "Number of grads" with "10"
+    And I fill in "Number of others" with "10"
+    And I fill in "Starts on" with "2010-01-01"
+    And I fill in "Ends on" with "2010-01-01"
     And I press "Create"
-    Then I should see "Inventory item was successfully created."
-    And I should see "Description: Boots"
-    And I should see "Identifier: Boots-0001"
-    And I should see "These come in pairs."
-    And I should see "Purchase price: $50.00"
-    And I should see "Current value: $25.00"
-    And I should see "Usable? Usable"
-    And I should see "Missing? Not missing"
-    And I should see "Acquired on: January 1, 2010"
-    And I should see "Scheduled retirement on: January 1, 2015"
-    And I should not see "Retired on"
+    Then I should see "Activity report was successfully created."
+    And I should see "Description: Concert"
+    And I should see "Number of undergrads: 10"
+    And I should see "Number of grads: 10"
+    And I should see "Number of others: 10"
+    And I should see "Starts on: January 1st, 2010"
+    And I should see "Ends on: January 1st, 2010"
     When I follow "Edit"
-    And I fill in "Description" with "Ski boots"
-    And I fill in "Identifier" with "Boots-0002"
-    And I fill in "Comments" with "These are for skiing."
-    And I fill in "Purchase price" with "55"
-    And I fill in "Current value" with "30"
-    And I choose "Not usable"
-    And I choose "Missing"
-    And I fill in "Acquired on" with "2011-01-01"
-    And I fill in "Scheduled retirement on" with "2015-01-02"
-    And I fill in "Retired on" with "2012-01-01"
+    When I fill in "Description" with "Recital"
+    And I fill in "Number of undergrads" with "5"
+    And I fill in "Number of grads" with "6"
+    And I fill in "Number of others" with "7"
+    And I fill in "Starts on" with "2010-01-02"
+    And I fill in "Ends on" with "2010-01-02"
     And I press "Update"
-    Then I should see "Inventory item was successfully updated."
-    And I should see "Description: Ski boots"
-    And I should see "Identifier: Boots-0002"
-    And I should see "These are for skiing."
-    And I should see "Purchase price: $55.00"
-    And I should see "Current value: $30.00"
-    And I should see "Usable? Not usable"
-    And I should see "Missing? Missing"
-    And I should see "Acquired on: January 1, 2011"
-    And I should see "Scheduled retirement on: January 2, 2015"
-    And I should see "Retired on: January 1, 2012"
-@wip
+    Then I should see "Activity report was successfully updated."
+    And I should see "Description: Recital"
+    And I should see "Number of undergrads: 5"
+    And I should see "Number of grads: 6"
+    And I should see "Number of others: 7"
+    And I should see "Starts on: January 2nd, 2010"
+    And I should see "Ends on: January 2nd, 2010"
+
   Scenario: List and delete activity reports
     Given an organization: "first" exists with last_name: "First Club"
     And an organization: "last" exists with last_name: "Last Club"
-    And an activity_report exists with description: "Sandals", identifier: "foot31", organization: organization "last"
-    And an activity_report exists with description: "Sandals", identifier: "foot30", organization: organization "last"
-    And an activity_report exists with description: "Boots", identifier: "foot2", organization: organization "first"
-    And an activity_report exists with description: "Boots", identifier: "foot1", organization: organization "first"
+    And an activity_report exists with starts_on: "2010-01-04", description: "Concert", organization: organization "last"
+    And an activity_report exists with starts_on: "2010-01-03", description: "Concerto", organization: organization "last"
+    And an activity_report exists with starts_on: "2010-01-01", description: "Play", organization: organization "first"
+    And an activity_report exists with starts_on: "2010-01-01", description: "Musical", organization: organization "first"
     And I log in as user: "admin"
     And I am on the activity_reports page
-    When I fill in "Description" with "Boot"
+    When I fill in "Description" with "Concert"
     And I press "Search"
     Then I should see the following activity_reports:
-      | Organization | Identifier |
-      | First Club   | foot1      |
-      | First Club   | foot2      |
+      | Organization | Description |
+      | Last Club    | Concerto    |
+      | Last Club    | Concert     |
     Given I am on the activity_reports page
-    And I fill in "Identifier" with "foot3"
+    And I fill in "Organization" with "last"
     And I press "Search"
     Then I should see the following activity_reports:
-      | Organization | Identifier |
-      | Last Club    | foot30     |
-      | Last Club    | foot31     |
+      | Organization | Description |
+      | Last Club    | Concerto    |
+      | Last Club    | Concert     |
     Given I am on the activity_reports page for organization: "first"
     Then I should see the following requests:
-      | Identifier |
-      | foot1      |
-      | foot2      |
+      | Description |
+      | Musical     |
+      | Play        |
     When I follow "Destroy" for the 3rd activity_report
     And I am on the activity_reports page
     Then I should see the following activity_reports:
-      | Organization | Identifier |
-      | First Club   | foot1      |
-      | First Club   | foot2      |
-      | Last Club    | foot31     |
+      | Organization | Description |
+      | First Club   | Musical     |
+      | First Club   | Play        |
+      | Last Club    | Concert     |
 
