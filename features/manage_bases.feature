@@ -7,7 +7,6 @@ Feature: Manage bases
     Given a user: "admin" exists with admin: true
     And an organization: "source" exists with last_name: "Funding Source"
 
-  # TODO: should not show bases that open in the future to unprivileged users
   Scenario Outline: Test permissions for basis controller actions
     Given an organization: "applicant" exists with last_name: "Applicant"
     And an organization: "observer" exists with last_name: "Observer"
@@ -23,14 +22,14 @@ Feature: Manage bases
     And a user: "observer_requestor" exists
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
-    And a basis: "current" exists with name: "Current", organization: organization "source"
+    And a <basis>basis: "current" exists with name: "Opportunity", organization: organization "source"
     And a request exists with basis: the basis, organization: organization "applicant"
     And I log in as user: "<user>"
     And I am on the page for the basis: "current"
     Then I should <show> authorized
     And I should <update> "Edit"
     Given I am on the bases page for organization: "source"
-    Then I should <show> "Current"
+    Then I should <show> "Opportunity"
     And I should <create> "New basis"
     And I should <update> "Edit"
     And I should <destroy> "Destroy"
@@ -45,12 +44,22 @@ Feature: Manage bases
     Given I delete on the page for basis: "current"
     Then I should <destroy> authorized
     Examples:
-      | user               | create  | update  | destroy  | show    |
-      | admin              | see     | see     | see      | see     |
-      | source_manager     | see     | see     | see      | see     |
-      | source_reviewer    | not see | not see | not see  | see     |
-      | observer_requestor | not see | not see | not see  | see     |
-      | regular            | not see | not see | not see  | see     |
+      | basis   | user               | create  | update  | destroy  | show    |
+      |         | admin              | see     | see     | see      | see     |
+      |         | source_manager     | see     | see     | see      | see     |
+      |         | source_reviewer    | not see | not see | not see  | see     |
+      |         | observer_requestor | not see | not see | not see  | see     |
+      |         | regular            | not see | not see | not see  | see     |
+      | past_   | admin              | see     | see     | see      | see     |
+      | past_   | source_manager     | see     | see     | see      | see     |
+      | past_   | source_reviewer    | not see | not see | not see  | see     |
+      | past_   | observer_requestor | not see | not see | not see  | not see |
+      | past_   | regular            | not see | not see | not see  | not see |
+      | future_ | admin              | see     | see     | see      | see     |
+      | future_ | source_manager     | see     | see     | see      | see     |
+      | future_ | source_reviewer    | not see | not see | not see  | see     |
+      | future_ | observer_requestor | not see | not see | not see  | not see |
+      | future_ | regular            | not see | not see | not see  | not see |
 
   Scenario: Register new basis and update
     Given a structure exists with name: "annual"

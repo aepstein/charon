@@ -1,6 +1,10 @@
 <h2>Listing bases for <%=h @organization %></h2>
 
+<%= will_paginate @bases %>
+
 <%= render :partial => "bases", :object => @bases %>
+
+<%= will_paginate @bases %>
 
 <br />
 

@@ -11,6 +11,9 @@ class BasesController < ApplicationController
   # GET /organizations/:organization_id/bases
   # GET /organizations/:organization_id/bases.xml
   def index
+    @search = @bases.searchlogic( params[:search] )
+    @bases = @search.paginate( :page => params[:page] )
+
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @bases }
@@ -92,7 +95,7 @@ class BasesController < ApplicationController
   end
 
   def initialize_index
-    @bases = @organization.bases
+    @bases = @organization.bases.with_permissions_to(:show)
   end
 
   def new_basis_from_params

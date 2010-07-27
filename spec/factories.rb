@@ -215,12 +215,20 @@ Factory.define :basis do |f|
   f.association :organization
   f.association :framework
   f.association :structure
-  f.open_at DateTime.now - 1.days
-  f.closed_at DateTime.now + 10.days
+  f.open_at { |b| Date.today - 1.days }
+  f.closed_at { |b| b.open_at + 2.days }
   f.submissions_due_at { |b| b.closed_at - 1.days }
   f.contact_name "a contact"
   f.contact_email "contact@example.com"
   f.contact_web "http://example.com"
+end
+
+Factory.define :past_basis, :parent => :basis do |f|
+  f.open_at { Date.today - 1.year }
+end
+
+Factory.define :future_basis, :parent => :basis do |f|
+  f.open_at { Date.today + 1.month }
 end
 
 Factory.define :request do |f|

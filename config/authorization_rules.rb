@@ -54,14 +54,15 @@ authorization do
       if_attribute :memberships => { :user_id => is { user.id }, :active => is { true }, :role => { :name => is_in { Role::MANAGER } } }
     end
 
-    has_permission_on [ :bases ], :to => :review do
+    has_permission_on [ :bases ], :to => [ :review, :show ] do
       if_permitted_to :review, :organization
     end
     has_permission_on [ :bases ], :to => :manage do
       if_permitted_to :manage, :organization
     end
-    # TODO Should only show bases that are open as of current date
-    has_permission_on [ :bases ], :to => :show
+    has_permission_on [ :bases ], :to => :show do
+      if_attribute :open_at => lte { Date.today }, :closed_at => gte { Date.today }
+    end
 
     has_permission_on [ :activity_reports ], :to => :manage do
       if_permitted_to :request, :organization
