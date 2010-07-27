@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   include Fulfiller
 
-  STATUSES = %w[ unknown undergrad grad staff faculty alumni temporary ]
+  STATUSES = %w[ undergrad grad staff faculty alumni temporary ]
 
   attr_protected :admin
   attr_readonly :net_id
@@ -95,7 +95,7 @@ class User < ActiveRecord::Base
   validates_format_of :email, :with => Authlogic::Regex.email
 
   before_validation_on_create :extract_email, :initialize_password
-  validates_inclusion_of    :status, :in => STATUSES
+  validates_inclusion_of :status, :in => STATUSES, :allow_blank => true
   before_validation :import_simple_ldap_attributes
   before_validation_on_create { |user| user.addresses.each { |address| address.addressable = user } }
   after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
@@ -153,10 +153,10 @@ class User < ActiveRecord::Base
 
   def import_simple_ldap_attributes
     if ldap_entry then
-      self.first_name = ldap_entry.first_name.titleize unless ldap_entry.first_name.nil?
-      self.middle_name = ldap_entry.middle_name.titleize unless ldap_entry.middle_name.nil?
-      self.last_name = ldap_entry.last_name.titleize unless ldap_entry.last_name.nil?
-      self.status = ldap_entry.status unless ldap_entry.status.nil?
+      self.first_name = ldap_entry.first_name.titleize if ldap_entry.first_name
+      self.middle_name = ldap_entry.middle_name.titleize if ldap_entry.middle_name
+      self.last_name = ldap_entry.last_name.titleize if ldap_entry.last_name
+      self.status = ldap_entry.status if ldap_entry.status
     end
   end
 
