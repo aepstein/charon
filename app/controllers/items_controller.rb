@@ -100,7 +100,7 @@ class ItemsController < ApplicationController
 
   def initialize_context
     @request = Request.find params[:request_id] if params[:request_id]
-    @item = Item.find params[:id] if params[:id]
+    @item = Item.find( params[:id], :include => { :editions => :documents } ) if params[:id]
     @request = @item.request if @item
     @item.attributes = params[:item] if @item && params[:item]
   end

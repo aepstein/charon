@@ -1,4 +1,5 @@
 development:
+  session_secret: 64cced0d99dabeb84b2e596eca215243ca31df9d96984f74a80b3ae1359595e4f23bb9983ef9ad874a82f0f17274b5305c5ab395d4941e6ffeada96795fdc5a4
   expenses:
     general:
       mailbox:
@@ -15,6 +16,7 @@ development:
       lodging: 15.0
 
 test:
+  session_secret: 64cced0d99dabeb84b2e596eca215243ca31df9d96984f74a80b3ae1359595e4f23bb9983ef9ad874a82f0f17274b5305c5ab395d4941e6ffeada96795fdc5a4
   expenses:
     general:
       mailbox:
@@ -31,6 +33,7 @@ test:
       lodging: 15.0
 
 production:
+  session_secret: 64cced0d99dabeb84b2e596eca215243ca31df9d96984f74a80b3ae1359595e4f23bb9983ef9ad874a82f0f17274b5305c5ab395d4941e6ffeada96795fdc5a4
   expenses:
     general:
       mailbox:

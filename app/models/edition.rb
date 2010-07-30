@@ -33,7 +33,8 @@ class Edition < ActiveRecord::Base
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
   validates_inclusion_of :perspective, :in => PERSPECTIVES
   validates_uniqueness_of :perspective, :scope => :item_id
-  validate :amount_must_be_within_requestable_max, :amount_must_be_within_original_edition, :amount_must_be_within_node_limit
+  validate :amount_must_be_within_requestable_max,
+    :amount_must_be_within_original_edition, :amount_must_be_within_node_limit
 
   delegate :request, :to => :item
   delegate :node, :to => :item

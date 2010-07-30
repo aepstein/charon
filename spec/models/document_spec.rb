@@ -30,5 +30,12 @@ describe Document do
     duplicate.save.should == false
   end
 
+  it 'should not create if document is larger than size allowed by document type' do
+    document = Factory(:document)
+    document.document_type.update_attributes!( :max_size_quantity => 200, :max_size_unit => 'byte' )
+    document.reload
+    document.save.should be_false
+  end
+
 end
 

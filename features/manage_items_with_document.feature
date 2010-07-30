@@ -18,7 +18,7 @@ Feature: Manage items with document
     And I am on the items page for request: "focus"
     When I select "Focus" from "Add New Root Item"
     And I press "Add Root Item"
-    And I attach the file "features/support/assets/small.png" to "price quote"
+    And I attach the file "features/support/assets/small.png" to "Requestor price quote"
     And I press "Create"
     Then I should see "Item was successfully created."
     And I should see the following documents:
@@ -31,7 +31,7 @@ Feature: Manage items with document
       | Type        |
       | price quote |
     When I follow "Edit"
-    And I attach the file "features/support/assets/large.png" to "price quote"
+    And I attach the file "features/support/assets/large.png" to "Requestor price quote"
     And I press "Update"
     Then I should not see "Item was successfully updated."
 

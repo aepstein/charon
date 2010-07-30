@@ -3,6 +3,7 @@ class Item < ActiveRecord::Base
 
   belongs_to :node
   belongs_to :request, :touch => true
+  has_many :documents, :through => :editions
   has_many :editions do
     def for_perspective( perspective )
       self.each do |v|
