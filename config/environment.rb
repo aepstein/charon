@@ -15,7 +15,7 @@ Rails::Initializer.run do |config|
   config.gem 'authlogic', :source => 'http://gemcutter.org'
   config.gem 'calendar_date_select'
   config.gem 'will_paginate', :source => 'http://gemcutter.org'
-  config.gem 'aasm', :source => 'http://gemcutter.org'
+  config.gem 'aasm', :source => 'http://gemcutter.org', :version => '= 2.1.5'
   config.gem 'paperclip', :source => 'http://gemcutter.org'
   config.gem 'validates_timeliness', :source => 'http://gemcutter.org'
   config.gem 'prawn', :source => 'http://gemcutter.org'
