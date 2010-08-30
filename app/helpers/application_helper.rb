@@ -44,7 +44,6 @@ module ApplicationHelper
         memo
       end.join(', ')
     end
-    out.html_safe!
     out
   end
 
