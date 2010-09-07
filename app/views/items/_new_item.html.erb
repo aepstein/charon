@@ -5,7 +5,7 @@
     <% end -%>
     <%= f.label :node_id, ( new_item.parent ? "Add New Subitem for #{new_item.parent}" : 'Add New Root Item') %>
     <%= f.collection_select :node_id, new_item.allowed_nodes, :id, :name %>
-    <%= f.submit ( new_item.parent ? 'Add Subitem' : 'Add Root Item') %>
+    <%= f.submit( new_item.parent ? 'Add Subitem' : 'Add Root Item' ) %>
   <% end %>
 <% end -%>
 
