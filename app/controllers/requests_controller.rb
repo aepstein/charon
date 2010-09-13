@@ -115,7 +115,8 @@ class RequestsController < ApplicationController
   end
 
   def csv_index
-    csv_string = CSV.generate do |csv|
+    csv_string = ""
+    CSV::Reader.create(csv_string) do |csv|
       csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
       @requests.each do |request|
         next unless permitted_to?( :review, request )
