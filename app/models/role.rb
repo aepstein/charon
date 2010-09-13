@@ -1,6 +1,6 @@
 class Role < ActiveRecord::Base
   MANAGER = %w( staff )
-  REVIEWER = %w( member )
+  REVIEWER = %w( member eboard commissioner )
   REQUESTOR =  %w( president vice-president treasurer officer advisor )
 
   default_scope :order => 'roles.name ASC'
