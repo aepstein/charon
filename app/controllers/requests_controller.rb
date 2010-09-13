@@ -118,7 +118,7 @@ class RequestsController < ApplicationController
     csv_string = ""
     CSV::Writer.generate(csv_string) do |csv|
       csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
-      @requests.each do |request|
+      @search.each do |request|
         next unless permitted_to?( :review, request )
         csv << ( [ request.organization.name,
                    ( request.organization.club_sport? ? 'Yes' : 'No' ),
