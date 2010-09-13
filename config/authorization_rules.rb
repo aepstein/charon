@@ -68,10 +68,6 @@ authorization do
       if_permitted_to :request, :organization
     end
 
-    has_permission_on [ :requests ], :to => :create, :join_by => :and do
-      if_permitted_to :request, :organization
-      if_attribute :basis => is { nil }
-    end
     has_permission_on [ :requests ], :to => :show do
       if_permitted_to :request
     end
@@ -85,6 +81,7 @@ authorization do
       if_permitted_to :request, :organization
       if_attribute :basis => { :framework_id => is_in { object.organization.frameworks( Edition::PERSPECTIVES.first ).map(&:id) } }
       if_attribute :basis => { :framework_id => is_in { user.framework_ids( Edition::PERSPECTIVES.first, object.organization.roles.ids_for_user( user ) ) } }
+      if_attribute :basis => { :open_at => lte { Time.zone.now } }
     end
     has_permission_on [ :requests ], :to => :review, :join_by => :and do
       if_permitted_to :review, :basis
@@ -98,6 +95,7 @@ authorization do
     has_permission_on [ :requests ], :to => :manage, :join_by => :and do
       if_permitted_to :request
       if_attribute :status => is_in { %w( started ) }
+      if_attribute :basis => { :closed_at => gte { Time.zone.now } }
     end
     has_permission_on [ :requests ], :to => :approve, :join_by => :and do
       if_permitted_to :request
