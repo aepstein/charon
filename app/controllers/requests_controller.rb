@@ -128,7 +128,7 @@ class RequestsController < ApplicationController
                    "$#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "$#{request.items.allocation_for_category(c)}" } )
       end
     end
-    send_data csv_string, :disposition => "attachment; filename=requests.csv"
+    send_data csv_string, :disposition => "attachment; filename=requests.csv", :type => 'text/csv'
   end
 
 end
