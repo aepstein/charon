@@ -1,8 +1,8 @@
 # deploy.rb
 set :application, "charon"
-role :app, "assembly.cornell.edu"
-role :web, "assembly.cornell.edu"
-role :db,  "assembly.cornell.edu", :primary => true
+role :app, "xen1.assembly.cornell.edu", "kvm02.assembly.cornell.edu"
+role :web, "xen1.assembly.cornell.edu", "kvm02.assembly.cornell.edu"
+role :db,  "kvm02.assembly.cornell.edu", :primary => true
 
 set :user, "www-data"
 set :deploy_to, "/var/www/assembly/#{application}"
@@ -35,7 +35,8 @@ namespace :deploy do
 
   desc "Update the crontab file"
   task :update_crontab, :roles => :db do
-    run "cd #{release_path} && whenever --update-crontab #{application}"
+    #Prevent cron jobs until new setup is tested
+    #run "cd #{release_path} && whenever --update-crontab #{application}"
   end
 end
 

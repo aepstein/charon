@@ -19,8 +19,6 @@ Rails::Initializer.run do |config|
     :key => '_charon_session', :secret => Proc.new { APP_CONFIG['session_secret'] }
   }
 
-  config.action_controller.session_store = :active_record_store
-
   config.time_zone = 'Eastern Time (US & Canada)'
 
   config.gem 'acts_as_tree', :source => 'http://gemcutter.org'

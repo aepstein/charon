@@ -16,8 +16,8 @@ class ApplicationController < ActionController::Base
   end
 
   def sso_net_id
-    return false unless request.env['REMOTE_USER'] && !request.env['REMOTE_USER'].blank?
-    request.env['REMOTE_USER']
+    net_id = request.env['REMOTE_USER'] || request.env['HTTP_REMOTE_USER']
+    net_id.blank? ? false : net_id
   end
 
   private
