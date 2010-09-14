@@ -35,8 +35,7 @@ namespace :deploy do
 
   desc "Update the crontab file"
   task :update_crontab, :roles => :db do
-    #Prevent cron jobs until new setup is tested
-    #run "cd #{release_path} && whenever --update-crontab #{application}"
+    run "cd #{release_path} && whenever --update-crontab #{application}"
   end
 end
 
