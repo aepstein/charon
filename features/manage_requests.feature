@@ -56,9 +56,14 @@ Feature: Manage requests
     And a <tense>basis exists with name: "Annual", organization: organization "source"
     And a request: "annual" exists with basis: the basis, organization: organization "applicant", status: "<status>"
     And I log in as user: "<user>"
-    And I am on the new request page for organization: "applicant"
-    Then I should <create> authorized
-    Given I post on the requests page for organization: "applicant"
+# TODO: New request should allow to specify basis and therefore act different from create action
+# Create action needs to be qualified with the basis_id -- consider special path definition
+#    And I am on the new request page for organization: "applicant"
+#    Then I should <create> authorized
+#    Given I post on the requests page for organization: "applicant"
+# Maybe factor out next two lines for requestor-specific creation testing?
+#    Given I am on the profile page for organization: "applicant"
+#    And I press "Create"
     Then I should <create> authorized
     And I am on the edit page for the request
     Then I should <update> authorized
