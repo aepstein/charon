@@ -1,7 +1,6 @@
 class Request < ActiveRecord::Base
   default_scope :include => [ :organization, :basis ],
     :order => 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC'
-  @@per_page = 10
 
   belongs_to :basis
   has_many :approvals, :dependent => :delete_all, :as => :approvable do

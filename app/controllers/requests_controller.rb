@@ -14,7 +14,7 @@ class RequestsController < ApplicationController
   # GET /organizations/:organization_id/requests.xml
   def index
     @search = @requests.searchlogic( params[:search] )
-    @requests = @search.paginate( :page => params[:page], :include => {
+    @requests = @search.paginate( :page => params[:page], :per_page => 10, :include => {
       :approvals => [], :basis =>  { :organization => [:memberships], :framework => [] }
     } )
 
