@@ -46,6 +46,23 @@ external_registrations_production:
   username: root
   host: localhost
 
+external_staffing_development:
+  adapter: mysql
+  database: staffing_development
+  username: root
+  host: localhost
+
+external_staffing_test:
+  adapter: mysql
+  database: staffing
+  username: root
+  host: localhost
+
+external_staffing_production:
+  adapter: mysql
+  database: staffing
+  username: root
+  host: localhost
 
 cucumber:
   <<: *TEST
