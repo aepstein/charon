@@ -11,6 +11,7 @@ class Membership < ActiveRecord::Base
   belongs_to :role
   belongs_to :registration
   belongs_to :organization
+  belongs_to :member_source
 
   before_validation :set_organization_from_registration
 
