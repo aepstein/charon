@@ -13,7 +13,7 @@ class Membership < ActiveRecord::Base
   belongs_to :organization
   belongs_to :member_source
 
-  before_validation :set_organization_from_registration
+  before_validation :set_organization_from_registration, :set_from_member_source
 
   validates_presence_of :user
   validates_presence_of :role
@@ -23,6 +23,13 @@ class Membership < ActiveRecord::Base
     unless registration.blank?
       self.active = registration.active?
       self.organization = registration.organization unless registration.organization.blank?
+    end
+  end
+
+  def set_from_member_source
+    unless member_source.blank?
+      self.role = member_source.role
+      self.organization = member_source.organization
     end
   end
 

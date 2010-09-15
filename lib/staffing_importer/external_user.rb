@@ -44,7 +44,7 @@ module StaffingImporter
       unless old.empty?
         source.memberships.delete_all(["memberships.user_id IN (?)", old])
       end
-      [adds, (changes - adds), old.length, ( Time.zone.now - starts )]
+      [adds, changes, old.length, ( Time.zone.now - starts )]
     end
 
   end
