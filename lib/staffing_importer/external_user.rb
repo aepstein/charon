@@ -14,7 +14,6 @@ module StaffingImporter
     establish_connection "external_staffing_#{RAILS_ENV}".to_sym
     set_table_name "users"
     set_primary_key :id
-    default_scope :select => MAP.keys.join(', ')
 
     named_scope :with_source, lambda { |source|
       { :joins => 'INNER JOIN memberships ON users.id = memberships.user_id INNER JOIN ' +
