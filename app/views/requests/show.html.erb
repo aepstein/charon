@@ -3,7 +3,7 @@
 <p>Basis: <%=h @request.basis %></p>
 <p>Status: <%=h @request.status %></p>
 <p>Requestor total: <%= number_to_currency @request.editions.perspective_equals('requestor').sum('editions.amount') %></p>
-<% if permitted_to? :review -%>
+<% if permitted_to? :review, @request -%>
 <p>Reviewer total: <%= number_to_currency @request.editions.perspective_equals('reviewer').sum('editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
 <table>
