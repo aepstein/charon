@@ -123,9 +123,9 @@ class RequestsController < ApplicationController
         csv << ( [ request.organization.name,
                    ( request.organization.club_sport? ? 'Yes' : 'No' ),
                    request.status,
-                   "$#{request.editions.perspective_equals('requestor').sum('amount')}",
-                   "$#{request.editions.perspective_equals('reviewer').sum('amount')}",
-                   "$#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "$#{request.items.allocation_for_category(c)}" } )
+                   "#{request.editions.perspective_equals('requestor').sum('amount')}",
+                   "#{request.editions.perspective_equals('reviewer').sum('amount')}",
+                   "#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "#{request.items.allocation_for_category(c)}" } )
       end
     end
     send_data csv_string, :disposition => "attachment; filename=requests.csv", :type => 'text/csv'
