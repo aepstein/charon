@@ -66,6 +66,11 @@ class Organization < ActiveRecord::Base
     registrations.current.registered?
   end
 
+  def independent?
+    return false if registrations.current.blank?
+    registrations.current.independent?
+  end
+
   def name(format=nil)
     case format
     when :last_first

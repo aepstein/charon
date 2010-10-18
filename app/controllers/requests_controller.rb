@@ -117,10 +117,11 @@ class RequestsController < ApplicationController
   def csv_index
     csv_string = ""
     CSV::Writer.generate(csv_string) do |csv|
-      csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
+      csv << ( ['organizations', 'independent?','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
       @search.each do |request|
         next unless permitted_to?( :review, request )
         csv << ( [ request.organization.name,
+                   ( request.organization.independent? ? 'Yes' : 'No' ),
                    ( request.organization.club_sport? ? 'Yes' : 'No' ),
                    request.status,
                    "#{request.editions.perspective_equals('requestor').sum('amount')}",
