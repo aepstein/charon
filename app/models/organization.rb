@@ -67,8 +67,9 @@ class Organization < ActiveRecord::Base
   end
 
   def independent?
-    return false if registrations.current.blank?
-    registrations.current.independent?
+    return registrations.current.independent? unless registrations.current.blank?
+    return registrations.last(:order => 'registration_terms.starts_at ASC').independent? unless registrations.empty?
+    false
   end
 
   def name(format=nil)
