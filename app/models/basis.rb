@@ -22,8 +22,8 @@ class Basis < ActiveRecord::Base
   belongs_to :framework
   has_many :requests, :dependent => :destroy do
     def allocate_with_caps(status, club_sport, other)
-      self.status_equals(status, :include => [ :organizations, { :items => :editions } ] ).each do |r|
-        if r.organizations.first.club_sport?
+      self.status_equals(status, :include => [ :organization, { :items => :editions } ] ).each do |r|
+        if r.organization.club_sport?
           r.items.allocate club_sport
         else
           r.items.allocate other
@@ -32,7 +32,7 @@ class Basis < ActiveRecord::Base
     end
     def build_for( organization )
       r = self.build
-      r.organizations << organization
+      r.organization = organization
       r
     end
     def amount_for_perspective_and_status(perspective, status)
