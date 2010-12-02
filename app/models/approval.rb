@@ -41,7 +41,8 @@ class Approval < ActiveRecord::Base
   def approvable_must_not_change
     return unless approvable && as_of
     if approvable.updated_at.to_s.to_datetime > as_of
-      errors.add_to_base( "#{approvable} has changed since you saw it.  Please review again and confirm approval." )
+      errors.add :base,
+        "#{approvable} has changed since you saw it.  Please review again and confirm approval."
     end
   end
 

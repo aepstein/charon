@@ -35,7 +35,7 @@ class Membership < ActiveRecord::Base
   end
 
   def must_have_registration_or_organization
-    errors.add_to_base( 'Must have a registration or organization.' ) unless (registration || organization)
+    errors.add( :base, 'Must have a registration or organization.' ) unless (registration || organization)
   end
 
 end
