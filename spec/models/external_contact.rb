@@ -1,5 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-require 'spec/lib/importer_tests'
+require 'importer_tests'
 
 describe RegistrationImporter::ExternalContact do
 
