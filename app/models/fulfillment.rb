@@ -51,7 +51,7 @@ class Fulfillment < ActiveRecord::Base
 
   def self.fulfill_fulfiller( fulfiller )
     FULFILLABLE_TYPES[ fulfiller.class.to_s ].each do |fulfillable_type|
-      current = fulfiller.fulfillments.fulfillable_type_eq( fulfillable_type ).map { |f| f.fulfillable_id }
+      current = fulfiller.fulfillments.where( :fulfillable_type => fulfillable_type ).map { |f| f.fulfillable_id }
       fulfiller.send(fulfillable_type.underscore.pluralize).each do |criterion|
         fulfiller.fulfillments.create( :fulfillable => criterion ) unless current.include? criterion.id
       end

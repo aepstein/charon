@@ -1,4 +1,7 @@
 class RequestMailer < ActionMailer::Base
+
+  helper :application
+
   def started_reminder(request)
     @request = request
     mail(

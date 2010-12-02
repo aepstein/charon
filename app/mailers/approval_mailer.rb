@@ -1,4 +1,5 @@
 class ApprovalMailer < ActionMailer::Base
+  helper :application
 
   def approval_notice(approval)
     @approval = approval
