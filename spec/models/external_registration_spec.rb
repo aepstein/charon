@@ -1,5 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-require 'spec/lib/importer_tests'
+require 'importer_tests'
 
 describe RegistrationImporter::ExternalRegistration do
 
@@ -34,7 +34,7 @@ describe RegistrationImporter::ExternalRegistration do
 
   it 'should return appropriate values for updated_time' do
     @registration.updated_time = nil
-    @registration.updated_time.to_i.should be_close( Time.zone.now.to_i, 5 )
+    @registration.updated_time.to_i.should be_within(5).of( Time.zone.now.to_i )
     existing = (Time.zone.now - 1.year).to_i
     @registration.updated_time = existing
     @registration.updated_time.to_i.should eql existing
@@ -58,7 +58,7 @@ describe RegistrationImporter::ExternalRegistration do
   it 'should manage contacts for an imported record correctly' do
     @contact = Factory(:external_contact, :registration => @registration, :netid => 'zzz999', :contacttype => 'PRES')
     import_result_test RegistrationImporter::ExternalRegistration.import, [ 1, 0, 0 ]
-    import = Registration.external_id_equals(@contact.org_id).external_term_id_equals(@contact.term_id).first
+    import = Registration.where( :external_id => @contact.org_id, :external_term_id => @contact.term_id).first
     import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz999'
     @contact.update_attribute :netid, 'zzz998'

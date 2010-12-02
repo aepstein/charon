@@ -100,7 +100,7 @@ module RegistrationImporter
           destination.save if changed
           changes += 1 if source.import_contacts( destination ) || changed
         end
-        deletes += Registration.external_term_id_equals( term.term_id ).
+        deletes += Registration.where( :external_term_id => term.term_id ).
           where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) ).map(&:destroy).length
       end
       [adds, (changes - adds), deletes, ( Time.now - starts )]

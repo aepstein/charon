@@ -24,7 +24,7 @@ module RegistrationImporter
         if latest
           return where( 'updated_time >= ?', latest.when_updated.to_i )
         end
-        ExternalRegistration.where( :term_id => proxy_owner.term_id )
+        ExternalRegistration.where( "orgs.term_id = #{proxy_owner.term_id}" )
       end
     end
 
