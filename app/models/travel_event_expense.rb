@@ -30,12 +30,12 @@ class TravelEventExpense < ActiveRecord::Base
 
   def travel_cost
     return 0.0 unless distance
-    APP_CONFIG['expenses']['travel']['travel'] * participants * distance
+    Charon::Application.app_config['expenses']['travel']['travel'] * participants * distance
   end
 
   def lodging_cost
     return 0.0 unless nights_of_lodging
-    APP_CONFIG['expenses']['travel']['lodging'] * participants * nights_of_lodging
+    Charon::Application.app_config['expenses']['travel']['lodging'] * participants * nights_of_lodging
   end
 
   def max_request

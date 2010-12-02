@@ -1,6 +1,6 @@
 class RegistrationTerm < ActiveRecord::Base
 
-  named_scope :current, :conditions => { :current => true }
+  scope :current, where( :current => true )
 
   has_many :registrations,:dependent => :nullify
   has_many :memberships, :through => :registrations

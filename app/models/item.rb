@@ -1,5 +1,5 @@
 class Item < ActiveRecord::Base
-  default_scope :order => 'items.position ASC'
+  default_scope order( 'items.position ASC' )
 
   belongs_to :node
   belongs_to :request, :touch => true
@@ -50,9 +50,9 @@ class Item < ActiveRecord::Base
   validates_presence_of :node
   validates_presence_of :request
   validates_numericality_of :amount, :greater_than_or_equal_to => 0.0
-  validate_on_create :node_must_be_allowed
+  validate :node_must_be_allowed, :on => :create
 
-  before_validation_on_create { |item| item.editions.each { |edition| edition.item = item } }
+  before_validation :initialize_editions, :on => :create
   before_validation :set_title
   after_save :move_to_new_position
 
@@ -89,6 +89,10 @@ class Item < ActiveRecord::Base
       self.new_position = nil
       insert_at np
     end
+  end
+
+  def initialize_editions
+    editions.each { |edition| edition.item = self }
   end
 
 end

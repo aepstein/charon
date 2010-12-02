@@ -8,22 +8,22 @@ class Requirement < ActiveRecord::Base
   validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type, :role_id ]
   validates_inclusion_of :fulfillable_type, :in => Fulfillment::FULFILLABLE_TYPES.values.flatten
 
-  named_scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
-    { :joins => 'LEFT JOIN fulfillments ON requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
+  scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
+    joins( 'LEFT JOIN fulfillments ON requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
         'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
-        "fulfillments.fulfiller_id = #{fulfiller.id}",
-      :group => 'requirements.id',
-      :conditions => "requirements.perspectives_mask & #{2**Edition::PERSPECTIVES.index(perspective)} > 0 " +
+        "fulfillments.fulfiller_id = #{fulfiller.id}" ).
+    group( 'requirements.id' ).
+    where( "requirements.perspectives_mask & #{2**Edition::PERSPECTIVES.index(perspective)} > 0 " +
       "AND requirements.fulfillable_type IN (#{Fulfillment.quoted_types_for(fulfiller)}) AND " +
       ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
-      "requirements.role_id IN (#{role_ids.join ','}) )" : "requirements.role_id IS NULL" ) }
+      "requirements.role_id IN (#{role_ids.join ','}) )" : "requirements.role_id IS NULL" ) )
   }
-  named_scope :fulfilled, :having => 'COUNT(requirements.id) <= COUNT(fulfillments.id)'
-  named_scope :unfulfilled, :having => 'COUNT(requirements.id) > COUNT(fulfillments.id)'
-  scope_procedure :fulfilled_for, lambda { |fulfiller, perspective, role_ids|
+  scope :fulfilled, having( 'COUNT(requirements.id) <= COUNT(fulfillments.id)' )
+  scope :unfulfilled, having( 'COUNT(requirements.id) > COUNT(fulfillments.id)' )
+  scope :fulfilled_for, lambda { |fulfiller, perspective, role_ids|
     with_fulfillments_for(fulfiller, perspective, role_ids).fulfilled
   }
-  scope_procedure :unfulfilled_for, lambda { |fulfiller, perspective, role_ids|
+  scope :unfulfilled_for, lambda { |fulfiller, perspective, role_ids|
     with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
   }
 

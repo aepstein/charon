@@ -2,9 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-#  helper :all
+  protect_from_forgery
   helper_method :current_user_session, :current_user, :sso_net_id
-  filter_parameter_logging :password, :password_confirmation
   before_filter :check_authorization
 
   def permission_denied

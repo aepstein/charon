@@ -8,7 +8,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations
   # GET /organizations.xml
   def index
-    @search = @organizations.searchlogic( params[:search] )
+    @search = @organizations.search( params[:search] )
     @organizations = @search.paginate( :page => params[:page] )
 
     respond_to do |format|

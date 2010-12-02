@@ -4,14 +4,14 @@ class ActivityReport < ActiveRecord::Base
     :order => 'organizations.last_name ASC, organizations.first_name ASC, ' +
     'activity_reports.starts_on ASC, activity_reports.description ASC'
 
-  named_scope :past, lambda { { :conditions => ['activity_reports.ends_on < ?', Date.today] } }
-  named_scope :current, lambda { { :conditions => [
+  scope :past, lambda { where 'activity_reports.ends_on < ?', Time.zone.today }
+  scope :current, lambda { where(
     'activity_reports.starts_on <= :date AND activity_reports.ends_on >= :date',
-    { :date => Date.today } ] } }
-  named_scope :future, lambda { { :conditions => ['activity_reports.starts_on > ?', Date.today] } }
-  named_scope :organization_name_like, lambda { |name|
-    { :conditions => [ 'organizations.last_name LIKE :n OR organizations.first_name LIKE :n',
-      { :n => "%#{name}%" } ] }
+    :date => Date.today ) }
+  scope :future, lambda { where 'activity_reports.starts_on > ?', Time.zone.today }
+  scope :organization_name_like, lambda { |name|
+    where( 'organizations.last_name LIKE :n OR organizations.first_name LIKE :n',
+      :n => "%#{name}%" )
   }
 
   belongs_to :organization

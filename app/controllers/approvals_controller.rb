@@ -12,7 +12,7 @@ class ApprovalsController < ApplicationController
   # GET /:approvable_class/:approvable_id/approvals
   # GET /:approvable_class/:approvable_id/approvals.xml
   def index
-    @search = @approvals.searchlogic( params[:search] )
+    @search = @approvals.search( params[:search] )
     @approvals = @search.paginate( :page => params[:page] )
 
     respond_to do |format|

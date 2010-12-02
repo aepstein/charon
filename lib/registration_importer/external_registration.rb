@@ -25,19 +25,19 @@ module RegistrationImporter
       :funding, :membership_ugrad, :membership_grad, :membership_faculty,
       :membership_staff, :membership_alumni, :membership_noncornell, :updated_time ]
 
-    establish_connection "external_registrations_#{RAILS_ENV}".to_sym
+    establish_connection "external_registrations_#{::Rails.env}".to_sym
     set_table_name "orgs"
     set_primary_keys :org_id, :term_id
-    default_scope :select => MAP.keys.join(', '), :include => [ :contacts ],
-      :order => 'orgs.updated_time ASC'
+    default_scope select( MAP.keys.join(', ') ).includes( :contacts ).
+      order( 'orgs.updated_time ASC' )
 
-    named_scope :importable, lambda {
-      max_registration = Registration.find(:first, :conditions => 'when_updated IS NOT NULL', :order => 'when_updated DESC')
+    scope :importable, lambda {
+      max_registration = Registration.where( :when_updated.ne => nil).order( 'when_updated DESC' ).first
       if max_registration then
-      { :conditions => ["updated_time > ?", max_registration.when_updated.to_i ] }
+      where( "updated_time > ?", max_registration.when_updated.to_i )
       else
       { }
-      end.merge( { :order => :updated_time, :include => [ :contacts ] } )
+      end.order( :updated_time ).includes( :contacts )
     }
 
     has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
@@ -100,8 +100,8 @@ module RegistrationImporter
           destination.save if changed
           changes += 1 if source.import_contacts( destination ) || changed
         end
-        deletes += Registration.external_term_id_equals( term.term_id ).all(
-          :conditions => ['registrations.external_id NOT IN (?)',term.registrations.map(&:org_id)] ).map(&:destroy).length
+        deletes += Registration.external_term_id_equals( term.term_id ).
+          where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) ).map(&:destroy).length
       end
       [adds, (changes - adds), deletes, ( Time.now - starts )]
     end

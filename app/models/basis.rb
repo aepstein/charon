@@ -1,20 +1,19 @@
 class Basis < ActiveRecord::Base
   default_scope :order => 'bases.name ASC'
 
-  named_scope :closed, lambda {
-    { :conditions => [ 'closed_at < ?', DateTime.now.utc ] }
+  scope :closed, lambda { where( 'closed_at < ?', Time.zone.now ) }
+  scope :open, lambda {
+    where( 'open_at < :t AND closed_at > :t', :t => Time.zone.now )
   }
-  named_scope :open, lambda {
-    { :conditions => [ 'open_at < ? AND closed_at > ?', DateTime.now.utc, DateTime.now.utc ] }
+  scope :upcoming, lambda {
+    where( 'open_at > ?', Time.zone.now )
   }
-  named_scope :upcoming, lambda {
-    { :conditions => [ 'open_at > ?', DateTime.now.utc ] }
-  }
-  named_scope :no_draft_request_for, lambda { |organization|
-    { :conditions => [
+  scope :no_draft_request_for, lambda { |organization|
+    where(
       'bases.id NOT IN (SELECT basis_id FROM requests ' +
       'WHERE requests.status IN (?) AND requests.organization_id = ? )',
-      %w( started completed ), organization.id ] }
+      %w( started completed ),
+      organization.id )
   }
 
   belongs_to :organization
@@ -62,7 +61,7 @@ class Basis < ActiveRecord::Base
   validates_datetime :submissions_due_at, :before => :closed_at
 
   def open?
-    (open_at < DateTime.now) && (closed_at > DateTime.now)
+    (open_at < Time.zone.now) && (closed_at > Time.zone.now)
   end
 
   def to_s; name; end

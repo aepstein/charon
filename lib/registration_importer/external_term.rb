@@ -12,20 +12,19 @@ module RegistrationImporter
     }
     REGISTRATION_TERM_ATTRIBUTES = [ :term_ldescr, :current, :reg_start_time, :reg_end_time ]
 
-    establish_connection "external_registrations_#{RAILS_ENV}".to_sym
+    establish_connection "external_registrations_#{::Rails.env}".to_sym
     set_table_name "terms"
     set_primary_key :term_id
     default_scope :select => MAP.keys.join(', ')
 
     has_many :registrations, :class_name => 'ExternalRegistration', :foreign_key => :term_id do
       def latest
-        latest = Registration.external_term_id_equals(proxy_owner.term_id).when_updated_not_null.descend_by_when_updated.first
+        latest = Registration.where( :external_term_id => proxy_owner.term_id,
+          :when_updated.ne => nil ).order( "when_updated DESC" ).first
         if latest
-          return scoped( :conditions => [
-            'updated_time >= ?',
-            latest.when_updated.to_i ] )
+          return where( 'updated_time >= ?', latest.when_updated.to_i )
         end
-        ExternalRegistration.scoped( :conditions => { :term_id => proxy_owner.term_id } )
+        ExternalRegistration.where( :term_id => proxy_owner.term_id )
       end
     end
 
@@ -52,7 +51,8 @@ module RegistrationImporter
         changes += 1 if destination.changed?
         destination.save if destination.changed?
       end
-      deletes = RegistrationTerm.all( :conditions => ['external_id NOT IN (?)', ExternalTerm.all.map(&:term_id)] ).map(&:destroy).length
+      deletes = RegistrationTerm.where( 'external_id NOT IN (?)', ExternalTerm.all.map(&:term_id) ).
+        map(&:destroy).length
       [adds, (changes - adds), deletes, ( Time.now - starts )]
     end
 

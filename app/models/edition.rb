@@ -41,8 +41,8 @@ class Edition < ActiveRecord::Base
   delegate :document_types, :to => :node
   delegate :requestors, :to => :request
 
-  before_validation_on_create :initialize_documents
-  before_validation_on_create :initialize_requestable
+  before_validation :initialize_documents, :on => :create
+  before_validation :initialize_requestable, :on => :create
   after_save :set_item_title
 
   def title
@@ -65,7 +65,7 @@ class Edition < ActiveRecord::Base
     amounts << item.node.item_amount_limit if item && item.node
     amounts << requestable.max_request if requestable
     unless perspective.blank? || perspective == Edition::PERSPECTIVES.first
-      amounts << item.editions.perspective_equals( Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first.amount
+      amounts << item.editions.where( :perspective => Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first.amount
     end
     amounts.sort.first
   end
@@ -113,7 +113,7 @@ class Edition < ActiveRecord::Base
 
   def previous
     return nil unless perspective && Edition::PERSPECTIVES.index(perspective) && Edition::PERSPECTIVES.index(perspective) > 0
-    item.editions.perspective_equals( Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first
+    item.editions.where( :perspective => Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first
   end
 
   def to_s; "#{perspective} edition of #{item}"; end

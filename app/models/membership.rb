@@ -2,10 +2,11 @@ class Membership < ActiveRecord::Base
   include UserNameLookup
   include OrganizationNameLookup
 
-  default_scope :include => [ :user, :organization ],
-    :order => 'organizations.last_name, organizations.first_name, users.last_name, users.first_name, users.net_id'
-  named_scope :active, :conditions => { :active => true }
-  named_scope :inactive, :conditions => [ 'memberships.active IS NULL or memberships.active = ?', false ]
+  default_scope includes( :user, :organization ).
+    order( 'organizations.last_name, organizations.first_name, users.last_name, ' +
+      'users.first_name, users.net_id' )
+  scope :active, where( :active => true )
+  scope :inactive, where( 'memberships.active IS NULL or memberships.active = ?', false )
 
   belongs_to :user
   belongs_to :role

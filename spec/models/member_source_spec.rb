@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe MemberSource do
   before(:each) do
@@ -14,3 +14,4 @@ describe MemberSource do
     MemberSource.create!(@valid_attributes)
   end
 end
+

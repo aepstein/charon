@@ -1,72 +1,90 @@
-ActionController::Routing::Routes.draw do |map|
-  map.resources :activity_reports, :except => [ :new, :create ]
-  map.resources :university_accounts, :except => [ :new, :create ]
-  map.resources :user_status_criterions do |user_status_criterion|
-    user_status_criterion.resources :fulfillments, :only => [:index]
-  end
-  map.resources :registration_criterions do |registration_criterion|
-    registration_criterion.resources :fulfillments, :only => [:index]
-  end
-  map.resources :categories
-  map.resources :requests, :only => [ :index ]
-  map.resources :users, :shallow => true do |user|
-    user.resources :addresses
-    user.resources :fulfillments, :only => [ :index ]
-    user.resources :approvals, :only => [ :index ]
-    user.resources :memberships, :only => [ :index, :new, :create ]
-  end
-  map.resources :approvals, :only => [ :show ]
-  map.resources :agreements, :shallow => true do |agreement|
-    agreement.resources :approvals, :only => [ :create, :destroy, :index, :new ]
-    agreement.resources :fulfillments, :only => [ :index ]
-  end
-  map.resources :documents, :only => [ :show ]
-  map.resources :document_types
-  map.resources :requests, :only => [ :index ]
-  map.resources :frameworks, :shallow => true do |framework|
-    framework.resources :approvers
-  end
-  map.resources :structures, :shallow => true do |structure|
-    structure.resources :nodes
-  end
-  map.resources :local_event_expenses, :only => [ :index ]
-  map.resources :inventory_items, :except => [ :new, :create ],
-    :collection => { :retired => :get, :active => :get }
-  map.resources :organizations, :member => { :profile => :get }, :shallow => true do |organization|
-    organization.resources :activity_reports, :only => [ :index, :new, :create ],
-      :collection => { :past => :get, :current => :get, :future => :get }
-    organization.resources :university_accounts, :only => [ :new, :create, :index ]
-    organization.resources :inventory_items, :only => [ :index, :new, :create ],
-      :collection => { :retired => :get, :active => :get }
-    organization.resources :registrations, :only => [ :index ]
-    organization.resources :fulfillments, :only => [ :index ]
-    organization.resources :bases do |basis|
-      basis.resources :requests
+Charon::Application.routes.draw do
+  shallow do
+    resources :activity_reports, :except => [ :new, :create ]
+    resources :university_accounts, :except => [ :new, :create ]
+    resources :user_status_criterions do
+      resources :fulfillments, :only => [:index]
     end
-    organization.resources :memberships
-    organization.resources :requests, :member => { :supporting_documents => :get } do |request|
-      request.resources :approvals, :only => [ :create, :destroy, :index, :new ]
-      request.resources :items, { :member => { :move => :get, :do_move => :put } } do |item|
-        item.resources :editions
+    resources :registration_criterions do
+      resources :fulfillments, :only => [:index]
+    end
+    resources :categories
+    resources :requests, :only => [ :index ]
+    resources :users do
+      resources :addresses
+      resources :fulfillments, :only => [ :index ]
+      resources :approvals, :only => [ :index ]
+      resources :memberships, :only => [ :index, :new, :create ]
+    end
+    resources :approvals, :only => [ :show ]
+    resources :agreements do
+      resources :approvals, :only => [ :create, :destroy, :index, :new ]
+      resources :fulfillments, :only => [ :index ]
+    end
+    resources :documents, :only => [ :show ]
+    resources :document_types
+    resources :requests, :only => [ :index ]
+    resources :frameworks do
+      resources :approvers
+    end
+    resources :structures do
+      resources :nodes
+    end
+    resources :local_event_expenses, :only => [ :index ]
+    resources :inventory_items, :except => [ :new, :create ] do
+        collection do
+          get :retired, :active
+        end
+    end
+    resources :organizations, :member => { :profile => :get } do
+      resources :activity_reports, :only => [ :index, :new, :create ] do
+        collection do
+          get :past, :current, :future
+        end
+      end
+      resources :university_accounts, :only => [ :new, :create, :index ]
+      resources :inventory_items, :only => [ :index, :new, :create ] do
+        collection do
+          get :retired, :active
+        end
+      end
+      resources :registrations, :only => [ :index ]
+      resources :fulfillments, :only => [ :index ]
+      resources :bases do
+        resources :requests
+      end
+      resources :memberships
+      resources :requests do
+        collection do
+          get :supporting_documents
+        end
+        resources :approvals, :only => [ :create, :destroy, :index, :new ]
+        resources :items do
+          collection do
+            get :move
+            put :do_move
+          end
+          resources :editions
+        end
+      end
+    end
+    resources :roles
+    resources :registrations, :only => [ :index ] do
+      resources :memberships, :only => [ :index ]
+    end
+    resources :registration_terms do
+      resources :registrations, :only => [ :index, :show ] do
+        resource :organization, :only => [ :new, :create ]
       end
     end
   end
-  map.resources :roles
-  map.resources :registrations, :only => [ :index ] do |registration|
-    registration.resources :memberships, :only => [ :index ]
-  end
-  map.resources :registration_terms, :shallow => true do |term|
-    term.resources :registrations, :only => [ :index, :show ] do |registration|
-      registration.resource :organization, :only => [ :new, :create ]
-    end
-  end
-  map.login 'login', :controller => 'user_sessions', :action => 'new'
-  map.logout 'logout', :controller => 'user_sessions', :action => 'destroy'
-  map.profile 'profile', :controller => 'users', :action => 'profile'
-  map.unauthorized 'unauthorized', :controller => 'static', :action => 'unauthorized'
 
-  map.resource :user_session
-  map.root :controller => "users", :action => "profile" # optional, this just sets the root route
+  resource :user_session
 
+  match 'login', :to => 'user_sessions#new', :as => 'login'
+  match 'logout', :to => 'user_sessions#destroy', :as => 'logout'
+  match 'profile', :to => 'users#profile', :as => 'profile'
+
+  root :to => 'users#profile'
 end
 

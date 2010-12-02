@@ -13,7 +13,7 @@ class Organization < ActiveRecord::Base
   has_many :memberships
   has_many :roles, :through => :memberships do
     def user_id_equals( id )
-      scoped( :conditions => [ 'memberships.user_id = ?', id ] )
+      scoped.where( 'memberships.user_id = ?', id )
     end
     def ids_for_user( user )
       user_id_equals( user.id ).all.map(&:id)
@@ -33,8 +33,13 @@ class Organization < ActiveRecord::Base
 
   before_validation :format_name
 
-  default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC'
-  scope_procedure :name_like, lambda { |name| first_name_like_or_last_name_like( name ) }
+  default_scope order( 'organizations.last_name ASC, organizations.first_name ASC' )
+
+  scope :name_like, lambda { |name|
+    %w( first_name last_name ).inject(self) do |memo, field|
+      memo.or( field.to_sym.contains => name )
+    end
+  }
 
   after_save :update_registrations
 
@@ -44,8 +49,8 @@ class Organization < ActiveRecord::Base
   # Adopt registrations (and consequently memberships where appropriate)
   def update_registrations
     unless registrations.length == 0
-      Registration.external_id_equals_any( registrations.map(&:external_id).uniq
-      ).organization_id_null.each do |registration|
+      Registration.where( :external_id.in => registrations.map(&:external_id).uniq,
+        :organization_id => nil ).each do |registration|
         registration.organization = self
         registration.save
       end

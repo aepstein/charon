@@ -80,7 +80,9 @@ class Fulfillment < ActiveRecord::Base
   def self.unfulfill_fulfiller( fulfiller )
     FULFILLABLE_TYPES[ fulfiller.class.to_s ].each do |fulfillable_type|
       current = fulfiller.send(fulfillable_type.underscore.pluralize).map { |criterion| criterion.id }
-      fulfiller.fulfillments.delete fulfiller.fulfillments.fulfillable_type_eq(fulfillable_type).reject { |f| current.include? f.fulfillable_id }
+      fulfiller.fulfillments.delete fulfiller.fulfillments.
+        where( :fulfillable_type => fulfillable_type).
+        reject { |f| current.include? f.fulfillable_id }
     end
   end
 

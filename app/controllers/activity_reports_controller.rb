@@ -27,7 +27,7 @@ class ActivityReportsController < ApplicationController
   # GET /organizations/:organization_id/activity_reports
   # GET /organizations/:organization_id/activity_reports.xml
   def index
-    @search = @activity_reports.searchlogic( params[:search] )
+    @search = @activity_reports.search( params[:search] )
     @activity_reports = @search.paginate( :page => params[:page],
       :include => { :organization => { :memberships => :role } }
     )

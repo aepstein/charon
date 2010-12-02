@@ -6,7 +6,7 @@ class RegistrationsController < ApplicationController
 
   def index
     @registrations = @registrations.with_permissions_to(:show)
-    @search = @registrations.searchlogic( params[:search] )
+    @search = @registrations.search( params[:search] )
     @registrations = @search.paginate( :page => params[:page] )
 
     respond_to do |format|

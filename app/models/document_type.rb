@@ -1,7 +1,7 @@
 class DocumentType < ActiveRecord::Base
   UNITS = %w( byte kilobyte megabyte gigabyte )
 
-  default_scope :order => 'document_types.name ASC'
+  default_scope order( 'document_types.name ASC' )
 
   has_and_belongs_to_many :nodes
   has_many :documents

@@ -1,5 +1,5 @@
 class Document < ActiveRecord::Base
-  default_scope :include => :document_type, :order => 'document_types.name ASC'
+  default_scope includes( :document_type).order( 'document_types.name ASC' )
 
   belongs_to :edition
   belongs_to :document_type
