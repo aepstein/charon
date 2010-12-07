@@ -41,34 +41,34 @@ describe RegistrationImporter::ExternalRegistration do
   end
 
   it 'should import a new record successfully' do
-    import_result_test RegistrationImporter::ExternalRegistration.import, [ 1, 0, 0 ]
+    RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 1, 0, 0 ]
     import = Registration.first
     import.registered?.should be_true
     @registration.update_attribute :reg_approved, 'NO'
-    import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 1, 0 ]
-    import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 0, 0 ]
-    import_result_test RegistrationImporter::ExternalRegistration.import(:latest), [ 0, 0, 0 ]
+    RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 0, 1, 0 ]
+    RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 0, 0, 0 ]
+    RegistrationImporter::ExternalRegistration.import(:latest)[0,3].should eql [ 0, 0, 0 ]
     import.reload
     import.registered?.should be_false
     @registration.destroy
-    import_result_test RegistrationImporter::ExternalRegistration.import, [ 0, 0, 1 ]
+    RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 0, 0, 1 ]
     Registration.all.should be_empty
   end
 
   it 'should manage contacts for an imported record correctly' do
     @contact = Factory(:external_contact, :registration => @registration, :netid => 'zzz999', :contacttype => 'PRES')
-    import_result_test RegistrationImporter::ExternalRegistration.import, [ 1, 0, 0 ]
+    RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 1, 0, 0 ]
     import = Registration.where( :external_id => @contact.org_id, :external_term_id => @contact.term_id).first
     import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz999'
     @contact.update_attribute :netid, 'zzz998'
-    import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 1, 0 ]
-    import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 0, 0 ]
+    RegistrationImporter::ExternalRegistration.import(:all)[0,3].should eql [ 0, 1, 0 ]
+    RegistrationImporter::ExternalRegistration.import(:all)[0,3].should eql [ 0, 0, 0 ]
     import.reload
     import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz998'
     @contact.destroy
-    import_result_test RegistrationImporter::ExternalRegistration.import(:all), [ 0, 1, 0 ]
+    RegistrationImporter::ExternalRegistration.import(:all)[0,3].should eql [ 0, 1, 0 ]
     import.reload
     import.users.should be_empty
   end

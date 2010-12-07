@@ -13,11 +13,5 @@ module SpecImporterTests
     end
   end
 
-  def import_result_test(actual,expected)
-    expected.each_index do |i|
-      actual[ i ].should eql expected[ i ]
-    end
-  end
-
 end
 

@@ -93,15 +93,19 @@ module RegistrationImporter
           term.registrations
         end
         registrations.all.each do |source|
-          destination = Registration.find_or_initialize_by_external_id_and_external_term_id( source.org_id, source.term_id )
+          destination = Registration.find_or_initialize_by_external_id_and_external_term_id(
+            source.org_id, source.term_id )
           destination.attributes = source.import_attributes( REGISTRATION_ATTRIBUTES )
           changed = destination.changed?
           adds += 1 if destination.new_record?
           destination.save if changed
           changes += 1 if source.import_contacts( destination ) || changed
         end
-        deletes += Registration.where( :external_term_id => term.term_id ).
-          where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) ).map(&:destroy).length
+        d = Registration.where( :external_term_id => term.term_id )
+        if term.registrations.length > 0
+          d = d.where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) )
+        end
+        deletes = d.all.map(&:destroy).length
       end
       [adds, (changes - adds), deletes, ( Time.now - starts )]
     end
