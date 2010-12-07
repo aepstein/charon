@@ -51,8 +51,11 @@ module RegistrationImporter
         changes += 1 if destination.changed?
         destination.save if destination.changed?
       end
-      deletes = RegistrationTerm.where( 'external_id NOT IN (?)', ExternalTerm.all.map(&:term_id) ).
-        map(&:destroy).length
+      d = RegistrationTerm.unscoped
+      if ExternalTerm.all.length > 0
+        d = d.where( 'external_id NOT IN (?)', ExternalTerm.all.map(&:term_id) )
+      end
+      deletes = d.map(&:destroy).length
       [adds, (changes - adds), deletes, ( Time.now - starts )]
     end
 

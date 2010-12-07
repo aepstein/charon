@@ -1,5 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-require 'spec/lib/importer_tests'
+require 'importer_tests'
 
 describe RegistrationImporter::ExternalTerm do
 
@@ -25,13 +25,13 @@ describe RegistrationImporter::ExternalTerm do
   end
 
   it 'should import a new record successfully' do
-    import_result_test RegistrationImporter::ExternalTerm.import, [ 1, 0, 0 ]
+    RegistrationImporter::ExternalTerm.import[0,3].should eql [ 1, 0, 0 ]
     @term.current = 'NO'
     @term.current_changed?.should be_true
     @term.save
-    import_result_test RegistrationImporter::ExternalTerm.import, [ 0, 1, 0 ]
+    RegistrationImporter::ExternalTerm.import[0,3].should eql [ 0, 1, 0 ]
     @term.destroy
-    import_result_test RegistrationImporter::ExternalTerm.import, [ 0, 0, 1 ]
+    RegistrationImporter::ExternalTerm.import[0,3].should eql [ 0, 0, 1 ]
   end
 
 end
