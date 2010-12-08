@@ -1,6 +1,4 @@
 class Item < ActiveRecord::Base
-  default_scope order( 'items.position ASC' )
-
   belongs_to :node
   belongs_to :request, :touch => true
   has_many :documents, :through => :editions
@@ -35,6 +33,9 @@ class Item < ActiveRecord::Base
       self.reject { |edition| edition.new_record? }
     end
   end
+
+  scope :root, where( :parent_id => nil )
+
   acts_as_list :scope => :parent_id
   acts_as_tree
 
