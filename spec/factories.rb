@@ -197,6 +197,13 @@ Factory.define :membership do |f|
   f.association :organization
 end
 
+Factory.define :member_source do |f|
+  f.association :organization
+  f.association :role
+  f.minimum_votes 0
+  f.external_committee_id 1
+end
+
 Factory.define :structure do |f|
   f.sequence(:name) { |n| "Structure #{n}" }
 end
