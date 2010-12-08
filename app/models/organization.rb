@@ -57,13 +57,13 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  def registration_criterions
-    return [] unless registrations.current
-    registrations.current.registration_criterions
+  def registration_criterions( force_reload = false )
+    return [] unless registrations( force_reload ).current
+    registrations( force_reload ).current.registration_criterions
   end
 
-  def registration_criterion_ids
-    registration_criterions.map { |criterion| criterion.id }
+  def registration_criterion_ids( force_reload = false )
+    registration_criterions( force_reload ).map(&:id)
   end
 
   def registered?
