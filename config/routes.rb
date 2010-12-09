@@ -36,7 +36,10 @@ Charon::Application.routes.draw do
           get :retired, :active
         end
     end
-    resources :organizations, :member => { :profile => :get } do
+    resources :organizations do
+      member do
+        get :profile
+      end
       resources :activity_reports, :only => [ :index, :new, :create ] do
         collection do
           get :past, :current, :future

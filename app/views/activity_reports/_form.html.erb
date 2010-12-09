@@ -1,9 +1,9 @@
 <%= render "shared/error_messages", :target => form.object %>
-<% form.inputs do %>
+<%= form.inputs do %>
   <%= form.input :description, :hint => 'Provide the title or a brief description of the activity' %>
-  <%= form.input :starts_on, :as => :ft_calendar_date_select, :html_options => { :time => false },
+  <%= form.input :starts_on, :as => :string, :html_options => { :time => false },
     :hint => 'The date of the activity or the first date if activity occurs over a period of time.' %>
-  <%= form.input :ends_on, :as => :ft_calendar_date_select, :html_options => { :time => false },
+  <%= form.input :ends_on, :as => :string, :html_options => { :time => false },
     :hint => 'The date of the activity or the last date if activity occurs over a period of time.' %>
   <%= form.input :number_of_undergrads %>
   <%= form.input :number_of_grads %>

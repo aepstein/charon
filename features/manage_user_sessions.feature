@@ -4,12 +4,9 @@ Feature: Manage user sessions
   I want to login
 
   Background:
-    Given a user exists with net_id: "zzz999"
+    Given a user: "user" exists with net_id: "zzz999"
 
   Scenario: Login an exisiting user
-    Given I am on the login page
-    When I fill in "Net" with "zzz999"
-    And I fill in "Password" with "secret"
-    And I press "Login"
+    Given I log in as user: "user"
     Then I should see "You logged in successfully."
 

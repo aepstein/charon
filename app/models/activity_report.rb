@@ -1,5 +1,7 @@
 class ActivityReport < ActiveRecord::Base
 
+  belongs_to :organization
+
   default_scope :include => [ :organization ],
     :order => 'organizations.last_name ASC, organizations.first_name ASC, ' +
     'activity_reports.starts_on ASC, activity_reports.description ASC'
@@ -9,12 +11,12 @@ class ActivityReport < ActiveRecord::Base
     'activity_reports.starts_on <= :date AND activity_reports.ends_on >= :date',
     :date => Date.today ) }
   scope :future, lambda { where 'activity_reports.starts_on > ?', Time.zone.today }
-  scope :organization_name_like, lambda { |name|
+  scope :organization_name_contains, lambda { |name|
     where( 'organizations.last_name LIKE :n OR organizations.first_name LIKE :n',
       :n => "%#{name}%" )
   }
 
-  belongs_to :organization
+  search_methods :organization_name_contains
 
   validates_presence_of :organization
   validates_presence_of :description
