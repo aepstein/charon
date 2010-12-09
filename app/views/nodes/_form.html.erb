@@ -1,5 +1,5 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
   <%= form.input :parent, :label => "Parent Node", :collection => form.object.structure.nodes,
     :input_html => { :include_blank => true } %>
   <%= form.input :name %>

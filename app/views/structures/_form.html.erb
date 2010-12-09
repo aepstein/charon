@@ -1,5 +1,5 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
   <%= form.input :name %>
   <%= form.input :minimum_requestors %>
   <%= form.input :maximum_requestors %>

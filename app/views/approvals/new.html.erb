@@ -1,7 +1,7 @@
 <h2>Approve <%=h @approval.approvable %></h2>
 
 <% semantic_form_for( :approval, @approval, :url => polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
-  <%= f.error_messages %>
+  <%= render "shared/error_messages", :target => f.object %>
 
   <p>
   Please review the document below and click "Confirm Approval" at the bottom if you approve.

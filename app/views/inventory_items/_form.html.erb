@@ -1,5 +1,5 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
   <%= form.input :purchase_price, :hint => 'What was the purchase price of the item?' %>
   <%= form.input :current_value, :hint => 'What is the estimated current value of the item?' %>
   <%= form.input :description, :hint => 'Briefly describe what the item is.' %>

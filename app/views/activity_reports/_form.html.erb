@@ -1,4 +1,4 @@
-<%= form.error_messages %>
+<%= render "shared/error_messages", :target => form.object %>
 <% form.inputs do %>
   <%= form.input :description, :hint => 'Provide the title or a brief description of the activity' %>
   <%= form.input :starts_on, :as => :ft_calendar_date_select, :html_options => { :time => false },

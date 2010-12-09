@@ -1,5 +1,5 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
     <%= form.input :net_id %>
     <%= form.input :email %>
     <%= form.input :first_name %>
@@ -13,7 +13,7 @@
     <% end %>
   <% end %>
 
-  <% form.semantic_fields_for :addresses do |address_form| %>
+  <%= form.semantic_fields_for :addresses do |address_form| %>
     <%= render :partial => 'addresses/form', :object => address_form %>
   <% end %>
 

@@ -1,6 +1,6 @@
-  <%= form.error_messages %>
+  <%= render "shared/error_messages", :target => form.object %>
 
-  <% form.inputs :name => 'Basic Information' do %>
+  <%= form.inputs :name => 'Basic Information' do %>
     <% if form.object.new_record? -%>
       <%= form.input :perspective, :as => :hidden %>
     <% end -%>
@@ -11,7 +11,7 @@
     <% end %>
   <% end %>
 
-  <% form.inputs :name => 'Supporting Documents' do %>
+  <%= form.inputs :name => 'Supporting Documents' do %>
     <% form.semantic_fields_for :documents do |document_form| %>
       <%= document_form.input :document_type_id, :as => :hidden %>
       <%= document_form.input :attached,
@@ -20,7 +20,7 @@
     <% end %>
   <% end %>
 
-  <% form.inputs :name => 'Calculations' do %>
+  <%= form.inputs :name => 'Calculations' do %>
     <% if form.object.requestable %>
     <li>
     <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/calculation", :object => form.object.requestable %>
@@ -31,7 +31,7 @@
     </li>
   <% end %>
 
-  <% form.inputs :name => 'Funding Amount and Comments' do %>
+  <%= form.inputs :name => 'Funding Amount and Comments' do %>
   <% if form.object.item.node.nil? || ( form.object.item.node.item_amount_limit == 0 ) %>
   <% form.object.amount = 0.0 %>
   <%= form.input :amount, :as => :hidden %>

@@ -1,7 +1,7 @@
 <% organization ||= false -%>
 <% user ||= false -%>
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
     <% if form.object.new_record? %>
       <% unless organization %>
         <%= form.input :organization_name, :label => 'Organization' %>
