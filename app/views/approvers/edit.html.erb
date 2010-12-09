@@ -1,6 +1,6 @@
 <h2>Editing approver for <%= @approver.framework %></h2>
 
-<% semantic_form_for(@approver) do |f| %>
+<%= semantic_form_for(@approver) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 

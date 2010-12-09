@@ -1,4 +1,4 @@
-  <% table_row_tag do %>
+  <%= table_row_tag do %>
     <td><%=h item.title %><% if item.title != item.node.name %> (<%=h item.node.name %>)<% end %></td>
     <td><%= render :partial => 'items/new_item', :object => item.request.items.build( :parent => item ) %></td>
     <td><%= link_to( 'Edit', edit_item_path( item ) ) if permitted_to?( :edit, item ) %></td>

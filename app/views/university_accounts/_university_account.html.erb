@@ -1,5 +1,5 @@
 <% organization ||= false %>
-  <% table_row_tag do %>
+  <%= table_row_tag do %>
     <% unless organization -%>
     <td><%=h university_account.organization %></td>
     <% end -%>

@@ -1,6 +1,6 @@
 <h2>Approve <%=h @approval.approvable %></h2>
 
-<% semantic_form_for( :approval, @approval, :url => polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
+<%= semantic_form_for( @approval, :url => polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
   <%= render "shared/error_messages", :target => f.object %>
 
   <p>
@@ -10,10 +10,10 @@
   <%= render :partial => "#{@approval.approvable_type.underscore.pluralize}/detail",
     :object => @approval.approvable %>
 
-  <% f.inputs do %>
+  <%= f.inputs do %>
     <%= f.input :as_of, :as => :hidden %>
   <% end %>
-  <% f.buttons do %>
+  <%= f.buttons do %>
     <%= f.commit_button :label => 'Confirm Approval' %>
   <% end %>
 <% end %>

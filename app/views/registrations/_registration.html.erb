@@ -1,4 +1,4 @@
-  <% table_row_tag do %>
+  <%= table_row_tag do %>
     <td><%=h registration %></td>
     <td><%= link_to 'Show', registration_path(registration) %></td>
     <td><%= link_to( 'New Organization', new_registration_organization_path( registration ) ) if permitted_to? :match, registration %></td>

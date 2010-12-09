@@ -1,4 +1,4 @@
-  <% table_row_tag do %>
+  <%= table_row_tag do %>
     <td><%=h structure.name %></td>
     <td><%= link_to 'Show', structure %></td>
     <td><%= link_to( 'Edit', edit_structure_path(structure) ) if permitted_to? :edit, structure %></td>

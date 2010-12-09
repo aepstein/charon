@@ -1,6 +1,6 @@
   <% label = ( form.object.label? ? "#{form.object.label.titleize}" : false ) -%>
   <%= render "shared/error_messages", :target => form.object %>
-  <% form.inputs do %>
+  <%= form.inputs do %>
     <% if form.object.new_record? -%>
       <%= form.input :label %>
     <% end -%>

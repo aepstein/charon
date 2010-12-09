@@ -1,6 +1,6 @@
 <h2>New university account for <%=h @university_account.organization %></h2>
 
-<% semantic_form_for(:university_account, @university_account,
+<%= semantic_form_for( @university_account,
   :url => organization_university_accounts_path( @university_account.organization ) ) do |f| %>
   <%= render :partial => "university_accounts/form", :object => f %>
 <% end %>

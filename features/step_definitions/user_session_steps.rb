@@ -1,10 +1,10 @@
 Given /^I (?:am )?log(?:ged)? in as "(.*)" with password "(.*)"$/ do |net_id, password|
   unless net_id.blank?
-   visit login_url
-   fill_in( 'Net', :with => net_id )
-   fill_in( 'Password', :with => password )
-   click_button( 'Login' )
-   response.should contain('You logged in successfully.')
+   Given %{I am on the login page}
+   When %{I fill in "Net" with "#{net_id}"}
+   When %{I fill in "Password" with "#{password}"}
+   When %{I press "Login"}
+   Then %{I should see "You logged in successfully."}
   end
 end
 

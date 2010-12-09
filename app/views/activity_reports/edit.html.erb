@@ -1,6 +1,6 @@
 <h2>Editing <%=h @activity_report %></h2>
 
-<% semantic_form_for( @activity_report ) do |f| %>
+<%= semantic_form_for( @activity_report ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 

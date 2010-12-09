@@ -1,6 +1,6 @@
 <h2>New organization</h2>
 
-<% semantic_form_for( :organization, @organization,
+<%= semantic_form_for( @organization,
   :url => (@registration ? registration_organization_path(@registration) : organizations_path ) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>

@@ -1,6 +1,6 @@
 <h2>New approver for <%= @approver.framework %></h2>
 
-<% semantic_form_for(:approver, @approver, :url => framework_approvers_path(@approver.framework) ) do |f| %>
+<%= semantic_form_for(@approver, :url => framework_approvers_path(@approver.framework) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 
