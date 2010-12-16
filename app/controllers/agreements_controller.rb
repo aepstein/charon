@@ -93,7 +93,7 @@ class AgreementsController < ApplicationController
   end
 
   def initialize_index
-    @agreements = Agreement
+    @agreements = Agreement.scoped
   end
 end
 

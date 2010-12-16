@@ -200,7 +200,7 @@ DEPENDENCIES
   paperclip
   pickle
   prawn
-  rails (= 3.0.3)
+  rails (~> 3.0.3)
   rspec
   rspec-rails
   spork

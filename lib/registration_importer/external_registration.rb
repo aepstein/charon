@@ -72,6 +72,18 @@ module RegistrationImporter
       Time.zone.at read_attribute(:updated_time)
     end
 
+    def import
+      destination = Registration.find_or_initialize_by_external_id_and_external_term_id(
+        org_id, term_id )
+      destination.attributes = import_attributes( REGISTRATION_ATTRIBUTES )
+      out = Array.new
+      out << ( destination.new_record? ? 1 : 0  )
+      out << ( destination.changed? ? 1 : 0 )
+      destination.save if out.last == 1
+      out[1] = 1 if import_contacts( destination )
+      out
+    end
+
     def import_contacts( destination )
       deletes = destination.memberships.reject { |m| contacts.users.include?( [m.role, m.user] ) }
       destination.memberships.delete( deletes ) unless deletes.empty?
@@ -93,13 +105,9 @@ module RegistrationImporter
           term.registrations
         end
         registrations.all.each do |source|
-          destination = Registration.find_or_initialize_by_external_id_and_external_term_id(
-            source.org_id, source.term_id )
-          destination.attributes = source.import_attributes( REGISTRATION_ATTRIBUTES )
-          changed = destination.changed?
-          adds += 1 if destination.new_record?
-          destination.save if changed
-          changes += 1 if source.import_contacts( destination ) || changed
+          r = source.import
+          adds += r.first
+          changes += r.last
         end
         d = Registration.where( :external_term_id => term.term_id )
         if term.registrations.length > 0

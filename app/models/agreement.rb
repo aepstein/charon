@@ -1,7 +1,7 @@
 class Agreement < ActiveRecord::Base
   include Fulfillable
 
-  default_scope :order => 'agreements.name ASC'
+  default_scope order( 'agreements.name ASC' )
 
   has_many :approvals, :as => :approvable, :dependent => :delete_all
   has_many :users, :through => :approvals
@@ -14,8 +14,11 @@ class Agreement < ActiveRecord::Base
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
 
 #  after_update :destroy_approvals_if_content_changes
-  after_create 'Fulfillment.fulfill self'
-  after_update 'Fulfillment.unfulfill self', 'Fulfillment.fulfill self'
+  after_create :fulfill
+  after_update :unfulfill, :fulfill
+  before_destroy { |r|
+    puts "Destroying agreement #{r.id}"
+  }
 
   def destroy_approvals_if_content_changes
     approvals.clear if content_changed?
@@ -34,5 +37,12 @@ class Agreement < ActiveRecord::Base
   end
 
   def to_s; name; end
+
+  private
+
+  def fulfill; Fulfillment.fulfill self; end
+
+  def unfulfill; Fulfillment.unfulfill self; end
+
 end
 

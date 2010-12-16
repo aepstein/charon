@@ -29,7 +29,7 @@ Feature: Manage agreements
     And I should see "I agree to try to behave ethically."
     And I should see "Contact name: New Office of the Assemblies"
     And I should see "Contact email: new_office@example.com"
-
+@wip
   Scenario Outline: Test permissions for agreements controller actions
     Given an agreement: "basic" exists
     And I log in as user: "<user>"
