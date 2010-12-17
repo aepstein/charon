@@ -92,8 +92,8 @@ class UniversityAccountsController < ApplicationController
   end
 
   def initialize_index
-    @university_accounts = UniversityAccount
-    @university_accounts = UniversityAccount.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
+    @university_accounts = UniversityAccount.where( :organization_id => @organization.id ) if @organization
+    @university_accounts ||= UniversityAccount.scoped
   end
 
   def new_university_account_from_params

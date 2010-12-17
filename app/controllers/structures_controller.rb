@@ -89,7 +89,7 @@ class StructuresController < ApplicationController
   end
 
   def initialize_index
-    @structures = Structure
+    @structures = Structure.scoped
   end
 
   def new_structure_from_params
