@@ -35,11 +35,14 @@ class Organization < ActiveRecord::Base
 
   default_scope order( 'organizations.last_name ASC, organizations.first_name ASC' )
 
-  scope :name_like, lambda { |name|
-    %w( first_name last_name ).inject(self) do |memo, field|
-      memo.or( field.to_sym.contains => name )
+  scope :name_contains, lambda { |name|
+    sql = %w( first_name last_name ).inject([]) do |memo, field|
+      memo << "organizations.#{field} LIKE :name"
     end
+    where( sql.join(' OR '), :name => "%#{name}%" )
   }
+
+  search_methods :name_contains
 
   after_save :update_registrations
 

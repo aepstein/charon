@@ -40,12 +40,12 @@
 } %>
 <% end %>
 
-<% unless @organization.requests.status_equals_any('accepted','reviewed','certified').empty? %>
+<% unless @organization.requests.where( :status.in => %w( accepted reviewed certified ) ).empty? %>
 <h3>Requests that have been accepted for review</h3>
 
 <p>You may view details of any of the following requests, although reviews have not yet been released:</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.status_equals_any('accepted','reviewed','certified'),
+<%= render :partial => 'requests/requests', :object => @organization.requests.where( :status.in => %w( accepted reviewed certified ) ),
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 

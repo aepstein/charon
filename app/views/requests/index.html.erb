@@ -9,8 +9,8 @@
   <% end -%>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_like, 'Organization' %>
-    <%= f.text_field :organization_name_like %>
+    <%= f.label :organization_name_contains, 'Organization' %>
+    <%= f.text_field :organization_name_contains %>
   </p>
   <% end -%>
   <p>
