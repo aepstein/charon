@@ -12,7 +12,7 @@ class FulfillmentsController < ApplicationController
   def index
     @fulfillments = @fulfiller.fulfillments if @fulfiller
     @fulfillments = @fulfillable.fulfillments if @fulfillable
-    @fulfillments ||= Fulfillment
+    @fulfillments ||= Fulfillment.scoped
 
     @fulfillments = @fulfillments.with_permissions_to(:show).paginate(:page => params[:page])
 
