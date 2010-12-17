@@ -1,11 +1,11 @@
   <%= table_row_tag do %>
     <% if user then %>
-    <td><%=h approval.user %></td>
+    <td><%= approval.user %></td>
     <% end %>
     <% if approvable then %>
-    <td><%=h approval.approvable %></td>
+    <td><%= approval.approvable %></td>
     <% end %>
-    <td><%=h approval.created_at %></td>
+    <td><%= approval.created_at %></td>
     <td><%= link_to( 'Create', new_approvable_approval_path( approval.approvable ) ) if approval.new_record? && permitted_to?( :create, approval )%></td>
     <td><%= link_to( 'Destroy', approval, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, approval %></td>
   <% end %>

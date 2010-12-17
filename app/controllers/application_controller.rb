@@ -26,12 +26,12 @@ class ApplicationController < ActionController::Base
     perspective ||= Edition::PERSPECTIVES.first
     for_user = request.unfulfilled_requirements_for current_user
     out = ""
-    unless for_user.empty?
+    unless for_user.length == 0
       out << "You must fulfill the following requirements: #{for_user.join '; '}."
     end
     organization = request.send(perspective)
     for_organization = request.unfulfilled_requirements_for organization
-    unless for_organization.empty?
+    unless for_organization.length == 0
       out << "#{organization} must fulfill the following requirements: #{for_organization.join '; '}."
     end
     out

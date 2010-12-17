@@ -79,12 +79,12 @@ class ApprovalsController < ApplicationController
   end
 
   def initialize_index
-    @approvals = Approval
-    @approvals = @approvals.scoped( :conditions => { :approvable_type => @approvable.class.to_s,
-      :approvable_id => @approvable.id } ) if @approvable
-    @approvals = @approvals.scoped( :conditions => { :user_id => @user.id } ) if @user
+    @approvals = Approval.scoped
+    @approvals = @approvals.where( :approvable_type => @approvable.class.to_s,
+      :approvable_id => @approvable.id ) if @approvable
+    @approvals = @approvals.where( :user_id => @user.id ) if @user
     # Kludge to get index behavior correct without using with_permissions_to scope
-    @approvals = @approvals.user_id_equals( current_user.id ) if @approvable.class == Agreement && !current_user.role_symbols.include?( :admin )
+    @approvals = @approvals.where( :user_id => current_user.id ) if @approvable.class == Agreement && !current_user.role_symbols.include?( :admin )
   end
 
   def new_approval_from_params
