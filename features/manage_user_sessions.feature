@@ -10,3 +10,12 @@ Feature: Manage user sessions
     Given I log in as user: "user"
     Then I should see "You logged in successfully."
 
+  Scenario Outline: Administrative menu appears only for administrator
+    Given a user: "admin" exists with admin: true
+    And I log in as user: "<user>"
+    Then I should <see> "agreements" within "#navigation"
+    Examples:
+      | user  | see     |
+      | admin | see     |
+      | user  | not see |
+
