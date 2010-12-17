@@ -1,4 +1,6 @@
 class InventoryItem < ActiveRecord::Base
+  belongs_to :organization
+
   default_scope includes(:organization).
     order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
     'inventory_items.identifier ASC, inventory_items.acquired_on ASC, ' +
@@ -6,8 +8,11 @@ class InventoryItem < ActiveRecord::Base
 
   scope :active, where( :retired_on => nil)
   scope :retired, where( :retired_on.ne => nil )
+  scope :organization_name_contains, lambda { |name|
+    scoped & Organization.name_contains( name )
+  }
 
-  belongs_to :organization
+  search_methods :organization_name_contains
 
   validates_presence_of :organization
   validates_uniqueness_of :identifier, :scope => [ :organization_id ]

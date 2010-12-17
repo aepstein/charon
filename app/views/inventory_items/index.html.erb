@@ -1,10 +1,10 @@
 <h2>Listing inventory items<%= @organization ? " for #{@organization}" : '' %></h2>
 
-<% form_for :search, :url => polymorphic_path( [ @context, :inventory_items ] ), :html => { :method => :get } do |f| %>
+<%= form_for :search, :url => polymorphic_path( [ @context, :inventory_items ] ), :html => { :method => :get } do |f| %>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_like, 'Organization' %>
-    <%= f.text_field :organization_name_like %>
+    <%= f.label :organization_name_contains, 'Organization' %>
+    <%= f.text_field :organization_name_contains %>
   </p>
   <% end -%>
   <p>
