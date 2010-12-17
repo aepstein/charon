@@ -10,9 +10,9 @@ class Request < ActiveRecord::Base
   end
   has_many :users, :through => :approvals do
     def for_perspective( perspective )
-      Membership.includes(:user).
-        where( :organization_id => proxy_owner.send(perspective).id ) &
-        Role.name_like_any( Role::REQUESTOR ).map(&:user)
+      ( Membership.includes(:user).
+          where( :organization_id => proxy_owner.send(perspective).id ) &
+          Role.where( :name.in => Role::REQUESTOR ) ).map(&:user)
     end
     def fulfilled( approvers = Approver )
       approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint

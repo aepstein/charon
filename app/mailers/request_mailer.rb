@@ -14,7 +14,7 @@ class RequestMailer < ActionMailer::Base
   def completed_reminder(request)
     @request = request
     mail(
-      :to => request.users.unfulfilled(Approver.quantity_null).map(&:to_email),
+      :to => request.users.unfulfilled( Approver.where( :quantity => nil ) ).map(&:to_email),
       :from => request.contact_to_email,
       :subject => "#{request} needs your approval"
     )

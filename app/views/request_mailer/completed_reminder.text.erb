@@ -4,7 +4,7 @@ This email is to inform you that your <%= @request %> has been completed, but re
 
 The following people must approve the request before it is considered submitted:
 
-<% @request.users.unfulfilled( Approver.quantity_null ).each do |user| -%>
+<% @request.users.unfulfilled( Approver.where( :quantity => nil ) ).each do |user| -%>
  * <%= user.name %>
 <% end -%>
 
