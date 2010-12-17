@@ -21,7 +21,7 @@ class Basis < ActiveRecord::Base
   belongs_to :framework
   has_many :requests, :dependent => :destroy do
     def allocate_with_caps(status, club_sport, other)
-      self.status_equals(status, :include => [ :organization, { :items => :editions } ] ).each do |r|
+      where( :status => status ).includes( :organization, { :items => :editions } ).each do |r|
         if r.organization.club_sport?
           r.items.allocate club_sport
         else
@@ -37,12 +37,13 @@ class Basis < ActiveRecord::Base
     def amount_for_perspective_and_status(perspective, status)
       sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
             "AND basis_id = ? AND requests.status = ?"
-      Edition.perspective_equals(perspective).sum( 'amount', :conditions => [ "item_id IN (#{sub})", proxy_owner.id, status ] )
+      Edition.where(:perspective => perspective).
+        where( "item_id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
     end
     def item_amount_for_status(status)
       sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
             "AND basis_id = ? AND requests.status = ?"
-      Item.sum('amount', :conditions => ["id IN (#{sub})", proxy_owner.id, status] )
+      Item.where( "id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
     end
   end
   has_many :editions
