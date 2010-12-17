@@ -5,14 +5,14 @@
       <%= form.input :perspective, :as => :hidden %>
     <% end -%>
     <% if form.object.requestable %>
-    <% form.semantic_fields_for form.object.requestable.class.to_s.underscore.to_sym do |requestable_form| %>
+    <%= form.semantic_fields_for form.object.requestable.class.to_s.underscore.to_sym do |requestable_form| %>
       <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form", :object => requestable_form %>
     <% end %>
     <% end %>
   <% end %>
 
   <%= form.inputs :name => 'Supporting Documents' do %>
-    <% form.semantic_fields_for :documents do |document_form| %>
+    <%= form.semantic_fields_for :documents do |document_form| %>
       <%= document_form.input :document_type_id, :as => :hidden %>
       <%= document_form.input :attached,
         :label => document_form.object.edition.perspective.titleize + ' ' +
@@ -39,8 +39,8 @@
   <p>No request amount may be specified for this item.</p>
   </li>
   <% else %>
-  <%= form.input :amount, :label => "#{form.object.perspective.capitalize} Amount" %>
+  <%= form.input :amount, :label => "#{form.object.perspective.capitalize} amount" %>
   <% end %>
-  <%= form.input :comment, :label => "#{form.object.perspective.capitalize} Comment" %>
+  <%= form.input :comment, :label => "#{form.object.perspective.capitalize} comment" %>
   <% end %>
 

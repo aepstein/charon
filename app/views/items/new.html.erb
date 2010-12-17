@@ -1,6 +1,6 @@
 <h2>New <%= @item.node %> item for <%=h @item.parent ? @item.parent : @item.request %></h2>
 
-<%= semantic_form_for( :item, @item, :url => request_items_path( @item.request_id ) ) do |f| %>
+<%= semantic_form_for( @item, :url => request_items_path( @item.request_id ) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 

@@ -1,5 +1,5 @@
 <% if permitted_to? :show, edition %>
-    <% table_row_tag false do %>
+    <%= table_row_tag false do %>
       <td><%= edition.perspective.capitalize %> edition</td>
       <% if edition.new_record? then %>
       <td colspan="2" align="center"><em>None yet.</em></td>

@@ -113,8 +113,8 @@ Feature: Manage items
     Then I should not see "Reviewer"
     When I select "<node>" from "Add New <box>"
     And I press "Add <button>"
-    And I fill in "Requestor Amount" with "100"
-    And I fill in "Requestor Comment" with "This is *important*."
+    And I fill in "Requestor amount" with "100"
+    And I fill in "Requestor comment" with "This is *important*."
     And I press "Create Item"
     Then I should see "Item was successfully created."
     And I should <parent> "Parent: Existing"
@@ -122,10 +122,10 @@ Feature: Manage items
     And I should see "Requestor amount: $100.00"
     And I should see "This is important."
     When I follow "Edit"
-    And I fill in "Requestor Amount" with "200"
-    And I fill in "Requestor Comment" with "Different comment."
-    And I fill in "Reviewer Amount" with "100"
-    And I fill in "Reviewer Comment" with "Final comment."
+    And I fill in "Requestor amount" with "200"
+    And I fill in "Requestor comment" with "Different comment."
+    And I fill in "Reviewer amount" with "100"
+    And I fill in "Reviewer comment" with "Final comment."
     And I press "Update Item"
     Then I should see "Item was successfully updated."
     And I should see "Requestor amount: $200.00"
@@ -148,6 +148,7 @@ Feature: Manage items
     And a membership exists with user: the user, role: the requestor_role, organization: the organization
     And I log in as the user
     When I am on the edit page for the item
+    Then show me the page
     And I fill in "Requestor amount" with "100"
     And I fill in "Reviewer amount" with "200"
     Given the user has admin: <admin>
