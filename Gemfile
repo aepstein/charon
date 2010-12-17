@@ -19,7 +19,7 @@ gem 'cornell_ldap', '>= 1.3.1'
 gem 'validation_reflection'
 gem 'formtastic'
 gem 'declarative_authorization', '>= 0.5'
-gem 'composite_primary_keys'
+gem 'composite_primary_keys', :git => 'git://github.com/aepstein/composite_primary_keys.git'
 group :test do
   gem 'test-unit'
   gem 'cucumber-rails'

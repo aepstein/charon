@@ -16,9 +16,6 @@ class Agreement < ActiveRecord::Base
 #  after_update :destroy_approvals_if_content_changes
   after_create :fulfill
   after_update :unfulfill, :fulfill
-  before_destroy { |r|
-    puts "Destroying agreement #{r.id}"
-  }
 
   def destroy_approvals_if_content_changes
     approvals.clear if content_changed?
