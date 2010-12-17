@@ -88,7 +88,7 @@ class CategoriesController < ApplicationController
   end
 
   def initialize_index
-    @categories = Category
+    @categories = Category.scoped
   end
 
   def new_category_from_params
