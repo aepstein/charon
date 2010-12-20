@@ -20,6 +20,12 @@ module NavigationHelpers
     when /^the edit page for #{capture_model}$/
       edit_polymorphic_path( [model($1)] )
 
+    when /^#{capture_model} new #{capture_factory} page for #{capture_model}$/
+      new_polymorphic_path( [ model($3), $2 ] ) + "?request[basis_id]=#{model($1).id}"
+
+    when /^#{capture_model} #{capture_plural_factory} page for #{capture_model}$/
+      polymorphic_path( [ model($3), $2 ] ) + "?request[basis_id]=#{model($1).id}"
+
     when /^the new #{capture_factory} page$/
       new_polymorphic_path( [$1] )
 

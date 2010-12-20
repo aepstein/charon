@@ -56,9 +56,9 @@ Feature: Manage requests
     And a <tense>basis exists with name: "Annual", organization: organization "source"
     And a request: "annual" exists with basis: the basis, organization: organization "applicant", status: "<status>"
     And I log in as user: "<user>"
-    And I am on the new request page for organization: "applicant"
+    And I am on the basis new request page for organization: "applicant"
     Then I should <create> authorized
-    Given I post on the requests page for organization: "applicant"
+    Given I post on the basis requests page for organization: "applicant"
     Then I should <create> authorized
     And I am on the edit page for the request
     Then I should <update> authorized
@@ -73,27 +73,27 @@ Feature: Manage requests
     Examples:
       | tense | status    | user                | create  | update  | show    | destroy |
       |       | started   | admin               | see     | see     | see     | see     |
-      |       | started   | source_manager      | not see | see     | see     | see     |
+      |       | started   | source_manager      | see     | see     | see     | see     |
       |       | started   | source_reviewer     | not see | not see | see     | not see |
-      |       | started   | applicant_requestor | see     | see     | see     | see     |
+      |       | started   | applicant_requestor | not see | see     | see     | see     |
       | past_ | started   | applicant_requestor | not see | not see | see     | not see |
       |       | started   | observer_requestor  | not see | not see | not see | not see |
       |       | started   | regular             | not see | not see | not see | not see |
       |       | completed | admin               | see     | see     | see     | see     |
-      |       | completed | source_manager      | not see | see     | see     | see     |
+      |       | completed | source_manager      | see     | see     | see     | see     |
       |       | completed | source_reviewer     | not see | not see | see     | not see |
-      |       | completed | applicant_requestor | see     | not see | see     | not see |
+      |       | completed | applicant_requestor | not see | not see | see     | not see |
       | past_ | completed | applicant_requestor | not see | not see | see     | not see |
       |       | completed | observer_requestor  | not see | not see | not see | not see |
       |       | completed | regular             | not see | not see | not see | not see |
       |       | submitted | admin               | see     | see     | see     | see     |
-      |       | submitted | source_manager      | not see | see     | see     | see     |
+      |       | submitted | source_manager      | see     | see     | see     | see     |
       |       | submitted | source_reviewer     | not see | not see | see     | not see |
       |       | submitted | applicant_requestor | see     | not see | see     | not see |
       |       | submitted | observer_requestor  | not see | not see | not see | not see |
       |       | submitted | regular             | not see | not see | not see | not see |
       |       | accepted  | admin               | see     | see     | see     | see     |
-      |       | accepted  | source_manager      | not see | see     | see     | see     |
+      |       | accepted  | source_manager      | see     | see     | see     | see     |
       |       | accepted  | source_reviewer     | not see | not see | see     | not see |
       |       | accepted  | applicant_requestor | see     | not see | see     | not see |
       |       | accepted  | observer_requestor  | not see | not see | not see | not see |
