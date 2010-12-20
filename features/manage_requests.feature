@@ -36,7 +36,7 @@ Feature: Manage requests
       | requestor | requestor   | user_status_criterion  | not see | see     | see     | not see   | not see | Applicant | not see      |
       | requestor | requestor   | agreement              | not see | see     | not see | see       | not see | Applicant | not see      |
       | requestor | requestor   | registration_criterion | not see | not see | not see | not see   | see     | Applicant | see          |
-@wip
+
   Scenario Outline: Test permissions for requests controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -75,14 +75,14 @@ Feature: Manage requests
       |       | started   | admin               | see     | see     | see     | see     |
       |       | started   | source_manager      | see     | see     | see     | see     |
       |       | started   | source_reviewer     | not see | not see | see     | not see |
-      |       | started   | applicant_requestor | not see | see     | see     | see     |
+      |       | started   | applicant_requestor | see     | see     | see     | see     |
       | past_ | started   | applicant_requestor | not see | not see | see     | not see |
       |       | started   | observer_requestor  | not see | not see | not see | not see |
       |       | started   | regular             | not see | not see | not see | not see |
       |       | completed | admin               | see     | see     | see     | see     |
       |       | completed | source_manager      | see     | see     | see     | see     |
       |       | completed | source_reviewer     | not see | not see | see     | not see |
-      |       | completed | applicant_requestor | not see | not see | see     | not see |
+      |       | completed | applicant_requestor | see     | not see | see     | not see |
       | past_ | completed | applicant_requestor | not see | not see | see     | not see |
       |       | completed | observer_requestor  | not see | not see | not see | not see |
       |       | completed | regular             | not see | not see | not see | not see |
