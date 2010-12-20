@@ -148,7 +148,6 @@ Feature: Manage items
     And a membership exists with user: the user, role: the requestor_role, organization: the organization
     And I log in as the user
     When I am on the edit page for the item
-    Then show me the page
     And I fill in "Requestor amount" with "100"
     And I fill in "Reviewer amount" with "200"
     Given the user has admin: <admin>

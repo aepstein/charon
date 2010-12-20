@@ -36,7 +36,7 @@ Feature: Manage requests
       | requestor | requestor   | user_status_criterion  | not see | see     | see     | not see   | not see | Applicant | not see      |
       | requestor | requestor   | agreement              | not see | see     | not see | see       | not see | Applicant | not see      |
       | requestor | requestor   | registration_criterion | not see | not see | not see | not see   | see     | Applicant | see          |
-
+@wip
   Scenario Outline: Test permissions for requests controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"

@@ -86,18 +86,19 @@ class Request < ActiveRecord::Base
   has_many :editions, :through => :items
   belongs_to :organization
 
-  scope :organization_name_like, lambda { |name|
-    where( 'organizations.last_name LIKE :n OR organizations.first_name LIKE :n',
-      :n => name )
+  scope :organization_name_contains, lambda { |name|
+    scoped & Organization.name_contains( name )
   }
-  scope :basis_name_like, lambda { |name|
-    where( 'bases.name LIKE ?', "%#{name}%" )
+  scope :basis_name_contains, lambda { |name|
+    scoped & Basis.where( :name.like => name )
   }
   scope :incomplete_for_perspective, lambda { |perspective|
     where( "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
         "editions ON items.id = editions.item_id AND editions.perspective = ? " +
         "WHERE items.request_id = requests.id AND editions.id IS NULL)", perspective )
   }
+
+  search_methods :organization_name_contains, :basis_name_contains
 
   delegate :structure, :to => :basis
   delegate :framework, :to => :basis

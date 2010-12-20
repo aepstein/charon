@@ -1,6 +1,6 @@
 <h2>New node for <%=h @node.structure %></h2>
 
-<%= semantic_form_for( :node, @node, :url => structure_nodes_path( @node.structure ) ) do |f| %>
+<%= semantic_form_for( @node, :url => structure_nodes_path( @node.structure ) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 

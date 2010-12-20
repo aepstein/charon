@@ -1,6 +1,6 @@
-<h2>New request for <%=h @request.organization %></h2>
+<h2>New request for <%= @request.organization %></h2>
 
-<%= semantic_form_for(:request, @request, :url => organization_requests_path(@request.organization) ) do |f| %>
+<%= semantic_form_for( @request, :url => organization_requests_path(@request.organization) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 
