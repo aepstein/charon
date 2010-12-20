@@ -49,6 +49,32 @@ Feature: Manage request mailers
     And the email parts should not contain "John Doe"
     And the email parts should not contain "Alpha Beta"
 
+  Scenario: Send notice regarding a submitted request
+    Given all emails have been delivered
+    And request: "completed" has status: "submitted"
+    And a submitted notice email is sent for request: "completed"
+    Then 1 email should be delivered
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been submitted"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is a confirmation that you have successfully submitted your request for Money Taking Fund."
+    And the email parts should contain "You should receive an additional notice when it is accepted for review."
+
+  Scenario: Send notice regarding an accepted request
+    Given all emails have been delivered
+    And request: "completed" has status: "accepted"
+    And an accepted notice email is sent for request: "completed"
+    Then 1 email should be delivered
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been accepted for review"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is a confirmation that your request for Money Taking Fund has been accepted for review."
+    And the email parts should contain "You will receive additional notice when a determination is released."
+
   Scenario: Send notice regarding a released request
     Given all emails have been delivered
     And request: "completed" has status: "released"

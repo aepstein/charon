@@ -123,8 +123,9 @@ class Request < ActiveRecord::Base
   aasm_initial_state :started
   aasm_state :started
   aasm_state :completed, :after_enter => :deliver_required_approval_notice
-  aasm_state :submitted, :enter => :reset_approval_checkpoint
-  aasm_state :accepted, :after_enter => :set_accepted_at
+  aasm_state :submitted, :enter => :reset_approval_checkpoint,
+    :after_enter => :deliver_submitted_notice
+  aasm_state :accepted, :after_enter => [ :set_accepted_at, :deliver_accepted_notice ]
   aasm_state :reviewed
   aasm_state :certified, :enter => :reset_approval_checkpoint
   aasm_state :released, :after_enter => [:deliver_release_notice, :set_released_at]
@@ -200,6 +201,14 @@ class Request < ActiveRecord::Base
     needed_approvals.each do |approval|
       ApprovalMailer.request_notice(approval).deliver
     end
+  end
+
+  def deliver_submitted_notice
+    RequestMailer.submitted_notice(self).deliver
+  end
+
+  def deliver_accepted_notice
+    RequestMailer.accepted_notice(self).deliver
   end
 
   def deliver_release_notice

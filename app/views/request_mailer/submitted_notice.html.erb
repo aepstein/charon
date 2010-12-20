@@ -1,0 +1,13 @@
+<p>
+Dear Officers of <%= @request.organization %>,
+</p>
+
+<p>
+This email is a confirmation that you have successfully submitted your request for <%=h @request.basis.to_s %>.
+You should receive an additional notice when it is accepted for review.
+</p>
+
+<p>
+To see it, please go to: &lt;<%= link_to request_url(@request), request_url(@request) %>&gt;.
+</p>
+

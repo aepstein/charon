@@ -20,6 +20,24 @@ class RequestMailer < ActionMailer::Base
     )
   end
 
+  def submitted_notice( request )
+    @request = request
+    mail(
+      :to => request.users.for_perspective(Edition::PERSPECTIVES.first).map(&:to_email),
+      :from => request.contact_to_email,
+      :subject => "#{request} has been submitted"
+    )
+  end
+
+  def accepted_notice( request )
+    @request = request
+    mail(
+      :to => request.users.for_perspective(Edition::PERSPECTIVES.first).map(&:to_email),
+      :from => request.contact_to_email,
+      :subject => "#{request} has been accepted for review"
+    )
+  end
+
   def release_notice(request)
     @request = request
     mail(
