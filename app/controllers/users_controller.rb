@@ -87,7 +87,7 @@ class UsersController < ApplicationController
   end
 
   def initialize_index
-    @users = User
+    @users = User.with_permissions_to(:show)
   end
 
   def new_user_from_params
