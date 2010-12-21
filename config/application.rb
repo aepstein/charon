@@ -18,6 +18,10 @@ module Charon
       @@app_config ||= YAML.load(File.read(File.expand_path('../application.yml', __FILE__)))[Rails.env]
     end
 
+    class << self
+      attr_accessor :relative_url_root
+    end
+
   end
 end
 

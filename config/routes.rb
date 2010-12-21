@@ -1,41 +1,31 @@
 Charon::Application.routes.draw do
-  shallow do
+  scope Charon::Application.relative_url_root do
+    resources :addresses, :only => [ :edit, :update, :show, :destroy ]
     resources :activity_reports, :except => [ :new, :create ]
-    resources :university_accounts, :except => [ :new, :create ]
-    resources :user_status_criterions do
-      resources :fulfillments, :only => [:index]
+    resources :agreements do
+      resources :approvals, :only => [ :create, :index, :new ]
+      resources :fulfillments, :only => [ :index ]
     end
-    resources :registration_criterions do
-      resources :fulfillments, :only => [:index]
+    resources :approvals, :only => [ :show, :destroy ]
+    resources :approvers, :except => [ :index, :create, :new ]
+    resources :bases, :except => [ :create, :new ] do
+      resources :requests, :only => [ :create, :new, :index ]
     end
     resources :categories
-    resources :requests, :only => [ :index ]
-    resources :users do
-      resources :addresses
-      resources :fulfillments, :only => [ :index ]
-      resources :approvals, :only => [ :index ]
-      resources :memberships, :only => [ :index, :new, :create ]
-    end
-    resources :approvals, :only => [ :show ]
-    resources :agreements do
-      resources :approvals, :only => [ :create, :destroy, :index, :new ]
-      resources :fulfillments, :only => [ :index ]
-    end
     resources :documents, :only => [ :show ]
     resources :document_types
-    resources :requests, :only => [ :index ]
     resources :frameworks do
-      resources :approvers
+      resources :approvers, :only => [ :index, :create, :new ]
     end
-    resources :structures do
-      resources :nodes
-    end
-    resources :local_event_expenses, :only => [ :index ]
     resources :inventory_items, :except => [ :new, :create ] do
         collection do
           get :retired, :active
         end
     end
+    resources :items, :except => [ :create, :new, :index ]
+    resources :local_event_expenses, :only => [ :index ]
+    resources :memberships, :except => [ :create, :new ]
+    resources :nodes, :except => [ :index, :create, :new ]
     resources :organizations do
       member do
         get :profile
@@ -45,49 +35,54 @@ Charon::Application.routes.draw do
           get :past, :current, :future
         end
       end
-      resources :university_accounts, :only => [ :new, :create, :index ]
+      resources :bases, :only => [ :create, :new, :index ]
+      resources :fulfillments, :only => [ :index ]
       resources :inventory_items, :only => [ :index, :new, :create ] do
         collection do
           get :retired, :active
         end
       end
+      resources :memberships, :only => [ :create, :new, :index ]
       resources :registrations, :only => [ :index ]
-      resources :fulfillments, :only => [ :index ]
-      resources :bases do
-        resources :requests
-      end
-      resources :memberships
-      resources :requests do
-        collection do
-          get :supporting_documents
-        end
-        resources :approvals, :only => [ :create, :destroy, :index, :new ]
-        resources :items do
-          collection do
-            get :move
-            put :do_move
-          end
-          resources :editions
-        end
-      end
+      resources :requests, :only => [ :create, :new, :index ]
+      resources :university_accounts, :only => [ :new, :create, :index ]
     end
-    resources :roles
-    resources :registrations, :only => [ :index ] do
+    resources :registration_criterions do
+      resources :fulfillments, :only => [:index]
+    end
+    resources :registrations, :only => [ :index, :show ] do
       resources :memberships, :only => [ :index ]
+      resources :organizations, :only => [ :new, :create ]
     end
     resources :registration_terms do
-      resources :registrations, :only => [ :index, :show ] do
-        resource :organization, :only => [ :new, :create ]
-      end
+      resources :registrations, :only => [ :index, :show ]
     end
+    resources :requests, :except => [ :create, :new ] do
+      resources :approvals, :only => [ :create, :destroy, :index, :new ]
+      resources :items, :only => [ :create, :new, :index ]
+    end
+    resources :roles
+    resources :structures do
+      resources :nodes, :only => [ :index, :create, :new ]
+    end
+    resources :university_accounts, :except => [ :new, :create ]
+    resources :user_status_criterions do
+      resources :fulfillments, :only => [:index]
+    end
+    resources :users do
+      resources :addresses, :only => [ :index, :new, :create ]
+      resources :approvals, :only => [ :index ]
+      resources :fulfillments, :only => [ :index ]
+      resources :memberships, :only => [ :index, :new, :create ]
+    end
+
+    resource :user_session
+
+    match 'login', :to => 'user_sessions#new', :as => 'login'
+    match 'logout', :to => 'user_sessions#destroy', :as => 'logout'
+    match 'profile', :to => 'users#profile', :as => 'profile'
+
+    root :to => 'users#profile'
   end
-
-  resource :user_session
-
-  match 'login', :to => 'user_sessions#new', :as => 'login'
-  match 'logout', :to => 'user_sessions#destroy', :as => 'logout'
-  match 'profile', :to => 'users#profile', :as => 'profile'
-
-  root :to => 'users#profile'
 end
 

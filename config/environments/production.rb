@@ -47,6 +47,6 @@ Charon::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
-  config.relative_url_root = '/charon'
+  config.action_controller.relative_url_root = '/charon'
 end
 
