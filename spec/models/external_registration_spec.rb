@@ -32,14 +32,6 @@ describe RegistrationImporter::ExternalRegistration do
     getter_tests(@registration, tests)
   end
 
-  it 'should return appropriate values for updated_time' do
-    @registration.updated_time = nil
-    @registration.updated_time.to_i.should be_within(5).of( Time.zone.now.to_i )
-    existing = (Time.zone.now - 1.year).to_i
-    @registration.updated_time = existing
-    @registration.updated_time.to_i.should eql existing
-  end
-
   it 'should import a new record successfully' do
     RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 1, 0, 0 ]
     import = Registration.first
@@ -71,6 +63,21 @@ describe RegistrationImporter::ExternalRegistration do
     RegistrationImporter::ExternalRegistration.import(:all)[0,3].should eql [ 0, 1, 0 ]
     import.reload
     import.users.should be_empty
+  end
+
+  it 'should have an importable scope that only identifies the latest records' do
+    @registration.update_attribute(:updated_time, Time.zone.now.to_i)
+    Registration.unscoped.count.should eql 0
+    RegistrationImporter::ExternalRegistration.importable.length.should eql 1
+    RegistrationImporter::ExternalRegistration.import
+    RegistrationImporter::ExternalRegistration.importable.length.should eql 0
+    newer = Factory(:external_registration, :updated_time => @registration.updated_time + 1)
+    RegistrationImporter::ExternalRegistration.importable.length.should eql 1
+    RegistrationImporter::ExternalRegistration.import
+    RegistrationImporter::ExternalRegistration.importable.length.should eql 0
+    newer.update_attribute(:updated_time, @registration.updated_time + 5)
+    RegistrationImporter::ExternalRegistration.importable.length.should eql 1
+    RegistrationImporter::ExternalRegistration.importable.should include newer
   end
 
 end

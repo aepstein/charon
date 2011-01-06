@@ -32,12 +32,12 @@ module RegistrationImporter
       order( 'orgs.updated_time ASC' )
 
     scope :importable, lambda {
-      max_registration = Registration.where( :when_updated.ne => nil).order( 'when_updated DESC' ).first
+      max_registration = Registration.unscoped.where( :when_updated.ne => nil).maximum(:when_updated)
       if max_registration then
-      where( "updated_time > ?", max_registration.when_updated.to_i )
+        where( :updated_time.gt => max_registration )
       else
-      { }
-      end.order( :updated_time ).includes( :contacts )
+        scoped
+      end
     }
 
     has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
@@ -65,11 +65,6 @@ module RegistrationImporter
 
     def sports_club
       read_attribute(:sports_club) == 'YES'
-    end
-
-    def updated_time
-      return Time.zone.now if read_attribute(:updated_time).blank?
-      Time.zone.at read_attribute(:updated_time)
     end
 
     def import
@@ -109,7 +104,7 @@ module RegistrationImporter
           adds += r.first
           changes += r.last
         end
-        d = Registration.where( :external_term_id => term.term_id )
+        d = Registration.unscoped.where( :external_term_id => term.term_id )
         if term.registrations.length > 0
           d = d.where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) )
         end
