@@ -43,7 +43,7 @@ module ApplicationHelper
         memo
       end.join(', ')
     end
-    raw( out )
+    out.html_safe
   end
 
 end
