@@ -7,10 +7,10 @@
   <%= form.input :usable, :as => :radio, :collection => { "Usable" => true, "Not usable" => false } %>
   <%= form.input :missing, :as => :radio, :collection => { "Missing" => true, "Not missing" => false },
     :hint => 'Missing items may have been lost or stolen.' %>
-  <%= form.input :acquired_on, :as => :string %>
-  <%= form.input :scheduled_retirement_on, :as => :string,
+  <%= form.input :acquired_on, :as => :date_picker %>
+  <%= form.input :scheduled_retirement_on, :as => :date_picker,
     :hint => 'Until when is the item intended to be in service?' %>
-  <%= form.input :retired_on, :as => :string,
+  <%= form.input :retired_on, :as => :date_picker,
     :hint => 'If item is no longer in servcie, indicate the date it was retired from inventory.' %>
   <%= form.input :comments, :hint => 'Provide any special notes about the item here.' %>
   <% end %>

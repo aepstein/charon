@@ -7,7 +7,7 @@
     <%= form.input :last_name %>
     <%= form.input :password, :label => (form.object.new_record? ? "Password" : "Change password") %>
     <%= form.input :password_confirmation %>
-    <%= form.input :date_of_birth, :as => :string %>
+    <%= form.input :date_of_birth, :as => :date_picker %>
     <% if current_user.admin? %>
       <%= form.input :admin, :as => :radio %>
     <% end %>

@@ -10,16 +10,17 @@ module Charon
   class Application < Rails::Application
     config.autoload_paths += %W(#{::Rails.root}/lib)
     config.encoding = "utf-8"
-    config.filter_parameters += [:password, :password_confirmation]
+    config.filter_parameters += [ :password, :password_confirmation ]
     config.time_zone = 'Eastern Time (US & Canada)'
     config.action_mailer.default_url_options = { :host => "assembly.cornell.edu", :protocol => 'https' }
+    config.action_view.javascript_expansions[:defaults] = %w(jquery jquery-ui jquery-ui-timepicker-addon autocomplete-rails rails)
+
+    def self.relative_url_root
+      '/charon'
+    end
 
     def self.app_config
       @@app_config ||= YAML.load(File.read(File.expand_path('../application.yml', __FILE__)))[Rails.env]
-    end
-
-    class << self
-      attr_accessor :relative_url_root
     end
 
   end

@@ -6,7 +6,7 @@ class Document < ActiveRecord::Base
 
   has_attached_file :attached,
     :path => ':rails_root/db/uploads/:rails_env/:id_partition/:attachment/:style.:extension',
-    :url => '/documents/:id.:format'
+    :url => ':relative_url_root/documents/:id.:format'
 
   delegate :max_size, :to => :document_type
   delegate :max_size_string, :to => :document_type
