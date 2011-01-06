@@ -41,9 +41,9 @@ module ApplicationHelper
       out += ": ".html_safe + views.inject([]) do |memo, view|
         memo << link_to( view, polymorphic_path( [ view, parent, children ] ) )
         memo
-      end.join(', '.html_safe)
+      end.join(', ').html_safe
     end
-    out
+    out.html_safe
   end
 
 end
