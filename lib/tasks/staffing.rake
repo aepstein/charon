@@ -5,7 +5,7 @@ namespace :staffing do
     puts "Importing sourced memberships from staffing database..."
     result = MemberSource.all.inject([0, 0, 0, 0.seconds]) do |memo, source|
       r = StaffingImporter::ExternalUser.import( source )
-      memo = 0..3.map { |i| memo[i] + r[i] }
+      memo = (0..3).map { |i| memo[i] + r[i] }
     end
     report_import_result( result )
   end
