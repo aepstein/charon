@@ -42,7 +42,7 @@ module StaffingImporter
       # Remove old memberships
       old = source.user_ids - users.map(&:id)
       unless old.empty?
-        source.memberships.where(:user_id.in => old).delete_all
+        source.memberships.delete( source.memberships.where( :user_id.in => old ) )
       end
       [adds, changes, old.length, ( Time.zone.now - starts )]
     end
