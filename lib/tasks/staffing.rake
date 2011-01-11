@@ -3,12 +3,11 @@ namespace :staffing do
   desc "Import sourced memberships from staffing database."
   task :import => [ :environment ] do
     puts "Importing sourced memberships from staffing database..."
-    MemberSource.inject([0, 0, 0, 0.seconds]) do |memo, source|
-    r = StaffingImporter::ExternalUser.import( source )
-    memo = 0..3.map { |i| memo[i] + r[i] }
+    result = MemberSource.all.inject([0, 0, 0, 0.seconds]) do |memo, source|
+      r = StaffingImporter::ExternalUser.import( source )
+      memo = 0..3.map { |i| memo[i] + r[i] }
     end
-    result = RegistrationImporter::ExternalTerm.import
-    report_import_result( "all", "registration_terms", result )
+    report_import_result( result )
   end
 
   def report_import_result( result )
