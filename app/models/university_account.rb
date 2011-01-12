@@ -1,6 +1,7 @@
 class UniversityAccount < ActiveRecord::Base
   include OrganizationNameLookup
 
+  has_many :activity_accounts
   belongs_to :organization
 
   default_scope order( 'university_accounts.department_code ASC, ' +

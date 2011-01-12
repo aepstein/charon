@@ -1,5 +1,9 @@
 require 'factory_girl'
 
+Factory.define :activity_account do |f|
+  f.association :university_account
+end
+
 Factory.define :activity_report do |f|
   f.association :organization
   f.sequence( :description ) { |n| "activity #{n}" }

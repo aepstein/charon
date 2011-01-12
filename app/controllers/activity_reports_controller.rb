@@ -116,8 +116,8 @@ class ActivityReportsController < ApplicationController
   end
 
   def initialize_index
-    @activity_reports = ActivityReport
-    @activity_reports = @activity_reports.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
+    @activity_reports = ActivityReport.scoped
+    @activity_reports = @activity_reports.where(:organization_id => @organization.id) if @organization
     @activity_reports = @activity_reports.with_permissions_to(:show)
   end
 

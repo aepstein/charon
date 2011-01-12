@@ -1,6 +1,7 @@
 Charon::Application.routes.draw do
-  resources :addresses, :only => [ :edit, :update, :show, :destroy ]
+  resources :activity_accounts, :except => [ :index, :new, :create ]
   resources :activity_reports, :except => [ :new, :create ]
+  resources :addresses, :except => [ :index, :new, :create ]
   resources :agreements do
     resources :approvals, :only => [ :create, :index, :new ]
     resources :fulfillments, :only => [ :index ]
@@ -29,6 +30,7 @@ Charon::Application.routes.draw do
     member do
       get :profile
     end
+    resources :activity_accounts, :only => [ :index ]
     resources :activity_reports, :only => [ :index, :new, :create ] do
       collection do
         get :past, :current, :future
@@ -64,7 +66,9 @@ Charon::Application.routes.draw do
   resources :structures do
     resources :nodes, :only => [ :index, :create, :new ]
   end
-  resources :university_accounts, :except => [ :new, :create ]
+  resources :university_accounts, :except => [ :new, :create ] do
+    resources :activity_accounts, :only => [ :index, :new, :create ]
+  end
   resources :user_status_criterions do
     resources :fulfillments, :only => [:index]
   end

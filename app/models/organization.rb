@@ -3,6 +3,7 @@ class Organization < ActiveRecord::Base
 
   has_many :activity_reports, :dependent => :destroy
   has_many :university_accounts, :dependent => :destroy
+  has_many :activity_accounts, :through => :university_accounts
   has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
   has_many :registrations do
     def current

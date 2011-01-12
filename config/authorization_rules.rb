@@ -1,10 +1,11 @@
 authorization do
   role :admin do
-    has_permission_on [ :activity_reports, :addresses, :agreements, :approvers,
-      :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
-      :inventory_items, :items, :nodes, :organizations, :permissions,
-      :registration_criterions, :registrations, :registration_terms, :requests,
-      :roles, :structures, :university_accounts, :users, :user_status_criterions ],
+    has_permission_on [ :activity_accounts, :activity_reports, :addresses,
+      :agreements, :approvers, :bases, :categories, :document_types, :editions,
+      :frameworks, :fulfillments, :inventory_items, :items, :nodes,
+      :organizations, :permissions, :registration_criterions, :registrations,
+      :registration_terms, :requests, :roles, :structures, :university_accounts,
+      :users, :user_status_criterions ],
       :to => [ :manage ]
     has_permission_on [ :bases ], :to => [ :review ]
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
@@ -194,6 +195,25 @@ authorization do
       if_permitted_to :show, :approvable
       if_attribute :approvable_type => is { 'Request' }
     end
+
+    has_permission_on [ :university_accounts ], :to => :request do
+      if_permitted_to :request, :organization
+    end
+
+    has_permission_on [ :university_accounts ], :to => :manage do
+      if_permitted_to :manage, :organization
+      if_permitted_to :manage, :activity_accounts
+    end
+
+    has_permission_on [ :activity_accounts ], :to => :manage do
+      if_permitted_to :manage, :basis
+    end
+
+    has_permission_on [ :activity_accounts ], :to => :show do
+      if_permitted_to :request, :university_account
+      if_permitted_to :manage, :university_account
+    end
+
   end
   role :guest do
     has_permission_on :user_sessions, :to => [ :new, :create ]

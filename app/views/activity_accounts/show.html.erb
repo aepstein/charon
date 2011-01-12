@@ -1,0 +1,27 @@
+<p>
+  <b>University account:</b>
+  <%= @activity_account.university_account %>
+</p>
+
+<p>
+  <b>Basis:</b>
+  <%= @activity_account.basis %>
+</p>
+
+<p>
+  <b>Category:</b>
+  <%= @activity_account.category %>
+</p>
+
+<p>
+  <b>Comments:</b>
+  <%=markdown @activity_account.comments %>
+</p>
+
+<p>
+<% if permitted_to? :edit, @activity_account %>
+<%= link_to 'Edit', edit_activity_account_path(@activity_account) %> |
+<% end %>
+<%= link_to 'Back', university_account_activity_accounts_path( @activity_account.university_account ) %>
+</p>
+

@@ -38,10 +38,14 @@
 <% if permitted_to? :edit, @organization -%>
 <%= link_to 'Edit', edit_organization_path(@organization) %> |
 <% end -%>
+<% if permitted_to? :manage, @organization %>
+<%= link_to 'List university accounts', organization_university_accounts_path(@organization) %> |
+<% end %>
 <%= link_to 'List registrations', organization_registrations_path(@organization) %> |
 <%= link_to 'List bases', organization_bases_path(@organization) %> |
 <%= link_to 'List fulfillments', organization_fulfillments_path(@organization) %> |
 <%= nested_index @organization, :inventory_items, [ :active, :retired ] %> |
+<%= link_to 'List activity accounts', organization_activity_accounts_path(@organization) %> |
 <%= link_to 'Back', organizations_path %>
 </p>
 
