@@ -1,5 +1,15 @@
 require 'factory_girl'
 
+Factory.define :account_adjustment do |f|
+  f.association :account_transaction
+  f.association :activity_account
+  f.amount 0.0
+end
+
+Factory.define :account_transaction do |f|
+  f.effective_on { |t| Time.zone.today }
+end
+
 Factory.define :activity_account do |f|
   f.association :university_account
 end

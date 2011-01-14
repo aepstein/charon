@@ -3,6 +3,8 @@ class ActivityAccount < ActiveRecord::Base
   belongs_to :basis
   belongs_to :category
 
+  has_many :account_adjustments, :dependent => :destroy
+
   scope :organization_id_equals, lambda { |id|
     joins(:university_account) & UniversityAccount.unscoped.where(:organization_id => id)
   }

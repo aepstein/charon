@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Account transaction:</b>
+  <%= @account_adjustment.account_transaction %>
+</p>
+
+<p>
+  <b>Amount:</b>
+  <%= @account_adjustment.amount %>
+</p>
+
+
+<%= link_to 'Edit', edit_account_adjustment_path(@account_adjustment) %> |
+<%= link_to 'Back', account_adjustments_path %>
