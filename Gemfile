@@ -12,7 +12,7 @@ gem 'validates_timeliness'
 gem 'prawn'
 gem 'meta_where'
 gem 'meta_search'
-gem 'whenever'
+gem 'whenever', :require => false
 gem 'bluecloth'
 gem 'cornell_netid'
 gem 'cornell_ldap', '>= 1.3.1'

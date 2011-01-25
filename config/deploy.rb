@@ -15,6 +15,9 @@ set :repository, "git://assembly.cornell.edu/git/#{application}.git"
 set :branch, "master"
 set :git_enable_submodules, 0
 
+set :whenever_command, 'bundle exec whenever'
+require 'whenever/capistrano'
+
 namespace :deploy do
   desc "Tell Passenger to restart the app."
   task :restart do
@@ -34,11 +37,7 @@ namespace :deploy do
     #system "rsync -vr --exclude='.DS_Store' public/assets #{user}@#{application}:#{shared_path}/"
   end
 
-  desc "Update the crontab file"
-  task :update_crontab, :roles => :db do
-    run "cd #{release_path} && whenever --update-crontab #{application}"
-  end
 end
 
-after 'deploy:update_code', 'deploy:symlink_shared', 'deploy:update_crontab'
+after 'deploy:update_code', 'deploy:symlink_shared'
 
