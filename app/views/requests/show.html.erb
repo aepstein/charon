@@ -86,7 +86,7 @@ This request is now submitted for review.
 
 <p>
 <%= link_to h("Back to #{@request.organization}"), @request.organization %> |
-<%= link_to h("Back to #{@request.organization} profile"), organization_profile_path(@request.organization) %> |
+<%= link_to h("Back to #{@request.organization} profile"), profile_organization_path(@request.organization) %> |
 <%= link_to "Manage items", request_items_path(@request) %> |
 <%= link_to 'Edit', edit_request_path(@request) %>
 </p>
