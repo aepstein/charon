@@ -19,6 +19,8 @@
 
 # Learn more: http://github.com/javan/whenever
 
+set :output, { :standard => nil }
+
 every 1.hours do
   rake 'external_registrations:import:latest'
 end
