@@ -19,15 +19,18 @@ Feature: Manage request mailers
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
     And a user: "treasurer" exists with email: "treasurer@example.com", first_name: "Jane", last_name: "Doe"
     And a user: "officer" exists with email: "officer@example.com", first_name: "Alpha", last_name: "Beta"
+    And a user: "old_president" exists with email: "old_president@example.com", first_name: "Jane", last_name: "Jacobs"
     And a membership exists with organization: organization "requestor", role: role "president", user: user "president", active: true
     And a membership exists with organization: organization "requestor", role: role "treasurer", user: user "treasurer", active: true
     And a membership exists with organization: organization "requestor", role: role "officer", user: user "officer", active: true
+    And a membership exists with organization: organization "requestor", role: role "president", user: user "old_president", active: false
     And an approval exists with approvable: request "completed", user: user "president"
 
   Scenario: Send notice regarding a started request
     Given all emails have been delivered
     And a started reminder email is sent for request: "started"
-    Then 1 email should be delivered to "president@example.com"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And 1 email should be delivered to "officer@example.com"
     And the last email subject should contain "Request of Money Taking Club from Money Taking Fund needs attention"
@@ -40,7 +43,7 @@ Feature: Manage request mailers
   Scenario: Send notice regarding a completed request
     Given all emails have been delivered
     And a completed reminder email is sent for request: "completed"
-    Then 1 email should be delivered
+    Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And the email subject should contain "Request of Money Taking Club from Money Taking Fund needs your approval"
     And the email parts should contain "Dear Officers of Money Taking Club,"
@@ -53,7 +56,7 @@ Feature: Manage request mailers
     Given all emails have been delivered
     And request: "completed" has status: "submitted"
     And a submitted notice email is sent for request: "completed"
-    Then 1 email should be delivered
+    Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And 1 email should be delivered to "officer@example.com"
@@ -66,7 +69,7 @@ Feature: Manage request mailers
     Given all emails have been delivered
     And request: "completed" has status: "accepted"
     And an accepted notice email is sent for request: "completed"
-    Then 1 email should be delivered
+    Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And 1 email should be delivered to "officer@example.com"
@@ -79,7 +82,7 @@ Feature: Manage request mailers
     Given all emails have been delivered
     And request: "completed" has status: "released"
     And a release notice email is sent for request: "completed"
-    Then 1 email should be delivered
+    Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And 1 email should be delivered to "officer@example.com"

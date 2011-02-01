@@ -11,7 +11,7 @@ class Request < ActiveRecord::Base
   has_many :users, :through => :approvals do
     def for_perspective( perspective )
       ( Membership.includes(:user).
-          where( :organization_id => proxy_owner.send(perspective).id ) &
+          where( :active => true, :organization_id => proxy_owner.send(perspective).id ) &
           Role.where( :name.in => Role::REQUESTOR ) ).map(&:user)
     end
     def fulfilled( approvers = Approver )
