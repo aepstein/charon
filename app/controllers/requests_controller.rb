@@ -1,7 +1,7 @@
 class RequestsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index ]
+  before_filter :initialize_index, :only => [ :index, :duplicate ]
   before_filter :new_request_from_params, :only => [ :new, :create ]
   filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
   filter_access_to :index, :duplicate do

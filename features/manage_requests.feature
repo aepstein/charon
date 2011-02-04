@@ -152,4 +152,7 @@ Feature: Manage requests
       | Annual   | First Club   | accepted  |
       | Annual   | Last Club    | submitted |
       | Semester | Last Club    | started   |
+    Given I am on the duplicate requests page
+    And I am on the duplicate requests page for basis: "annual"
+    And I am on the duplicate requests page for organization: "first"
 
