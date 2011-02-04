@@ -155,5 +155,17 @@ describe Request do
     end
   end
 
+  it 'should have a duplicate scope' do
+    @request.save
+    duplicate = Factory(:request, :basis => @request.basis, :organization => @request.organization)
+    same_organization = Factory(:request, :organization => @request.organization)
+    same_basis = Factory(:request, :basis => @request.basis)
+    different = Factory(:request)
+    duplicates = Request.duplicate
+    duplicates.count.should eql 2
+    duplicates.should include @request
+    duplicates.should include duplicate
+  end
+
 end
 

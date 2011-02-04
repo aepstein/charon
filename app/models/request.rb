@@ -97,7 +97,9 @@ class Request < ActiveRecord::Base
         "editions ON items.id = editions.item_id AND editions.perspective = ? " +
         "WHERE items.request_id = requests.id AND editions.id IS NULL)", perspective )
   }
-
+  scope :duplicate, where("requests.basis_id IN (SELECT basis_id FROM requests " +
+    "AS duplicates WHERE duplicates.organization_id = requests.organization_id " +
+    "AND requests.id <> duplicates.id)")
   search_methods :organization_name_contains, :basis_name_contains
 
   delegate :structure, :to => :basis
