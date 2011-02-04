@@ -75,7 +75,7 @@
 <%= link_to( 'Edit', edit_basis_path(@basis) ) %> |
 <% end -%>
 <% if permitted_to? :review, @basis -%>
-<%= link_to 'List requests', basis_requests_path(@basis) %> |
+<%= nested_index @basis, :requests, [ :duplicate ] %> |
 <% end -%>
 <%= link_to 'Back', organization_bases_path( @basis.organization ) %>
 </p>

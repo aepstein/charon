@@ -9,7 +9,11 @@ Charon::Application.routes.draw do
   resources :approvals, :only => [ :show, :destroy ]
   resources :approvers, :except => [ :index, :create, :new ]
   resources :bases, :except => [ :create, :new ] do
-    resources :requests, :only => [ :create, :new, :index ]
+    resources :requests, :only => [ :create, :new, :index ] do
+      collection do
+        get :duplicate
+      end
+    end
   end
   resources :categories
   resources :documents, :only => [ :show ]
@@ -45,7 +49,11 @@ Charon::Application.routes.draw do
     end
     resources :memberships, :only => [ :create, :new, :index ]
     resources :registrations, :only => [ :index ]
-    resources :requests, :only => [ :create, :new, :index ]
+    resources :requests, :only => [ :create, :new, :index ] do
+      collection do
+        get :duplicate
+      end
+    end
     resources :university_accounts, :only => [ :new, :create, :index ]
   end
   resources :registration_criterions do
@@ -59,6 +67,9 @@ Charon::Application.routes.draw do
     resources :registrations, :only => [ :index, :show ]
   end
   resources :requests, :except => [ :create, :new ] do
+    collection do
+      get :duplicate
+    end
     resources :approvals, :only => [ :create, :destroy, :index, :new ]
     resources :items, :only => [ :create, :new, :index ]
   end

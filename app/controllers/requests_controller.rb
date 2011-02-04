@@ -4,10 +4,15 @@ class RequestsController < ApplicationController
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_request_from_params, :only => [ :new, :create ]
   filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
-  filter_access_to :index do
+  filter_access_to :index, :duplicate do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @basis ) if @basis
     permitted_to!( :index )
+  end
+
+  def duplicate
+    @requests = @requests.duplicate
+    index
   end
 
   # GET /organizations/:organization_id/requests
