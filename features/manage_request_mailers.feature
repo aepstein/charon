@@ -78,6 +78,19 @@ Feature: Manage request mailers
     And the email parts should contain "This email is a confirmation that your request for Money Taking Fund has been accepted for review."
     And the email parts should contain "You will receive additional notice when a determination is released."
 
+  Scenario: Send notice regarding a rejected request
+    Given all emails have been delivered
+    And request: "completed" has reject_message: "Organization is banned from applying this time."
+    And an reject notice email is sent for request: "completed"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been rejected"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been rejected."
+    And the email parts should contain "Organization is banned from applying this time."
+
   Scenario: Send notice regarding a released request
     Given all emails have been delivered
     And request: "completed" has status: "released"

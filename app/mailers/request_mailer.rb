@@ -47,5 +47,14 @@ class RequestMailer < ActionMailer::Base
     )
   end
 
+  def reject_notice(request)
+    @request = request
+    mail(
+      :to => request.users.for_perspective(Edition::PERSPECTIVES.first).map(&:to_email),
+      :from => request.contact_to_email,
+      :subject => "#{request} has been rejected"
+    )
+  end
+
 end
 

@@ -119,6 +119,7 @@ class Request < ActiveRecord::Base
   end
 
   attr_readonly :basis_id
+  attr_protected :status, :accepted_at, :approval_checkpoint, :rejected_at, :reject_message
 
   include AASM
   aasm_column :status
@@ -131,6 +132,7 @@ class Request < ActiveRecord::Base
   aasm_state :reviewed
   aasm_state :certified, :enter => :reset_approval_checkpoint
   aasm_state :released, :after_enter => [:deliver_release_notice, :set_released_at]
+  aasm_state :rejected, :after_enter => [ :set_rejected_at, :deliver_reject_notice ]
 
   aasm_event :accept do
     transitions :to => :accepted, :from => :submitted
@@ -152,6 +154,9 @@ class Request < ActiveRecord::Base
   end
   aasm_event :release do
     transitions :to => :released, :from => :certified
+  end
+  aasm_event :reject do
+    transitions :to => :rejected, :from => [ :completed, :submitted ], :guard => :reject_message?
   end
 
   alias :requestor :organization
@@ -217,12 +222,20 @@ class Request < ActiveRecord::Base
     RequestMailer.release_notice(self).deliver
   end
 
+  def deliver_reject_notice
+    RequestMailer.reject_notice(self).deliver
+  end
+
   def set_accepted_at
     self.accepted_at = Time.zone.now
   end
 
   def set_released_at
     self.released_at = Time.zone.now
+  end
+
+  def set_rejected_at
+    self.rejected_at = Time.zone.now
   end
 
   def approvals_fulfilled?

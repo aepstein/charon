@@ -67,6 +67,10 @@ Charon::Application.routes.draw do
     resources :registrations, :only => [ :index, :show ]
   end
   resources :requests, :except => [ :create, :new ] do
+    member do
+      get :reject
+      put :do_reject
+    end
     collection do
       get :duplicate
     end

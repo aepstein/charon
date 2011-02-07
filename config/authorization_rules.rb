@@ -113,6 +113,10 @@ authorization do
       if_permitted_to :review
       if_attribute :approvals => { :user_id => is { user.id } }, :status => is_in { %w( completed reviewed ) }
     end
+    has_permission_on [ :requests ], :to => :reject, :join_by => :and do
+      if_permitted_to :manage
+      if_attribute :status => is_in { %w( completed submitted ) }
+    end
 
     has_permission_on [ :items ], :to => :allocate do
       if_permitted_to :allocate, :request
@@ -241,6 +245,9 @@ privileges do
   end
   privilege :show do
     includes :index
+  end
+  privilege :reject do
+    includes :do_reject
   end
 end
 

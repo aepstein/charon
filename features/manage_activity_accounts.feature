@@ -75,7 +75,7 @@ Feature: Manage activity accounts
     And I should see "University account: B00-0002"
     And I should see "Basis: ISPB"
     And I should see "Category: ISPB Food"
-@wip
-  Scenario: List and delete university accounts
+
+#  Scenario: List and delete university accounts
 #TODO
 

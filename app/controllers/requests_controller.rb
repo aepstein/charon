@@ -3,11 +3,31 @@ class RequestsController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index, :duplicate ]
   before_filter :new_request_from_params, :only => [ :new, :create ]
-  filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
+  filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy, :show, :attribute_check => true
   filter_access_to :index, :duplicate do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @basis ) if @basis
     permitted_to!( :index )
+  end
+
+  def reject; end
+
+  def do_reject
+    unless params[:request].blank? || params[:request][:reject_message].blank?
+      @request.update_attribute :reject_message, params[:request][:reject_message]
+      @request.reject!
+      flash[:notice] = 'Request was successfully rejected.'
+      respond_to do |format|
+        format.html { redirect_to @request }
+        format.xml  { head :ok }
+      end
+    else
+      @request.errors.add :reject_message, "cannot be empty."
+      respond_to do |format|
+        format.html { render :action => "reject" }
+        format.xml  { render :xml => @request.errors, :status => :unprocessable_entity }
+      end
+    end
   end
 
   def duplicate

@@ -66,38 +66,42 @@ Feature: Manage requests
     Then I should <update> authorized
     Given I am on the page for the request
     Then I should <show> authorized
+    Given I am on the reject page for the request
+    Then I should <reject> authorized
+    Given I put on the do_reject page for the request
+    Then I should <reject> authorized
 #    Given I am on the requests page for organization: "applicant"
 #    Then I should <show> "Annual"
     Given I delete on the page for the request
     Then I should <destroy> authorized
     Examples:
-      | tense | status    | user                | create  | update  | show    | destroy |
-      |       | started   | admin               | see     | see     | see     | see     |
-      |       | started   | source_manager      | see     | see     | see     | see     |
-      |       | started   | source_reviewer     | not see | not see | see     | not see |
-      |       | started   | applicant_requestor | see     | see     | see     | see     |
-      | past_ | started   | applicant_requestor | not see | not see | see     | not see |
-      |       | started   | observer_requestor  | not see | not see | not see | not see |
-      |       | started   | regular             | not see | not see | not see | not see |
-      |       | completed | admin               | see     | see     | see     | see     |
-      |       | completed | source_manager      | see     | see     | see     | see     |
-      |       | completed | source_reviewer     | not see | not see | see     | not see |
-      |       | completed | applicant_requestor | see     | not see | see     | not see |
-      | past_ | completed | applicant_requestor | not see | not see | see     | not see |
-      |       | completed | observer_requestor  | not see | not see | not see | not see |
-      |       | completed | regular             | not see | not see | not see | not see |
-      |       | submitted | admin               | see     | see     | see     | see     |
-      |       | submitted | source_manager      | see     | see     | see     | see     |
-      |       | submitted | source_reviewer     | not see | not see | see     | not see |
-      |       | submitted | applicant_requestor | see     | not see | see     | not see |
-      |       | submitted | observer_requestor  | not see | not see | not see | not see |
-      |       | submitted | regular             | not see | not see | not see | not see |
-      |       | accepted  | admin               | see     | see     | see     | see     |
-      |       | accepted  | source_manager      | see     | see     | see     | see     |
-      |       | accepted  | source_reviewer     | not see | not see | see     | not see |
-      |       | accepted  | applicant_requestor | see     | not see | see     | not see |
-      |       | accepted  | observer_requestor  | not see | not see | not see | not see |
-      |       | accepted  | regular             | not see | not see | not see | not see |
+      | tense | status    | user                | create  | update  | show    | reject  | destroy |
+      |       | started   | admin               | see     | see     | see     | not see | see     |
+      |       | started   | source_manager      | see     | see     | see     | not see | see     |
+      |       | started   | source_reviewer     | not see | not see | see     | not see | not see |
+      |       | started   | applicant_requestor | see     | see     | see     | not see | see     |
+      | past_ | started   | applicant_requestor | not see | not see | see     | not see | not see |
+      |       | started   | observer_requestor  | not see | not see | not see | not see | not see |
+      |       | started   | regular             | not see | not see | not see | not see | not see |
+      |       | completed | admin               | see     | see     | see     | see     | see     |
+      |       | completed | source_manager      | see     | see     | see     | see     | see     |
+      |       | completed | source_reviewer     | not see | not see | see     | not see | not see |
+      |       | completed | applicant_requestor | see     | not see | see     | not see | not see |
+      | past_ | completed | applicant_requestor | not see | not see | see     | not see | not see |
+      |       | completed | observer_requestor  | not see | not see | not see | not see | not see |
+      |       | completed | regular             | not see | not see | not see | not see | not see |
+      |       | submitted | admin               | see     | see     | see     | see     | see     |
+      |       | submitted | source_manager      | see     | see     | see     | see     | see     |
+      |       | submitted | source_reviewer     | not see | not see | see     | not see | not see |
+      |       | submitted | applicant_requestor | see     | not see | see     | not see | not see |
+      |       | submitted | observer_requestor  | not see | not see | not see | not see | not see |
+      |       | submitted | regular             | not see | not see | not see | not see | not see |
+      |       | accepted  | admin               | see     | see     | see     | not see | see     |
+      |       | accepted  | source_manager      | see     | see     | see     | not see | see     |
+      |       | accepted  | source_reviewer     | not see | not see | see     | not see | not see |
+      |       | accepted  | applicant_requestor | see     | not see | see     | not see | not see |
+      |       | accepted  | observer_requestor  | not see | not see | not see | not see | not see |
+      |       | accepted  | regular             | not see | not see | not see | not see | not see |
 
   Scenario: Create and update requests
     Given a basis exists with name: "Annual Budget"
@@ -112,6 +116,17 @@ Feature: Manage requests
     When I follow "Edit"
     And I press "Update"
     Then I should see "Request was successfully updated."
+
+  Scenario: Reject requests
+    Given a request exists with status: "completed"
+    And I log in as user: "admin"
+    And I am on the reject page for the request
+    When I press "Reject"
+    Then I should not see "Request was successfully rejected."
+    And show me the page
+    When I fill in "Reject message" with "Not acceptable."
+    And I press "Reject"
+    Then I should see "Request was successfully rejected."
 
   Scenario: List and delete requests
     Given a basis: "annual" exists with name: "Annual"
