@@ -149,8 +149,8 @@ class RequestsController < ApplicationController
                    ( request.organization.independent? ? 'Yes' : 'No' ),
                    ( request.organization.club_sport? ? 'Yes' : 'No' ),
                    request.status,
-                   "#{request.editions.perspective_equals('requestor').sum('amount')}",
-                   "#{request.editions.perspective_equals('reviewer').sum('amount')}",
+                   "#{request.editions.where(:perspective => 'requestor').sum('amount')}",
+                   "#{request.editions.where(:perspective => 'reviewer').sum('amount')}",
                    "#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "#{request.items.allocation_for_category(c)}" } )
       end
     end
