@@ -123,7 +123,6 @@ Feature: Manage requests
     And I am on the reject page for the request
     When I press "Reject"
     Then I should not see "Request was successfully rejected."
-    And show me the page
     When I fill in "Reject message" with "Not acceptable."
     And I press "Reject"
     Then I should see "Request was successfully rejected."
