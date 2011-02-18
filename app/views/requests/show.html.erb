@@ -3,7 +3,7 @@
 <p>Basis: <%= @request.basis %></p>
 <p>Status: <%= @request.status %></p>
 <p>Requestor total: <%= number_to_currency @request.editions.where( :perspective => 'requestor').sum('editions.amount') %></p>
-<% if permitted_to? :review, @request -%>
+<% if permitted_to?( :review, @request ) || @request.released? -%>
 <p>Reviewer total: <%= number_to_currency @request.editions.where( :perspective => 'reviewer').sum('editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
 <table>
