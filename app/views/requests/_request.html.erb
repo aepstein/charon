@@ -2,19 +2,19 @@
 <% basis ||= false %>
 <% organization ||= false %>
 
-<% table_row_tag do %>
+<%= table_row_tag do %>
   <% unless basis %>
-  <td><%=h request.basis.name %></td>
+  <td><%= request.basis.name %></td>
   <% end %>
   <% unless organization %>
-  <td><%=h request.organization %></td>
+  <td><%= request.organization %></td>
   <% end %>
   <% unless status %>
   <td><%= request.status %></td>
   <% end %>
   <% if request.new_record? -%>
   <td>
-    <% form_for :request, request, :url => organization_requests_path(request.organization) do |f| %>
+    <%= form_for request, :url => organization_requests_path(request.organization) do |f| %>
       <%= f.hidden_field :basis_id %>
       <%= f.submit 'Create' %>
     <% end %>
@@ -24,8 +24,9 @@
   <td><%= link_to 'Show Detail', request %></td>
   <td><%= link_to 'Manage Items', request_items_path(request) %></td>
   <td><%= link_to( 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) if permitted_to? :destroy, request %></td>
-  <td><%= link_to( 'Approve', new_request_approval_path( request ) ) if permitted_to?( :approve, request ) && request.approvals.user_id_equals(current_user.id).empty? %></td>
+  <td><%= link_to( 'Approve', new_request_approval_path( request ) ) if permitted_to?( :approve, request ) && request.approvals.where( :user_id => current_user.id ).empty? %></td>
   <td><%= link_to_unapprove_request(request) %></td>
+  <td><%= link_to( 'Reject', reject_request_path(request) ) if permitted_to?( :reject, request ) %></td>
   <% end -%>
 <% end %>
 

@@ -10,17 +10,17 @@ class SpeakerExpense < ActiveRecord::Base
 
   def travel_cost
     return 0.0 unless distance && number_of_travelers
-    APP_CONFIG['expenses']['speaker']['travel'] * distance * number_of_travelers
+    Charon::Application.app_config['expenses']['speaker']['travel'] * distance * number_of_travelers
   end
 
   def basic_lodging_cost
     return 0.0 unless number_of_travelers && nights_of_lodging
-    APP_CONFIG['expenses']['speaker']['lodging'] * number_of_travelers * nights_of_lodging
+    Charon::Application.app_config['expenses']['speaker']['lodging'] * number_of_travelers * nights_of_lodging
   end
 
   def meals_cost
     return 0.0 unless number_of_travelers && nights_of_lodging
-    APP_CONFIG['expenses']['speaker']['meals'] * number_of_travelers * nights_of_lodging
+    Charon::Application.app_config['expenses']['speaker']['meals'] * number_of_travelers * nights_of_lodging
   end
 
 	def max_request

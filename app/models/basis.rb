@@ -1,20 +1,19 @@
 class Basis < ActiveRecord::Base
   default_scope :order => 'bases.name ASC'
 
-  named_scope :closed, lambda {
-    { :conditions => [ 'closed_at < ?', DateTime.now.utc ] }
+  scope :closed, lambda { where( 'closed_at < ?', Time.zone.now ) }
+  scope :open, lambda {
+    where( 'open_at < :t AND closed_at > :t', :t => Time.zone.now )
   }
-  named_scope :open, lambda {
-    { :conditions => [ 'open_at < ? AND closed_at > ?', DateTime.now.utc, DateTime.now.utc ] }
+  scope :upcoming, lambda {
+    where( 'open_at > ?', Time.zone.now )
   }
-  named_scope :upcoming, lambda {
-    { :conditions => [ 'open_at > ?', DateTime.now.utc ] }
-  }
-  named_scope :no_draft_request_for, lambda { |organization|
-    { :conditions => [
+  scope :no_draft_request_for, lambda { |organization|
+    where(
       'bases.id NOT IN (SELECT basis_id FROM requests ' +
       'WHERE requests.status IN (?) AND requests.organization_id = ? )',
-      %w( started completed ), organization.id ] }
+      %w( started completed ),
+      organization.id )
   }
 
   belongs_to :organization
@@ -22,8 +21,8 @@ class Basis < ActiveRecord::Base
   belongs_to :framework
   has_many :requests, :dependent => :destroy do
     def allocate_with_caps(status, club_sport, other)
-      self.status_equals(status, :include => [ :organizations, { :items => :editions } ] ).each do |r|
-        if r.organizations.first.club_sport?
+      where( :status => status ).includes( :organization, { :items => :editions } ).each do |r|
+        if r.organization.club_sport?
           r.items.allocate club_sport
         else
           r.items.allocate other
@@ -32,18 +31,19 @@ class Basis < ActiveRecord::Base
     end
     def build_for( organization )
       r = self.build
-      r.organizations << organization
+      r.organization = organization
       r
     end
     def amount_for_perspective_and_status(perspective, status)
       sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
             "AND basis_id = ? AND requests.status = ?"
-      Edition.perspective_equals(perspective).sum( 'amount', :conditions => [ "item_id IN (#{sub})", proxy_owner.id, status ] )
+      Edition.where(:perspective => perspective).
+        where( "item_id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
     end
     def item_amount_for_status(status)
       sub = "SELECT items.id FROM items INNER JOIN requests WHERE request_id = requests.id " +
             "AND basis_id = ? AND requests.status = ?"
-      Item.sum('amount', :conditions => ["id IN (#{sub})", proxy_owner.id, status] )
+      Item.where( "id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
     end
   end
   has_many :editions
@@ -62,7 +62,7 @@ class Basis < ActiveRecord::Base
   validates_datetime :submissions_due_at, :before => :closed_at
 
   def open?
-    (open_at < DateTime.now) && (closed_at > DateTime.now)
+    (open_at < Time.zone.now) && (closed_at > Time.zone.now)
   end
 
   def to_s; name; end

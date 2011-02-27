@@ -25,19 +25,19 @@ module RegistrationImporter
       :funding, :membership_ugrad, :membership_grad, :membership_faculty,
       :membership_staff, :membership_alumni, :membership_noncornell, :updated_time ]
 
-    establish_connection "external_registrations_#{RAILS_ENV}".to_sym
+    establish_connection "external_registrations_#{::Rails.env}".to_sym
     set_table_name "orgs"
     set_primary_keys :org_id, :term_id
-    default_scope :select => MAP.keys.join(', '), :include => [ :contacts ],
-      :order => 'orgs.updated_time ASC'
+    default_scope select( MAP.keys.join(', ') ).includes( :contacts ).
+      order( 'orgs.updated_time ASC' )
 
-    named_scope :importable, lambda {
-      max_registration = Registration.find(:first, :conditions => 'when_updated IS NOT NULL', :order => 'when_updated DESC')
+    scope :importable, lambda {
+      max_registration = Registration.unscoped.where( :when_updated.ne => nil).maximum(:when_updated)
       if max_registration then
-      { :conditions => ["updated_time > ?", max_registration.when_updated.to_i ] }
+        where( :updated_time.gt => max_registration )
       else
-      { }
-      end.merge( { :order => :updated_time, :include => [ :contacts ] } )
+        scoped
+      end
     }
 
     has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
@@ -67,9 +67,16 @@ module RegistrationImporter
       read_attribute(:sports_club) == 'YES'
     end
 
-    def updated_time
-      return Time.zone.now if read_attribute(:updated_time).blank?
-      Time.zone.at read_attribute(:updated_time)
+    def import
+      destination = Registration.find_or_initialize_by_external_id_and_external_term_id(
+        org_id, term_id )
+      destination.attributes = import_attributes( REGISTRATION_ATTRIBUTES )
+      out = Array.new
+      out << ( destination.new_record? ? 1 : 0  )
+      out << ( destination.changed? ? 1 : 0 )
+      destination.save if out.last == 1
+      out[1] = 1 if import_contacts( destination )
+      out
     end
 
     def import_contacts( destination )
@@ -93,15 +100,15 @@ module RegistrationImporter
           term.registrations
         end
         registrations.all.each do |source|
-          destination = Registration.find_or_initialize_by_external_id_and_external_term_id( source.org_id, source.term_id )
-          destination.attributes = source.import_attributes( REGISTRATION_ATTRIBUTES )
-          changed = destination.changed?
-          adds += 1 if destination.new_record?
-          destination.save if changed
-          changes += 1 if source.import_contacts( destination ) || changed
+          r = source.import
+          adds += r.first
+          changes += r.last
         end
-        deletes += Registration.external_term_id_equals( term.term_id ).all(
-          :conditions => ['registrations.external_id NOT IN (?)',term.registrations.map(&:org_id)] ).map(&:destroy).length
+        d = Registration.unscoped.where( :external_term_id => term.term_id )
+        if term.registrations.length > 0
+          d = d.where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) )
+        end
+        deletes = d.all.map(&:destroy).length
       end
       [adds, (changes - adds), deletes, ( Time.now - starts )]
     end

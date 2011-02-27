@@ -1,6 +1,6 @@
 <h2>New activity report for <%=h @activity_report.organization %></h2>
 
-<% semantic_form_for(:activity_report, @activity_report, :url => organization_activity_reports_path(@activity_report.organization) ) do |f| %>
+<%= semantic_form_for(@activity_report, :url => organization_activity_reports_path(@activity_report.organization) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 

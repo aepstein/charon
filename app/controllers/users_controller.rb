@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
 
   def index
-    @search = @users.searchlogic( params[:search] )
+    @search = @users.search( params[:search] )
     @users = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
@@ -87,7 +87,7 @@ class UsersController < ApplicationController
   end
 
   def initialize_index
-    @users = User
+    @users = User.with_permissions_to(:show)
   end
 
   def new_user_from_params

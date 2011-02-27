@@ -59,7 +59,7 @@
       </tr>
     </thead>
     <% Request.aasm_state_names.each do |status| %>
-      <% table_row_tag do %>
+      <%= table_row_tag do %>
         <td><%=h status %></td>
         <td><%= @basis.requests.send(status).size %></td>
         <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('requestor',status) ) %></td>
@@ -75,7 +75,7 @@
 <%= link_to( 'Edit', edit_basis_path(@basis) ) %> |
 <% end -%>
 <% if permitted_to? :review, @basis -%>
-<%= link_to 'List requests', basis_requests_path(@basis) %> |
+<%= nested_index @basis, :requests, [ :duplicate ] %> |
 <% end -%>
 <%= link_to 'Back', organization_bases_path( @basis.organization ) %>
 </p>

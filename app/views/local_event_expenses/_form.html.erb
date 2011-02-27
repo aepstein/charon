@@ -1,4 +1,4 @@
-  <%= form.input :date, :as => :ft_calendar_date_select, :html_options => { :time => false },
+  <%= form.input :date, :as => :date_picker,
     :hint => 'On what date does the event occur?  If the event spans multiple dates, specify the start date.' %>
   <%= form.input :title, :hint => 'What is the title of the event?' %>
   <%= form.input :location, :hint => 'Where will the event be held?' %>
@@ -23,5 +23,5 @@
   </ul>
   </p>
   </li>
-  <%= form.input :uup_required, :label => 'Will a Use of University Property Form be filed for this event?', :as => :radio %>
+  <%= form.input :uup_required, :label => 'UUP?', :hint => 'Will a Use of University Property Form be filed for this event?', :as => :radio %>
 

@@ -1,5 +1,5 @@
-  <% table_row_tag do %>
-    <td><%=h document_type.name %></td>
+  <%= table_row_tag do %>
+    <td><%= document_type.name %></td>
     <td><%= link_to 'Show', document_type %></td>
     <td><%= link_to( 'Edit', edit_document_type_path(document_type) ) if permitted_to?( :edit, document_type ) %></td>
     <td><%= link_to( 'Destroy', document_type, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, document_type ) %></td>

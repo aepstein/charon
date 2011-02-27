@@ -18,7 +18,6 @@ Feature: Manage fulfillments
     And I log in as user: "<user>"
     And I am on the fulfillments page for user: "focus"
     Then I should <show_user> authorized
-    And I should <show_user> "Key Agreement"
     And I should <show_user> "undergrad"
     Given I am on the fulfillments page for organization: "focus"
     Then I should <show_organization> authorized

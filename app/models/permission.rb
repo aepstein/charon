@@ -16,39 +16,34 @@ class Permission < ActiveRecord::Base
   validates_inclusion_of :perspective, :in => Edition::PERSPECTIVES
   validates_inclusion_of :status, :in => Request.aasm_state_names
 
-  named_scope :with_requirements, :joins => 'LEFT JOIN requirements ON permissions.id = requirements.permission_id'
+  scope :with_requirements, joins( 'LEFT JOIN requirements ON permissions.id = ' +
+    'requirements.permission_id' )
   # Needs requirements and memberships tables
-  named_scope :with_fulfillments, :joins => 'LEFT JOIN fulfillments ON ' +
+  scope :with_fulfillments, joins( 'LEFT JOIN fulfillments ON ' +
     'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
     'requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
-    "( (fulfillments.fulfiller_type = 'Organization' AND fulfillments.fulfiller_id = memberships.organization_id) OR " +
-    "(fulfillments.fulfiller_type = 'User' AND fulfillments.fulfiller_id = memberships.user_id) )"
+    "( (fulfillments.fulfiller_type = 'Organization' AND " +
+    "fulfillments.fulfiller_id = memberships.organization_id) OR " +
+    "(fulfillments.fulfiller_type = 'User' AND fulfillments.fulfiller_id = memberships.user_id) )" )
   # Needs requirements and fulfillments tables
-  named_scope :fulfilled, :group => 'permissions.id',
-    :having => 'COUNT(fulfillments.id) = COUNT(requirements.id)'
+  scope :fulfilled, group( 'permissions.id' ).
+    having( 'COUNT(fulfillments.id) = COUNT(requirements.id)' )
   # Needs requirements and fulfillments tables
-  named_scope :unfulfilled, :group => 'permissions.id',
-    :having => 'COUNT(fulfillments.id) < COUNT(requirements.id)'
+  scope :unfulfilled, group( 'permissions.id' ).
+    having( 'COUNT(fulfillments.id) < COUNT(requirements.id)' )
   # Needs memberships table
-  named_scope :perspectives_in, lambda { |perspectives|
-    { :conditions => perspectives.map { |perspective|
-        "permissions.perspective = #{connection.quote perspective.shift} AND memberships.organization_id IN (#{perspective.join ','})"
-      }.join( ' OR ' )
-    }
+  scope :perspectives_in, lambda { |perspectives|
+    perspectives.inject(self) do |memo, perspective|
+      memo.or( "permissions.perspective = #{connection.quote perspective.shift} " +
+        "AND memberships.organization_id IN (#{perspective.join ','})"  )
+    end
   }
   # Must have memberships table related
-  scope_procedure :satisfied, lambda {
-    fulfilled.with_fulfillments.with_requirements
-  }
+  scope :satisfied, lambda { fulfilled.with_fulfillments.with_requirements }
   # Must have memberships table related
-  scope_procedure :unsatisfied, lambda {
-    unfulfilled.with_fulfillments.with_requirements
-  }
+  scope :unsatisfied, lambda { unfulfilled.with_fulfillments.with_requirements }
 
-  delegate :may_update?, :to => :framework
-  delegate :may_see?, :to => :framework
-
-  before_validation_on_create { |p| p.requirements.each { |r| r.permission = p } }
+  before_validation :initialize_requirements, :on => :create
 
   def fulfillable_ids
     requirements.map { |requirement| requirement.flat_fulfillable_id }
@@ -85,12 +80,11 @@ class Permission < ActiveRecord::Base
     potential_fulfillables.map { |f| "#{f.id}_#{f.class.to_s}" }
   end
 
-  def may_create?(user)
-    may_update? user
+  private
+
+  def initialize_requirements
+    requirements.each { |requirement| requirement.permission = self }
   end
 
-  def may_destroy?(user)
-    may_update? user
-  end
 end
 

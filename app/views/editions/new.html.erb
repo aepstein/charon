@@ -1,6 +1,6 @@
 <h2>New edition for <%=h @edition.item %></h2>
 
-<% semantic_form_for( :edition, @edition, :url => item_editions_path(@edition.item) ) do |f| %>
+<%= semantic_form_for( @edition, :url => item_editions_path(@edition.item) ) do |f| %>
   <%= render :partial => "form", :object => f %>
 <% end %>
 

@@ -6,13 +6,21 @@ class User < ActiveRecord::Base
   attr_protected :admin
   attr_readonly :net_id
 
-  default_scope :order => 'users.last_name ASC, users.first_name ASC, users.middle_name ASC, users.net_id ASC'
-  named_scope :approved, lambda { |approvable|
-    { :joins => :approvals,
-      :conditions => [ 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',
-      approvable.class.to_s, approvable.id ] }
+  default_scope order( 'users.last_name ASC, users.first_name ASC, ' +
+    'users.middle_name ASC, users.net_id ASC' )
+  scope :approved, lambda { |approvable|
+    joins( :approvals ).
+    where( 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',
+      approvable.class.to_s, approvable.id )
   }
-  scope_procedure :name_like, lambda { |name| first_name_or_middle_name_or_last_name_or_net_id_like(name) }
+  scope :name_contains, lambda { |name|
+    sql = %w( first_name middle_name last_name net_id ).map do |field|
+      "users.#{field} LIKE :name"
+    end
+    where( sql.join(' OR '), :name => "%#{name}%" )
+  }
+
+  search_methods :name_contains
 
   acts_as_authentic do |c|
     c.login_field = 'net_id'
@@ -45,7 +53,8 @@ class User < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy
   has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
     def in(organizations)
-      Membership.user_id_equals(proxy_owner.id).active.organization_id_equals_any( organizations.map(&:id) ).map(&:role)
+      Membership.where( :user_id => proxy_owner.id,
+        :organization_id.in => organizations.map(&:id) ).active.map(&:role)
     end
     def requestor_in?(organization)
       requestor_in_ids( organization ).length > 0
@@ -94,10 +103,9 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :net_id
   validates_format_of :email, :with => Authlogic::Regex.email
 
-  before_validation_on_create :extract_email, :initialize_password
+  before_validation :extract_email, :initialize_password, :initialize_addresses, :on => :create
   validates_inclusion_of :status, :in => STATUSES, :allow_blank => true
   before_validation :import_simple_ldap_attributes
-  before_validation_on_create { |user| user.addresses.each { |address| address.addressable = user } }
   after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
   after_update 'Fulfillment.unfulfill self'
 
@@ -114,7 +122,9 @@ class User < ActiveRecord::Base
   end
 
   def agreements
-    Agreement.find( approvals.approvable_type_eq('Agreement').map { |approval| approval.approvable_id } )
+    Agreement.find( approvals.where( :approvable_type => 'Agreement' ).map { |approval|
+      approval.approvable_id
+    } )
   end
 
   def full_name
@@ -123,6 +133,10 @@ class User < ActiveRecord::Base
 
   def name
     "#{first_name} #{last_name}".squeeze ' '
+  end
+
+  def to_email
+    "#{name} <#{email}>"
   end
 
   def role_symbols
@@ -167,6 +181,10 @@ class User < ActiveRecord::Base
       'home' => ldap_entry.home_address }.each do |label, address|
       addresses.create_or_update_from_attributes address.merge({:label => label}) if address
     end
+  end
+
+  def initialize_addresses
+    addresses.each { |address| address.addressable = self }
   end
 end
 

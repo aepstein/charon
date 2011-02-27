@@ -54,7 +54,7 @@ Feature: Manage users
     And I fill in "City" with "Ithaca"
     And I fill in "State" with "NY"
     And I fill in "Zip" with "14850"
-    And I choose "Off campus"
+    And I choose "off campus"
     And I press "Create"
     Then I should see "User was successfully created."
     And I should see "First name: first"
@@ -111,15 +111,6 @@ Feature: Manage users
       | Name                |
       | John Bo 1           |
       | John Bo 4           |
-
-  Scenario Outline: Display administrative options for admin on profile page
-    Given I log in as user: "<user>"
-    And I am on the profile page
-    Then I <see> see "agreements"
-    Examples:
-      | user  | see        |
-      | admin | should     |
-      | owner | should not |
 
   Scenario: Show organizations and unmatched registrations for the current user
     Given a role: "president" exists with name: "president"

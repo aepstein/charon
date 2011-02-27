@@ -89,7 +89,7 @@ class RegistrationCriterionsController < ApplicationController
   end
 
   def initialize_index
-    @registration_criterions = RegistrationCriterion
+    @registration_criterions = RegistrationCriterion.scoped
   end
 
   def new_registration_criterion_from_params

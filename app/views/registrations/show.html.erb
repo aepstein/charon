@@ -8,7 +8,7 @@
   <dd><%=h @registration.organization %></dd>
 
   <dt>When Updated</dt>
-  <dd><%=h @registration.when_updated %></dd>
+  <dd><%=raw @registration.when_updated.blank? ? '' : Time.zone.at( @registration.when_updated ).to_formatted_s( :us_ordinal ) %></dd>
 
   <dt>Funding sources</dt>
   <dd><%=h @registration.funding_sources.join ', ' %></dd>

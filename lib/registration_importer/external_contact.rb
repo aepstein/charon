@@ -23,10 +23,10 @@ module RegistrationImporter
       'ADVISOR' => 'advisor'
     }
 
-    establish_connection "external_registrations_#{RAILS_ENV}".to_sym
+    establish_connection "external_registrations_#{::Rails.env}".to_sym
     set_table_name "orgs_contacts"
     set_primary_keys :org_id, :term_id, :contacttype
-    default_scope :select => MAP.keys.join(', ')
+    default_scope select( MAP.keys.join(', ') )
 
     belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
     belongs_to :registration, :class_name => 'ExternalRegistration', :foreign_key => [ :org_id, :term_id ]

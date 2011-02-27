@@ -1,20 +1,45 @@
 class RequestsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index ]
+  before_filter :initialize_index, :only => [ :index, :duplicate ]
   before_filter :new_request_from_params, :only => [ :new, :create ]
-  filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
-  filter_access_to :index do
+  filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy, :show, :attribute_check => true
+  filter_access_to :index, :duplicate do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @basis ) if @basis
     permitted_to!( :index )
   end
 
+  def reject; end
+
+  def do_reject
+    unless params[:request].blank? || params[:request][:reject_message].blank?
+      @request.update_attribute :reject_message, params[:request][:reject_message]
+      @request.reject!
+      flash[:notice] = 'Request was successfully rejected.'
+      respond_to do |format|
+        format.html { redirect_to @request }
+        format.xml  { head :ok }
+      end
+    else
+      @request.errors.add :reject_message, "cannot be empty."
+      respond_to do |format|
+        format.html { render :action => "reject" }
+        format.xml  { render :xml => @request.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  def duplicate
+    @requests = @requests.duplicate
+    index
+  end
+
   # GET /organizations/:organization_id/requests
   # GET /organizations/:organization_id/requests.xml
   def index
-    @search = @requests.searchlogic( params[:search] )
-    @requests = @search.paginate( :page => params[:page], :include => {
+    @search = @requests.search( params[:search] )
+    @requests = @search.paginate( :page => params[:page], :per_page => 10, :include => {
       :approvals => [], :basis =>  { :organization => [:memberships], :framework => [] }
     } )
 
@@ -116,16 +141,17 @@ class RequestsController < ApplicationController
 
   def csv_index
     csv_string = ""
-    CSV::Writer.generate(csv_string) do |csv|
-      csv << ( ['organizations','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
+    CSV.generate(csv_string) do |csv|
+      csv << ( ['organizations', 'independent?','club sport?','status','request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
       @search.each do |request|
         next unless permitted_to?( :review, request )
         csv << ( [ request.organization.name,
+                   ( request.organization.independent? ? 'Yes' : 'No' ),
                    ( request.organization.club_sport? ? 'Yes' : 'No' ),
                    request.status,
-                   "$#{request.editions.perspective_equals('requestor').sum('amount')}",
-                   "$#{request.editions.perspective_equals('reviewer').sum('amount')}",
-                   "$#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "$#{request.items.allocation_for_category(c)}" } )
+                   "#{request.editions.where(:perspective => 'requestor').sum('amount')}",
+                   "#{request.editions.where(:perspective => 'reviewer').sum('amount')}",
+                   "#{request.items.sum('items.amount')}" ] + Category.all.map { |c| "#{request.items.allocation_for_category(c)}" } )
       end
     end
     send_data csv_string, :disposition => "attachment; filename=requests.csv", :type => 'text/csv'

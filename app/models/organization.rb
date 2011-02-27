@@ -3,6 +3,7 @@ class Organization < ActiveRecord::Base
 
   has_many :activity_reports, :dependent => :destroy
   has_many :university_accounts, :dependent => :destroy
+  has_many :activity_accounts, :through => :university_accounts
   has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
   has_many :registrations do
     def current
@@ -13,7 +14,7 @@ class Organization < ActiveRecord::Base
   has_many :memberships
   has_many :roles, :through => :memberships do
     def user_id_equals( id )
-      scoped( :conditions => [ 'memberships.user_id = ?', id ] )
+      scoped.where( 'memberships.user_id = ?', id )
     end
     def ids_for_user( user )
       user_id_equals( user.id ).all.map(&:id)
@@ -33,8 +34,16 @@ class Organization < ActiveRecord::Base
 
   before_validation :format_name
 
-  default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC'
-  scope_procedure :name_like, lambda { |name| first_name_like_or_last_name_like( name ) }
+  default_scope order( 'organizations.last_name ASC, organizations.first_name ASC' )
+
+  scope :name_contains, lambda { |name|
+    sql = %w( first_name last_name ).inject([]) do |memo, field|
+      memo << "organizations.#{field} LIKE :name"
+    end
+    where( sql.join(' OR '), :name => "%#{name}%" )
+  }
+
+  search_methods :name_contains
 
   after_save :update_registrations
 
@@ -44,26 +53,32 @@ class Organization < ActiveRecord::Base
   # Adopt registrations (and consequently memberships where appropriate)
   def update_registrations
     unless registrations.length == 0
-      Registration.external_id_equals_any( registrations.map(&:external_id).uniq
-      ).organization_id_null.each do |registration|
+      Registration.where( :external_id.in => registrations.map(&:external_id).uniq,
+        :organization_id => nil ).each do |registration|
         registration.organization = self
         registration.save
       end
     end
   end
 
-  def registration_criterions
-    return [] unless registrations.current
-    registrations.current.registration_criterions
+  def registration_criterions( force_reload = false )
+    return [] unless registrations( force_reload ).current
+    registrations( force_reload ).current.registration_criterions
   end
 
-  def registration_criterion_ids
-    registration_criterions.map { |criterion| criterion.id }
+  def registration_criterion_ids( force_reload = false )
+    registration_criterions( force_reload ).map(&:id)
   end
 
   def registered?
     return false if registrations.current.blank?
     registrations.current.registered?
+  end
+
+  def independent?
+    return registrations.current.independent? unless registrations.current.blank?
+    return registrations.last(:order => 'registration_terms.starts_at ASC').independent? unless registrations.empty?
+    false
   end
 
   def name(format=nil)

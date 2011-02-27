@@ -11,16 +11,16 @@ development:
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
-test: &TEST
-  adapter: sqlite3
-  database: db/test.sqlite3
-  pool: 5
-  timeout: 5000
 #test: &TEST
-#  adapter: mysql
-#  database: charon_test
-#  host: localhost
-#  user: root
+#  adapter: sqlite3
+#  database: db/test.sqlite3
+#  pool: 5
+#  timeout: 5000
+test: &TEST
+  adapter: mysql
+  database: charon_test
+  host: localhost
+  user: root
 
 production:
   adapter: sqlite3
@@ -46,6 +46,23 @@ external_registrations_production:
   username: root
   host: localhost
 
+external_staffing_development:
+  adapter: mysql
+  database: staffing_development
+  username: root
+  host: localhost
+
+external_staffing_test:
+  adapter: mysql
+  database: staffing
+  username: root
+  host: localhost
+
+external_staffing_production:
+  adapter: mysql
+  database: staffing
+  username: root
+  host: localhost
 
 cucumber:
   <<: *TEST

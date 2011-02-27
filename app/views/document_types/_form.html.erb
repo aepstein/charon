@@ -1,5 +1,5 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
   <%= form.input :name %>
   <%= form.input :max_size_quantity %>
   <%= form.input :max_size_unit, :as => :select, :collection => DocumentType::UNITS %>

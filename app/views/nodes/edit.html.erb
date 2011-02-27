@@ -1,6 +1,6 @@
 <h2>Editing node for <%=h @node.structure %></h2>
 
-<% semantic_form_for(@node) do |f| %>
+<%= semantic_form_for(@node) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 

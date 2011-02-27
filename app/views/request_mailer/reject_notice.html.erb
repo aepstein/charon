@@ -1,0 +1,13 @@
+<p>
+Dear Officers of <%= @request.organization %>,
+</p>
+
+<p>
+This email is to inform you that your <%=h @request %> has been rejected.
+To see it, please go to: &lt;<%= link_to request_url(@request), request_url(@request) %>&gt;.
+</p>
+
+<p><b>Why the request was rejected:</b></p>
+
+<%=markdown @request.reject_message %>
+

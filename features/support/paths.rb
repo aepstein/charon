@@ -20,6 +20,12 @@ module NavigationHelpers
     when /^the edit page for #{capture_model}$/
       edit_polymorphic_path( [model($1)] )
 
+    when /^#{capture_model} new #{capture_factory} page for #{capture_model}$/
+      new_polymorphic_path( [ model($3), $2 ] ) + "?request[basis_id]=#{model($1).id}"
+
+    when /^#{capture_model} #{capture_plural_factory} page for #{capture_model}$/
+      polymorphic_path( [ model($3), $2 ] ) + "?request[basis_id]=#{model($1).id}"
+
     when /^the new #{capture_factory} page$/
       new_polymorphic_path( [$1] )
 
@@ -51,8 +57,14 @@ module NavigationHelpers
     #     user_profile_path(User.find_by_login($1))
 
     else
-      raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
-        "Now, go and add a mapping in #{__FILE__}"
+      begin
+        page_name =~ /the (.*) page/
+        path_components = $1.split(/\s+/)
+        self.send(path_components.push('path').join('_').to_sym)
+      rescue Object => e
+        raise "Can't find mapping from \"#{page_name}\" to a path.\n" +
+          "Now, go and add a mapping in #{__FILE__}"
+      end
     end
   end
 end

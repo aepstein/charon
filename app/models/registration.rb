@@ -1,18 +1,6 @@
 class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
-  default_scope :order => "registrations.name ASC", :include => [ :registration_term ]
-  named_scope :active, :conditions => [ 'registration_terms.current = ?', true ]
-  named_scope :inactive, :conditions => [ 'registration_terms.current = ? OR registration_terms.current IS NULL', false ]
-  named_scope :unmatched, :conditions => { :organization_id => nil }
-  named_scope :named, lambda { |name|
-    { :conditions => [ "registrations.name LIKE '%?%'", name ] }
-  }
-  named_scope :min_percent_members_of_type, lambda { |percent, type|
-    { :conditions => [ " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
-        "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + " +
-        "number_of_others ) )", percent.to_i] }
-  }
 
   belongs_to :organization
   belongs_to :registration_term
@@ -23,14 +11,32 @@ class Registration < ActiveRecord::Base
   end
   has_many :users, :through => :memberships, :uniq => true
 
+  default_scope :order => "registrations.name ASC", :include => [ :registration_term ]
+
+  scope :active, where( 'registration_terms.current = ?', true )
+  scope :inactive, where( 'registration_terms.current = ? OR ' +
+    'registration_terms.current IS NULL', false )
+  scope :unmatched, where( :organization_id => nil )
+  scope :named, lambda { |name| where( "registrations.name LIKE '%?%'", name ) }
+  scope :min_percent_members_of_type, lambda { |percent, type|
+    where( " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
+        "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + " +
+        "number_of_others ) )", percent.to_i )
+  }
+
   validates_uniqueness_of :id
 
-  attr_accessor :organization_id_previously_changed
-  alias :organization_id_previously_changed? :organization_id_previously_changed
-
   before_save :adopt_registration_term, :update_organization
-  after_save 'Fulfillment.fulfill organization if organization && active?'
-  after_update 'Fulfillment.unfulfill organization if organization && active?', :update_memberships
+  after_save :fulfill_organization
+  after_update :unfulfill_organization, :update_memberships
+
+  def fulfill_organization
+    Fulfillment.fulfill organization if organization(true) && active?
+  end
+
+  def unfulfill_organization
+    Fulfillment.unfulfill organization if organization(true) && active?
+  end
 
   def registration_criterions
     RegistrationCriterion.all.inject([]) do |memo, criterion|
@@ -68,17 +74,17 @@ class Registration < ActiveRecord::Base
   # Update associate organizations
   def update_organization
     if organization.blank?
-      organizations = Registration.external_id_equals( external_id ).organization_id_not_null.all(:include => :organization).map(&:organization).uniq
+      organizations = Registration.where( :external_id => external_id,
+        :organization_id.ne => nil ).includes( :organization ).map(&:organization).uniq
       self.organization = organizations.first if organizations.length > 0
     end
-    self.organization_id_previously_changed = organization_id_changed?
     if organization && current?
       organization.update_attributes name.to_organization_name_attributes
     end
   end
 
   def update_memberships
-    if organization_id_previously_changed?
+    if organization_id_changed?
       Membership.update_all(
         "organization_id = #{connection.quote organization_id} " +
         "WHERE registration_id = #{id}"

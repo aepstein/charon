@@ -9,6 +9,7 @@ class Role < ActiveRecord::Base
   validates_uniqueness_of :name
 
   has_many :memberships, :dependent => :destroy
+  has_many :member_sources, :dependent => :destroy
 
   def to_s; name; end
 end

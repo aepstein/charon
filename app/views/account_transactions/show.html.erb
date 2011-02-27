@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Status:</b>
+  <%= @account_transaction.status %>
+</p>
+
+<p>
+  <b>Effective on:</b>
+  <%= @account_transaction.effective_on %>
+</p>
+
+
+<%= link_to 'Edit', edit_account_transaction_path(@account_transaction) %> |
+<%= link_to 'Back', account_transactions_path %>

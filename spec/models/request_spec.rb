@@ -1,5 +1,5 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-require 'spec/lib/approver_scenarios'
+require 'approver_scenarios'
 
 describe Request do
 
@@ -153,6 +153,18 @@ describe Request do
     ].each do |scenario|
       request.perspective_for( scenario.first ).should eql scenario.last
     end
+  end
+
+  it 'should have a duplicate scope' do
+    @request.save
+    duplicate = Factory(:request, :basis => @request.basis, :organization => @request.organization)
+    same_organization = Factory(:request, :organization => @request.organization)
+    same_basis = Factory(:request, :basis => @request.basis)
+    different = Factory(:request)
+    duplicates = Request.duplicate
+    duplicates.count.should eql 2
+    duplicates.should include @request
+    duplicates.should include duplicate
   end
 
 end

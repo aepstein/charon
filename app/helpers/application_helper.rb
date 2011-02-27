@@ -1,13 +1,12 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
 
+  def markdown( content )
+    sanitize Markdown.new(content).to_html
+  end
+
   def table_row_tag(increment=true, &block)
-    content_tag = content_tag 'tr', capture(&block), :class => table_row_class(increment)
-    if block_called_from_erb?(block)
-      concat(content_tag)
-    else
-      content_tag
-    end
+    content_tag 'tr', capture(&block), :class => table_row_class(increment)
   end
 
   def table_row_class(increment=true)
@@ -29,7 +28,7 @@ module ApplicationHelper
   end
 
   def link_to_unapprove_request(request)
-    approval = request.approvals.user_id_equals(current_user.id).first
+    approval = request.approvals.where( :user_id => current_user.id).first
     if approval && permitted_to?( :destroy, approval )
       return link_to 'Unapprove', approval, :confirm => 'Are you sure?', :method => :delete
     end
@@ -39,12 +38,12 @@ module ApplicationHelper
   def nested_index(parent, children, views=[])
     out = link_to( "List #{children}", polymorphic_path( [ parent, children ] ) )
     if views.length > 0
-      out += ": " + views.inject([]) do |memo, view|
-        memo << link_to( h( view ), polymorphic_path( [ view, parent, children ] ) )
+      out += ": ".html_safe + views.inject([]) do |memo, view|
+        memo << link_to( view, polymorphic_path( [ view, parent, children ] ) )
         memo
-      end.join(', ')
+      end.join(', ').html_safe
     end
-    out
+    out.html_safe
   end
 
 end

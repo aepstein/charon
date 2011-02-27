@@ -1,0 +1,11 @@
+<%= form.inputs do %>
+<% unless form.object.new_record? %>
+<%= form.input :university_account %>
+<% end %>
+<%= form.input :basis %>
+<%= form.input :category %>
+<%= form.input :comments %>
+<% end %>
+
+<%= form.buttons %>
+

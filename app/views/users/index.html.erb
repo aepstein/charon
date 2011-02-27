@@ -1,9 +1,9 @@
 <h2>Listing users</h2>
 
-<% form_for :search, :url => users_path, :html => { :method => :get } do |f| %>
+<%= form_for :search, :url => users_path, :html => { :method => :get } do |f| %>
   <p>
-    <%= f.label :name_like, 'Name' %>
-    <%= f.text_field :name_like %>
+    <%= f.label :name_contains, 'Name' %>
+    <%= f.text_field :name_contains %>
     <%= f.submit 'Search' %>
   </p>
 <% end %>

@@ -1,5 +1,5 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
   <%= form.input :first_name %>
   <%= form.input :last_name %>
   <%= form.input :club_sport, :as => :radio %>

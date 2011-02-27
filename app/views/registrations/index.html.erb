@@ -1,6 +1,6 @@
 <h2>Listing registrations <%= @organization ? "for #{h @organization}" : "" %><%= @registration_term ? "for #{h @registration_term}" : "" %></h2>
 
-<% form_for :search,
+<%= form_for :search,
   :url => polymorphic_path( [ (@organization ? @organization : @registration_term), :registrations ] ),
   :html => { :method => :get } do |f| %>
   <p>

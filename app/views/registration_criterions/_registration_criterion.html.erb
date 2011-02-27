@@ -1,9 +1,9 @@
-  <tr>
+  <%= table_row_tag do %>
     <td><%= registration_criterion.must_register? ? 'Yes' : 'No' %></td>
     <td><%= registration_criterion.minimal_percentage %>%</td>
     <td><%= registration_criterion.type_of_member %></td>
     <td><%= link_to 'Show', registration_criterion %></td>
     <td><%= link_to( 'Edit', edit_registration_criterion_path(registration_criterion) ) if permitted_to? :edit, registration_criterion %></td>
     <td><%= link_to( 'Destroy', registration_criterion, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, registration_criterion %></td>
-  </tr>
+  <% end %>
 

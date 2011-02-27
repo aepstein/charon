@@ -1,6 +1,6 @@
 <h2>New inventory item</h2>
 
-<% semantic_form_for( :inventory_item, @inventory_item,
+<%= semantic_form_for( @inventory_item,
   :url => organization_inventory_items_path( @inventory_item.organization ) ) do |f| %>
   <%= render :partial => "inventory_items/form", :object => f %>
 <% end %>

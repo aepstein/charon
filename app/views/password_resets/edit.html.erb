@@ -1,7 +1,7 @@
 <h1>Change My Password</h1>
 
-<% form_for @user, :url => password_reset_path, :method => :put do |f| %>
-  <%= f.error_messages %>
+<%= form_for @user, :url => password_reset_path, :method => :put do |f| %>
+  <%= render "shared/error_messages", :target => f.object %>
   <%= f.label :password %><br />
   <%= f.password_field :password %><br />
   <br />
@@ -10,3 +10,4 @@
   <br />
   <%= f.submit "Update my password and log me in" %>
 <% end %>
+

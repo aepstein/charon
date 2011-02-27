@@ -1,0 +1,6 @@
+Dear Officers of <%= @request.organization %>,
+
+This email is to inform you that your <%= @request %> has been rejected.  To see it, please go to: <<%= request_url @request %>>.
+
+<%= @request.reject_message %>
+

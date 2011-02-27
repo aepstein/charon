@@ -1,5 +1,5 @@
-  <% table_row_tag do %>
-    <td><%=h organization.name %></td>
+  <%= table_row_tag do %>
+    <td><%= organization.name %></td>
     <td><%= link_to 'Show', organization %></td>
     <td><%= link_to( 'Profile', profile_organization_path( organization ) ) if permitted_to? :profile, organization %></td>
     <td><%= link_to( 'Edit', edit_organization_path(organization) ) if permitted_to? :edit, organization %></td>

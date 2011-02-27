@@ -91,7 +91,7 @@ class ItemsController < ApplicationController
 
     respond_to do |format|
       flash[:notice] = 'Item was successfully destroyed.'
-      format.html { redirect_to( request_items_url(@item.request) ) }
+      format.html { redirect_to request_items_url @item.request }
       format.xml  { head :ok }
     end
   end
@@ -106,8 +106,8 @@ class ItemsController < ApplicationController
   end
 
   def initialize_index
-    @items = Item
-    @items = @request.items.root
+    @items = @request.items.root if @request
+    @items ||= Item.scoped.order( "items.position ASC" )
     # Skip explicit permissions check because if you can see the request, you can see items
   end
 

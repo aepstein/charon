@@ -24,7 +24,7 @@ class InventoryItemsController < ApplicationController
   # GET /organizations/:organization_id/inventory_items
   # GET /organizations/:organization_id/inventory_items.xml
   def index
-    @search = @inventory_items.with_permissions_to(:show).searchlogic( params[:search] )
+    @search = @inventory_items.with_permissions_to(:show).search( params[:search] )
     @inventory_items = @search.paginate( :page => params[:page] )
 
     respond_to do |format|

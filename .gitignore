@@ -1,3 +1,4 @@
+.bundle
 log/*.log
 tmp/**/*
 doc/api
@@ -8,3 +9,4 @@ db/*.sqlite*-journal
 db/*.sql
 db/schema.rb
 db/uploads
+

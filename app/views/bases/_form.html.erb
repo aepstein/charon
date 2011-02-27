@@ -1,14 +1,14 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
   <%= form.input :name %>
   <%= form.input :structure %>
   <%= form.input :framework %>
   <%= form.input :contact_name %>
   <%= form.input :contact_email %>
   <%= form.input :contact_web %>
-  <%= form.input :open_at, :as => :ft_calendar_date_select %>
-  <%= form.input :closed_at, :as => :ft_calendar_date_select %>
-  <%= form.input :submissions_due_at, :as => :ft_calendar_date_select,
+  <%= form.input :open_at, :as => :datetime_picker %>
+  <%= form.input :closed_at, :as => :datetime_picker %>
+  <%= form.input :submissions_due_at, :as => :datetime_picker,
     :hint => 'The next deadline for submissions (when there are multiple deadlines on a rolling basis)' %>
   <%= form.input :release_message %>
   <% end %>

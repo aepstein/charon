@@ -54,19 +54,18 @@ describe Item do
     node = @item.node
     node.item_quantity_limit = 3
     node.save
-    second = @item.request.items.create(:node => node)
-    second.id.should_not be_nil
-    third = @item.request.items.create(:node => node)
-    third.id.should_not be_nil
-    first.position.should == 1
-    second.position.should == 2
-    third.position.should == 3
+    second = @item.request.items.create!(:node => node)
+    @item.reload
+    third = @item.request.items.create!(:node => node)
+    first.position.should eql 1
+    second.position.should eql 2
+    third.position.should eql 3
     third.insert_at(second.position)
     first.reload
     second.reload
-    first.position.should == 1
-    second.position.should == 3
-    third.position.should == 2
+    first.position.should eql 1
+    second.position.should eql 3
+    third.position.should eql 2
   end
 
   it "should have an initialize_next_edition that initialize the next edition in each child and in self" do

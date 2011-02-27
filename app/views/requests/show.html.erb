@@ -1,10 +1,10 @@
-<h2><%=h @request %></h2>
+<h2><%= @request %></h2>
 
-<p>Basis: <%=h @request.basis %></p>
-<p>Status: <%=h @request.status %></p>
-<p>Requestor total: <%= number_to_currency @request.editions.perspective_equals('requestor').sum('editions.amount') %></p>
-<% if permitted_to? :review -%>
-<p>Reviewer total: <%= number_to_currency @request.editions.perspective_equals('reviewer').sum('editions.amount') %></p>
+<p>Basis: <%= @request.basis %></p>
+<p>Status: <%= @request.status %></p>
+<p>Requestor total: <%= number_to_currency @request.editions.where( :perspective => 'requestor').sum('editions.amount') %></p>
+<% if permitted_to?( :review, @request ) || @request.released? -%>
+<p>Reviewer total: <%= number_to_currency @request.editions.where( :perspective => 'reviewer').sum('editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @request.items.sum('items.amount') %></p>
 <table>
   <thead>
@@ -16,7 +16,7 @@
   <tbody>
   <% @request.basis.structure.categories.each do |category| -%>
   <% table_row_tag do -%>
-    <td><%=h category.name %></td>
+    <td><%= category.name %></td>
     <td><%= number_to_currency @request.items.allocation_for_category(category) %></td>
   <% end -%>
   <% end -%>
@@ -62,11 +62,11 @@ This request is now submitted for review.
 <%= render :partial => 'items/detailed', :collection => @request.items.root,
   :locals => { :level => 4 } %>
 
-<% unless @request.users.unfulfilled(Approver.quantity_null).length == 0 -%>
+<% unless @request.users.unfulfilled(Approver.where( :quantity => nil )).length == 0 -%>
 <h2>Who must approve</h2>
 <p>The following users must approve before the request may be considered submitted.</p>
 <ul>
-  <% @request.users.unfulfilled(Approver.quantity_null).each do |user| -%>
+  <% @request.users.unfulfilled(Approver.where( :quantity => nil )).each do |user| -%>
   <li><%=h user %></li>
   <% end -%>
 </ul>
@@ -81,11 +81,13 @@ This request is now submitted for review.
 <% end -%>
 <h3>Who has approved</h3>
 
-<%= render :partial => 'approvals/approvals', :object => @request.approvals.all(:include => :user),
+<%= render :partial => 'approvals/approvals', :object => @request.approvals.includes(:user).all,
            :locals => { :user => true, :approvable => false } %>
 
 <p>
 <%= link_to h("Back to #{@request.organization}"), @request.organization %> |
+<%= link_to h("Back to #{@request.organization} profile"), profile_organization_path(@request.organization) %> |
+<%= link_to "Manage items", request_items_path(@request) %> |
 <%= link_to 'Edit', edit_request_path(@request) %>
 </p>
 

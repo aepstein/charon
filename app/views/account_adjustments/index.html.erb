@@ -1,0 +1,25 @@
+<h1>Listing account_adjustments</h1>
+
+<table>
+  <tr>
+    <th>Account transaction</th>
+    <th>Amount</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @account_adjustments.each do |account_adjustment| %>
+  <tr>
+    <td><%= account_adjustment.account_transaction %></td>
+    <td><%= account_adjustment.amount %></td>
+    <td><%= link_to 'Show', account_adjustment %></td>
+    <td><%= link_to 'Edit', edit_account_adjustment_path(account_adjustment) %></td>
+    <td><%= link_to 'Destroy', account_adjustment, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Account adjustment', new_account_adjustment_path %>

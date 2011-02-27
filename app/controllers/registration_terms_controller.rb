@@ -93,7 +93,7 @@ class RegistrationTermsController < ApplicationController
   end
 
   def initialize_index
-    @registration_terms = RegistrationTerm
+    @registration_terms = RegistrationTerm.scoped
   end
 end
 

@@ -1,4 +1,4 @@
-  <% table_row_tag do %>
+  <%= table_row_tag do %>
     <td><%=h document.document_type %></td>
     <td><%= link_to( 'Show', document ) if permitted_to?( :show, document ) %></td>
   <% end %>

@@ -1,0 +1,9 @@
+  <%= table_row_tag do %>
+    <td><%= activity_account.university_account %></td>
+    <td><%= activity_account.basis %></td>
+    <td><%= activity_account.category %></td>
+    <td><%= link_to 'Show', activity_account %></td>
+    <td><%= link_to 'Edit', edit_activity_account_path(activity_account) if permitted_to? :edit, activity_account %></td>
+    <td><%= link_to( 'Destroy', activity_account, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, activity_account %></td>
+  <% end %>
+

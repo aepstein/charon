@@ -89,7 +89,7 @@ class RolesController < ApplicationController
   end
 
   def initialize_index
-    @roles = Role
+    @roles = Role.scoped
   end
 
   def new_role_from_params

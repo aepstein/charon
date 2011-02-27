@@ -11,7 +11,7 @@ class BasesController < ApplicationController
   # GET /organizations/:organization_id/bases
   # GET /organizations/:organization_id/bases.xml
   def index
-    @search = @bases.searchlogic( params[:search] )
+    @search = @bases.search( params[:search] )
     @bases = @search.paginate( :page => params[:page] )
 
     respond_to do |format|

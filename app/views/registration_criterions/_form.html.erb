@@ -1,6 +1,6 @@
-<% form.error_messages %>
+<%= render "shared/error_messages", :target => form.object %>
 
-<% form.inputs do %>
+<%= form.inputs do %>
 <%= form.input :must_register, :as => :radio %>
 <%= form.input :minimal_percentage %>
 <%= form.input :type_of_member, :as => :select, :collection => Registration::MEMBER_TYPES %>

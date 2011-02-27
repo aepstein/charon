@@ -1,5 +1,19 @@
 require 'factory_girl'
 
+Factory.define :account_adjustment do |f|
+  f.association :account_transaction
+  f.association :activity_account
+  f.amount 0.0
+end
+
+Factory.define :account_transaction do |f|
+  f.effective_on { |t| Time.zone.today }
+end
+
+Factory.define :activity_account do |f|
+  f.association :university_account
+end
+
 Factory.define :activity_report do |f|
   f.association :organization
   f.sequence( :description ) { |n| "activity #{n}" }
@@ -69,7 +83,9 @@ Factory.define :category do |f|
 end
 
 Factory.define :document do |f|
-  f.attached { ActionController::TestUploadedFile.new('features/support/assets/small.png','image/png') }
+  f.attached { Rack::Test::UploadedFile.new(
+    "#{::Rails.root}/features/support/assets/small.png",
+    'image/png') }
   f.association :edition, :factory => :attachable_edition
   f.document_type { |d| d.edition.document_types.first }
 end
@@ -193,6 +209,13 @@ Factory.define :membership do |f|
   f.association :user
   f.association :role
   f.association :organization
+end
+
+Factory.define :member_source do |f|
+  f.association :organization
+  f.association :role
+  f.minimum_votes 0
+  f.external_committee_id 1
 end
 
 Factory.define :structure do |f|

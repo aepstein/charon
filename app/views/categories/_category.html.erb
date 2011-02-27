@@ -1,4 +1,4 @@
-  <% table_row_tag do %>
+  <%= table_row_tag do %>
     <td><%=h category.name %></td>
     <td><%= link_to 'Show', category %></td>
     <td><%= link_to( 'Edit', edit_category_path(category) ) if permitted_to?( :edit, category ) %></td>

@@ -1,10 +1,11 @@
 authorization do
   role :admin do
-    has_permission_on [ :activity_reports, :addresses, :agreements, :approvers,
-      :bases, :categories, :document_types, :editions, :frameworks, :fulfillments,
-      :inventory_items, :items, :nodes, :organizations, :permissions,
-      :registration_criterions, :registrations, :registration_terms, :requests,
-      :roles, :structures, :university_accounts, :users, :user_status_criterions ],
+    has_permission_on [ :activity_accounts, :activity_reports, :addresses,
+      :agreements, :approvers, :bases, :categories, :document_types, :editions,
+      :frameworks, :fulfillments, :inventory_items, :items, :nodes,
+      :organizations, :permissions, :registration_criterions, :registrations,
+      :registration_terms, :requests, :roles, :structures, :university_accounts,
+      :users, :user_status_criterions ],
       :to => [ :manage ]
     has_permission_on [ :bases ], :to => [ :review ]
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
@@ -25,12 +26,10 @@ authorization do
 
     has_permission_on [ :memberships ], :to => :show do
       if_permitted_to :show, :user
+      if_attribute :user => { :organizations => intersects_with { user.organizations } }
+      if_attribute :user => { :registrations => intersects_with { user.registrations } }
     end
 
-    has_permission_on [ :users ], :to => [ :show ] do
-      if_attribute :organizations => intersects_with { user.organizations }
-      if_attribute :registrations => intersects_with { user.registrations }
-    end
     has_permission_on [ :users ], :to => [ :show, :edit, :update ] do
       if_attribute :id => is { user.id }
     end
@@ -111,6 +110,10 @@ authorization do
     has_permission_on [ :requests ], :to => :unapprove, :join_by => :and do
       if_permitted_to :review
       if_attribute :approvals => { :user_id => is { user.id } }, :status => is_in { %w( completed reviewed ) }
+    end
+    has_permission_on [ :requests ], :to => :reject, :join_by => :and do
+      if_permitted_to :manage
+      if_attribute :status => is_in { %w( completed submitted ) }
     end
 
     has_permission_on [ :items ], :to => :allocate do
@@ -194,6 +197,25 @@ authorization do
       if_permitted_to :show, :approvable
       if_attribute :approvable_type => is { 'Request' }
     end
+
+    has_permission_on [ :university_accounts ], :to => :request do
+      if_permitted_to :request, :organization
+    end
+
+    has_permission_on [ :university_accounts ], :to => :manage do
+      if_permitted_to :manage, :organization
+      if_permitted_to :manage, :activity_accounts
+    end
+
+    has_permission_on [ :activity_accounts ], :to => :manage do
+      if_permitted_to :manage, :basis
+    end
+
+    has_permission_on [ :activity_accounts ], :to => :show do
+      if_permitted_to :request, :university_account
+      if_permitted_to :manage, :university_account
+    end
+
   end
   role :guest do
     has_permission_on :user_sessions, :to => [ :new, :create ]
@@ -221,6 +243,9 @@ privileges do
   end
   privilege :show do
     includes :index
+  end
+  privilege :reject do
+    includes :do_reject
   end
 end
 

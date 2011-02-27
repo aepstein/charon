@@ -1,11 +1,18 @@
 class InventoryItem < ActiveRecord::Base
-  default_scope :order => 'organizations.last_name ASC, organizations.first_name ASC, inventory_items.identifier ASC, ' +
-    'inventory_items.acquired_on ASC, inventory_items.description ASC', :include => :organization
-
-  scope_procedure :active, lambda { retired_on_null }
-  scope_procedure :retired, lambda { retired_on_not_null }
-
   belongs_to :organization
+
+  default_scope includes(:organization).
+    order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
+    'inventory_items.identifier ASC, inventory_items.acquired_on ASC, ' +
+    'inventory_items.description ASC' )
+
+  scope :active, where( :retired_on => nil)
+  scope :retired, where( :retired_on.ne => nil )
+  scope :organization_name_contains, lambda { |name|
+    scoped & Organization.name_contains( name )
+  }
+
+  search_methods :organization_name_contains
 
   validates_presence_of :organization
   validates_uniqueness_of :identifier, :scope => [ :organization_id ]
@@ -16,9 +23,15 @@ class InventoryItem < ActiveRecord::Base
   validates_date :scheduled_retirement_on, :after => :acquired_on
   validates_date :retired_on, :allow_blank => true, :after => :acquired_on
 
-  before_validation_on_create { |r| r.current_value ||= r.purchase_price }
+  before_validation :initialize_current_value, :on => :create
 
   def to_s; description + ( identifier? ? " (#{identifier})" : "" ); end
+
+  private
+
+  def initialize_current_value
+    self.current_value ||= purchase_price
+  end
 
 end
 

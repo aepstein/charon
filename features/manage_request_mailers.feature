@@ -19,39 +19,88 @@ Feature: Manage request mailers
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
     And a user: "treasurer" exists with email: "treasurer@example.com", first_name: "Jane", last_name: "Doe"
     And a user: "officer" exists with email: "officer@example.com", first_name: "Alpha", last_name: "Beta"
+    And a user: "old_president" exists with email: "old_president@example.com", first_name: "Jane", last_name: "Jacobs"
     And a membership exists with organization: organization "requestor", role: role "president", user: user "president", active: true
     And a membership exists with organization: organization "requestor", role: role "treasurer", user: user "treasurer", active: true
     And a membership exists with organization: organization "requestor", role: role "officer", user: user "officer", active: true
+    And a membership exists with organization: organization "requestor", role: role "president", user: user "old_president", active: false
     And an approval exists with approvable: request "completed", user: user "president"
 
   Scenario: Send notice regarding a started request
-    Given a started reminder email is sent for request: "started"
-    Then "president@example.com" should receive an email with subject "Request of Money Taking Club from Money Taking Fund needs attention"
-    When "president@example.com" opens the email with subject "Request of Money Taking Club from Money Taking Fund needs attention"
-    Then they should see "Dear Officers of Money Taking Club," in the email body
-    And they should see "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been started, but requires further action before it will be considered submitted." in the email body
-    And they should see "Jane Doe" in the email body
-    And they should see "John Doe" in the email body
-    And they should not see "Alpha Beta" in the email body
+    Given all emails have been delivered
+    And a started reminder email is sent for request: "started"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the last email subject should contain "Request of Money Taking Club from Money Taking Fund needs attention"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been started, but requires further action before it will be considered submitted."
+    And the email parts should contain "Jane Doe"
+    And the email parts should contain "John Doe"
+    And the email parts should not contain "Alpha Beta"
 
   Scenario: Send notice regarding a completed request
-    Given a completed reminder email is sent for request: "completed"
-    Then "treasurer@example.com" should receive an email with subject "Request of Money Taking Club from Money Taking Fund needs your approval"
-    When "treasurer@example.com" opens the email with subject "Request of Money Taking Club from Money Taking Fund needs your approval"
-    Then they should see "Dear Officers of Money Taking Club," in the email body
-    And they should see "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been completed, but requires further action before it will be considered submitted." in the email body
-    And they should see "Jane Doe" in the email body
-    And they should not see "John Doe" in the email body
-    And they should not see "Alpha Beta" in the email body
+    Given all emails have been delivered
+    And a completed reminder email is sent for request: "completed"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund needs your approval"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been completed, but requires further action before it will be considered submitted."
+    And the email parts should contain "Jane Doe"
+    And the email parts should not contain "John Doe"
+    And the email parts should not contain "Alpha Beta"
+
+  Scenario: Send notice regarding a submitted request
+    Given all emails have been delivered
+    And request: "completed" has status: "submitted"
+    And a submitted notice email is sent for request: "completed"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been submitted"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is a confirmation that you have successfully submitted your request for Money Taking Fund."
+    And the email parts should contain "You should receive an additional notice when it is accepted for review."
+
+  Scenario: Send notice regarding an accepted request
+    Given all emails have been delivered
+    And request: "completed" has status: "accepted"
+    And an accepted notice email is sent for request: "completed"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been accepted for review"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is a confirmation that your request for Money Taking Fund has been accepted for review."
+    And the email parts should contain "You will receive additional notice when a determination is released."
+
+  Scenario: Send notice regarding a rejected request
+    Given all emails have been delivered
+    And request: "completed" has reject_message: "Organization is banned from applying this time."
+    And an reject notice email is sent for request: "completed"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been rejected"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been rejected."
+    And the email parts should contain "Organization is banned from applying this time."
 
   Scenario: Send notice regarding a released request
-    Given request: "completed" has status: "released"
+    Given all emails have been delivered
+    And request: "completed" has status: "released"
     And a release notice email is sent for request: "completed"
-    Then "president@example.com" should receive an email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
-    And "treasurer@example.com" should receive an email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
-    And "officer@example.com" should receive an email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
-    When "president@example.com" opens the email with subject "You may now review Request of Money Taking Club from Money Taking Fund"
-    Then they should see "Dear Officers of Money Taking Club," in the email body
-    And they should see "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been processed and released for you to review." in the email body
-    And they should see "A customized release message." in the email body
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "You may now review Request of Money Taking Club from Money Taking Fund"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been processed and released for you to review."
+    And the email parts should contain "A customized release message."
 

@@ -1,6 +1,6 @@
 class Request < ActiveRecord::Base
-  default_scope :include => [ :organization, :basis ],
-    :order => 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC'
+  default_scope includes( :organization, :basis ).
+    order( 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   belongs_to :basis
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
@@ -10,8 +10,9 @@ class Request < ActiveRecord::Base
   end
   has_many :users, :through => :approvals do
     def for_perspective( perspective )
-      Membership.active.role_name_like_any( Role::REQUESTOR ).organization_id_equals(
-      proxy_owner.send(perspective).id ).all( :include => [ :user ] ).map(&:user)
+      ( Membership.includes(:user).
+          where( :active => true, :organization_id => proxy_owner.send(perspective).id ) &
+          Role.where( :name.in => Role::REQUESTOR ) ).map(&:user)
     end
     def fulfilled( approvers = Approver )
       approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
@@ -20,11 +21,12 @@ class Request < ActiveRecord::Base
       approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
     end
     def required_for_status( status )
-      approvers_to_users( Approver.framework_id_equals( proxy_owner.basis.framework_id ).status_equals( status ).quantity_null )
+      approvers_to_users( Approver.where( :framework_id => proxy_owner.basis.framework_id,
+        :status => status, :quantity => nil ) )
     end
     protected
     def after_checkpoint
-      all( :conditions => ['approvals.created_at > ?', proxy_owner.approval_checkpoint] )
+      where( 'approvals.created_at > ?', proxy_owner.approval_checkpoint )
     end
     def approvers_to_users(approvers)
       approvers_organized = approvers.inject({}) do |memo, approver|
@@ -38,8 +40,8 @@ class Request < ActiveRecord::Base
           "AND memberships.role_id IN (#{role_ids.join(',')}) )" )
       end
       return Array.new if approvers.length == 0
-      User.all( :joins => [:memberships], :conditions => approvers_fragments.join(' OR ') +
-        " AND memberships.active = #{connection.quote true}" ) - self
+      User.joins( :memberships).where( approvers_fragments.join(' OR ') +
+        " AND memberships.active = #{connection.quote true}" ).all - self
     end
   end
   has_many :items, :dependent => :destroy, :order => 'items.position ASC' do
@@ -84,17 +86,21 @@ class Request < ActiveRecord::Base
   has_many :editions, :through => :items
   belongs_to :organization
 
-  named_scope :organization_name_like, lambda { |name|
-    { :conditions => ['organizations.last_name LIKE ? OR organizations.first_name LIKE ?', "%#{name}%", "%#{name}%" ] }
+  scope :organization_name_contains, lambda { |name|
+    scoped & Organization.name_contains( name )
   }
-  named_scope :basis_name_like, lambda { |name|
-    { :conditions => ['bases.name LIKE ?', "%#{name}%"] }
+  scope :basis_name_contains, lambda { |name|
+    scoped & Basis.where( :name.like => name )
   }
-  named_scope :incomplete_for_perspective, lambda { |perspective|
-    { :conditions => [ "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
+  scope :incomplete_for_perspective, lambda { |perspective|
+    where( "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
         "editions ON items.id = editions.item_id AND editions.perspective = ? " +
-        "WHERE items.request_id = requests.id AND editions.id IS NULL)", perspective ] }
+        "WHERE items.request_id = requests.id AND editions.id IS NULL)", perspective )
   }
+  scope :duplicate, where("requests.basis_id IN (SELECT basis_id FROM requests " +
+    "AS duplicates WHERE duplicates.organization_id = requests.organization_id " +
+    "AND requests.id <> duplicates.id)")
+  search_methods :organization_name_contains, :basis_name_contains
 
   delegate :structure, :to => :basis
   delegate :framework, :to => :basis
@@ -102,7 +108,7 @@ class Request < ActiveRecord::Base
   delegate :contact_name, :to => :basis
   delegate :contact_email, :to => :basis
 
-  before_validation_on_create :set_approval_checkpoint
+  before_validation :set_approval_checkpoint, :on => :create
 
   validates_presence_of :organization
   validates_datetime :approval_checkpoint
@@ -113,17 +119,20 @@ class Request < ActiveRecord::Base
   end
 
   attr_readonly :basis_id
+  attr_protected :status, :accepted_at, :approval_checkpoint, :rejected_at, :reject_message
 
   include AASM
   aasm_column :status
   aasm_initial_state :started
   aasm_state :started
   aasm_state :completed, :after_enter => :deliver_required_approval_notice
-  aasm_state :submitted, :enter => :reset_approval_checkpoint
-  aasm_state :accepted, :after_enter => :set_accepted_at
+  aasm_state :submitted, :enter => :reset_approval_checkpoint,
+    :after_enter => :deliver_submitted_notice
+  aasm_state :accepted, :after_enter => [ :set_accepted_at, :deliver_accepted_notice ]
   aasm_state :reviewed
   aasm_state :certified, :enter => :reset_approval_checkpoint
   aasm_state :released, :after_enter => [:deliver_release_notice, :set_released_at]
+  aasm_state :rejected, :after_enter => [ :set_rejected_at, :deliver_reject_notice ]
 
   aasm_event :accept do
     transitions :to => :accepted, :from => :submitted
@@ -145,6 +154,9 @@ class Request < ActiveRecord::Base
   end
   aasm_event :release do
     transitions :to => :released, :from => :certified
+  end
+  aasm_event :reject do
+    transitions :to => :rejected, :from => [ :completed, :submitted ], :guard => :reject_message?
   end
 
   alias :requestor :organization
@@ -188,18 +200,30 @@ class Request < ActiveRecord::Base
   end
 
   def deliver_required_approval_notice
-    needed_approvals = users.unfulfilled(Approver.quantity_null).map do |u|
+    needed_approvals = users.unfulfilled(Approver.where( :quantity => nil )).map do |u|
       a = Approval.new( :user => u )
       a.approvable = self
       a
     end
     needed_approvals.each do |approval|
-      ApprovalMailer.deliver_request_notice(approval)
+      ApprovalMailer.request_notice(approval).deliver
     end
   end
 
+  def deliver_submitted_notice
+    RequestMailer.submitted_notice(self).deliver
+  end
+
+  def deliver_accepted_notice
+    RequestMailer.accepted_notice(self).deliver
+  end
+
   def deliver_release_notice
-    RequestMailer.deliver_release_notice(self)
+    RequestMailer.release_notice(self).deliver
+  end
+
+  def deliver_reject_notice
+    RequestMailer.reject_notice(self).deliver
   end
 
   def set_accepted_at
@@ -208,6 +232,10 @@ class Request < ActiveRecord::Base
 
   def set_released_at
     self.released_at = Time.zone.now
+  end
+
+  def set_rejected_at
+    self.rejected_at = Time.zone.now
   end
 
   def approvals_fulfilled?
@@ -225,6 +253,10 @@ class Request < ActiveRecord::Base
   def reset_approval_checkpoint
     return if approvals.existing.last.nil?
     self.approval_checkpoint = approvals.existing.last.created_at
+  end
+
+  def contact_to_email
+    "#{contact_name} <#{contact_email}>"
   end
 
   def self.aasm_state_names

@@ -1,0 +1,16 @@
+<h2>Reject <%=h @request %></h2>
+
+<%= semantic_form_for( @request, :url => do_reject_request_path(@request), :method => :put ) do |f| %>
+  <%= f.inputs do %>
+    <%= f.input :reject_message %>
+  <% end %>
+  <%= f.buttons do %>
+    <%= f.commit_button :label => 'Reject' %>
+  <% end %>
+<% end %>
+
+<p>
+<%= link_to 'Show', @request %> |
+<%= link_to 'Back', organization_requests_path( @request.organization ) %>
+</p>
+

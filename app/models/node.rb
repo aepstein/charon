@@ -11,14 +11,14 @@ class Node < ActiveRecord::Base
 
   default_scope :order => 'nodes.name ASC'
 
-  named_scope :allowed_for_children_of, lambda { |request, parent_item|
+  scope :allowed_for_children_of, lambda { |request, parent_item|
     parent_node_sql = parent_item.nil? ? "IS NULL" : "= #{parent_item.node_id}"
     parent_item_sql = parent_item.nil? ? "IS NULL" : "= #{parent_item.id}"
     parent_item_count_sql =
       "(SELECT COUNT(*) FROM items WHERE items.request_id = #{request.id} AND " +
       "items.node_id = nodes.id AND items.parent_id #{parent_item_sql})"
-    { :conditions => "nodes.parent_id #{parent_node_sql} AND " +
-                     "nodes.item_quantity_limit > #{parent_item_count_sql}" }
+    where( "nodes.parent_id #{parent_node_sql} AND " +
+           "nodes.item_quantity_limit > #{parent_item_count_sql}" )
   }
 
   has_and_belongs_to_many :document_types

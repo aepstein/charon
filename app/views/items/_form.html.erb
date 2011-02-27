@@ -1,6 +1,6 @@
-<%= form.error_messages %>
+<%= render "shared/error_messages", :target => form.object %>
 
-<% form.inputs do %>
+<%= form.inputs do %>
   <% if form.object.new_record? -%>
     <%= form.input :node_id, :as => :hidden %>
     <%= form.input :parent_id, :as => :hidden %>
@@ -14,7 +14,7 @@
   <% end -%>
 <% end %>
 
-<% form.semantic_fields_for :editions do |edition_form| %>
+<%= form.semantic_fields_for :editions do |edition_form| %>
   <% if form.object.new_record? ||
         (edition_form.object.new_record? && permitted_to?( :create, edition_form.object ) ) ||
         (edition_form.object.id && permitted_to?( :update, edition_form.object ) ) -%>

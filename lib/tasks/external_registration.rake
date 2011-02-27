@@ -24,7 +24,7 @@ namespace :external_registrations do
     end
 
     def report_import_result( context, type, result )
-      Rails.logger.info "External registrations: import: #{context} [#{type}]: #{import_result result}"
+      ::Rails.logger.info "External registrations: import: #{context} [#{type}]: #{import_result result}"
       puts import_result result
     end
 

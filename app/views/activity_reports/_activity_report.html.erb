@@ -1,9 +1,9 @@
 <% organization ||= false -%>
-<% table_row_tag do %>
+<%= table_row_tag do %>
   <% unless organization %>
-  <td><%=h activity_report.organization %></td>
+  <td><%= activity_report.organization %></td>
   <% end %>
-  <td><%=h activity_report.description %></td>
+  <td><%= activity_report.description %></td>
   <td><%= activity_report.starts_on.to_formatted_s :rfc822 %></td>
   <td><%= activity_report.ends_on.to_formatted_s :rfc822 %></td>
   <td><%= link_to 'Show', activity_report %></td>

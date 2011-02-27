@@ -1,4 +1,4 @@
-<% table_row_tag do %>
+<%= table_row_tag do %>
   <td><%=h organization.name %></td>
   <td><%=h current_user.roles.in([organization]).join(", ") %></td>
   <td><%= link_to 'Profile', profile_organization_path(organization) %></td>

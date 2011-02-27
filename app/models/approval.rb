@@ -1,14 +1,13 @@
 class Approval < ActiveRecord::Base
-  default_scope :include => [ :user ], :order => 'users.last_name ASC, users.first_name ASC, users.middle_name ASC'
-
   belongs_to :approvable, :polymorphic => true
   belongs_to :user
 
-  named_scope :agreements, :conditions => { :approvable_type => 'Agreement' }
-  named_scope :requests, :conditions => { :approvable_type => 'Request' }
-  named_scope :at_or_after, lambda { |time|
-    { :conditions => [ 'approvals.created_at >= ?', time.utc ] }
-  }
+  default_scope includes( :user ).
+    order( 'users.last_name ASC, users.first_name ASC, users.middle_name ASC' )
+
+  scope :agreements, where( :approvable_type => 'Agreement' )
+  scope :requests, where( :approvable_type => 'Request' )
+  scope :at_or_after, lambda { |time| where( 'approvals.created_at >= ?', Time.zone.now ) }
 
   validates_datetime :as_of
   validates_uniqueness_of :approvable_id, :scope => [ :approvable_type, :user_id ]
@@ -20,11 +19,11 @@ class Approval < ActiveRecord::Base
   after_destroy :unapprove_approvable, :deliver_unapproval_notice, :unfulfill_user
 
   def deliver_approval_notice
-    ApprovalMailer.deliver_approval_notice( self )
+    ApprovalMailer.approval_notice( self ).deliver
   end
 
   def deliver_unapproval_notice
-    ApprovalMailer.deliver_unapproval_notice( self )
+    ApprovalMailer.unapproval_notice( self ).deliver
   end
 
   def as_of=(datetime)
@@ -43,7 +42,8 @@ class Approval < ActiveRecord::Base
   def approvable_must_not_change
     return unless approvable && as_of
     if approvable.updated_at.to_s.to_datetime > as_of
-      errors.add_to_base( "#{approvable} has changed since you saw it.  Please review again and confirm approval." )
+      errors.add :base,
+        "#{approvable} has changed since you saw it.  Please review again and confirm approval."
     end
   end
 

@@ -1,6 +1,4 @@
 class Item < ActiveRecord::Base
-  default_scope :order => 'items.position ASC'
-
   belongs_to :node
   belongs_to :request, :touch => true
   has_many :documents, :through => :editions
@@ -35,6 +33,9 @@ class Item < ActiveRecord::Base
       self.reject { |edition| edition.new_record? }
     end
   end
+
+  scope :root, where( :parent_id => nil )
+
   acts_as_list :scope => :parent_id
   acts_as_tree
 
@@ -50,9 +51,9 @@ class Item < ActiveRecord::Base
   validates_presence_of :node
   validates_presence_of :request
   validates_numericality_of :amount, :greater_than_or_equal_to => 0.0
-  validate_on_create :node_must_be_allowed
+  validate :node_must_be_allowed, :on => :create
 
-  before_validation_on_create { |item| item.editions.each { |edition| edition.item = item } }
+  before_validation :initialize_editions, :on => :create
   before_validation :set_title
   after_save :move_to_new_position
 
@@ -72,7 +73,7 @@ class Item < ActiveRecord::Base
   end
 
   def allowed_nodes
-    Node.allowed_for_children_of( request, parent ).structure_id_equals( request.basis.structure_id )
+    Node.allowed_for_children_of( request, parent ).where( :structure_id => request.basis.structure_id )
   end
 
   def node_must_be_allowed
@@ -89,6 +90,10 @@ class Item < ActiveRecord::Base
       self.new_position = nil
       insert_at np
     end
+  end
+
+  def initialize_editions
+    editions.each { |edition| edition.item = self }
   end
 
 end

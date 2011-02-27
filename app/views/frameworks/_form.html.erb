@@ -1,9 +1,9 @@
-  <%= form.error_messages %>
-  <% form.inputs do %>
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
     <%= form.input :name %>
   <% end %>
-  <% form.semantic_fields_for :requirements do |requirement_form| %>
-    <% requirement_form.inputs do %>
+  <%= form.semantic_fields_for :requirements do |requirement_form| %>
+    <%= requirement_form.inputs do %>
       <%= render :partial => 'requirements/form', :object => requirement_form %>
     <% end %>
   <% end %>

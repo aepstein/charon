@@ -1,10 +1,15 @@
 class UniversityAccount < ActiveRecord::Base
   include OrganizationNameLookup
 
-  default_scope :order => 'university_accounts.department_code ASC, ' +
-    'university_accounts.subledger_code ASC', :include => [ :organization ]
-
+  has_many :activity_accounts
   belongs_to :organization
+
+  default_scope order( 'university_accounts.department_code ASC, ' +
+    'university_accounts.subledger_code ASC').includes( :organization )
+
+  scope :organization_name_contains, lambda { |name|
+    includes( :organization ) & Organization.name_contains( name )
+  }
 
   validates_format_of :department_code, :with => /\A[A-Z]\d{2,2}\Z/
   validates_format_of :subledger_code, :with => /\A\d{4,4}\Z/

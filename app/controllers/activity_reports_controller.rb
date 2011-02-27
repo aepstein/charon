@@ -27,7 +27,7 @@ class ActivityReportsController < ApplicationController
   # GET /organizations/:organization_id/activity_reports
   # GET /organizations/:organization_id/activity_reports.xml
   def index
-    @search = @activity_reports.searchlogic( params[:search] )
+    @search = @activity_reports.search( params[:search] )
     @activity_reports = @search.paginate( :page => params[:page],
       :include => { :organization => { :memberships => :role } }
     )
@@ -116,8 +116,8 @@ class ActivityReportsController < ApplicationController
   end
 
   def initialize_index
-    @activity_reports = ActivityReport
-    @activity_reports = @activity_reports.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
+    @activity_reports = ActivityReport.scoped
+    @activity_reports = @activity_reports.where(:organization_id => @organization.id) if @organization
     @activity_reports = @activity_reports.with_permissions_to(:show)
   end
 

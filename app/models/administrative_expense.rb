@@ -1,8 +1,8 @@
 class AdministrativeExpense < ActiveRecord::Base
   MAILBOX_OPTIONS = {
     "$0 - no mailbox" => "0",
-    "$#{APP_CONFIG['expenses']['general']['mailbox']['existing']} - existing" => APP_CONFIG['expenses']['general']['mailbox']['existing'],
-    "$#{APP_CONFIG['expenses']['general']['mailbox']['new']} - new" => APP_CONFIG['expenses']['general']['mailbox']['new']
+    "$#{Charon::Application.app_config['expenses']['general']['mailbox']['existing']} - existing" => Charon::Application.app_config['expenses']['general']['mailbox']['existing'],
+    "$#{Charon::Application.app_config['expenses']['general']['mailbox']['new']} - new" => Charon::Application.app_config['expenses']['general']['mailbox']['new']
   }
 
   belongs_to :edition
@@ -16,12 +16,12 @@ class AdministrativeExpense < ActiveRecord::Base
 
   def copies_expense
     return 0.0 unless copies
-    APP_CONFIG['expenses']['general']['copies'] * copies
+    Charon::Application.app_config['expenses']['general']['copies'] * copies
   end
 
   def chalk_expense
     return 0.0 unless chalk
-    APP_CONFIG['expenses']['general']['chalk'] * chalk
+    Charon::Application.app_config['expenses']['general']['chalk'] * chalk
   end
 
 	def max_request

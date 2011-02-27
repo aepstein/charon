@@ -1,12 +1,12 @@
 class Document < ActiveRecord::Base
-  default_scope :include => :document_type, :order => 'document_types.name ASC'
+  default_scope includes( :document_type).order( 'document_types.name ASC' )
 
   belongs_to :edition
   belongs_to :document_type
 
   has_attached_file :attached,
     :path => ':rails_root/db/uploads/:rails_env/:id_partition/:attachment/:style.:extension',
-    :url => '/documents/:id.:format'
+    :url => ':relative_url_root/documents/:id.:format'
 
   delegate :max_size, :to => :document_type
   delegate :max_size_string, :to => :document_type

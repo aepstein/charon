@@ -2,9 +2,8 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-#  helper :all
+  protect_from_forgery
   helper_method :current_user_session, :current_user, :sso_net_id
-  filter_parameter_logging :password, :password_confirmation
   before_filter :check_authorization
 
   def permission_denied
@@ -16,8 +15,8 @@ class ApplicationController < ActionController::Base
   end
 
   def sso_net_id
-    return false unless request.env['REMOTE_USER'] && !request.env['REMOTE_USER'].blank?
-    request.env['REMOTE_USER']
+    net_id = request.env['REMOTE_USER'] || request.env['HTTP_REMOTE_USER']
+    net_id.blank? ? false : net_id
   end
 
   private
@@ -27,12 +26,12 @@ class ApplicationController < ActionController::Base
     perspective ||= Edition::PERSPECTIVES.first
     for_user = request.unfulfilled_requirements_for current_user
     out = ""
-    unless for_user.empty?
+    unless for_user.length == 0
       out << "You must fulfill the following requirements: #{for_user.join '; '}."
     end
     organization = request.send(perspective)
     for_organization = request.unfulfilled_requirements_for organization
-    unless for_organization.empty?
+    unless for_organization.length == 0
       out << "#{organization} must fulfill the following requirements: #{for_organization.join '; '}."
     end
     out

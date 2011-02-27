@@ -1,0 +1,11 @@
+<h2>Editing activity account</h2>
+
+<%= semantic_form_for(@activity_account) do |f| %>
+  <% render :partial => 'activity_accounts/form', :object => f %>
+<% end %>
+
+<p>
+<%= link_to 'Show', @activity_account %> |
+<%= link_to 'Back', university_account_activity_accounts_path(@activity_account.university_account) %>
+</p>
+
