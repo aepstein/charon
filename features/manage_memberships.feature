@@ -47,6 +47,8 @@ Feature: Manage memberships
     And I should <create> "New membership"
     And I should <update> "Edit"
     And I should <destroy> "Destroy"
+    Given I am on the active memberships page for <context>: "focus"
+    Then I should <show> "Focus" within "table"
     Given I am on the new membership page for <context>: "focus"
     Then I should <create> authorized
     Given I post on the memberships page for <context>: "focus"
@@ -67,6 +69,10 @@ Feature: Manage memberships
       | user                 | focus     | not see | not see | not see | see     |
       | user                 | colleague | not see | not see | not see | see     |
       | user                 | regular   | not see | not see | not see | not see |
+#      | registration         | admin     | not see | not see | not see | see     |
+      | registration         | focus     | not see | not see | not see | see     |
+      | registration         | colleague | not see | not see | not see | see     |
+      | registration         | regular   | not see | not see | not see | not see |
 
   Scenario Outline: Create new membership and update
     Given a user exists with net_id: "zzz333", first_name: "Buzz", last_name: "Aldrin"

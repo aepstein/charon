@@ -1,9 +1,22 @@
 class MembershipsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index ]
+  before_filter :initialize_index, :only => [ :index, :active ]
   before_filter :new_membership_from_params, :only => [ :new, :create ]
   filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
+  filter_access_to :index, :active do
+    permitted_to! :show, @organization if @organization
+    permitted_to! :show, @user if @user
+    permitted_to! :show, @registration if @registration
+    true
+  end
+
+  # GET /organizations/:organization_id/memberships/active
+  # GET /organizations/:organization_id/memberships/active.xml
+  def active
+    @memberships = @memberships.active
+    index
+  end
 
   # GET /organizations/:organization_id/memberships
   # GET /organizations/:organization_id/memberships.xml
@@ -12,7 +25,7 @@ class MembershipsController < ApplicationController
     @memberships = @search.paginate( :page => params[:page] )
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { render :action => 'index' } # index.html.erb
       format.xml  { render :xml => @memberships }
     end
   end
@@ -91,7 +104,7 @@ class MembershipsController < ApplicationController
   end
 
   def initialize_index
-    @memberships = Membership
+    @memberships = Membership.scoped
     if @context
       @memberships = @memberships.scoped( :conditions => { :organization_id => @context.id } ) if @context.class == Organization
       @memberships = @memberships.scoped( :conditions => { :user_id => @context.id } ) if @context.class == User

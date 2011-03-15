@@ -47,7 +47,11 @@ Charon::Application.routes.draw do
         get :retired, :active
       end
     end
-    resources :memberships, :only => [ :create, :new, :index ]
+    resources :memberships, :only => [ :create, :new, :index ] do
+      collection do
+        get :active
+      end
+    end
     resources :registrations, :only => [ :index ]
     resources :requests, :only => [ :create, :new, :index ] do
       collection do
@@ -60,7 +64,11 @@ Charon::Application.routes.draw do
     resources :fulfillments, :only => [:index]
   end
   resources :registrations, :only => [ :index, :show ] do
-    resources :memberships, :only => [ :index ]
+    resources :memberships, :only => [ :index, :new, :create ] do
+      collection do
+        get :active
+      end
+    end
     resources :organizations, :only => [ :new, :create ]
   end
   resources :registration_terms do
@@ -91,7 +99,11 @@ Charon::Application.routes.draw do
     resources :addresses, :only => [ :index, :new, :create ]
     resources :approvals, :only => [ :index ]
     resources :fulfillments, :only => [ :index ]
-    resources :memberships, :only => [ :index, :new, :create ]
+    resources :memberships, :only => [ :index, :new, :create ] do
+      collection do
+        get :active
+      end
+    end
   end
 
   resource :user_session
