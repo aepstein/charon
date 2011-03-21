@@ -12,12 +12,12 @@ module Formtastic
   else
 	DATE_FORMATS = Date::DATE_FORMATS
   end
- 
+
   module DatePicker
     protected
 
     def date_picker_input(method, options = {})
-      format = options[:format] || DATE_FORMATS[:default] || '%d %b %Y'
+      format = options[:format] || DATE_FORMATS[:default] || '%m/%d/%Y'
       string_input(method, date_picker_options(format, object.send(method)).merge(options))
     end
 
@@ -27,12 +27,12 @@ module Formtastic
       {:input_html => {:class => 'ui-date-picker',:value => value.try(:strftime, format)}}
     end
   end
-  
+
   module DateTimePicker
     protected
 
     def datetime_picker_input(method, options = {})
-      format = options[:format] || DATE_FORMATS[:default] || '%d %b %Y %H:%M'
+      format = options[:format] || DATE_FORMATS[:default] || '%m/%d/%Y %I:%M %P'
       string_input(method, datetime_picker_options(format, object.send(method)).merge(options))
     end
 
@@ -46,3 +46,4 @@ end
 
 Formtastic::SemanticFormBuilder.send(:include, Formtastic::DatePicker)
 Formtastic::SemanticFormBuilder.send(:include, Formtastic::DateTimePicker)
+
