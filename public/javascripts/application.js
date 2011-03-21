@@ -3,6 +3,6 @@
 $(document).ready(function(){
   $('input.ui-date-picker').datepicker({ dateFormat: 'yy-mm-dd' });
   $('input.ui-datetime-picker').datetimepicker({ ampm: true,
-    dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm T'  });
+    dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm tt'  });
 });
 
