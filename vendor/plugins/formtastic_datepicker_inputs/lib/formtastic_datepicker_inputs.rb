@@ -17,7 +17,7 @@ module Formtastic
     protected
 
     def date_picker_input(method, options = {})
-      format = options[:format] || DATE_FORMATS[:default] || '%m/%d/%Y'
+      format = options[:format] || DATE_FORMATS[:default] || '%Y-%m-%d'
       string_input(method, date_picker_options(format, object.send(method)).merge(options))
     end
 
@@ -32,7 +32,7 @@ module Formtastic
     protected
 
     def datetime_picker_input(method, options = {})
-      format = options[:format] || DATE_FORMATS[:default] || '%m/%d/%Y %I:%M %P'
+      format = options[:format] || DATE_FORMATS[:default] || '%Y-%m-%d %I:%M %P'
       string_input(method, datetime_picker_options(format, object.send(method)).merge(options))
     end
 
