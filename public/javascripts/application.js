@@ -2,6 +2,7 @@
 // This file is automatically included by javascript_include_tag :defaults
 $(document).ready(function(){
   $('input.ui-date-picker').datepicker({ dateFormat: 'yy-mm-dd' });
-  $('input.ui-datetime-picker').datetimepicker({ dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm TT'  });
+  $('input.ui-datetime-picker').datetimepicker({ ampm: true,
+    dateFormat: 'yy-mm-dd', timeFormat: 'hh:mm T'  });
 });
 
