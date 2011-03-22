@@ -20,6 +20,8 @@ class UniversityAccount < ActiveRecord::Base
     r.department_code = r.department_code.capitalize unless r.department_code.blank?
   end
 
+  search_methods :organization_name_contains
+
   def to_s; "#{department_code}-#{subledger_code}"; end
 end
 

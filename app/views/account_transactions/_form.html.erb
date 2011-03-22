@@ -1,25 +1,7 @@
-<%= form_for(@account_transaction) do |f| %>
-  <% if @account_transaction.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@account_transaction.errors.count, "error") %> prohibited this account_transaction from being saved:</h2>
-
-      <ul>
-      <% @account_transaction.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
+<%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
+    <%= form.input :effective_on, :hint => 'What is the effective date for this transaction?' %>
   <% end %>
-
-  <div class="field">
-    <%= f.label :status %><br />
-    <%= f.text_field :status %>
-  </div>
-  <div class="field">
-    <%= f.label :effective_on %><br />
-    <%= f.date_select :effective_on %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+  <%= form.buttons %>
 <% end %>
+

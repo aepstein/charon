@@ -1,5 +1,11 @@
-<h1>New account_transaction</h1>
+<h2>New account transaction</h2>
 
-<%= render 'form' %>
+<%= semantic_form_for( @account_transaction,
+  :url => activity_account_account_transactions_path( @activity_account ) ) do |form| %>
+<%= render :partial => 'form' %>
+<% end %>
 
-<%= link_to 'Back', account_transactions_path %>
+<p>
+<%= link_to 'Back', activity_account_account_transactions_path( @activity_account ) %>
+</p>
+
