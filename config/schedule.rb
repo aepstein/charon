@@ -20,6 +20,7 @@
 # Learn more: http://github.com/javan/whenever
 
 set :output, { :standard => nil }
+set :job_template, "/bin/bash -l -c ':job'"
 
 every 1.hours do
   rake 'external_registrations:import:latest'
