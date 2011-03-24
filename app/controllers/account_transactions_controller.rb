@@ -1,4 +1,14 @@
 class AccountTransactionsController < ApplicationController
+  before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, :only => [ :index ]
+  before_filter :new_account_transaction_from_params, :only => [ :new, :create ]
+  filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
+  filter_access_to :index do
+    permitted_to!( :show, @activity_account ) if @activity_account
+    true
+  end
+
   # GET /account_transactions
   # GET /account_transactions.xml
   def index
@@ -80,4 +90,26 @@ class AccountTransactionsController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+
+  def initialize_context
+    @activity_account = ActivityAccount.find params[:activity_account_id] if params[:activity_account_id]
+    @account_transaction = AccountTransaction.find params[:id] if params[:id]
+  end
+
+  def initialize_index
+    @account_transactions = AccountTransaction.scoped
+    @account_transactions = @activity_account.account_transactions if @activity_account
+  end
+
+  def new_account_transaction_from_params
+    @account_transaction = @activity_account.account_transactions.build( params[ :account_transaction ] )
+    if @activity_account &&
+      @account_transaction.adjustments.for_activity_account( @activity_account ).blank?
+      @account_transaction.adjustments.build( :activity_account => @activity_account )
+    end
+  end
+
 end
+

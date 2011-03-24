@@ -1,5 +1,5 @@
 class ExternalEquityReport < ActiveRecord::Base
-  belongs_to :edition
+  belongs_to :edition, :inverse_of => :external_equity_report
 
   validates_presence_of :edition
   validates_numericality_of :anticipated_income, :greater_than_or_equal_to => 0.0

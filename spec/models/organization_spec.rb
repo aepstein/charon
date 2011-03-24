@@ -25,20 +25,6 @@ describe Organization do
     requests.first.basis.should eql basis
   end
 
-  it "should have a requests.started method that returns started requests" do
-    request = Factory.build(:request, :organization => @registered_organization)
-    request.save.should be_true
-    @registered_organization.requests.should include(request)
-    @registered_organization.requests.started.empty?.should be_false
-  end
-
-  it "should have a requests.released method that returns released requests" do
-    request = Factory.build(:request, :status => "released", :organization => @registered_organization)
-    request.save.should be_true
-    @registered_organization.requests.should include(request)
-    @registered_organization.requests.released.empty?.should be_false
-  end
-
   it "should reformat last_name of organizations such that An|A|The|Cornell are moved to first_name" do
     organization = Factory(:organization)
     parameters = {

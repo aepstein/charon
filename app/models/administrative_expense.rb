@@ -5,7 +5,7 @@ class AdministrativeExpense < ActiveRecord::Base
     "$#{Charon::Application.app_config['expenses']['general']['mailbox']['new']} - new" => Charon::Application.app_config['expenses']['general']['mailbox']['new']
   }
 
-  belongs_to :edition
+  belongs_to :edition, :inverse_of => :administrative_expense
 
   validates_presence_of :edition
   validates_numericality_of :copies, :only_integer => true, :greater_than_or_equal_to => 0

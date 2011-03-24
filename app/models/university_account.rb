@@ -1,14 +1,14 @@
 class UniversityAccount < ActiveRecord::Base
   include OrganizationNameLookup
 
-  has_many :activity_accounts
-  belongs_to :organization
+  has_many :activity_accounts, :inverse_of => :university_account, :dependent => :destroy
+  belongs_to :organization, :inverse_of => :university_accounts
 
   default_scope order( 'university_accounts.department_code ASC, ' +
     'university_accounts.subledger_code ASC').includes( :organization )
 
   scope :organization_name_contains, lambda { |name|
-    includes( :organization ) & Organization.name_contains( name )
+    includes( :organization ).merge( Organization.name_contains( name ) )
   }
 
   validates_format_of :department_code, :with => /\A[A-Z]\d{2,2}\Z/

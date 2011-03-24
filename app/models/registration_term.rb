@@ -2,44 +2,50 @@ class RegistrationTerm < ActiveRecord::Base
 
   scope :current, where( :current => true )
 
-  has_many :registrations,:dependent => :nullify
-  has_many :memberships, :through => :registrations
+  has_many :registrations, :dependent => :nullify, :inverse_of => :registration_term do
+    # Update registrations:
+    # * dissociate registrations that do not have a non-matching external term id
+    # * associate registrations that have a matching external term id
+    # * reset association to reflect any changes made
+    def adopt!
+      Registration.update_all(
+        "registration_term_id = NULL",
+        "registration_term_id = #{proxy_owner.id} AND external_term_id IS NOT NULL AND " +
+        "external_term_id <> #{proxy_owner.external_id}"
+      )
+      Registration.update_all(
+        "registration_term_id = #{proxy_owner.id}",
+        "external_term_id = #{proxy_owner.external_id}"
+      )
+      reset
+    end
+  end
+  has_many :memberships, :through => :registrations do
+    # Sets memberships' activation status to match registration setting
+    def activate!
+      scoped.update_all "active = #{connection.quote current?}",
+        "registration_id IN (#{registration_ids.join ','})"
+      reset
+    end
+  end
 
-  before_update :will_update_dependencies
-  after_save :adopt_registrations
+  after_save { |term| term.registrations.adopt! }
   after_update :update_dependencies
 
   def to_s; description; end
 
   private
 
-  def will_update_dependencies
-    @will_update_dependencies = true if current_changed?
-  end
-
-  def adopt_registrations
-    Registration.update_all(
-      "registration_term_id = NULL",
-      "registration_term_id = #{id} AND external_term_id IS NOT NULL AND " +
-      "external_term_id <> #{external_id}"
-    )
-    Registration.update_all(
-      "registration_term_id = #{id}",
-      "external_term_id = #{external_id}"
-    )
-    registrations.reload
-  end
-
+  # Update dependent entities if registration's 'current' status is changed
+  # * Update fulfillments for registration criterions
+  # * Update activation status for memberships
   def update_dependencies
-    return unless @will_update_dependencies
+    return if current_changed?
     RegistrationCriterion.all.each do |criterion|
-      Fulfillment.fulfill criterion
-      Fulfillment.unfulfill criterion
+      criterion.fulfill
+      criterion.unfulfill
     end
-    registration_ids = registrations.map(&:id)
-    return if registration_ids.empty?
-    Membership.update_all( "active = #{connection.quote current?}",
-      "registration_id IN (#{registration_ids.join ','})" )
+    memberships.activate!
   end
 
 end

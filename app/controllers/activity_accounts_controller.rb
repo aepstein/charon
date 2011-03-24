@@ -5,7 +5,8 @@ class ActivityAccountsController < ApplicationController
   before_filter :new_activity_account_from_params, :only => [ :new, :create ]
   filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
   filter_access_to :index do
-    permitted_to!( :show, @context )
+    permitted_to!( :show, @context ) if @context
+    true
   end
 
   # GET /activity_accounts

@@ -1,8 +1,8 @@
 class Document < ActiveRecord::Base
   default_scope includes( :document_type).order( 'document_types.name ASC' )
 
-  belongs_to :edition
-  belongs_to :document_type
+  belongs_to :edition, :inverse_of => :documents
+  belongs_to :document_type, :inverse_of => :documents
 
   has_attached_file :attached,
     :path => ':rails_root/db/uploads/:rails_env/:id_partition/:attachment/:style.:extension',

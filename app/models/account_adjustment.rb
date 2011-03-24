@@ -1,6 +1,6 @@
 class AccountAdjustment < ActiveRecord::Base
-  belongs_to :account_transaction
-  belongs_to :activity_account
+  belongs_to :account_transaction, :inverse_of => :adjustments
+  belongs_to :activity_account, :inverse_of => :adjustments
 
   validates_presence_of :account_transaction
   validates_presence_of :activity_account

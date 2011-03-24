@@ -1,6 +1,6 @@
 class Approver < ActiveRecord::Base
-  belongs_to :framework
-  belongs_to :role
+  belongs_to :framework, :inverse_of => :approvers
+  belongs_to :role, :inverse_of => :approvers
 
   validates_presence_of :framework
   validates_presence_of :role
@@ -8,7 +8,7 @@ class Approver < ActiveRecord::Base
   validates_inclusion_of :perspective, :in => Edition::PERSPECTIVES
   validates_uniqueness_of :role_id, :scope => [ :framework_id, :status, :perspective ]
 
-  default_scope :include => [:role], :order => 'roles.name ASC'
+  default_scope includes( :role ).order( 'roles.name ASC' )
 
   scope :with_approvals_for, lambda { |request|
     joins( "LEFT JOIN memberships ON approvers.role_id = memberships.role_id " +

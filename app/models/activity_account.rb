@@ -1,12 +1,16 @@
 class ActivityAccount < ActiveRecord::Base
-  belongs_to :university_account
-  belongs_to :basis
-  belongs_to :category
+  belongs_to :university_account, :inverse_of => :activity_accounts
+  belongs_to :basis, :inverse_of => :activity_accounts
+  belongs_to :category, :inverse_of => :activity_accounts
 
-  has_many :account_adjustments, :dependent => :destroy
+  has_many :adjustments, :dependent => :destroy, :class_name => 'AccountAdjustment',
+    :inverse_of => :activity_account
 
   scope :organization_id_equals, lambda { |id|
-    joins(:university_account) & UniversityAccount.unscoped.where(:organization_id => id)
+    joins(:university_account).merge( UniversityAccount.unscoped.where( :organization_id => id ) )
+  }
+  scope :organization_id_in, lambda { |ids|
+    joins(:university_account).merge( UniversityAccount.unscoped.where( :organization_id.in => ids ) )
   }
 
   validates_presence_of :university_account

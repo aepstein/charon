@@ -1,0 +1,10 @@
+<div class="nested-fields">
+  <%= adjustment_fields.inputs do %>
+    <%= adjustment_field.input :amount,
+      :hint => 'Use negative amount for debit, positive amount for credit' %>
+  <% end %>
+  <p>
+    <%= link_to_remove_association "remove adjustment", adjustment_fields %>
+  </p>
+</div>
+

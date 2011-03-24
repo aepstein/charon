@@ -14,8 +14,8 @@ class Agreement < ActiveRecord::Base
   validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
 
 #  after_update :destroy_approvals_if_content_changes
-  after_create :fulfill
-  after_update :unfulfill, :fulfill
+  after_save :fulfill
+  after_update :unfulfill
 
   def destroy_approvals_if_content_changes
     approvals.clear if content_changed?
@@ -34,12 +34,6 @@ class Agreement < ActiveRecord::Base
   end
 
   def to_s; name; end
-
-  private
-
-  def fulfill; Fulfillment.fulfill self; end
-
-  def unfulfill; Fulfillment.unfulfill self; end
 
 end
 

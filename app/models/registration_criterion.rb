@@ -8,16 +8,16 @@ class RegistrationCriterion < ActiveRecord::Base
   validates_inclusion_of :type_of_member, :in => Registration::MEMBER_TYPES
   validates_uniqueness_of :must_register, :scope => [ :type_of_member, :minimal_percentage ]
 
-  after_save 'Fulfillment.fulfill self'
-  after_update 'Fulfillment.unfulfill self'
+  after_save :fulfill
+  after_update :unfulfill
 
   def organization_ids
-    registration_term_ids = RegistrationTerm.current.map(&:external_id)
+    registration_term_ids = RegistrationTerm.current.map(&:id)
     return [] if registration_term_ids.empty?
     connection.select_values(
       "SELECT DISTINCT organizations.id FROM organizations INNER JOIN registrations " +
       "WHERE organizations.id = registrations.organization_id AND " +
-      "registrations.external_term_id IN (#{registration_term_ids.join ','}) AND " +
+      "registrations.registration_term_id IN (#{registration_term_ids.join ','}) AND " +
       (must_register? ? "registrations.registered = #{connection.quote true} AND " : "") +
       "#{minimal_percentage} <= ( number_of_#{type_of_member} * 100.0 / ( " +
       "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + number_of_others ) )"

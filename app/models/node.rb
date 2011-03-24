@@ -21,10 +21,10 @@ class Node < ActiveRecord::Base
            "nodes.item_quantity_limit > #{parent_item_count_sql}" )
   }
 
+  belongs_to :structure, :inverse_of => :nodes
+  belongs_to :category, :inverse_of => :nodes
   has_and_belongs_to_many :document_types
-  has_many :items
-  belongs_to :structure
-  belongs_to :category
+  has_many :items, :inverse_of => :node
   acts_as_tree
 
   validates_presence_of :name

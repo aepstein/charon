@@ -1,14 +1,14 @@
 class Edition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
-  belongs_to :item
-  has_one :administrative_expense
-  has_one :local_event_expense
-  has_one :speaker_expense
-  has_one :travel_event_expense
-  has_one :durable_good_expense
-  has_one :publication_expense
-  has_one :external_equity_report
-  has_many :documents do
+  belongs_to :item, :inverse_of => :editions
+  has_one :administrative_expense, :inverse_of => :edition
+  has_one :local_event_expense, :inverse_of => :edition
+  has_one :speaker_expense, :inverse_of => :edition
+  has_one :travel_event_expense, :inverse_of => :edition
+  has_one :durable_good_expense, :inverse_of => :edition
+  has_one :publication_expense, :inverse_of => :edition
+  has_one :external_equity_report, :inverse_of => :edition
+  has_many :documents, :inverse_of => :edition do
     def for_type?( document_type )
       self.map { |d| d.document_type }.include?( document_type )
     end
@@ -41,8 +41,6 @@ class Edition < ActiveRecord::Base
   delegate :document_types, :to => :node
   delegate :requestors, :to => :request
 
-  before_validation :initialize_documents, :on => :create
-  before_validation :initialize_requestable, :on => :create
   after_save :set_item_title
 
   def title
@@ -51,14 +49,6 @@ class Edition < ActiveRecord::Base
   end
 
   def title?; !title.blank?; end
-
-  def initialize_documents
-    documents.each { |document| document.edition = self }
-  end
-
-  def initialize_requestable
-    requestable.edition = self if requestable
-  end
 
   def max_request
     amounts = []

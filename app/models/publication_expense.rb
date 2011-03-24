@@ -1,5 +1,5 @@
 class PublicationExpense < ActiveRecord::Base
-  belongs_to :edition
+  belongs_to :edition, :inverse_of => :publication_expense
 
   validates_presence_of :edition
   validates_presence_of :title

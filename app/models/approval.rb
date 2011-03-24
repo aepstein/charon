@@ -1,13 +1,13 @@
 class Approval < ActiveRecord::Base
   belongs_to :approvable, :polymorphic => true
-  belongs_to :user
+  belongs_to :user, :inverse_of => :approvals
 
   default_scope includes( :user ).
     order( 'users.last_name ASC, users.first_name ASC, users.middle_name ASC' )
 
   scope :agreements, where( :approvable_type => 'Agreement' )
   scope :requests, where( :approvable_type => 'Request' )
-  scope :at_or_after, lambda { |time| where( 'approvals.created_at >= ?', Time.zone.now ) }
+  scope :at_or_after, lambda { |time| where( :created_at.gte => time ) }
 
   validates_datetime :as_of
   validates_uniqueness_of :approvable_id, :scope => [ :approvable_type, :user_id ]

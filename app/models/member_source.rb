@@ -1,7 +1,7 @@
 class MemberSource < ActiveRecord::Base
-  belongs_to :organization
-  belongs_to :role
-  has_many :memberships, :dependent => :destroy
+  belongs_to :organization, :inverse_of => :member_sources
+  belongs_to :role, :inverse_of => :member_sources
+  has_many :memberships, :dependent => :destroy, :inverse_of => :member_source
   has_many :users, :through => :memberships
 
   validates_presence_of :organization

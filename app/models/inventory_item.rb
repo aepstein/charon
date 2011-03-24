@@ -1,5 +1,5 @@
 class InventoryItem < ActiveRecord::Base
-  belongs_to :organization
+  belongs_to :organization, :inverse_of => :inventory_items
 
   default_scope includes(:organization).
     order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
@@ -9,7 +9,7 @@ class InventoryItem < ActiveRecord::Base
   scope :active, where( :retired_on => nil)
   scope :retired, where( :retired_on.ne => nil )
   scope :organization_name_contains, lambda { |name|
-    scoped & Organization.name_contains( name )
+    scoped.merge( Organization.name_contains( name ) )
   }
 
   search_methods :organization_name_contains

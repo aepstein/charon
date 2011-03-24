@@ -1,8 +1,9 @@
 class Framework < ActiveRecord::Base
   default_scope order( 'frameworks.name ASC' )
 
-  has_many :approvers
-  has_many :requirements
+  has_many :approvers, :inverse_of => :framework
+  has_many :requirements, :inverse_of => :framework
+  has_many :bases, :inverse_of => :framework
 
   scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
     joins( 'LEFT JOIN requirements ON requirements.framework_id = frameworks.id ' +
@@ -31,15 +32,7 @@ class Framework < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  before_validation :initialize_requirements, :on => :create
-
   def to_s; name; end
-
-  private
-
-  def initialize_requirements
-    requirements.each { |requirement| requirement.framework = self }
-  end
 
 end
 

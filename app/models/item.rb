@@ -1,8 +1,7 @@
 class Item < ActiveRecord::Base
-  belongs_to :node
-  belongs_to :request, :touch => true
-  has_many :documents, :through => :editions
-  has_many :editions do
+  belongs_to :node, :inverse_of => :items
+  belongs_to :request, :touch => true, :inverse_of => :items
+  has_many :editions, :inverse_of => :item do
     def for_perspective( perspective )
       self.each do |v|
         return v if v.perspective == perspective
@@ -33,6 +32,7 @@ class Item < ActiveRecord::Base
       self.reject { |edition| edition.new_record? }
     end
   end
+  has_many :documents, :through => :editions
 
   scope :root, where( :parent_id => nil )
 
@@ -53,7 +53,6 @@ class Item < ActiveRecord::Base
   validates_numericality_of :amount, :greater_than_or_equal_to => 0.0
   validate :node_must_be_allowed, :on => :create
 
-  before_validation :initialize_editions, :on => :create
   before_validation :set_title
   after_save :move_to_new_position
 
@@ -90,10 +89,6 @@ class Item < ActiveRecord::Base
       self.new_position = nil
       insert_at np
     end
-  end
-
-  def initialize_editions
-    editions.each { |edition| edition.item = self }
   end
 
 end

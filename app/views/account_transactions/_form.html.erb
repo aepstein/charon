@@ -1,7 +1,14 @@
 <%= render "shared/error_messages", :target => form.object %>
   <%= form.inputs do %>
     <%= form.input :effective_on, :hint => 'What is the effective date for this transaction?' %>
+    <div id="adjustments">
+      <%= form.semantic_fields_for :adjustments do |adjustment_fields| %>
+        <%= render :partial => 'adjustment_fields', :object => adjustment_fields %>
+        <p>
+        <%= link_to_add_association 'add adjustment', form, :adjustments %>
+        </p>
+      <% end %>
+    </div>
   <% end %>
   <%= form.buttons %>
-<% end %>
 

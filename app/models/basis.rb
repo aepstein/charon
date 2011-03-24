@@ -16,10 +16,11 @@ class Basis < ActiveRecord::Base
       organization.id )
   }
 
-  belongs_to :organization
-  belongs_to :structure
-  belongs_to :framework
-  has_many :requests, :dependent => :destroy do
+  belongs_to :organization, :inverse_of => :bases
+  belongs_to :structure, :inverse_of => :bases
+  belongs_to :framework, :inverse_of => :bases
+  has_many :activity_accounts, :dependent => :destroy, :inverse_of => :basis
+  has_many :requests, :dependent => :destroy, :inverse_of => :basis do
     def allocate_with_caps(status, club_sport, other)
       where( :status => status ).includes( :organization, { :items => :editions } ).each do |r|
         if r.organization.club_sport?
@@ -46,7 +47,6 @@ class Basis < ActiveRecord::Base
       Item.where( "id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
     end
   end
-  has_many :editions
 
   validates_uniqueness_of :name
   validates_presence_of :name

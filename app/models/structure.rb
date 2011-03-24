@@ -1,7 +1,7 @@
 class Structure < ActiveRecord::Base
   default_scope order( 'structures.name ASC' )
 
-  has_many :nodes, :include => [ :parent ] do
+  has_many :nodes, :include => [ :parent ], :inverse_of => :structure do
     def children_of(node)
       self.select { |n| n.parent == node }
     end
@@ -12,8 +12,7 @@ class Structure < ActiveRecord::Base
       self.select { |n| n.parent == node }
     end
   end
-  has_many :bases
-  has_many :requests
+  has_many :bases, :inverse_of => :structure
   has_many :categories, :through => :nodes, :uniq => true
 
   validates_numericality_of :minimum_requestors, :only_integer => true

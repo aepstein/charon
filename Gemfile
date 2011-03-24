@@ -33,6 +33,7 @@ group :test do
   gem 'rspec-rails'
   gem 'spork'
   gem 'factory_girl', '= 1.3.2'
+  gem 'factory_girl_rails'
   gem 'pickle'
   gem 'email_spec'
   gem 'launchy'

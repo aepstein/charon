@@ -1,5 +1,5 @@
 class LocalEventExpense < ActiveRecord::Base
-  belongs_to :edition
+  belongs_to :edition, :inverse_of => :local_event_expense
 
   validates_presence_of :edition
 	validates_date :date

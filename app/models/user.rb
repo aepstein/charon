@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
     c.validate_email_field = false
   end
 
-  has_many :approvals do
+  has_many :approvals, :inverse_of => :user do
     def agreements
       self.select { |approval| approval.approvable_type == 'Agreement' }
     end
@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
       fragments.join ' OR '
     end
   end
-  has_many :memberships, :dependent => :destroy
+  has_many :memberships, :dependent => :destroy, :inverse_of => :user
   has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
     def in(organizations)
       Membership.where( :user_id => proxy_owner.id,
@@ -106,8 +106,8 @@ class User < ActiveRecord::Base
   before_validation :extract_email, :initialize_password, :initialize_addresses, :on => :create
   validates_inclusion_of :status, :in => STATUSES, :allow_blank => true
   before_validation :import_simple_ldap_attributes
-  after_save :import_complex_ldap_attributes, 'Fulfillment.fulfill self'
-  after_update 'Fulfillment.unfulfill self'
+  after_save :import_complex_ldap_attributes, :fulfill
+  after_update :unfulfill
 
   def requests; Request.organization_id_equals_any( organization_ids ); end
 
@@ -117,10 +117,13 @@ class User < ActiveRecord::Base
     reset_password if password.blank?
   end
 
+  # Returns the user status criterions that the user presently fulfills
   def user_status_criterions
     UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
   end
 
+  # Returns the agreements (and therefore agreement criteria) that the user
+  # presently fulfills
   def agreements
     Agreement.find( approvals.where( :approvable_type => 'Agreement' ).map { |approval|
       approval.approvable_id

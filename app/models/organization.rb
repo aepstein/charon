@@ -1,17 +1,18 @@
 class Organization < ActiveRecord::Base
   include Fulfiller
 
-  has_many :activity_reports, :dependent => :destroy
-  has_many :university_accounts, :dependent => :destroy
+  has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
+  has_many :university_accounts, :dependent => :destroy, :inverse_of => :organization
   has_many :activity_accounts, :through => :university_accounts
   has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
-  has_many :registrations do
+  has_many :registrations, :dependent => :nullify, :inverse_of => :organization do
     def current
-      self.active.first
+      select { |registration| registration.current? }.first
     end
   end
-  has_many :inventory_items, :dependent => :destroy
-  has_many :memberships
+  has_many :inventory_items, :dependent => :destroy, :inverse_of => :organization
+  has_many :memberships, :dependent => :destroy, :inverse_of => :organization
+  has_many :member_sources, :inverse_of => :organization
   has_many :roles, :through => :memberships do
     def user_id_equals( id )
       scoped.where( 'memberships.user_id = ?', id )
@@ -20,12 +21,12 @@ class Organization < ActiveRecord::Base
       user_id_equals( user.id ).all.map(&:id)
     end
   end
-  has_many :bases do
+  has_many :bases, :inverse_of => :organization do
     def requestable
       Basis.open.no_draft_request_for( proxy_owner )
     end
   end
-  has_many :requests do
+  has_many :requests, :inverse_of => :organization do
     def creatable
       proxy_owner.bases.requestable.map { |basis| build( :basis => basis ) }
     end
@@ -45,29 +46,16 @@ class Organization < ActiveRecord::Base
 
   search_methods :name_contains
 
-  after_save :update_registrations
-
   validates_presence_of :last_name
   validates_uniqueness_of :last_name, :scope => :first_name
 
-  # Adopt registrations (and consequently memberships where appropriate)
-  def update_registrations
-    unless registrations.length == 0
-      Registration.where( :external_id.in => registrations.map(&:external_id).uniq,
-        :organization_id => nil ).each do |registration|
-        registration.organization = self
-        registration.save
-      end
-    end
+  def registration_criterions
+    return [] unless registrations.current
+    registrations.current.registration_criterions
   end
 
-  def registration_criterions( force_reload = false )
-    return [] unless registrations( force_reload ).current
-    registrations( force_reload ).current.registration_criterions
-  end
-
-  def registration_criterion_ids( force_reload = false )
-    registration_criterions( force_reload ).map(&:id)
+  def registration_criterion_ids
+    registration_criterions.map( &:id )
   end
 
   def registered?

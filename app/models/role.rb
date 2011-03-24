@@ -8,8 +8,10 @@ class Role < ActiveRecord::Base
   validates_presence_of :name
   validates_uniqueness_of :name
 
-  has_many :memberships, :dependent => :destroy
-  has_many :member_sources, :dependent => :destroy
+  has_many :memberships, :dependent => :destroy, :inverse_of => :role
+  has_many :member_sources, :dependent => :destroy, :inverse_of => :role
+  has_many :requirements, :dependent => :destroy, :inverse_of => :role
+  has_many :approvers, :dependent => :destroy, :inverse_of => :role
 
   def to_s; name; end
 end

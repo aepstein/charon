@@ -20,16 +20,16 @@ Factory.define :activity_report do |f|
   f.number_of_grads 10
   f.number_of_undergrads 15
   f.number_of_others 0
-  f.starts_on { |report| Date.today - 1.month }
+  f.starts_on { |report| Time.zone.today - 1.month }
   f.ends_on { |report| report.starts_on + 1.day }
 end
 
 Factory.define :current_activity_report, :parent => :activity_report do |f|
-  f.starts_on { |report| Date.today }
+  f.starts_on { |report| Time.zone.today }
 end
 
 Factory.define :future_activity_report, :parent => :activity_report do |f|
-  f.starts_on { |report| Date.today + 1.month }
+  f.starts_on { |report| Time.zone.today + 1.month }
 end
 
 Factory.define :external_term, :class => RegistrationImporter::ExternalTerm do |f|
@@ -102,6 +102,7 @@ end
 
 Factory.define :registered_organization, :parent => :organization do |f|
   f.registrations { |o| [ o.association(:current_registration, :registered => true) ] }
+  f.after_create { |o| o.registrations.reset }
 end
 
 Factory.define :framework do |f|
@@ -238,7 +239,7 @@ Factory.define :basis do |f|
   f.association :organization
   f.association :framework
   f.association :structure
-  f.open_at { |b| Date.today - 1.days }
+  f.open_at { |b| Time.zone.today - 1.days }
   f.closed_at { |b| b.open_at + 2.days }
   f.submissions_due_at { |b| b.closed_at - 1.days }
   f.contact_name "a contact"
@@ -247,11 +248,11 @@ Factory.define :basis do |f|
 end
 
 Factory.define :past_basis, :parent => :basis do |f|
-  f.open_at { Date.today - 1.year }
+  f.open_at { Time.zone.today - 1.year }
 end
 
 Factory.define :future_basis, :parent => :basis do |f|
-  f.open_at { Date.today + 1.month }
+  f.open_at { Time.zone.today + 1.month }
 end
 
 Factory.define :request do |f|
@@ -308,7 +309,7 @@ end
 
 Factory.define :local_event_expense do |f|
   f.association :edition, :factory => :local_event_expense_edition
-  f.date Date.today + 2.months
+  f.date Time.zone.today + 2.months
   f.title 'An Event'
   f.location 'Willard Straight Hall'
   f.purpose 'To do something fun'
@@ -329,7 +330,7 @@ end
 
 Factory.define :travel_event_expense do |f|
   f.association :edition, :factory => :travel_event_expense_edition
-  f.date Date.today + 2.months
+  f.date Time.zone.today + 2.months
   f.title "A tournament"
   f.location 'Los Angeles, CA'
   f.purpose 'To compete'
@@ -358,7 +359,7 @@ Factory.define :inventory_item do |f|
   f.association :organization
   f.sequence(:identifier) { |n| "id##{n}" }
   f.description "Boots"
-  f.acquired_on Date.today
+  f.acquired_on Time.zone.today
   f.scheduled_retirement_on { |r| r.acquired_on + 1.year }
   f.purchase_price 100.0
 end

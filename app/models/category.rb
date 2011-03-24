@@ -1,5 +1,6 @@
 class Category < ActiveRecord::Base
-  has_many :nodes
+  has_many :nodes, :inverse_of => :category
+  has_many :activity_accounts, :inverse_of => :category
 
   validates_presence_of :name
   validates_uniqueness_of :name

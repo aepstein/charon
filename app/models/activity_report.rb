@@ -1,6 +1,6 @@
 class ActivityReport < ActiveRecord::Base
 
-  belongs_to :organization
+  belongs_to :organization, :inverse_of => :activity_reports
 
   default_scope :include => [ :organization ],
     :order => 'organizations.last_name ASC, organizations.first_name ASC, ' +

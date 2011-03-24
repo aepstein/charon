@@ -2,9 +2,9 @@ class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
 
-  belongs_to :organization
-  belongs_to :registration_term
-  has_many :memberships, :dependent => :destroy do
+  belongs_to :organization, :inverse_of => :registrations
+  belongs_to :registration_term, :inverse_of => :registrations
+  has_many :memberships, :dependent => :destroy, :inverse_of => :registration do
     def users
       self.map { |membership| [ membership.role, membership.user ] }
     end
@@ -26,22 +26,26 @@ class Registration < ActiveRecord::Base
 
   validates_uniqueness_of :id
 
-  before_save :adopt_registration_term, :update_organization
-  after_save :fulfill_organization
-  after_update :unfulfill_organization, :update_memberships
+  before_save :adopt_registration_term, :adopt_organization
+  after_save :update_organization, :update_memberships, :update_peers
 
-  def fulfill_organization
-    Fulfillment.fulfill organization if organization(true) && active?
+  attr_accessor :skip_update_peers
+
+  # Assures the external term id is populated when the registration term is set
+  def registration_term_id=( id )
+    write_attribute :registration_term_id, id
+    if registration_term && registration_term.external_id?
+      self.external_term_id = regisration_term.external_id
+    end
+    id
   end
 
-  def unfulfill_organization
-    Fulfillment.unfulfill organization if organization(true) && active?
-  end
-
+  # Return criterions fulfilled by this registration
+  # * can only fulfill criterions if the registration is current
   def registration_criterions
+    return [] unless active?
     RegistrationCriterion.all.inject([]) do |memo, criterion|
-      memo << criterion if fulfills? criterion
-      memo
+      fulfills?( criterion ) ? memo << criterion : memo
     end
   end
 
@@ -70,37 +74,6 @@ class Registration < ActiveRecord::Base
 
   alias :current? :active?
 
-  # Auto discover organization association through the external_id
-  # Update associate organizations
-  def update_organization
-    if organization.blank?
-      organizations = Registration.where( :external_id => external_id,
-        :organization_id.ne => nil ).includes( :organization ).map(&:organization).uniq
-      self.organization = organizations.first if organizations.length > 0
-    end
-    if organization && current?
-      organization.update_attributes name.to_organization_name_attributes
-    end
-  end
-
-  def update_memberships
-    if organization_id_changed?
-      Membership.update_all(
-        "organization_id = #{connection.quote organization_id} " +
-        "WHERE registration_id = #{id}"
-      )
-    end
-  end
-
-  def adopt_registration_term
-    if external_term_id? && ( registration_term.blank? || registration_term.external_id != external_term_id )
-      self.registration_term = RegistrationTerm.find_by_external_id( external_term_id )
-    end
-    if external_term_id.blank? && registration_term && registration_term.external_id?
-      self.external_term_id = registration_term.external_id
-    end
-  end
-
   def percent_members_of_type(type)
     self.send("number_of_#{type.to_s}") * 100.0 / ( number_of_undergrads +
       number_of_grads + number_of_staff + number_of_faculty + number_of_others )
@@ -118,6 +91,72 @@ class Registration < ActiveRecord::Base
   end
 
   def to_s; name; end
+
+  private
+
+  # Automatically match to registration_term based on external term id if record
+  # is not already matched to such a term
+  def adopt_registration_term
+    if external_term_id? && ( registration_term.blank? || registration_term.external_id != external_term_id )
+      self.registration_term = RegistrationTerm.find_by_external_id( external_term_id )
+    end
+    true
+  end
+
+  # Automatically match to organization based on external id if record is unmatched
+  # by checking if another organization is matched by the same external id
+  def adopt_organization
+    if external_id? && organization.blank?
+      organization = Organization.joins( :registrations ).merge(
+        Registration.where( :external_id => external_id ) ).first
+    end
+    true
+  end
+
+  # Update organization:
+  # * reset registrations collection so saved changes are reloaded in the collection
+  # ** this reset assures fulfill and unfulfill will work off of updated registration
+  # * synchronize name if it has changed and this is the current registration
+  # * fulfill and unfulfill organization as appropriate
+  # * fail silently if the organization name update fails
+  def update_organization
+    return true unless organization
+    organization.registrations.reset
+    if current?
+      organization.attributes = name.to_organization_name_attributes
+      if organization.first_name_changed? || organization.last_name_changed?
+        organization.save
+      end
+      organization.fulfill
+    end
+    organization.unfulfill
+    true
+  end
+
+  # Update memberships to point to the organization
+  def update_memberships
+    if organization && organization_id_changed?
+      organization.memberships << memberships.where( :organization_id.ne => organization.id )
+    end
+    true
+  end
+
+  # Match peers with same external id but different or blank organization id
+  # to the organization id of this registration
+  # * exclude this registration
+  # * set flag to prevent recursion
+  def update_peers
+    if skip_update_peers || external_id.blank? || organization.blank?
+      self.skip_update_peers = false
+      return true
+    end
+    Registration.where( :external_id => external_id, :id.ne => id,
+      :organization_id.ne => organization.id ).each do |registration|
+      registration.skip_update_peers = true
+      organization.registrations << registration
+    end
+    true
+  end
 
 end
 

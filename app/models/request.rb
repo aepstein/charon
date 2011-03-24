@@ -2,7 +2,8 @@ class Request < ActiveRecord::Base
   default_scope includes( :organization, :basis ).
     order( 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
-  belongs_to :basis
+  belongs_to :basis, :inverse_of => :requests
+  belongs_to :organization, :inverse_of => :requests
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
     def existing
       self.reject { |approval| approval.new_record? }
@@ -44,7 +45,8 @@ class Request < ActiveRecord::Base
         " AND memberships.active = #{connection.quote true}" ).all - self
     end
   end
-  has_many :items, :dependent => :destroy, :order => 'items.position ASC' do
+  has_many :items, :dependent => :destroy, :order => 'items.position ASC',
+    :inverse_of => :request do
     def children_of(parent_item)
       self.select { |item| item.parent_id == parent_item.id }
     end
@@ -84,13 +86,12 @@ class Request < ActiveRecord::Base
     end
   end
   has_many :editions, :through => :items
-  belongs_to :organization
 
   scope :organization_name_contains, lambda { |name|
-    scoped & Organization.name_contains( name )
+    scoped.merge Organization.name_contains( name )
   }
   scope :basis_name_contains, lambda { |name|
-    scoped & Basis.where( :name.like => name )
+    scoped.merge Basis.where( :name.like => name )
   }
   scope :incomplete_for_perspective, lambda { |perspective|
     where( "requests.id IN (SELECT request_id FROM items LEFT JOIN " +

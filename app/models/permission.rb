@@ -1,14 +1,15 @@
 class Permission < ActiveRecord::Base
-  belongs_to :framework
-  belongs_to :role
+  belongs_to :framework, :inverse_of => :permissions
+  belongs_to :role, :inverse_of => :permissions
   has_many :bases, :primary_key => :framework_id, :foreign_key => :framework_id
   has_many :requests, :through => :bases, :conditions => "permissions.status = requests.status"
-  has_many :requirements, :dependent => :delete_all do
+  has_many :requirements, :dependent => :delete_all, :inverse_of => :permission do
     def flat_fulfillable_id_equals(i)
       self.select { |r| r.flat_fulfillable_id == i }.first
     end
   end
-  has_many :memberships, :primary_key => :role_id, :foreign_key => :role_id, :conditions => { :active => true }
+  has_many :memberships, :primary_key => :role_id, :foreign_key => :role_id,
+    :conditions => { :active => true }
   has_many :users, :through => :memberships
 
   validates_presence_of :role

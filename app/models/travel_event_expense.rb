@@ -1,5 +1,5 @@
 class TravelEventExpense < ActiveRecord::Base
-  belongs_to :edition
+  belongs_to :edition, :inverse_of => :travel_event_expense
 
   validates_presence_of :edition
   validates_date :date

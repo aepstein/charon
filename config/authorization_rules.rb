@@ -210,10 +210,23 @@ authorization do
     has_permission_on [ :activity_accounts ], :to => :manage do
       if_permitted_to :manage, :basis
     end
-
     has_permission_on [ :activity_accounts ], :to => :show do
       if_permitted_to :request, :university_account
       if_permitted_to :manage, :university_account
+    end
+
+    has_permission_on [ :account_adjustments ], :to => :manage do
+      if_permitted_to :manage, :activity_account
+    end
+    has_permission_on [ :account_adjustments ], :to => :show do
+      if_permitted_to :show, :activity_account
+    end
+
+    has_permission_on [ :account_transactions ], :to => :manage do
+      if_permitted_to :manage, :account_adjustments
+    end
+    has_permission_on [ :account_transactions ], :to => :show do
+      if_permitted_to :show, :account_adjustments
     end
 
   end

@@ -24,23 +24,28 @@ describe Registration do
   end
 
   it 'should fulfill/unfulfill related organizations on create/update' do
-    criterion1 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'undergrads', :must_register => true)
-    criterion2 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'undergrads', :must_register => false)
-    criterion3 = Factory(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'others', :must_register => false)
-    registration = Factory(:current_registration, :organization => Factory(:organization), :number_of_undergrads => 10, :registered => true )
+    criterion1 = Factory(:registration_criterion, :minimal_percentage => 50,
+      :type_of_member => 'undergrads', :must_register => true)
+    criterion2 = Factory(:registration_criterion, :minimal_percentage => 50,
+      :type_of_member => 'undergrads', :must_register => false)
+    criterion3 = Factory(:registration_criterion, :minimal_percentage => 50,
+      :type_of_member => 'others', :must_register => false)
+    registration = Factory(:current_registration,
+      :organization => Factory(:organization), :number_of_undergrads => 10,
+      :registered => true )
     fulfillables = registration.organization.fulfillments.map(&:fulfillable)
     fulfillables.size.should eql 2
     fulfillables.should include criterion1
     fulfillables.should include criterion2
     registration.registered = false
-    registration.save.should be_true
+    registration.save!
     fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-    fulfillables.size.should eql 1
+    fulfillables.length.should eql 1
     fulfillables.should include criterion2
     registration.number_of_others = 11
-    registration.save.should be_true
+    registration.save!
     fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-    fulfillables.size.should eql 1
+    fulfillables.length.should eql 1
     fulfillables.should include criterion3
   end
 

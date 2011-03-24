@@ -4,7 +4,7 @@ class DocumentType < ActiveRecord::Base
   default_scope order( 'document_types.name ASC' )
 
   has_and_belongs_to_many :nodes
-  has_many :documents
+  has_many :documents, :inverse_of => :document_type
 
   validates_uniqueness_of :name
   validates_numericality_of :max_size_quantity, :greater_than => 0,
