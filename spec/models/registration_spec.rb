@@ -56,6 +56,13 @@ describe Registration do
     registration.organization.should eql organization
   end
 
+  it 'should adopt a registration_term whose external_id matches its external_term_id' do
+    term = Factory(:registration_term)
+    term.external_id.should_not be_nil
+    registration = Factory(:registration, :external_term_id => term.external_id)
+    registration.registration_term.should eql term
+  end
+
   it 'should have a peers scope that returns other registrations with same external_id' do
     registration = Factory(:registration)
     registration.external_id.should_not be_nil
