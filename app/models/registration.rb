@@ -92,6 +92,11 @@ class Registration < ActiveRecord::Base
 
   def to_s; name; end
 
+  def peers
+    return Registration.unscoped.where( :id => nil ) unless external_id? && persisted?
+    Registration.unscoped.where( :external_id => external_id, :id.ne => id )
+  end
+
   private
 
   # Automatically match to registration_term based on external term id if record
@@ -107,8 +112,8 @@ class Registration < ActiveRecord::Base
   # by checking if another organization is matched by the same external id
   def adopt_organization
     if external_id? && organization.blank?
-      organization = Organization.joins( :registrations ).merge(
-        Registration.where( :external_id => external_id ) ).first
+      self.organization = Organization.joins( :registrations ).merge(
+        Registration.unscoped.where( :external_id => external_id ) ).first
     end
     true
   end
@@ -150,8 +155,9 @@ class Registration < ActiveRecord::Base
       self.skip_update_peers = false
       return true
     end
-    Registration.where( :external_id => external_id, :id.ne => id,
-      :organization_id.ne => organization.id ).each do |registration|
+    peers.where( peers.arel_table[:organization_id].eq(nil).
+      or( peers.arel_table[:organization_id].not_eq( organization_id ) )
+    ).each do |registration|
       registration.skip_update_peers = true
       organization.registrations << registration
     end

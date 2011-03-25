@@ -49,5 +49,48 @@ describe Registration do
     fulfillables.should include criterion3
   end
 
+  it 'should adopt an organization if that organization is matched to the same external_id' do
+    organization = Factory(:registered_organization)
+    organization.registrations.first.external_id.should_not be_nil
+    registration = Factory(:registration, :external_id => organization.registrations.first.external_id)
+    registration.organization.should eql organization
+  end
+
+  it 'should have a peers scope that returns other registrations with same external_id' do
+    registration = Factory(:registration)
+    registration.external_id.should_not be_nil
+    peer = Factory(:registration, :external_id => registration.external_id)
+    other = Factory(:registration)
+    other.external_id.should_not be_nil
+    nonpeer = Factory(:registration, :external_id => nil)
+    nonpeer.external_id.should be_nil
+    nonsaved = Factory.build(:registration, :external_id => registration.external_id)
+    nonsaved.external_id.should eql registration.external_id
+    registration.peers.length.should eql 1
+    registration.peers.should include peer
+    other.peers.should be_empty
+    nonpeer.peers.should be_empty
+    nonsaved.peers.should be_empty
+  end
+
+  it 'should update peer registrations to point to the new organization if ' +
+    'they are matched to the same external id' do
+    # Mismatched record
+    registration_matching_scenario Factory( :registration, :organization => Factory(:organization) )
+    # Unmatched record
+    registration_matching_scenario Factory( :registration, :organization => nil )
+  end
+
+  def registration_matching_scenario( registration )
+    new_registration = Factory( :registration, :external_id => registration.external_id,
+      :organization => Factory(:organization) )
+    new_registration.external_id.should_not be_nil
+    new_registration.external_id.should eql registration.external_id
+    new_registration.organization.should_not be_nil
+    new_registration.peers.should include registration
+    registration = Registration.find registration.id
+    registration.organization.should eql new_registration.organization
+  end
+
 end
 
