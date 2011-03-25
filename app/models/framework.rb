@@ -8,7 +8,7 @@ class Framework < ActiveRecord::Base
   scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
     joins( 'LEFT JOIN requirements ON requirements.framework_id = frameworks.id ' +
       "AND requirements.perspectives_mask & #{2**Edition::PERSPECTIVES.index(perspective)} > 0 " +
-      "AND requirements.fulfillable_type IN (#{Fulfillment.quoted_types_for(fulfiller)}) AND " +
+      "AND requirements.fulfillable_type IN (#{fulfiller.class.quoted_fulfillable_types}) AND " +
       ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
       "requirements.role_id IN (#{role_ids.join ','}) ) " : "requirements.role_id IS NULL " ) +
       'LEFT JOIN fulfillments ON requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +

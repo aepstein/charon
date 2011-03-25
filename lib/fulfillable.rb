@@ -1,6 +1,14 @@
 module Fulfillable
 
   module ClassMethods
+
+    def fulfiller_type
+      Fulfillment::FULFILLABLE_TYPES.each do |fulfiller_type, fulfillable_types|
+        return fulfiller_type if fulfillable_types.include?( to_s )
+      end
+      nil
+    end
+
   end
 
   module InstanceMethods

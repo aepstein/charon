@@ -33,6 +33,10 @@ describe UserStatusCriterion do
     criterion.fulfillments.first.fulfiller_id.should eql unfulfilled.id
   end
 
+  it 'should return a fulfiller_type of "User"' do
+    UserStatusCriterion.fulfiller_type.should eql 'User'
+  end
+
   def user_with_status(status)
     Factory(:user, :status => status)
   end

@@ -14,7 +14,7 @@ class Requirement < ActiveRecord::Base
         "fulfillments.fulfiller_id = #{fulfiller.id}" ).
     group( 'requirements.id' ).
     where( "requirements.perspectives_mask & #{2**Edition::PERSPECTIVES.index(perspective)} > 0 " +
-      "AND requirements.fulfillable_type IN (#{Fulfillment.quoted_types_for(fulfiller)}) AND " +
+      "AND requirements.fulfillable_type IN (#{fulfiller.class.quoted_fulfillable_types}) AND " +
       ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
       "requirements.role_id IN (#{role_ids.join ','}) )" : "requirements.role_id IS NULL" ) )
   }
@@ -68,7 +68,7 @@ class Requirement < ActiveRecord::Base
 
   def perspective; perspectives.first; end
 
-  def fulfiller_type; Fulfillment.fulfiller_type_for_fulfillable fulfillable_type; end
+  def fulfiller_type; fulfillable.class.fulfiller_type; end
 
   def flat_fulfillable_id; "#{fulfillable_id}_#{fulfillable_type}"; end
 

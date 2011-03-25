@@ -46,6 +46,10 @@ describe Agreement do
     approval.user.fulfillments.size.should eql 0
   end
 
+  it 'should return a fulfiller_type of "User"' do
+    Agreement.fulfiller_type.should eql 'User'
+  end
+
   xit "should delete associated approvals if content is changed" do
     new_name = 'new name'
     new_content = 'new content'

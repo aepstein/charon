@@ -18,14 +18,6 @@ class Approval < ActiveRecord::Base
   after_create :approve_approvable, :deliver_approval_notice, :fulfill_user
   after_destroy :unapprove_approvable, :deliver_unapproval_notice, :unfulfill_user
 
-  def deliver_approval_notice
-    ApprovalMailer.approval_notice( self ).deliver
-  end
-
-  def deliver_unapproval_notice
-    ApprovalMailer.unapproval_notice( self ).deliver
-  end
-
   def as_of=(datetime)
     @as_of=datetime.to_s
   end
@@ -47,6 +39,14 @@ class Approval < ActiveRecord::Base
     end
   end
 
+  def deliver_approval_notice
+    ApprovalMailer.approval_notice( self ).deliver
+  end
+
+  def deliver_unapproval_notice
+    ApprovalMailer.unapproval_notice( self ).deliver
+  end
+
   def approve_approvable
     begin
       approvable.approve
@@ -66,11 +66,13 @@ class Approval < ActiveRecord::Base
   end
 
   def fulfill_user
-     Fulfillment.fulfill user if approvable_type == "Agreement"
+    user.approvals.reset
+    user.fulfill if approvable_type == "Agreement"
   end
 
   def unfulfill_user
-    Fulfillment.unfulfill user if approvable_type == "Agreement"
+    user.approvals.reset
+    user.unfulfill if approvable_type == "Agreement"
   end
 end
 

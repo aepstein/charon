@@ -52,5 +52,9 @@ describe RegistrationCriterion do
     criterion.fulfillments.first.fulfiller_id.should eql neither_ok.organization_id
   end
 
+  it 'should return a fulfiller_type of "Organization"' do
+    RegistrationCriterion.fulfiller_type.should eql 'Organization'
+  end
+
 end
 

@@ -1,6 +1,11 @@
 module Fulfiller
 
   module ClassMethods
+
+    def quoted_fulfillable_types
+      Fulfillment::FULFILLABLE_TYPES[ to_s ].map { |type| connection.quote type }.join ','
+    end
+
   end
 
   module InstanceMethods
