@@ -81,6 +81,21 @@ describe Registration do
     registration_matching_scenario Factory( :registration, :organization => nil )
   end
 
+  it 'should match unmatched or mismatched user records to the organization' do
+    membership = Factory( :registered_membership )
+    registration = membership.registration
+    organization = Factory( :organization )
+    organization.registrations << registration
+    organization.memberships.length.should eql 1
+    organization.memberships.should include membership
+    other = Factory(:organization)
+    other.registrations << registration
+    other.memberships.length.should eql 1
+    other.memberships.should include membership
+    organization.memberships.reset
+    organization.memberships.length.should eql 0
+  end
+
   def registration_matching_scenario( registration )
     new_registration = Factory( :registration, :external_id => registration.external_id,
       :organization => Factory(:organization) )

@@ -141,13 +141,16 @@ class Registration < ActiveRecord::Base
   # Update memberships to point to the organization
   def update_memberships
     if organization && organization_id_changed?
-      organization.memberships << memberships.where( :organization_id.ne => organization.id )
+      organization.memberships << memberships.where(
+        memberships.arel_table[:organization_id].eq(nil).
+        or( memberships.arel_table[:organization_id].not_eq( organization_id ) ) )
     end
     true
   end
 
   # Match peers with same external id but different or blank organization id
   # to the organization id of this registration
+  # * skip if no external_id or matching organization is present for this record
   # * exclude this registration
   # * set flag to prevent recursion
   def update_peers

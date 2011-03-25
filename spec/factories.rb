@@ -212,6 +212,12 @@ Factory.define :membership do |f|
   f.association :organization
 end
 
+Factory.define :registered_membership, :class => 'Membership' do |f|
+  f.association :user
+  f.association :role
+  f.association :registration
+end
+
 Factory.define :member_source do |f|
   f.association :organization
   f.association :role
