@@ -12,6 +12,10 @@ class ActivityAccount < ActiveRecord::Base
   scope :organization_id_in, lambda { |ids|
     joins(:university_account).merge( UniversityAccount.unscoped.where( :organization_id.in => ids ) )
   }
+  scope :transactable_for, lambda { |activity_account|
+    organization_id_in( [ activity_account.organization.id, activity_account.basis.organization.id ] ).
+    where( :id.ne => activity_account.id )
+  }
 
   validates_presence_of :university_account
   validates_uniqueness_of :university_account_id, :scope => [ :basis_id, :category_id ]
