@@ -60,7 +60,7 @@ Feature: Manage bases
       | future_ | source_reviewer    | not see | not see | not see  | see     |
       | future_ | observer_requestor | not see | not see | not see  | not see |
       | future_ | regular            | not see | not see | not see  | not see |
-
+@wip
   Scenario: Register new basis and update
     Given a structure exists with name: "annual"
     And a structure exists with name: "semester"
@@ -85,6 +85,7 @@ Feature: Manage bases
     And I should see "Contact name: Office of the Assemblies"
     And I should see "Contact email: office@example.com"
     And I should see "Contact web: http://example.com/"
+    Then show me the page
     And I should see "Open at: 2009-10-15 12:00:00"
     And I should see "Submissions due at: 2009-10-19 12:00:00"
     And I should see "Closed at: 2009-10-20 12:00:00"

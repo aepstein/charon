@@ -47,8 +47,14 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
+    return @current_user if defined? @current_user
     @current_user = current_user_session && current_user_session.record
-    return nil if sso_net_id && (@current_user.nil? || @current_user.net_id != sso_net_id)
+    # Delete stale session if sso_net_id has changed
+    if sso_net_id && (@current_user.nil? || @current_user.net_id != sso_net_id)
+      current_user_session.destroy
+      @current_user_session = nil
+      @current_user = nil
+    end
     @current_user
   end
 
@@ -67,6 +73,7 @@ class ApplicationController < ActionController::Base
   end
 
   def store_location
+    return if self.class == UserSessionsController
     session[:return_to] = request.request_uri
   end
 

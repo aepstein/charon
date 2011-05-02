@@ -6,8 +6,6 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
-require 'csv'
-
 module Charon
   class Application < Rails::Application
     config.autoload_paths += %W(#{::Rails.root}/lib)
