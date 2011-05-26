@@ -20,7 +20,7 @@ gem 'validation_reflection'
 gem 'formtastic'
 gem 'cocoon'
 gem 'declarative_authorization', '>= 0.5'
-gem 'composite_primary_keys'
+gem 'composite_primary_keys', :require => false # CPK only required for registration importer
 gem 'jquery-rails'
 gem 'rails3-jquery-autocomplete'
 group :test do

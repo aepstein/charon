@@ -1,3 +1,5 @@
+require 'composite_primary_keys'
+
 module RegistrationImporter
   module ClassMethods
 
