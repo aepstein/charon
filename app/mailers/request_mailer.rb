@@ -2,7 +2,7 @@ class RequestMailer < ActionMailer::Base
 
   helper :application
 
-  def started_reminder(request)
+  def started_notice(request)
     @request = request
     mail(
       :to => request.users.for_perspective(Edition::PERSPECTIVES.first).map(&:to_email),
@@ -11,7 +11,7 @@ class RequestMailer < ActionMailer::Base
     )
   end
 
-  def completed_reminder(request)
+  def completed_notice(request)
     @request = request
     mail(
       :to => request.users.unfulfilled( Approver.where( :quantity => nil ) ).map(&:to_email),
@@ -38,7 +38,7 @@ class RequestMailer < ActionMailer::Base
     )
   end
 
-  def release_notice(request)
+  def released_notice(request)
     @request = request
     mail(
       :to => request.users.for_perspective(Edition::PERSPECTIVES.first).map(&:to_email),
@@ -47,7 +47,7 @@ class RequestMailer < ActionMailer::Base
     )
   end
 
-  def reject_notice(request)
+  def rejected_notice(request)
     @request = request
     mail(
       :to => request.users.for_perspective(Edition::PERSPECTIVES.first).map(&:to_email),

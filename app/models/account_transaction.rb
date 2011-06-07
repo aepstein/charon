@@ -26,14 +26,12 @@ class AccountTransaction < ActiveRecord::Base
     r.errors.add :base, "adjustments must balance" unless r.adjustments.balanced?
   end
 
-  include AASM
-  aasm_column :status
-  aasm_initial_state :tentative
-  aasm_state :tentative
-  aasm_state :approved
+  state_machine :status, :initial => :tentative do
+    state :tentative, :approved
 
-  aasm_event :approve do
-    transitions :to => :approved, :from => :tentative
+    event :approve do
+      transition :tentative => :approved
+    end
   end
 
   def organizations

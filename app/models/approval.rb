@@ -50,19 +50,17 @@ class Approval < ActiveRecord::Base
   def approve_approvable
     begin
       approvable.approve
-    rescue AASM::InvalidTransition
+    rescue StateMachine::InvalidTransition
       return false
     end
-    approvable.save if approvable.changed?
   end
 
   def unapprove_approvable
     begin
       approvable.unapprove
-    rescue AASM::InvalidTransition
+    rescue StateMachine::InvalidTransition
       return false
     end
-    approvable.save if approvable.changed?
   end
 
   def fulfill_user

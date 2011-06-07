@@ -5,39 +5,39 @@
 
 <p>Choose a new request you would like to create and get started on:</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.creatable, :locals => {
-  :organization => @organization, :status => true
-} %>
+<%= render :partial => 'requests/requests',
+  :object => @organization.requests.creatable,
+  :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.started.empty? %>
+<% unless @organization.requests.with_status(:started).empty? %>
 <h3>Requests you have started</h3>
 
 <p>Choose a request below to examine and modify its items:</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.started, :locals => {
-  :organization => @organization, :status => true
-} %>
+<%= render :partial => 'requests/requests',
+  :object => @organization.requests.with_status(:started),
+  :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.completed.empty? %>
+<% unless @organization.requests.with_status(:completed).empty? %>
 <h3>Requests you have completed, but are still awaiting approvals</h3>
 
 <p>If you need to make changes, each person who has approved the request must unapprove it.</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.completed, :locals => {
-  :organization => @organization, :status => true
-} %>
+<%= render :partial => 'requests/requests',
+  :object => @organization.requests.with_status(:completed),
+  :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.submitted.empty? %>
+<% unless @organization.requests.with_status(:submitted).empty? %>
 <h3>Requests you have submitted and are waiting to be accepted</h3>
 
 <p>You may view details of any of the following requests, although reviews have not yet been released:</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.submitted, :locals => {
-  :organization => @organization, :status => true
-} %>
+<%= render :partial => 'requests/requests',
+  :object => @organization.requests.with_status(:submitted),
+  :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
 <% unless @organization.requests.where( :status.in => %w( accepted reviewed certified ) ).empty? %>
@@ -45,16 +45,17 @@
 
 <p>You may view details of any of the following requests, although reviews have not yet been released:</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.where( :status.in => %w( accepted reviewed certified ) ),
+<%= render :partial => 'requests/requests',
+  :object => @organization.requests.where( :status.in => %w( accepted reviewed certified ) ),
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.released.empty? %>
+<% unless @organization.requests.with_status(:released).empty? %>
 <h3>Requests that have been released</h3>
 
 <p>Results are available for the following requests:</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.released, :locals => {
+<%= render :partial => 'requests/requests', :object => @organization.requests.with_status(:released), :locals => {
   :organization => @organization, :status => true
 } %>
 <% end %>

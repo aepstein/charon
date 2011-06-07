@@ -1,17 +1,16 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.0.7'
-#gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'mysql2', '~> 0.2.6'
-#gem 'acts_as_tree'
 gem 'authlogic'
 gem 'will_paginate'
-gem 'aasm'
 gem 'paperclip'
 gem 'validates_timeliness'
 gem 'prawn'
 gem 'meta_where'
 gem 'meta_search'
+gem 'paper_trail'
+gem 'state_machine'
 gem 'whenever', :require => false
 gem 'bluecloth'
 gem 'cornell_netid'
@@ -20,7 +19,7 @@ gem 'validation_reflection'
 gem 'formtastic'
 gem 'cocoon'
 gem 'declarative_authorization', '>= 0.5'
-gem 'composite_primary_keys', :require => false # CPK only required for registration importer
+gem 'composite_primary_keys', '~> 3.1.9', :require => false # CPK only required for registration importer
 gem 'jquery-rails'
 gem 'rails3-jquery-autocomplete'
 group :test do

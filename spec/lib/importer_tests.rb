@@ -1,3 +1,5 @@
+require 'importer_factories'
+
 module SpecImporterTests
 
   def clean_external_registrations_db

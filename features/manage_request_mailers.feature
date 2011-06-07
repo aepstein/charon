@@ -28,7 +28,7 @@ Feature: Manage request mailers
 
   Scenario: Send notice regarding a started request
     Given all emails have been delivered
-    And a started reminder email is sent for request: "started"
+    And a started notice email is sent for request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
@@ -42,7 +42,7 @@ Feature: Manage request mailers
 
   Scenario: Send notice regarding a completed request
     Given all emails have been delivered
-    And a completed reminder email is sent for request: "completed"
+    And a completed notice email is sent for request: "completed"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And the email subject should contain "Request of Money Taking Club from Money Taking Fund needs your approval"
@@ -81,7 +81,7 @@ Feature: Manage request mailers
   Scenario: Send notice regarding a rejected request
     Given all emails have been delivered
     And request: "completed" has reject_message: "Organization is banned from applying this time."
-    And an reject notice email is sent for request: "completed"
+    And an rejected notice email is sent for request: "completed"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
@@ -94,7 +94,7 @@ Feature: Manage request mailers
   Scenario: Send notice regarding a released request
     Given all emails have been delivered
     And request: "completed" has status: "released"
-    And a release notice email is sent for request: "completed"
+    And a released notice email is sent for request: "completed"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"

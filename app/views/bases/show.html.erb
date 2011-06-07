@@ -61,7 +61,7 @@
     <% Request.aasm_state_names.each do |status| %>
       <%= table_row_tag do %>
         <td><%=h status %></td>
-        <td><%= @basis.requests.send(status).size %></td>
+        <td><%= @basis.requests.with_status( status ).size %></td>
         <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('requestor',status) ) %></td>
         <td><%= number_to_currency( @basis.requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
         <td><%= number_to_currency( @basis.requests.item_amount_for_status(status) ) %></td>

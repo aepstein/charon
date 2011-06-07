@@ -22,7 +22,7 @@ class Basis < ActiveRecord::Base
   has_many :activity_accounts, :dependent => :destroy, :inverse_of => :basis
   has_many :requests, :dependent => :destroy, :inverse_of => :basis do
     def allocate_with_caps(status, club_sport, other)
-      where( :status => status ).includes( :organization, { :items => :editions } ).each do |r|
+      with_state( status ).includes( :organization, { :items => :editions } ).each do |r|
         if r.organization.club_sport?
           r.items.allocate club_sport
         else

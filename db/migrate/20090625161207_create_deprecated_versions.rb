@@ -1,4 +1,4 @@
-class CreateVersions < ActiveRecord::Migration
+class CreateDeprecatedVersions < ActiveRecord::Migration
   def self.up
     create_table :versions do |t|
       t.integer :item_id, :null => false

@@ -28,7 +28,7 @@ describe Approver do
     approver = Factory(:approver)
     approver.status = 'invalid'
     Request.aasm_state_names.should_not include(approver.status)
-    approver.save.should == false
+    approver.save.should be_false
   end
 
   it "should not save with invalid perspective" do

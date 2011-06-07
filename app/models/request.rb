@@ -1,4 +1,9 @@
 class Request < ActiveRecord::Base
+  include Notifiable
+  notifiable_events :started, :completed, :submitted, :rejected, :accepted, :released
+
+  has_paper_trail
+
   default_scope includes( :organization, :basis ).
     order( 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
@@ -111,9 +116,9 @@ class Request < ActiveRecord::Base
 
   before_validation :set_approval_checkpoint, :on => :create
 
-  validates_presence_of :organization
+  validates :organization, :presence => true
   validates_datetime :approval_checkpoint
-  validates_presence_of :basis
+  validates :basis, :presence => true
 
   def must_have_open_basis
     errors.add( :basis_id, 'must be an open basis.' ) unless basis.open?
@@ -122,45 +127,73 @@ class Request < ActiveRecord::Base
   attr_readonly :basis_id
   attr_protected :status, :accepted_at, :approval_checkpoint, :rejected_at, :reject_message
 
-  include AASM
-  aasm_column :status
-  aasm_initial_state :started
-  aasm_state :started
-  aasm_state :completed, :after_enter => :deliver_required_approval_notice
-  aasm_state :submitted, :enter => :reset_approval_checkpoint,
-    :after_enter => :deliver_submitted_notice
-  aasm_state :accepted, :after_enter => [ :set_accepted_at, :deliver_accepted_notice ]
-  aasm_state :reviewed
-  aasm_state :certified, :enter => :reset_approval_checkpoint
-  aasm_state :released, :after_enter => [:deliver_release_notice, :set_released_at]
-  aasm_state :rejected, :after_enter => [ :set_rejected_at, :deliver_reject_notice ]
+  state_machine :status, :initial => :started do
 
-  aasm_event :accept do
-    transitions :to => :accepted, :from => :submitted
+    state :started, :completed, :submitted, :accepted, :reviewed, :certified,
+      :released
+
+    state :rejected do
+      validates :reject_message, :presence => true
+    end
+
+    event :approve do
+      transition :started => :completed, :if => :approvable?
+      transition :accepted => :reviewed, :if => :approvable?
+      transition :completed => :submitted, :if => :approvals_fulfilled?
+      transition :reviewed => :certified, :if => :approvals_fulfilled?
+      transition [ :completed, :reviewed ] => same
+    end
+
+    event :unapprove do
+      transition :completed => :started, :if => :approvals_unfulfilled?
+      transition :reviewed => :accepted, :if => :approvals_unfulfilled?
+      transition [ :completed, :reviewed ] => same
+    end
+
+    event :submit do
+      transition :completed => :submitted
+    end
+
+    event :accept do
+      transition :submitted => :accepted
+    end
+
+    event :certify do
+      transition :reviewed => :certified
+    end
+
+    event :release do
+      transition :certified => :released
+    end
+
+    event :reject do
+      transition [ :started, :completed, :submitted ] => :rejected
+    end
+
+    after_transition :started => :completed, :do => :deliver_required_approval_notice
+    after_transition :accepted => :reviewed, :do => :deliver_required_approval_notice
+    after_transition :completed => :submitted, :do => :reset_approval_checkpoint
+    after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
+
   end
-  aasm_event :submit do
-    transitions :to => :submitted, :from => :completed
-  end
-  aasm_event :approve do
-    transitions :to => :completed, :from => :started, :guard => :approvable?
-    transitions :to => :submitted, :from => :completed, :guard => :approvals_fulfilled?
-    transitions :to => :reviewed, :from => :accepted, :guard => :approvable?
-    transitions :to => :certified, :from => :reviewed, :guard => :approvals_fulfilled?
-  end
-  aasm_event :unapprove do
-    transitions :to => :started, :from => :completed, :guard => :approvals_unfulfilled?
-    transitions :to => :completed, :from => :submitted
-    transitions :to => :accepted, :from => :reviewed, :guard => :approvals_unfulfilled?
-    transitions :to => :reviewed, :from => :certified
-  end
-  aasm_event :release do
-    transitions :to => :released, :from => :certified
-  end
-  aasm_event :reject do
-    transitions :to => :rejected, :from => [ :completed, :submitted ], :guard => :reject_message?
+
+  # Send notices to all requests with a status
+  # * Without second argument, limit to requests that have not yet received such
+  #   notice
+  # * With second argument, limit to requests that have not yet received such
+  #   notice or have received such notice before specified date
+  def self.notify_unnotified!( status, since = nil )
+    requests = requests.with_state( status )
+    if since.blank?
+      requests = requests.send("no_#{status}_notice")
+    else
+      requests = requests.send("no_#{status}_notice_since")
+    end
+    requests.each { |request| request.send("send_#{status}_notice!") }
   end
 
   alias :requestor :organization
+
   def reviewer; basis ? basis.organization : nil; end
 
   def perspective_for( fulfiller )
@@ -211,34 +244,6 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def deliver_submitted_notice
-    RequestMailer.submitted_notice(self).deliver
-  end
-
-  def deliver_accepted_notice
-    RequestMailer.accepted_notice(self).deliver
-  end
-
-  def deliver_release_notice
-    RequestMailer.release_notice(self).deliver
-  end
-
-  def deliver_reject_notice
-    RequestMailer.reject_notice(self).deliver
-  end
-
-  def set_accepted_at
-    self.accepted_at = Time.zone.now
-  end
-
-  def set_released_at
-    self.released_at = Time.zone.now
-  end
-
-  def set_rejected_at
-    self.rejected_at = Time.zone.now
-  end
-
   def approvals_fulfilled?
     users.unfulfilled.length == 0
   end
@@ -253,7 +258,7 @@ class Request < ActiveRecord::Base
 
   def reset_approval_checkpoint
     return if approvals.existing.last.nil?
-    self.approval_checkpoint = approvals.existing.last.created_at
+    update_attribute :approval_checkpoint, approvals.existing.last.created_at
   end
 
   def contact_to_email
@@ -261,7 +266,8 @@ class Request < ActiveRecord::Base
   end
 
   def self.aasm_state_names
-    Request.aasm_states.map { |s| s.name.to_s }
+    [ :started, :completed, :submitted, :accepted, :reviewed, :certified,
+      :released, :rejected ]
   end
 
   def to_s

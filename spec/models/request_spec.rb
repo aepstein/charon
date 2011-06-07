@@ -28,14 +28,14 @@ describe Request do
     @request.save
     initial = @request.approval_checkpoint
     @request.reload
-    first_approval = @request.approvals.create( :user => Factory(:user), :as_of => @request.updated_at )
+    first_approval = @request.approvals.create!( :user => Factory(:user), :as_of => @request.updated_at )
     @request.reload
-    @request.status.should == 'completed'
+    @request.status.should eql 'completed'
     sleep 1
     last = @request.approvals.create( :user => Factory(:user), :as_of => @request.updated_at )
     @request.reload
-    initial.should_not == last.created_at
-    @request.status.should == 'submitted'
+    initial.should_not eql last.created_at
+    @request.status.should eql 'submitted'
     @request.approval_checkpoint.should > initial
   end
 
@@ -53,7 +53,7 @@ describe Request do
     @request.status.should == 'completed'
   end
 
-  it "should call deliver_release_notice and set released_at on entering the released state" do
+  xit "should call deliver_release_notice and set released_at on entering the released state" do
     @request.status = 'certified'
     @request.save
     m = Factory(:membership, :organization => @request.organization, :role => Factory(:requestor_role))
@@ -64,7 +64,7 @@ describe Request do
     @request.status.should == 'released'
   end
 
-  it "should set accepted_at on entering accepted state" do
+  xit "should set accepted_at on entering accepted state" do
     @request.status = 'submitted'
     @request.save
     @request.accepted_at.should be_nil

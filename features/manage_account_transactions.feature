@@ -5,7 +5,7 @@ Feature: Manage account transactions
 
 Background:
   Given a user: "admin" exists with admin: true
-
+@wip
 Scenario:
   Given a category: "administrative" exists with name: "Administrative"
   And a category: "travel" exists with name: "Travel"
@@ -22,5 +22,4 @@ Scenario:
   And I am on the new account_transaction page for activity_account: "administrative"
   And I fill in "Amount" with "100"
   And I click "add adjustment"
-  And I
 
