@@ -19,6 +19,20 @@ class ApplicationController < ActionController::Base
     net_id.blank? ? false : net_id
   end
 
+  protected
+
+  def add_breadcrumb name, url = ''
+    @breadcrumbs ||= []
+    url = eval(url) if url =~ /_path|_url|@/
+    @breadcrumbs << [name, url]
+  end
+
+  def self.add_breadcrumb name, url, options = {}
+    before_filter options do |controller|
+      controller.send(:add_breadcrumb, name, url)
+    end
+  end
+
   private
 
   def unfulfilled_requirements_for_request(request)

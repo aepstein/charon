@@ -167,5 +167,26 @@ describe Request do
     duplicates.should include duplicate
   end
 
+  it 'should have a notify_unnotified! class method' do
+    other_status = Factory(:request, :status => 'completed')
+    unnotified = Factory(:request)
+    notified_before = Factory(:request)
+    notified_before.update_attribute :started_notice_at, 1.week.ago
+    notified_before.reload
+    week_ago = notified_before.started_notice_at
+    Request.notify_unnotified! :started
+    unnotified.reload
+    unnotified_notice_at = unnotified.started_notice_at
+    unnotified_notice_at.should be_within(5.seconds).of(Time.zone.now)
+    notified_before.reload
+    notified_before.started_notice_at.should eql week_ago
+    sleep 1
+    Request.notify_unnotified! :started, 1.day.ago
+    unnotified.reload
+    unnotified.started_notice_at.should eql unnotified_notice_at
+    notified_before.reload
+    notified_before.started_notice_at.should be_within(5.seconds).of(Time.zone.now)
+  end
+
 end
 

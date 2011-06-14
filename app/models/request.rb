@@ -173,7 +173,9 @@ class Request < ActiveRecord::Base
     after_transition :started => :completed, :do => :deliver_required_approval_notice
     after_transition :accepted => :reviewed, :do => :deliver_required_approval_notice
     after_transition :completed => :submitted, :do => :reset_approval_checkpoint
+    after_transition :completed => :submitted, :do => :send_submitted_notice!
     after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
+    after_transition :certified => :released, :do => :send_released_notice!
 
   end
 
@@ -183,11 +185,11 @@ class Request < ActiveRecord::Base
   # * With second argument, limit to requests that have not yet received such
   #   notice or have received such notice before specified date
   def self.notify_unnotified!( status, since = nil )
-    requests = requests.with_state( status )
+    requests = Request.scoped.with_status( status )
     if since.blank?
       requests = requests.send("no_#{status}_notice")
     else
-      requests = requests.send("no_#{status}_notice_since")
+      requests = requests.send("no_#{status}_notice_since", since)
     end
     requests.each { |request| request.send("send_#{status}_notice!") }
   end

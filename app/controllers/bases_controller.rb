@@ -90,8 +90,8 @@ class BasesController < ApplicationController
   private
 
   def initialize_context
-    @organization = Organization.find params[:organization_id] if params[:organization_id]
     @basis = Basis.find params[:id] if params[:id]
+    @organization = Organization.find params[:organization_id] if params[:organization_id]
   end
 
   def initialize_index

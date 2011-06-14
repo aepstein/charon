@@ -94,8 +94,8 @@ class AccountTransactionsController < ApplicationController
   private
 
   def initialize_context
-    @activity_account = ActivityAccount.find params[:activity_account_id] if params[:activity_account_id]
     @account_transaction = AccountTransaction.find params[:id] if params[:id]
+    @activity_account = ActivityAccount.find params[:activity_account_id] if params[:activity_account_id]
   end
 
   def initialize_index
