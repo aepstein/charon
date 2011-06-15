@@ -1,4 +1,7 @@
 class Approval < ActiveRecord::Base
+
+  has_paper_trail
+
   belongs_to :approvable, :polymorphic => true
   belongs_to :user, :inverse_of => :approvals
 

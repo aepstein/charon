@@ -1,6 +1,8 @@
 class Agreement < ActiveRecord::Base
   include Fulfillable
 
+  has_paper_trail
+
   default_scope order( 'agreements.name ASC' )
 
   has_many :approvals, :as => :approvable, :dependent => :delete_all
