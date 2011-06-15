@@ -151,7 +151,7 @@ Feature: Manage approvals
     When I follow "Destroy" for the 3rd approval for the agreement
     Given I am on the approvals page for the agreement
     Then I should see the following approvals:
-      | User      |
+      | User name |
       | John Doe 1|
       | John Doe 2|
       | John Doe 4|

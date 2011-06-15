@@ -1,6 +1,7 @@
   <%= table_row_tag do %>
     <% if user then %>
-    <td><%= approval.user %></td>
+    <td><%= approval.user.name %></td>
+    <td><%= approval.user.net_id %></td>
     <% end %>
     <% if approvable then %>
     <td><%= approval.approvable %></td>

@@ -6,7 +6,8 @@
     <td><%= membership.organization %></td>
     <% end -%>
     <% unless user -%>
-    <td><%= membership.user %></td>
+    <td><%= membership.user.name %></td>
+    <td><%= membership.user.net_id %></td>
     <% end -%>
     <td><%= membership.registration_id? ? 'Yes' : 'No' %></td>
     <td><%= membership.role %></td>

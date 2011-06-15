@@ -134,8 +134,13 @@ class User < ActiveRecord::Base
     "#{first_name} #{middle_name} #{last_name}".squeeze ' '
   end
 
-  def name
-    "#{first_name} #{last_name}".squeeze ' '
+  def name(format = nil)
+    case format
+    when :net_id
+      "#{first_name} #{last_name} (#{net_id})".squeeze ' '
+    else
+      "#{first_name} #{last_name}".squeeze ' '
+    end
   end
 
   def to_email

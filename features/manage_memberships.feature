@@ -120,7 +120,7 @@ Feature: Manage memberships
     When I follow "Destroy" for the 3rd membership for the organization
     Given I am on the memberships page for the organization
     Then I should see the following memberships:
-      | User       |
+      | User name  |
       | John Alpha |
       | John Beta  |
       | John Delta |
