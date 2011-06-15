@@ -31,9 +31,10 @@ browser if this is incorrect or you wish to log out.  You may
 
   <p>
   These are registrations that you have started with the Student Activities
-  Office, but have not yet matched to a corresponding record in the Office of the Assemblies.
-  You should <a href="mailto:assembly@cornell.edu">email</a> the office to get a matching
-  record set up.
+  Office, but have not yet matched to a corresponding record in the Office of
+  the Assemblies.
+  You should <a href="mailto:assembly@cornell.edu">email</a> the Office of the
+  Assemblies to get a matching record set up.
   </p>
 
   <ul>
@@ -49,7 +50,7 @@ browser if this is incorrect or you wish to log out.  You may
 
   <ul>
   <% current_user.approvals.agreements.map(&:approvable).each do |agreement| %>
-  <li><%=h agreement %></li>
+  <li><%= agreement %></li>
   <% end %>
   </ul>
 <% end %>
@@ -65,3 +66,4 @@ browser if this is incorrect or you wish to log out.  You may
   <% end %>
   </ul>
 <% end %>
+
