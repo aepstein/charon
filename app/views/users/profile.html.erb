@@ -21,7 +21,7 @@ browser if this is incorrect or you wish to log out.  You may
     </tr>
   </thead>
   <tbody>
-    <%= render :partial => "organization", :collection => current_user.organizations %>
+    <%= render :partial => "organization", :collection => current_user.organizations.uniq %>
   </tbody>
   </table>
 <% end -%>
