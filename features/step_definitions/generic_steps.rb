@@ -7,7 +7,7 @@ end
 Given /^(?:|I )(put|post|delete) on (.+)$/ do |method, page_name|
 #  visit path_to(page_name), method.to_sym
   # TODO this only works with the rack driver
-  Capybara.current_session.driver.process method.to_sym, path_to(page_name), {}
+  Capybara.current_session.driver.submit method.to_sym, path_to(page_name), {}
 end
 
 Then /^I should see authorized$/ do

@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.7'
+gem 'rails', '3.0.8'
 gem 'mysql2', '~> 0.2.6'
 gem 'authlogic'
 gem 'will_paginate'
@@ -22,6 +22,7 @@ gem 'declarative_authorization', '>= 0.5'
 gem 'composite_primary_keys', '~> 3.1.9', :require => false # CPK only required for registration importer
 gem 'jquery-rails'
 gem 'rails3-jquery-autocomplete'
+gem 'escape_utils'
 group :test do
   gem 'test-unit'
   gem 'cucumber-rails'
