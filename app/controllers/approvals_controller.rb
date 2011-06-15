@@ -74,8 +74,9 @@ class ApprovalsController < ApplicationController
     @approval = Approval.find params[:id] if params[:id]
     @request ||= Request.find(params[:request_id]) if params[:request_id]
     @agreement ||= Agreement.find(params[:agreement_id]) if params[:agreement_id]
-    @approvable = @request || @agreement
+    @approvable = @request || @agreement || @approval.approvable
     @user = User.find params[:user_id] if params[:user_id]
+    add_breadcrumb @approvable, url_for( @approvable )
   end
 
   def initialize_index

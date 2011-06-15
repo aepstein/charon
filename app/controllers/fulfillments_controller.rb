@@ -10,8 +10,7 @@ class FulfillmentsController < ApplicationController
   # GET /fulfillments
   # GET /fulfillments.xml
   def index
-    @fulfillments = @fulfiller.fulfillments if @fulfiller
-    @fulfillments = @fulfillable.fulfillments if @fulfillable
+    @fulfillments = @context.fulfillments if @context
     @fulfillments ||= Fulfillment.scoped
 
     @fulfillments = @fulfillments.with_permissions_to(:show).paginate(:page => params[:page])
@@ -31,6 +30,12 @@ class FulfillmentsController < ApplicationController
     @fulfillable = Agreement.find params[:agreement_id] if params[:agreement_id]
     @fulfillable = RegistrationCriterion.find params[:registration_criterion_id] if params[:registration_criterion_id]
     @fulfillable = UserStatusCriterion.find params[:user_status_criterion_id] if params[:user_status_criterion_id]
+
+    @context = @fulfiller || @fulfillable
+    if @context
+      add_breadcrumb @context, url_for( @context )
+      add_breadcrumb 'Fulfillments', polymorphic_path( [ @context, :fulfillments ] )
+    end
   end
 
 end

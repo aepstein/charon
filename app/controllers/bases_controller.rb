@@ -38,7 +38,7 @@ class BasesController < ApplicationController
     end
   end
 
-  # GET /bases/1/edit
+  # GET /bases/:id/edit
   def edit
     respond_to do |format|
       format.html # edit.html.erb
@@ -92,6 +92,11 @@ class BasesController < ApplicationController
   def initialize_context
     @basis = Basis.find params[:id] if params[:id]
     @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @organization ||= @basis.organization if @basis
+    if @organization
+      add_breadcrumb @organization.name, organization_path( @organization )
+      add_breadcrumb 'Bases', organization_bases_path( @organization )
+    end
   end
 
   def initialize_index

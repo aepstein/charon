@@ -110,9 +110,11 @@ class ActivityReportsController < ApplicationController
   private
 
   def initialize_context
-    @organization = Organization.find params[:organization_id] if params[:organization_id]
-    @context ||= @organization
     @activity_report = ActivityReport.find params[:id] if params[:id]
+    @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @organization ||= @activity_report.organization if @activity_report
+    @context ||= @organization
+    add_breadcrumb @organization.name, organization_path( @organization ) if @organization
   end
 
   def initialize_index

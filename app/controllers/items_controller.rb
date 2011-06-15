@@ -99,10 +99,15 @@ class ItemsController < ApplicationController
   private
 
   def initialize_context
-    @request = Request.find params[:request_id] if params[:request_id]
     @item = Item.find( params[:id], :include => { :editions => :documents } ) if params[:id]
-    @request = @item.request if @item
+    @request = Request.find params[:request_id] if params[:request_id]
+    @request ||= @item.request if @item
     @item.attributes = params[:item] if @item && params[:item]
+    if @request
+      add_breadcrumb @request.organization.name, url_for( @request.organization )
+      add_breadcrumb "#{@request.basis.name} request", url_for( @request )
+      add_breadcrumb 'Items', request_items_path( @request )
+    end
   end
 
   def initialize_index

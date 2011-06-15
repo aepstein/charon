@@ -3,6 +3,7 @@ class RequestsController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index, :duplicate ]
   before_filter :new_request_from_params, :only => [ :new, :create ]
+  before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy, :show, :attribute_check => true
   filter_access_to :index, :duplicate do
     permitted_to!( :show, @organization ) if @organization
@@ -121,15 +122,16 @@ class RequestsController < ApplicationController
   private
 
   def initialize_context
-    @basis = Basis.find params[:basis_id] if params[:basis_id]
-    @organization = Organization.find params[:organization_id] if params[:organization_id]
-    @context ||= @basis
-    @context ||= @organization
     @request = Request.find params[:id] if params[:id]
+    @basis = Basis.find params[:basis_id] if params[:basis_id]
+    @basis ||= @request.basis if @request
+    @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @organization ||= @request.organization if @organization
+    @context = @basis || @organization
   end
 
   def initialize_index
-    @requests = Request
+    @requests = Request.scoped
     @requests = @requests.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
     @requests = @requests.scoped( :conditions => { :basis_id => @basis.id }) if @basis
 #    @requests = @requests.with_permissions_to(:show)
@@ -137,6 +139,17 @@ class RequestsController < ApplicationController
 
   def new_request_from_params
     @request = @organization.requests.build( params[:request] )
+  end
+
+  def setup_breadcrumbs
+    if @basis && permitted_to?( :review, @request )
+      add_breadcrumb @basis.name, url_for( @basis )
+      add_breadcrumb 'Requests', basis_requests_path( @basis )
+    end
+    if @organization
+      add_breadcrumb @organization.name, url_for( @organization )
+      add_breadcrumb 'Requests', organization_requests_path( @organization )
+    end
   end
 
   def csv_index

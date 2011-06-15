@@ -90,6 +90,7 @@ class AgreementsController < ApplicationController
 
   def initialize_context
     @agreement = Agreement.find params[:id] if params[:id]
+    add_breadcrumb 'Agreements', agreements_path
   end
 
   def initialize_index

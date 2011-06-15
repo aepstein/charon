@@ -86,6 +86,7 @@ class DocumentTypesController < ApplicationController
 
   def initialize_context
     @document_type = DocumentType.find params[:id] if params[:id]
+    add_breadcrumb 'Document types', document_types_path
   end
 
   def initialize_index

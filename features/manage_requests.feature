@@ -102,7 +102,7 @@ Feature: Manage requests
       |       | accepted  | applicant_requestor | see     | not see | see     | not see | not see |
       |       | accepted  | observer_requestor  | not see | not see | not see | not see | not see |
       |       | accepted  | regular             | not see | not see | not see | not see | not see |
-
+@wip
   Scenario: Create and update requests
     Given a basis exists with name: "Annual Budget"
     And a basis exists with name: "Semester Budget"
@@ -111,6 +111,7 @@ Feature: Manage requests
     And I am on the new request page for the organization
     When I select "Annual Budget" from "Basis"
     And I press "Create"
+    Then show me the page
     Then I should see "Request was successfully created."
     And I should see "Basis: Annual Budget"
     When I follow "Edit"

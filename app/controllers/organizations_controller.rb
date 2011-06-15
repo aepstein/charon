@@ -98,10 +98,12 @@ class OrganizationsController < ApplicationController
   def initialize_context
     @organization = Organization.find params[:id] if params[:id]
     @registration = Registration.find params[:registration_id] if params[:registration_id]
+    add_breadcrumb 'Organizations', organizations_path
+    add_breadcrumb "#{@registration.name} registration", url_for( @registration ) if @registration
   end
 
   def initialize_index
-    @organizations = Organization
+    @organizations = Organization.scoped
   end
 
   def new_organization_from_params

@@ -2,8 +2,10 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  attr_accessor :breadcrumbs
+
   protect_from_forgery
-  helper_method :current_user_session, :current_user, :sso_net_id
+  helper_method :current_user_session, :current_user, :sso_net_id, :breadcrumbs
   before_filter :check_authorization
 
   def permission_denied
@@ -22,9 +24,9 @@ class ApplicationController < ActionController::Base
   protected
 
   def add_breadcrumb name, url = ''
-    @breadcrumbs ||= []
+    self.breadcrumbs ||= []
     url = eval(url) if url =~ /_path|_url|@/
-    @breadcrumbs << [name, url]
+    self.breadcrumbs << [name, url]
   end
 
   def self.add_breadcrumb name, url, options = {}

@@ -84,6 +84,7 @@ class UsersController < ApplicationController
 
   def initialize_context
     @user = User.find params[:id] if params[:id]
+    add_breadcrumb 'Users', users_path
   end
 
   def initialize_index

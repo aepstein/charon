@@ -14,6 +14,9 @@ class MembershipsController < ApplicationController
   # GET /organizations/:organization_id/memberships/active
   # GET /organizations/:organization_id/memberships/active.xml
   def active
+    if @context
+      add_breadcrumb 'Active', polymorphic_path( [ :active, @context, :memberships ] )
+    end
     @memberships = @memberships.active
     index
   end
@@ -101,6 +104,10 @@ class MembershipsController < ApplicationController
     @context = Organization.find params[:organization_id] if params[:organization_id]
     @context = User.find params[:user_id] if params[:user_id]
     @context = Registration.find params[:registration_id] if params[:registration_id]
+    if @context
+      add_breadcrumb @context, url_for( @context )
+      add_breadcrumb 'Memberships', polymorphic_path( [ @context, :memberships ] )
+    end
   end
 
   def initialize_index

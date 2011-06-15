@@ -28,12 +28,22 @@ class RegistrationsController < ApplicationController
     @registration = Registration.find params[:id] if params[:id]
     @organization = Organization.find params[:organization_id] if params[:organization_id]
     @registration_term = RegistrationTerm.find params[:registration_term_id] if params[:registration_term_id]
+    if @registration
+      @organization ||= @registration.organization
+      @registration_term ||= @registration.registration_term
+    end
+    @context = @organization || @registration_term
+    add_breadcrumb 'Registration terms', registration_terms_path
+    if @context
+      add_breadcrumb @context, url_for( @context )
+      add_breadcrumb 'Registrations', polymorphic_path( [ @context, :registrations ] )
+    end
   end
 
   def initialize_index
     @registrations = Registration.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
     @registrations = Registration.scoped( :conditions => { :registration_term_id => @registration_term.id } ) if @registration_term
-    @registrations ||= Registration
+    @registrations ||= Registration.scoped
   end
 end
 

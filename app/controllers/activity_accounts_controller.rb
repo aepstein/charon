@@ -88,6 +88,8 @@ class ActivityAccountsController < ApplicationController
     @university_account = UniversityAccount.find( params[:university_account_id] ) if params[:university_account_id]
     @organization = Organization.find( params[:organization_id] ) if params[:organization_id]
     @context = @university_account || @organization
+    add_breadcrumb @organization.name, organization_path( @organization ) if @organization
+    add_breadcrumb @university_account, university_account_path( @university_account ) if @university_account
   end
 
   def initialize_index

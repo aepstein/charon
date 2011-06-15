@@ -85,6 +85,7 @@ class FrameworksController < ApplicationController
 
   def initialize_context
     @framework = Framework.find params[:id] if params[:id]
+    add_breadcrumb 'Frameworks', frameworks_path
   end
 
   def initialize_index

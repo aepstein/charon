@@ -86,6 +86,7 @@ class RegistrationCriterionsController < ApplicationController
 
   def initialize_context
     @registration_criterion = RegistrationCriterion.find params[:id] if params[:id]
+    add_breadcrumb 'Registration criterions', registration_criterions_path
   end
 
   def initialize_index

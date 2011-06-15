@@ -90,6 +90,7 @@ class RegistrationTermsController < ApplicationController
 
   def initialize_context
     @registration_term = RegistrationTerm.find params[:id] if params[:id]
+    add_breadcrumb 'Registration terms', registration_terms_path
   end
 
   def initialize_index

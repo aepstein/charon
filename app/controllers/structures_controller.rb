@@ -86,6 +86,7 @@ class StructuresController < ApplicationController
 
   def initialize_context
     @structure = Structure.find params[:id] if params[:id]
+    add_breadcrumb 'Structures', structures_path
   end
 
   def initialize_index

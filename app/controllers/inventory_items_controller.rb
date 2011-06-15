@@ -11,12 +11,18 @@ class InventoryItemsController < ApplicationController
 
   # GET /organizations/:organization_id/inventory_items/retired
   def retired
+    if @context
+      add_breadcrumb 'Retired', polymorphic_path( [ :retired, @context, :inventory_items ] )
+    end
     @inventory_items = @inventory_items.retired
     index
   end
 
   # GET /organizations/:organization_id/inventory_items/active
   def active
+    if @context
+      add_breadcrumb 'Active', polymorphic_path( [ :active, @context, :inventory_items ] )
+    end
     @inventory_items = @inventory_items.active
     index
   end
@@ -97,13 +103,18 @@ class InventoryItemsController < ApplicationController
   end
 
   def initialize_context
-    @organization = Organization.find params[:organization_id] if params[:organization_id]
-    @context ||= @organization
     @inventory_item = InventoryItem.find params[:id] if params[:id]
+    @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @organization ||= @inventory_item.organization if @inventory_item
+    @context ||= @organization
+    if @context
+      add_breadcrumb @context, url_for( @context )
+      add_breadcrumb 'Inventory items', polymorphic_path( [ @context, :inventory_items ] )
+    end
   end
 
   def initialize_index
-    @inventory_items = InventoryItem
+    @inventory_items = InventoryItem.scoped
     @inventory_items = @inventory_items.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
   end
 

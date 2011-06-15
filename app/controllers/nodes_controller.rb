@@ -86,6 +86,11 @@ class NodesController < ApplicationController
   def initialize_context
     @node = Node.find params[:id] if params[:id]
     @structure = Structure.find params[:structure_id] if params[:structure_id]
+    @structure ||= @node.structure if @node
+    if @structure
+      add_breadcrumb @structure.name, url_for( @structure )
+      add_breadcrumb 'Nodes', structure_nodes_path( @structure )
+    end
   end
 
   def initialize_index

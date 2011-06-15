@@ -85,6 +85,7 @@ class CategoriesController < ApplicationController
 
   def initialize_context
     @category = Category.find params[:id] if params[:id]
+    add_breadcrumb 'Categories', categories_path
   end
 
   def initialize_index

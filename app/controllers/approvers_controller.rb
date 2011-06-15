@@ -86,8 +86,11 @@ class ApproversController < ApplicationController
   private
 
   def initialize_context
-    @framework = Framework.find params[:framework_id] if params[:framework_id]
     @approver = Approver.find params[:id] if params[:id]
+    @framework = Framework.find params[:framework_id] if params[:framework_id]
+    @framework ||= @approver.framework
+    add_breadcrumb @framework.name, framework_path( @framework )
+    add_breadcrumb 'Approvers', framework_approvers_path( @framework )
   end
 
   def initialize_index

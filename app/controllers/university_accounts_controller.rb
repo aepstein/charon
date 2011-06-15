@@ -88,7 +88,14 @@ class UniversityAccountsController < ApplicationController
   def initialize_context
     @university_account = UniversityAccount.find params[:id] if params[:id]
     @organization = Organization.find params[:organization_id] if params[:organization_id]
+    @organization ||= @university_account.organization if @university_account
     @context = @organization if @organization
+    add_breadcrumb 'University accounts', university_accounts_path
+    if @organization
+      add_breadcrumb 'Organizations', organizations_path
+      add_breadcrumb @organization.name, url_for( @organization )
+      add_breadcrumb 'University accounts', organization_university_accounts_path( @organization )
+    end
   end
 
   def initialize_index

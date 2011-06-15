@@ -86,6 +86,7 @@ class RolesController < ApplicationController
 
   def initialize_context
     @role = Role.find params[:id] if params[:id]
+    add_breadcrumb 'Roles', roles_path
   end
 
   def initialize_index
