@@ -663,6 +663,7 @@ table {
 	margin: 15px 0;
 	border-bottom: 1px solid #e7e7e7;
 	caption-side: bottom;
+	clear: both;
 	}
 
 th {
