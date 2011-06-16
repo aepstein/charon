@@ -5,6 +5,7 @@ class UsersController < ApplicationController
   before_filter :new_user_from_params, :only => [ :new, :create ]
   before_filter :add_blank_address, :only => [ :new, :edit ]
   filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
+  before_filter :setup_breadcrumbs, :except => [ :profile ]
 
   def index
     @search = @users.search( params[:search] )
@@ -84,7 +85,6 @@ class UsersController < ApplicationController
 
   def initialize_context
     @user = User.find params[:id] if params[:id]
-    add_breadcrumb 'Users', users_path
   end
 
   def initialize_index
@@ -93,6 +93,13 @@ class UsersController < ApplicationController
 
   def new_user_from_params
     @user = User.new( params[:user] )
+  end
+
+  def setup_breadcrumbs
+    add_breadcrumb 'Users', users_path
+    if @user && @user.persisted?
+      add_breadcrumb @user, user_path( @user )
+    end
   end
 
   def add_blank_address
