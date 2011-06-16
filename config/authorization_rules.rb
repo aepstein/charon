@@ -10,6 +10,9 @@ authorization do
     has_permission_on [ :bases ], :to => [ :review ]
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
     has_permission_on [ :requests, :agreements ], :to => [ :unapprove ]
+    has_permission_on [ :requests ], :to => [ :accept ] do
+      if_attribute :status => is { 'submitted' }
+    end
     has_permission_on [ :memberships ], :to => :manage do
       if_attribute :registration_id => is { nil }
     end
@@ -114,6 +117,10 @@ authorization do
     has_permission_on [ :requests ], :to => :reject, :join_by => :and do
       if_permitted_to :manage
       if_attribute :status => is_in { %w( completed submitted ) }
+    end
+    has_permission_on [ :requests ], :to => :accept, :join_by => :and do
+      if_permitted_to :manage
+      if_attribute :status => is { 'submitted' }
     end
 
     has_permission_on [ :items ], :to => :allocate do

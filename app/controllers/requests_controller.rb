@@ -4,11 +4,21 @@ class RequestsController < ApplicationController
   before_filter :initialize_index, :only => [ :index, :duplicate ]
   before_filter :new_request_from_params, :only => [ :new, :create ]
   before_filter :setup_breadcrumbs
-  filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy, :show, :attribute_check => true
+  filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy,
+    :show, :accept, :attribute_check => true
   filter_access_to :index, :duplicate do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @basis ) if @basis
     permitted_to!( :index )
+  end
+
+  def accept
+    @request.accept!
+    flash[:notice] = 'Request was successfully accepted.'
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.xml { head :ok }
+     end
   end
 
   def reject; end

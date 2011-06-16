@@ -78,6 +78,7 @@ Charon::Application.routes.draw do
     member do
       get :reject
       put :do_reject
+      put :accept
     end
     collection do
       get :duplicate

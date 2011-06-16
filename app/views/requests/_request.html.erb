@@ -26,6 +26,7 @@
   <td><%= link_to( 'Destroy', request, :confirm => 'Are you sure?', :method => :delete) if permitted_to? :destroy, request %></td>
   <td><%= link_to( 'Approve', new_request_approval_path( request ) ) if permitted_to?( :approve, request ) && request.approvals.where( :user_id => current_user.id ).empty? %></td>
   <td><%= link_to_unapprove_request(request) %></td>
+  <td><%= link_to( 'Accept', accept_request_path(request), :method => :put ) if permitted_to? :accept, request %></td>
   <td><%= link_to( 'Reject', reject_request_path(request) ) if permitted_to?( :reject, request ) %></td>
   <% end -%>
 <% end %>
