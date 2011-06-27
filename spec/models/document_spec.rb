@@ -15,25 +15,27 @@ describe Document do
   it "should not save without an edition" do
     document = Factory(:document)
     document.edition = nil
-    document.save.should == false
+    document.save.should eql false
   end
 
   it "should not save without an document type" do
     document = Factory(:document)
     document.document_type = nil
-    document.save.should == false
+    document.save.should eql false
   end
 
   it "should not create if it conflicts with an existing document type for an edition" do
     document = Factory(:document)
     duplicate = document.clone
-    duplicate.save.should == false
+    duplicate.save.should eql false
   end
 
   it 'should not create if document is larger than size allowed by document type' do
     document = Factory(:document)
     document.document_type.update_attributes!( :max_size_quantity => 200, :max_size_unit => 'byte' )
     document.reload
+    document.original = Rack::Test::UploadedFile.new(
+      "#{::Rails.root}/features/support/assets/small.pdf", 'application/pdf' )
     document.save.should be_false
   end
 

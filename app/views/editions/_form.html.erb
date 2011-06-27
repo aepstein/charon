@@ -14,7 +14,7 @@
   <%= form.inputs :name => 'Supporting Documents' do %>
     <%= form.semantic_fields_for :documents do |document_form| %>
       <%= document_form.input :document_type_id, :as => :hidden %>
-      <%= document_form.input :attached,
+      <%= document_form.input :original, :as => :file,
         :label => document_form.object.edition.perspective.titleize + ' ' +
           document_form.object.document_type.to_s %>
     <% end %>

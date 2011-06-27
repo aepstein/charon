@@ -62,9 +62,8 @@ Factory.define :category do |f|
 end
 
 Factory.define :document do |f|
-  f.attached { Rack::Test::UploadedFile.new(
-    "#{::Rails.root}/features/support/assets/small.png",
-    'image/png') }
+  f.original { Rack::Test::UploadedFile.new(
+    "#{::Rails.root}/features/support/assets/small.pdf", 'application/pdf' ) }
   f.association :edition, :factory => :attachable_edition
   f.document_type { |d| d.edition.document_types.first }
 end

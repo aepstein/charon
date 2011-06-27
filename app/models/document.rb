@@ -4,26 +4,20 @@ class Document < ActiveRecord::Base
   belongs_to :edition, :inverse_of => :documents
   belongs_to :document_type, :inverse_of => :documents
 
-  has_attached_file :attached,
-    :path => ':rails_root/db/uploads/:rails_env/:id_partition/:attachment/:style.:extension',
-    :url => ':relative_url_root/documents/:id.:format'
+  mount_uploader :original, PdfUploader
 
-  delegate :max_size, :to => :document_type
-  delegate :max_size_string, :to => :document_type
+  validates :original, :presence => true
+  validates_integrity_of :original
+  validates :edition, :presence => true
+  validates :document_type, :presence => true
+  validates :document_type_id, :uniqueness => { :scope => [ :edition_id ] }
+  validate :document_type_must_be_allowed_by_edition
 
-  validates_attachment_presence :attached
-  validates_presence_of :edition
-  validates_presence_of :document_type
-  validates_uniqueness_of :document_type_id, :scope => [ :edition_id ]
-  validate :attached_file_size_must_be_less_than_max,
-           :document_type_must_be_allowed_by_edition
+  def max_size; return document_type.max_size if document_type; end
 
-  def attached_file_size_must_be_less_than_max
-    return unless document_type && attached_file_size?
-    if attached_file_size > max_size
-      errors.add( :attached, "is larger than #{max_size_string}." )
-    end
-  end
+  def max_size_string; return document_type.max_size_string if document_type; end
+
+  private
 
   def document_type_must_be_allowed_by_edition
     return if edition.nil? || document_type.nil?

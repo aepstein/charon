@@ -10,7 +10,7 @@ Feature: Manage items with document
     And a basis: "focus" exists with structure: structure "focus", name: "Basis"
     And an organization: "focus" exists with last_name: "Applicant"
     And a request: "focus" exists with basis: basis "focus", organization: organization "focus"
-
+@wip
   Scenario: Add and update edition with documentation
     Given a document_type: "price_quote" exists with name: "price quote", max_size_quantity: 500, max_size_unit: "byte"
     And the document_type is amongst the document_types of node: "focus"
@@ -21,6 +21,7 @@ Feature: Manage items with document
     And I attach the file "features/support/assets/small.png" to "Requestor price quote"
     And I press "Create"
     Then I should see "Item was successfully created."
+    And show me the page
     And I should see the following documents:
       | Type        |
       | price quote |
