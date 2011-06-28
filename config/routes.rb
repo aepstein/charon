@@ -80,7 +80,7 @@ Charon::Application.routes.draw do
   end
   resources :requests, :except => [ :create, :new ] do
     member do
-      get :reject
+      get :reject, :documents_report
       put :do_reject
       put :accept
     end

@@ -1,7 +1,5 @@
 class PdfUploader < CarrierWave::Uploader::Base
 
-#  before :cache, :check_file_size!
-
   # Replace filename extension with chosen alternative
   def substitute_extension(filename, extension)
     return nil if filename.blank?
@@ -25,16 +23,6 @@ class PdfUploader < CarrierWave::Uploader::Base
 
   def extension_white_list
     %w( pdf )
-  end
-
-  protected
-
-  # Verifies file is within size limits imposed by the model
-  def check_file_size!( new_file )
-    return new_file unless new_file && new_file.exists?
-    if model.max_size && new_file.size > model.max_size
-      raise CarrierWave::IntegrityError, "You may not upload a file larger than #{model.max_size_string}."
-    end
   end
 
 end

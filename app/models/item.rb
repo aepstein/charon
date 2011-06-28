@@ -33,6 +33,7 @@ class Item < ActiveRecord::Base
     end
   end
   has_many :documents, :through => :editions
+  has_many :document_types, :through => :node
 
   scope :root, where( :parent_id => nil )
 

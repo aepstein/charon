@@ -6,10 +6,24 @@ class RequestsController < ApplicationController
   before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy,
     :show, :accept, :attribute_check => true
+  filter_access_to :documents_report do
+    permitted_to! :show, @request
+  end
   filter_access_to :index, :duplicate do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @basis ) if @basis
     permitted_to!( :index )
+  end
+
+  # /requests/:id/documents_report.pdf
+  def documents_report
+    respond_to do |format|
+      format.pdf do
+        send_data DocumentsReport.new( @request ).to_pdf,
+          :filename => 'documents_report.pdf', :type => :pdf,
+          :disposition => 'inline'
+      end
+    end
   end
 
   def accept
