@@ -6,8 +6,8 @@ class Document < ActiveRecord::Base
 
   mount_uploader :original, PdfUploader
 
-  validates :original, :presence => true
-  validates_integrity_of :original
+  validates :original, :presence => true, :integrity => true,
+    :file_size => { :maximum => :max_size }
   validates :edition, :presence => true
   validates :document_type, :presence => true
   validates :document_type_id, :uniqueness => { :scope => [ :edition_id ] }
@@ -20,9 +20,9 @@ class Document < ActiveRecord::Base
   private
 
   def document_type_must_be_allowed_by_edition
-    return if edition.nil? || document_type.nil?
+    return if edition.blank? || document_type.blank?
     unless edition.document_types.include?( document_type )
-      errors.add( :document_type, "is not a valid document type for #{edition}." )
+      errors.add( :document_type, "is not a valid document type for #{edition}" )
     end
   end
 

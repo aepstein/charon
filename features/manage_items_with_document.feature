@@ -10,18 +10,17 @@ Feature: Manage items with document
     And a basis: "focus" exists with structure: structure "focus", name: "Basis"
     And an organization: "focus" exists with last_name: "Applicant"
     And a request: "focus" exists with basis: basis "focus", organization: organization "focus"
-@wip
+
   Scenario: Add and update edition with documentation
-    Given a document_type: "price_quote" exists with name: "price quote", max_size_quantity: 500, max_size_unit: "byte"
+    Given a document_type: "price_quote" exists with name: "price quote", max_size_quantity: 3, max_size_unit: "kilobyte"
     And the document_type is amongst the document_types of node: "focus"
     And I log in as user: "admin"
     And I am on the items page for request: "focus"
     When I select "Focus" from "Add New Root Item"
     And I press "Add Root Item"
-    And I attach the file "features/support/assets/small.png" to "Requestor price quote"
+    And I attach the file "features/support/assets/small.pdf" to "Requestor price quote"
     And I press "Create"
     Then I should see "Item was successfully created."
-    And show me the page
     And I should see the following documents:
       | Type        |
       | price quote |
@@ -32,7 +31,7 @@ Feature: Manage items with document
       | Type        |
       | price quote |
     When I follow "Edit"
-    And I attach the file "features/support/assets/large.png" to "Requestor price quote"
+    And I attach the file "features/support/assets/large.pdf" to "Requestor price quote"
     And I press "Update"
     Then I should not see "Item was successfully updated."
 

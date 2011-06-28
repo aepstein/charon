@@ -17,6 +17,7 @@
       <%= document_form.input :original, :as => :file,
         :label => document_form.object.edition.perspective.titleize + ' ' +
           document_form.object.document_type.to_s %>
+      <%= document_form.hidden_field :original_cache %>
     <% end %>
   <% end %>
 

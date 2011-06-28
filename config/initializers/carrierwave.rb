@@ -7,3 +7,5 @@ CarrierWave.configure do |config|
   config.cache_dir = 'carrierwave'
 end
 
+require 'file_size_validator'
+

@@ -5,7 +5,7 @@ Feature: Manage account transactions
 
 Background:
   Given a user: "admin" exists with admin: true
-@wip
+@todo
 Scenario:
   Given a category: "administrative" exists with name: "Administrative"
   And a category: "travel" exists with name: "Travel"
@@ -15,11 +15,11 @@ Scenario:
   And a basis: "budget" exists with name: "Annual Budget", organization: organization "grantor"
   And an organization: "recipient" exists with last_name: "Recipient"
   And a university_account: "recipient" exists with organization: organization "recipient"
-  And an activity_account: "administrative" exists with category: category "administrative", university_account: "recipient"
-  And an activity_account: "travel" exists with category: category "travel", university_account: "recipient"
-  And an activity_account: "social" exists with category: category "social", university_account: "recipient"
+  And an activity_account: "administrative" exists with category: category "administrative", university_account: university_account "recipient"
+  And an activity_account: "travel" exists with category: category "travel", university_account: university_account "recipient"
+  And an activity_account: "social" exists with category: category "social", university_account: university_account "recipient"
   When I log in as user: "admin"
-  And I am on the new account_transaction page for activity_account: "administrative"
-  And I fill in "Amount" with "100"
-  And I follow "add adjustment"
+#  And I am on the new account_transaction page for activity_account: activity_account "administrative"
+#  And I fill in "Amount" with "100"
+#  And I follow "add adjustment"
 

@@ -16,7 +16,11 @@ Charon::Application.routes.draw do
     end
   end
   resources :categories
-  resources :documents, :only => [ :show ]
+  resources :documents, :only => [ :show ] do
+    member do
+      get :original
+    end
+  end
   resources :document_types
   resources :frameworks do
     resources :approvers, :only => [ :index, :create, :new ]

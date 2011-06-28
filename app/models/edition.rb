@@ -12,12 +12,20 @@ class Edition < ActiveRecord::Base
     def for_type?( document_type )
       self.map { |d| d.document_type }.include?( document_type )
     end
+
     def populate
-      return if proxy_owner.item.nil? || proxy_owner.item.node.nil?
-      proxy_owner.node.document_types.each do |document_type|
-        document = self.build(:document_type => document_type) if self.select { |d| d.document_type == document_type }.empty?
-        document.edition = proxy_owner if proxy_owner.new_record?
+      return if proxy_owner.item.blank? || proxy_owner.item.node.blank?
+      proxy_owner.node.document_types.each do |type|
+        build_for_type( type ) unless self.map(&:document_type).include? type
       end
+    end
+
+    protected
+
+    def build_for_type( type )
+      document = build
+      document.document_type = type
+      document
     end
   end
   accepts_nested_attributes_for :administrative_expense
@@ -27,7 +35,7 @@ class Edition < ActiveRecord::Base
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
   accepts_nested_attributes_for :external_equity_report
-  accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['attached'].blank? || attributes['attached'].original_filename.blank? }
+  accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['original'].blank? || attributes['original'].original_filename.blank? }
 
   validates_presence_of :item
   validates_numericality_of :amount, :greater_than_or_equal_to => 0
