@@ -8,6 +8,8 @@
   <%= form.input :category %>
   <%= form.input :item_amount_limit %>
   <%= form.input :item_quantity_limit %>
+  <%= form.input :document_types, :as => :check_boxes,
+    :hint => 'What types of supporting documentation should be submitted?' %>
   <% end %>
   <%= form.buttons %>
 

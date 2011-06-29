@@ -28,6 +28,8 @@
   <b>Parent:</b> <%=h @node.parent %>
 </p>
 
+<p><b>Document types:</b> <%= @node.document_types.join ', ' %></p>
+
 <p>
 <% if permitted_to? :edit, @node -%>
 <%= link_to 'Edit', edit_node_path(@node) %> |
