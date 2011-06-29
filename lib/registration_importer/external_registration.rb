@@ -70,7 +70,9 @@ module RegistrationImporter
     def import
       destination = Registration.find_or_initialize_by_external_id_and_external_term_id(
         org_id, term_id )
-      destination.attributes = import_attributes( REGISTRATION_ATTRIBUTES )
+      import_attributes( REGISTRATION_ATTRIBUTES ).each do |k,v|
+        destination.send "#{k}=", v
+      end
       out = Array.new
       out << ( destination.new_record? ? 1 : 0  )
       out << ( destination.changed? ? 1 : 0 )
@@ -84,7 +86,10 @@ module RegistrationImporter
       destination.memberships.delete( deletes ) unless deletes.empty?
       adds = contacts.users.reject { |u| destination.memberships.users.include? u }
       adds.each do |pair|
-        destination.memberships.create( :role => pair.first, :user => pair.last )
+        m = destination.memberships.build
+        m.role = pair.first
+        m.user = pair.last
+        m.save
       end
       return (deletes + adds).length > 0
     end
