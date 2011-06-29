@@ -3,9 +3,9 @@ class Membership < ActiveRecord::Base
   include OrganizationNameLookup
 
   attr_accessible :user_id, :role_id, :active, :user_name
-  attr_readonly :organization_id, :registration_id, :member_source_id
+  attr_readonly :registration_id, :member_source_id
 
-  default_scope includes( :user, :organization ).
+  scope :ordered, includes( :user, :organization ).
     order( 'organizations.last_name, organizations.first_name, users.last_name, ' +
       'users.first_name, users.net_id' )
   scope :active, where( :active => true )
@@ -19,8 +19,8 @@ class Membership < ActiveRecord::Base
 
   before_validation :set_organization_from_registration, :set_from_member_source
 
-  validates_presence_of :user
-  validates_presence_of :role
+  validates :user, :presence => true
+  validates :role, :presence => true
   validate :must_have_registration_or_organization
 
   def set_organization_from_registration

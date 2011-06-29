@@ -33,6 +33,9 @@ class Registration < ActiveRecord::Base
 
   attr_accessor :skip_update_peers
 
+  # All attributes can be accessible because this model is not exposed for updates
+  def accessible; :all; end
+
   # Assures the external term id is populated when the registration term is set
   def registration_term_id=( id )
     write_attribute :registration_term_id, id
@@ -130,10 +133,7 @@ class Registration < ActiveRecord::Base
     return true unless organization
     organization.registrations.reset
     if current?
-      organization.attributes = name.to_organization_name_attributes
-      if organization.first_name_changed? || organization.last_name_changed?
-        organization.save
-      end
+      organization.update_attributes name.to_organization_name_attributes
       organization.fulfill
     end
     organization.unfulfill
