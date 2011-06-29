@@ -130,7 +130,8 @@ class Edition < ActiveRecord::Base
   end
 
   def previous_perspective
-    return nil unless perspective && perspective != PERSPECTIVES.first
+    return nil unless perspective && perspective != PERSPECTIVES.first &&
+      PERSPECTIVES.include?( perspective )
     PERSPECTIVES[PERSPECTIVES.index(perspective) - 1]
   end
 

@@ -12,28 +12,28 @@ describe Edition do
   it "should not save without an item" do
     edition = Factory(:edition)
     edition.item = nil
-    edition.save.should == false
+    edition.save.should be_false
   end
 
   it "should not save with an invalid perspective" do
     edition = Factory(:edition)
     edition.perspective = 'invalid'
     Edition::PERSPECTIVES.should_not include(edition.perspective)
-    edition.save.should == false
+    edition.save.should be_false
   end
 
   it "should not save with a duplicate perspective for item" do
     edition = Factory(:edition)
     duplicate_edition = Factory.build(:edition, :item => edition.item)
-    duplicate_edition.save.should == false
+    duplicate_edition.save.should be_false
   end
 
   it "should not save without an invalid amount" do
     edition = Factory(:edition)
     edition.amount = nil
-    edition.save.should == false
+    edition.save.should be_false
     edition.amount = -1.02
-    edition.save.should == false
+    edition.save.should be_false
   end
 
   it "should not save with an amount higher than item.node.item_amount_limit" do
@@ -57,10 +57,11 @@ describe Edition do
   it "should not save with an amount higher than original edition amount" do
     original = Factory(:edition)
     original.item.reload
-    review = original.item.editions.next( :amount => (original.amount + 1.0) )
+    review = original.item.editions.next
+    review.amount = ( original.amount + 1.0 )
     review.perspective.should eql 'reviewer'
     review.amount.should > original.amount
-    review.save.should eql false
+    review.save.should be_false
     review.errors.first.should eql [:amount, " is greater than original request amount."]
     review.max_request.should eql original.amount
   end
