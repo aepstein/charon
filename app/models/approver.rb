@@ -1,4 +1,7 @@
 class Approver < ActiveRecord::Base
+  attr_accessible :role_id, :status, :perspective, :quantity
+  attr_readonly :framework_id
+
   belongs_to :framework, :inverse_of => :approvers
   belongs_to :role, :inverse_of => :approvers
 

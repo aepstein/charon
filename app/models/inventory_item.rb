@@ -1,5 +1,12 @@
 class InventoryItem < ActiveRecord::Base
+  attr_accessible :purchase_price, :current_value, :description, :identifier,
+    :comments, :usable, :missing, :acquired_on, :scheduled_retirement_on,
+    :retired_on
+  attr_readonly :organization_id
+
   belongs_to :organization, :inverse_of => :inventory_items
+
+  has_paper_trail :class_name => 'SecureVersion'
 
   default_scope includes(:organization).
     order( 'organizations.last_name ASC, organizations.first_name ASC, ' +

@@ -28,11 +28,15 @@ describe Request do
     @request.save
     initial = @request.approval_checkpoint
     @request.reload
-    first_approval = @request.approvals.create!( :user => Factory(:user), :as_of => @request.updated_at )
+    first_approval = @request.approvals.build( :as_of => @request.updated_at )
+    first_approval.user = Factory(:user)
+    first_approval.save!
     @request.reload
     @request.status.should eql 'completed'
     sleep 1
-    last = @request.approvals.create( :user => Factory(:user), :as_of => @request.updated_at )
+    last = @request.approvals.build( :as_of => @request.updated_at )
+    last.user = Factory(:user)
+    last.save!
     @request.reload
     initial.should_not eql last.created_at
     @request.status.should eql 'submitted'
@@ -47,9 +51,10 @@ describe Request do
   end
 
   it "should call deliver_required_approval_notice on entering completed state" do
-    @request.save
+    @request.save!
     @request.should_receive(:deliver_required_approval_notice)
-    @request.approve.should == true
+    @request.approvable?.should be_true
+    @request.approve!
     @request.status.should == 'completed'
   end
 
@@ -82,7 +87,11 @@ describe Request do
     second_item = first_item.clone
     second_item.position = nil
     second_item.save
-    second_item.editions.create!( Factory.attributes_for(:edition, :amount => 100.0 ) )
+    e = second_item.editions.build
+    Factory.attributes_for(:edition, :amount => 100.0 ).each do |k, v|
+      e.send("#{k}=", v)
+    end
+    e.save!
     first_item.reload
     first_item.editions.next.save!
     second_item.reload

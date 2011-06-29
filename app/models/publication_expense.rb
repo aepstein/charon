@@ -1,8 +1,12 @@
 class PublicationExpense < ActiveRecord::Base
+  attr_accessible :title, :number_of_issues, :copies_per_issue, :price_per_copy,
+    :cost_per_issue
+  attr_readonly :edition_id
+
   belongs_to :edition, :inverse_of => :publication_expense
 
-  validates_presence_of :edition
-  validates_presence_of :title
+  validates :edition, :presence => true
+  validates :title, :presence => true
   validates_numericality_of :number_of_issues, :only_integer => true, :greater_than => 0
   validates_numericality_of :copies_per_issue, :only_integer => true, :greater_than => 0
   validates_numericality_of :price_per_copy, :greater_than_or_equal_to => 0

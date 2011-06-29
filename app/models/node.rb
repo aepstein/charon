@@ -9,6 +9,10 @@ class Node < ActiveRecord::Base
     'Speaker' => 'SpeakerExpense'
   }
 
+  attr_accessible :name, :requestable_type, :item_amount_limit,
+    :item_quantity_limit, :parent_id, :category_id
+  attr_readonly :structure_id
+
   default_scope :order => 'nodes.name ASC'
 
   scope :allowed_for_children_of, lambda { |request, parent_item|

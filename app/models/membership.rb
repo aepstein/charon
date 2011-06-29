@@ -2,6 +2,9 @@ class Membership < ActiveRecord::Base
   include UserNameLookup
   include OrganizationNameLookup
 
+  attr_accessible :user_id, :role_id, :active, :user_name
+  attr_readonly :organization_id, :registration_id, :member_source_id
+
   default_scope includes( :user, :organization ).
     order( 'organizations.last_name, organizations.first_name, users.last_name, ' +
       'users.first_name, users.net_id' )

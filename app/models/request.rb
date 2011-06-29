@@ -2,7 +2,9 @@ class Request < ActiveRecord::Base
   include Notifiable
   notifiable_events :started, :completed, :submitted, :rejected, :accepted, :released
 
-  has_paper_trail
+  attr_readonly :basis_id
+
+  has_paper_trail :class_name => 'SecureVersion'
 
   default_scope includes( :organization, :basis ).
     order( 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC' )

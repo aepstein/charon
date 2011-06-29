@@ -1,4 +1,6 @@
 class Category < ActiveRecord::Base
+  attr_accessible :name
+
   has_many :nodes, :inverse_of => :category
   has_many :activity_accounts, :inverse_of => :category
 

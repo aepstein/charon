@@ -1,4 +1,9 @@
 class Basis < ActiveRecord::Base
+  attr_accessible :name, :framework_id, :structure_id, :contact_name,
+    :contact_email, :open_at, :closed_at, :release_message, :contact_web,
+    :submissions_due_at
+  attr_readonly :framework_id, :structure_id
+
   default_scope :order => 'bases.name ASC'
 
   scope :closed, lambda { where( 'closed_at < ?', Time.zone.now ) }

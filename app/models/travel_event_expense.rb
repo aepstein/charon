@@ -1,4 +1,9 @@
 class TravelEventExpense < ActiveRecord::Base
+  attr_accessible :date, :title, :location, :purpose, :travelers_per_group,
+    :number_of_groups, :distance, :nights_of_lodging, :per_person_fees,
+    :per_group_fees
+  attr_readonly :edition_id
+
   belongs_to :edition, :inverse_of => :travel_event_expense
 
   validates_presence_of :edition

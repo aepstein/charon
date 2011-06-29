@@ -1,6 +1,8 @@
 class Organization < ActiveRecord::Base
   include Fulfiller
 
+  attr_accessible :first_name, :last_name, :club_sport
+
   has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
   has_many :university_accounts, :dependent => :destroy, :inverse_of => :organization
   has_many :activity_accounts, :through => :university_accounts

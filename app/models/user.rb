@@ -2,8 +2,10 @@ class User < ActiveRecord::Base
   include Fulfiller
 
   STATUSES = %w[ undergrad grad staff faculty alumni temporary ]
+  ADMIN_ACCESSIBLE_ATTRIBUTES = [ :admin, :net_id, :status ]
 
-  attr_protected :admin
+  attr_accessible :password, :email, :first_name, :middle_name, :last_name,
+    :date_of_birth
   attr_readonly :net_id
 
   default_scope order( 'users.last_name ASC, users.first_name ASC, ' +

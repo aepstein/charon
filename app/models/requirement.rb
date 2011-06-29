@@ -1,4 +1,7 @@
 class Requirement < ActiveRecord::Base
+  attr_accessible :fulfillable_name, :perspectives, :role_id
+  attr_readonly :framework_id
+
   belongs_to :framework, :inverse_of => :requirements
   belongs_to :fulfillable, :polymorphic => true
   belongs_to :role, :inverse_of => :requirements

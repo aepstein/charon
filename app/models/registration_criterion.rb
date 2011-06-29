@@ -1,6 +1,8 @@
 class RegistrationCriterion < ActiveRecord::Base
   include Fulfillable
 
+  attr_accessible :must_register, :minimal_percentage, :type_of_member
+
   has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
 
   validates_numericality_of :minimal_percentage, :integer_only => true,

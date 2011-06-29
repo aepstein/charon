@@ -1,7 +1,9 @@
 class Agreement < ActiveRecord::Base
   include Fulfillable
 
-  has_paper_trail
+  attr_accessible :name, :contact_name, :contact_email, :purpose, :content
+
+  has_paper_trail :class_name => 'SecureVersion'
 
   default_scope order( 'agreements.name ASC' )
 

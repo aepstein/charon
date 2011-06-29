@@ -1,4 +1,8 @@
 class LocalEventExpense < ActiveRecord::Base
+  attr_accessible :date, :title, :location, :purpose, :number_of_attendees,
+    :price_per_attendee, :copies_quantity, :services_cost, :uup_required
+  attr_readonly :edition_id
+
   belongs_to :edition, :inverse_of => :local_event_expense
 
   validates_presence_of :edition

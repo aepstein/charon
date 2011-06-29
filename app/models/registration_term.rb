@@ -1,4 +1,6 @@
 class RegistrationTerm < ActiveRecord::Base
+  attr_accessible :description, :current, :starts_at, :ends_at
+  attr_readonly :external_id
 
   scope :current, where( :current => true )
 

@@ -1,4 +1,6 @@
 class AccountAdjustment < ActiveRecord::Base
+  attr_accessible :activity_account_id, :amount
+
   belongs_to :account_transaction, :inverse_of => :adjustments
   belongs_to :activity_account, :inverse_of => :adjustments
 

@@ -1,4 +1,7 @@
 class ActivityReport < ActiveRecord::Base
+  attr_accessible :number_of_others, :number_of_undergrads, :number_of_grads,
+    :description, :starts_on, :ends_on
+  attr_readonly :organization_id
 
   belongs_to :organization, :inverse_of => :activity_reports
 
@@ -28,5 +31,7 @@ class ActivityReport < ActiveRecord::Base
     :greater_than_or_equal_to => 0
   validates_date :starts_on
   validates_date :ends_on, :on_or_after => :starts_on
+
+  has_paper_trail :class_name => 'SecureVersion'
 end
 

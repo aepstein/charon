@@ -1,4 +1,8 @@
 class ExternalEquityReport < ActiveRecord::Base
+  attr_accessible :anticipated_expenses, :anticipated_income, :current_assets,
+    :current_liabilities, :academic_credit
+  attr_readonly :edition_id
+
   belongs_to :edition, :inverse_of => :external_equity_report
 
   validates_presence_of :edition

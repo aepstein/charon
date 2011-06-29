@@ -3,6 +3,8 @@ class Role < ActiveRecord::Base
   REVIEWER = %w( member eboard commissioner )
   REQUESTOR =  %w( president vice-president treasurer officer advisor )
 
+  attr_accessible :name
+
   default_scope :order => 'roles.name ASC'
 
   validates_presence_of :name

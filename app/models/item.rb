@@ -1,4 +1,8 @@
 class Item < ActiveRecord::Base
+  #TODO conditionally make amount available based on user role
+  attr_accessible :node_id, :parent_id, :new_position, :amount
+  attr_readonly :request_id, :node_id, :parent_id
+
   belongs_to :node, :inverse_of => :items
   belongs_to :request, :touch => true, :inverse_of => :items
   has_many :editions, :inverse_of => :item do
@@ -15,17 +19,17 @@ class Item < ActiveRecord::Base
       if last then
         return last if last.new_record?
         return nil if last.perspective == Edition::PERSPECTIVES.last
-        perspective = Edition::PERSPECTIVES[ Edition::PERSPECTIVES.index(last.perspective) + 1 ]
         attributes = last.attributes.merge( attributes )
+        attributes['perspective'] = Edition::PERSPECTIVES[ Edition::PERSPECTIVES.index(last.perspective) + 1 ]
         previous_requestable_attributes = last.requestable.attributes if last.requestable
       end
-      perspective ||= Edition::PERSPECTIVES.first
-      previous_attributes ||= Hash.new
+      attributes['perspective'] ||= Edition::PERSPECTIVES.first
       previous_requestable_attributes ||= Hash.new
       edition = build
-      edition.item = proxy_owner if proxy_owner.new_record?
+      Edition::UPDATABLE_ATTRIBUTES.each do |k|
+        edition.send( "#{k}=", attributes[k.to_s] ) unless attributes[k.to_s].blank?
+      end
       edition.build_requestable( previous_requestable_attributes )
-      edition.attributes = attributes.merge( { :perspective => perspective } )
       edition
     end
     def existing

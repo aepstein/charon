@@ -1,4 +1,6 @@
 class AccountTransaction < ActiveRecord::Base
+  attr_accessible :effective_on, :adjustments_attributes
+
   has_many :adjustments, :dependent => :destroy, :inverse_of => :account_transaction,
     :class_name => 'AccountAdjustment' do
     def balance

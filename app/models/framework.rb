@@ -1,4 +1,6 @@
 class Framework < ActiveRecord::Base
+  attr_accessible :name
+
   default_scope order( 'frameworks.name ASC' )
 
   has_many :approvers, :inverse_of => :framework

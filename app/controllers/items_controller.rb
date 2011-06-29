@@ -40,11 +40,6 @@ class ItemsController < ApplicationController
   # POST /requests/:request_id/items
   # POST /requests/:request_id/items.xml
   def create
-    @item.editions.each do |edition|
-      if edition.perspective != Edition::PERSPECTIVES.first
-        raise Authorization::NotAuthorized, "not authorized to create #{edition.perspective} edition"
-      end
-    end
     respond_to do |format|
       if @item.save
         flash[:notice] = 'Item was successfully created.'
@@ -68,9 +63,6 @@ class ItemsController < ApplicationController
   # PUT /items/1
   # PUT /items/1.xml
   def update
-    @item.editions.each do |edition|
-      return permission_denied if edition.changed? && !permitted_to?( :update, edition )
-    end
     respond_to do |format|
       if @item.save
         flash[:notice] = 'Item was successfully updated.'
@@ -122,7 +114,10 @@ class ItemsController < ApplicationController
 
   def populate_editions
     @item.editions.next
-    @item.editions.each { |edition| edition.documents.populate }
+    @item.editions.each do |edition|
+      edition.accessible = Edition::UPDATABLE_ATTRIBUTES
+      edition.documents.populate
+    end
   end
 end
 

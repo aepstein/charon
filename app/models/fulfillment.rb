@@ -4,6 +4,8 @@ class Fulfillment < ActiveRecord::Base
     'Organization' => %w( RegistrationCriterion )
   }
 
+  attr_accessible :fulfiller, :fulfillable
+
   belongs_to :fulfiller, :polymorphic => true
   belongs_to :fulfillable, :polymorphic => true
 

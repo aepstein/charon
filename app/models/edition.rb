@@ -1,5 +1,13 @@
 class Edition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
+  UPDATABLE_ATTRIBUTES = [ :amount, :comment, :perspective,
+    :administrative_expense_attributes, :local_event_expense_attributes,
+    :speaker_expense_attributes, :travel_event_expense_attributes,
+    :durable_good_expense_attributes, :publication_expense_attributes,
+    :external_equity_report_attributes, :documents_attributes ]
+
+  attr_readonly :item_id, :perspective
+
   belongs_to :item, :inverse_of => :editions
   has_one :administrative_expense, :inverse_of => :edition
   has_one :local_event_expense, :inverse_of => :edition
@@ -43,6 +51,7 @@ class Edition < ActiveRecord::Base
   validates_uniqueness_of :perspective, :scope => :item_id
   validate :amount_must_be_within_requestable_max,
     :amount_must_be_within_original_edition, :amount_must_be_within_node_limit
+  validate :previous_edition_must_exist, :on => :create
 
   delegate :request, :to => :item
   delegate :node, :to => :item
@@ -89,6 +98,17 @@ class Edition < ActiveRecord::Base
     end
   end
 
+  # Should not create an edition if there is no previous edition for the item
+  # * on create only
+  # * only if the perspective is not first or there is no item
+  def previous_edition_must_exist
+    return if previous_perspective.blank? || item.blank?
+    if previous.blank?
+      errors.add( :perspective, " is not allowed until there is a " +
+        "#{previous_perspective} edition for the item" )
+    end
+  end
+
   def requestable(force_reload=false)
     return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}",force_reload)
@@ -109,9 +129,14 @@ class Edition < ActiveRecord::Base
     self.send("#{item.node.requestable_type.underscore}=",requestable)
   end
 
+  def previous_perspective
+    return nil unless perspective && perspective != PERSPECTIVES.first
+    PERSPECTIVES[PERSPECTIVES.index(perspective) - 1]
+  end
+
   def previous
-    return nil unless perspective && Edition::PERSPECTIVES.index(perspective) && Edition::PERSPECTIVES.index(perspective) > 0
-    item.editions.where( :perspective => Edition::PERSPECTIVES[Edition::PERSPECTIVES.index(perspective) - 1] ).first
+    return nil unless previous_perspective
+    item.editions.where( :perspective => previous_perspective ).first
   end
 
   def to_s; "#{perspective} edition of #{item}"; end

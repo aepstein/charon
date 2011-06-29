@@ -1,4 +1,6 @@
 class Structure < ActiveRecord::Base
+  attr_accessible :name
+
   default_scope order( 'structures.name ASC' )
 
   has_many :nodes, :include => [ :parent ], :inverse_of => :structure do

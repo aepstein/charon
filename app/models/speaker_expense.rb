@@ -1,4 +1,8 @@
 class SpeakerExpense < ActiveRecord::Base
+  attr_accessible :title, :distance, :number_of_travelers, :nights_of_lodging,
+    :engagement_fee, :dignitary
+  attr_readonly :edition_id
+
   belongs_to :edition, :inverse_of => :speaker_expense
 
   validates_presence_of :edition

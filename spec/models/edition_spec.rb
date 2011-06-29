@@ -76,6 +76,8 @@ describe Edition do
     edition.title.should == title
   end
 
+  pending "it should not save a non-initial edition if a previous edition does not exist"
+
   it "should set its item's title to its own title if it has one on save" do
     title = 'a title'
     edition = Factory(:edition)

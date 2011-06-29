@@ -1,4 +1,7 @@
 class Address < ActiveRecord::Base
+  attr_accessible :label, :street, :city, :state, :zip, :on_campus
+  attr_readonly :addressable_id, :addressable_type
+
   belongs_to :addressable, :polymorphic => true
 
   attr_readonly :label

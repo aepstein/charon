@@ -2,7 +2,7 @@ class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
 
-  has_paper_trail
+  has_paper_trail :class_name => 'SecureVersion'
 
   belongs_to :organization, :inverse_of => :registrations
   belongs_to :registration_term, :inverse_of => :registrations

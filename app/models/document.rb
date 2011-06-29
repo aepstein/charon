@@ -1,4 +1,7 @@
 class Document < ActiveRecord::Base
+  attr_accessible :document_type_id, :original, :original_cache
+  attr_readonly :document_type_id
+
   default_scope includes( :document_type).order( 'document_types.name ASC' )
 
   belongs_to :edition, :inverse_of => :documents
