@@ -12,9 +12,13 @@ describe User do
 
   it "should have a organizations method that returns organizations related by active memberships" do
     user = Factory(:user)
-    active = user.memberships.create( :role => Factory(:role), :organization => Factory(:organization), :active => true )
-    inactive = user.memberships.create( :role => Factory(:role), :organization => Factory(:organization), :active => false )
-    user.organizations.size.should == 1
+    active = user.memberships.build( :role_id => Factory(:role).id, :active => true )
+    active.organization = Factory(:organization)
+    active.save!
+    inactive = user.memberships.create( :role_id => Factory(:role).id, :active => false )
+    inactive.organization = Factory(:organization)
+    inactive.save!
+    user.organizations.size.should eql 1
     user.organizations.should include(active.organization)
     user.organizations.should_not include(inactive.organization)
   end
