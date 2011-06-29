@@ -3,9 +3,15 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Item do
   before(:each) do
     basis = Factory(:basis)
-    basis.structure.nodes.create(Factory.attributes_for(:node).merge( :category => Factory(:category) ) )
+    node = basis.structure.nodes.build
+    Factory.attributes_for(:node).merge( :category => Factory(:category)
+      ).each do |k,v|
+      node.send "#{k}=", v
+    end
+    node.save!
     request = Factory(:request, :basis => basis)
-    @item = request.items.build(:node => basis.structure.nodes.first)
+    @item = request.items.build
+    @item.node = node
   end
 
   it "should save with valid attributes" do
@@ -15,7 +21,7 @@ describe Item do
   it "should not save if there are already too many corresponding root items" do
     first = Factory(:item)
     second = Factory.build(:item, :request => first.request, :node => first.node)
-    second.save.should == false
+    second.save.should be_false
   end
 
   it "should not save if there are already too many corresponding items under parent" do
@@ -23,7 +29,7 @@ describe Item do
     child_node = Factory(:node, :parent => parent.node, :structure => parent.node.structure )
     first = Factory(:item, :request => parent.request, :parent => parent, :node => child_node)
     second = Factory.build(:item, :request => parent.request, :parent => parent, :node => child_node)
-    second.save.should == false
+    second.save.should be_false
   end
 
   it "should have a editions.perspectives method that returns perspectives of editions represented" do
@@ -38,25 +44,29 @@ describe Item do
 
   it "should set its title from the node" do
     item = Factory(:item)
-    item.title.should == item.node.name
+    item.title.should eql item.node.name
   end
 
   it "should call request.touch on save" do
     @item.request
     @item.should_receive(:belongs_to_touch_after_save_or_destroy_for_request)
-    @item.save
+    @item.save!
   end
 
   it "should save to the end of the list by default and act as list" do
     first = @item
-    first.save
+    first.save!
     request = @item.request
     node = @item.node
     node.item_quantity_limit = 3
     node.save
-    second = @item.request.items.create!(:node => node)
+    second = @item.request.items.build
+    second.node = node
+    second.save!
     @item.reload
-    third = @item.request.items.create!(:node => node)
+    third = @item.request.items.build
+    third.node = node
+    third.save!
     first.position.should eql 1
     second.position.should eql 2
     third.position.should eql 3
@@ -70,22 +80,27 @@ describe Item do
 
   it "should have an initialize_next_edition that initialize the next edition in each child and in self" do
     first = @item
-    first.save
+    first.save!
     request = @item.request
     node = @item.node
     node.item_quantity_limit = 2
     node.save
-    child_node = node.structure.nodes.create( Factory.attributes_for(:node).merge(
-      :parent_id => node.id, :category => Factory(:category) ) )
-    child_node.id.should_not be_nil
-    second = @item.request.items.create(:node => node)
-    child = @item.request.items.create(:node => child_node, :parent => first)
-    first.id.should_not be_nil
-    second.id.should_not be_nil
-    child.id.should_not be_nil
+    child_node = node.structure.nodes.build
+    Factory.attributes_for(:node).merge( :parent_id => node.id,
+      :category => Factory(:category) ).each do |k,v|
+      child_node.send "#{k}=", v
+    end
+    child_node.save!
+    second = @item.request.items.build
+    second.node = node
+    second.save!
+    child = @item.request.items.build
+    child.node = child_node
+    child.parent = first
+    child.save!
     first.initialize_next_edition
-    first.editions.first.class.should == Edition
-    first.children.first.editions.first.class.should == Edition
+    first.editions.first.class.should eql Edition
+    first.children.first.editions.first.class.should eql Edition
   end
 end
 
