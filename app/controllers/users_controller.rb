@@ -85,6 +85,7 @@ class UsersController < ApplicationController
 
   def initialize_context
     @user = User.find params[:id] if params[:id]
+    make_user_accessible
   end
 
   def initialize_index
@@ -92,7 +93,14 @@ class UsersController < ApplicationController
   end
 
   def new_user_from_params
-    @user = User.new( params[:user] )
+    @user = User.new
+    make_user_accessible
+    @user.attributes = params[:user] if params[:user]
+  end
+
+  def make_user_accessible
+    return unless @user
+    @user.accessible = User::ADMIN_ACCESSIBLE_ATTRIBUTES if permitted_to? :admin, @user
   end
 
   def setup_breadcrumbs

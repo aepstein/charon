@@ -6,7 +6,7 @@ Feature: Manage activity accounts
   Background:
     Given a user: "admin" exists with admin: true
 
-  Scenario Outline: Test permissions for university_accounts controller
+  Scenario Outline: Test permissions for activity_accounts controller
     Given an organization: "source" exists
     And an organization: "recipient" exists
     And a user: "member" exists

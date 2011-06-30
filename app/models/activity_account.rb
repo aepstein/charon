@@ -1,6 +1,5 @@
 class ActivityAccount < ActiveRecord::Base
-  attr_accessible :comments
-  attr_readonly :university_account_id
+  attr_accessible :comments, :basis_id, :category_id, :university_account_id
 
   belongs_to :university_account, :inverse_of => :activity_accounts
   belongs_to :basis, :inverse_of => :activity_accounts

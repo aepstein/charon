@@ -7,6 +7,7 @@ authorization do
       :registration_terms, :requests, :roles, :structures, :university_accounts,
       :users, :user_status_criterions ],
       :to => [ :manage ]
+    has_permission_on [ :users ], :to => [ :admin ]
     has_permission_on [ :bases ], :to => [ :review ]
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
     has_permission_on [ :requests, :agreements ], :to => [ :unapprove ]
