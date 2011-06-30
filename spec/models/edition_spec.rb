@@ -50,7 +50,7 @@ describe Edition do
     edition.requestable(true).should_not be_nil
     edition.requestable.stub!(:max_request).and_return(50.0)
     edition.amount = 500.0
-    edition.save.should == false
+    edition.save.should eql false
     edition.max_request.should eql edition.requestable.max_request
   end
 
@@ -77,15 +77,18 @@ describe Edition do
     edition.title.should == title
   end
 
-  pending "it should not save a non-initial edition if a previous edition does not exist"
+  it "should not save a non-initial edition if a previous edition does not exist" do
+    edition = Factory.build( :edition, :perspective => Edition::PERSPECTIVES.last )
+    edition.save.should be_false
+  end
 
   it "should set its item's title to its own title if it has one on save" do
     title = 'a title'
     edition = Factory(:edition)
     edition.stub!(:title).and_return(title)
-    edition.title.should_not == edition.item.title
+    edition.title.should_not eql edition.item.title
     edition.save
-    Item.find(edition.item.id).title.should == title
+    Item.find(edition.item.id).title.should eql title
   end
 end
 

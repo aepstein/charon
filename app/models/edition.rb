@@ -45,10 +45,11 @@ class Edition < ActiveRecord::Base
   accepts_nested_attributes_for :external_equity_report
   accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['original'].blank? || attributes['original'].original_filename.blank? }
 
-  validates_presence_of :item
-  validates_numericality_of :amount, :greater_than_or_equal_to => 0
-  validates_inclusion_of :perspective, :in => PERSPECTIVES
-  validates_uniqueness_of :perspective, :scope => :item_id
+  validates :item, :presence => true
+  validates :amount,
+    :numericality => { :greater_than_or_equal_to => 0 }
+  validates :perspective, :inclusion => { :in => PERSPECTIVES },
+    :uniqueness => { :scope => :item_id }
   validate :amount_must_be_within_requestable_max,
     :amount_must_be_within_original_edition, :amount_must_be_within_node_limit
   validate :previous_edition_must_exist, :on => :create

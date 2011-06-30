@@ -4,10 +4,12 @@ class DurableGoodExpense < ActiveRecord::Base
 
   belongs_to :edition, :inverse_of => :durable_good_expense
 
-  validates_presence_of :edition
-  validates_numericality_of :price, :greater_than => 0
-  validates_numericality_of :quantity, :greater_than => 0
-  validates_presence_of :description
+  has_paper_trail :class_name => 'SecureVersion'
+
+  validates :edition, :presence => true
+  validates :price, :numericality => { :greater_than => 0 }
+  validates :quantity, :numericality => { :greater_than => 0 }
+  validates :description, :presence => true
 
 	def max_request
 	  return 0.0 unless quantity && price

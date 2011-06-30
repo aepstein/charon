@@ -5,12 +5,18 @@ class SpeakerExpense < ActiveRecord::Base
 
   belongs_to :edition, :inverse_of => :speaker_expense
 
-  validates_presence_of :edition
-  validates_presence_of :title
-  validates_numericality_of :distance, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_numericality_of :number_of_travelers, :only_integer => true, :greater_than => 0
-  validates_numericality_of :nights_of_lodging, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_numericality_of :engagement_fee, :greater_than_or_equal_to => 0
+  has_paper_trail :class_name => 'SecureVersion'
+
+  validates :edition, :presence => true
+  validates :title, :presence => true
+  validates :distance,
+    :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
+  validates :number_of_travelers,
+    :numericality => { :only_integer => true, :greater_than => 0 }
+  validates :nights_of_lodging,
+    :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
+  validates :engagement_fee,
+    :numericality => { :greater_than_or_equal_to => 0 }
 
   def travel_cost
     return 0.0 unless distance && number_of_travelers

@@ -10,12 +10,18 @@ class AdministrativeExpense < ActiveRecord::Base
 
   belongs_to :edition, :inverse_of => :administrative_expense
 
-  validates_presence_of :edition
-  validates_numericality_of :copies, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_numericality_of :chalk, :only_integer => true, :greater_than_or_equal_to => 0
-  validates_numericality_of :sun_ads, :greater_than_or_equal_to => 0
-  validates_numericality_of :repairs_restocking, :greater_than_or_equal_to => 0
-  validates_numericality_of :mailbox_wsh, :greater_than_or_equal_to => 0
+  has_paper_trail :class_name => 'SecureVersion'
+
+  validates :edition, :presence => true
+  validates :copies, :numericality => { :only_integer => true,
+    :greater_than_or_equal_to => 0 }
+  validates :chalk, :numericality => { :only_integer => true,
+    :greater_than_or_equal_to => 0 }
+  validates :sun_ads, :numericality => { :greater_than_or_equal_to => 0 }
+  validates :repairs_restocking,
+    :numericality => { :greater_than_or_equal_to => 0 }
+  validates :mailbox_wsh,
+    :numericality => { :greater_than_or_equal_to => 0 }
 
   def copies_expense
     return 0.0 unless copies

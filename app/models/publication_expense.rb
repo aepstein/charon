@@ -5,12 +5,18 @@ class PublicationExpense < ActiveRecord::Base
 
   belongs_to :edition, :inverse_of => :publication_expense
 
+  has_paper_trail :class_name => 'SecureVersion'
+
   validates :edition, :presence => true
   validates :title, :presence => true
-  validates_numericality_of :number_of_issues, :only_integer => true, :greater_than => 0
-  validates_numericality_of :copies_per_issue, :only_integer => true, :greater_than => 0
-  validates_numericality_of :price_per_copy, :greater_than_or_equal_to => 0
-  validates_numericality_of :cost_per_issue, :greater_than_or_equal_to => 0
+  validates :number_of_issues,
+    :numericality => { :only_integer => true, :greater_than => 0 }
+  validates :copies_per_issue,
+    :numericality => { :only_integer => true, :greater_than => 0 }
+  validates :price_per_copy,
+    :numericality => { :greater_than_or_equal_to => 0 }
+  validates :cost_per_issue,
+    :numericality => { :greater_than_or_equal_to => 0 }
 
   def total_copies
     return 0 unless number_of_issues && copies_per_issue

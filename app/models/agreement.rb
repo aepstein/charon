@@ -3,19 +3,19 @@ class Agreement < ActiveRecord::Base
 
   attr_accessible :name, :contact_name, :contact_email, :purpose, :content
 
-  has_paper_trail :class_name => 'SecureVersion'
-
   default_scope order( 'agreements.name ASC' )
 
   has_many :approvals, :as => :approvable, :dependent => :delete_all
   has_many :users, :through => :approvals
   has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
 
-  validates_uniqueness_of :name
-  validates_presence_of :name
-  validates_presence_of :content
-  validates_presence_of :contact_name
-  validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
+  has_paper_trail :class_name => 'SecureVersion'
+
+  validates :name, :uniqueness => true, :presence => true
+  validates :content, :presence => true
+  validates :contact_name, :presence => true
+  validates :contact_email,
+    :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
 
 #  after_update :destroy_approvals_if_content_changes
   after_save :fulfill
