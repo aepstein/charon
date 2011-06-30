@@ -22,8 +22,8 @@ class AccountTransaction < ActiveRecord::Base
 
   accepts_nested_attributes_for :adjustments
 
-  validates_presence_of :status
-  validates_date :effective_on
+  validates :status, :presence => true
+  validates :effective_on, :timeliness => { :type => :date }
   validate do |r|
     r.errors.add :base, "adjustments must balance" unless r.adjustments.balanced?
   end

@@ -19,8 +19,9 @@ class ActivityAccount < ActiveRecord::Base
     where( :id.ne => activity_account.id )
   }
 
-  validates_presence_of :university_account
-  validates_uniqueness_of :university_account_id, :scope => [ :basis_id, :category_id ]
+  validates :university_account, :presence => true
+  validates :university_account_id,
+    :uniqueness => { :scope => [ :basis_id, :category_id ] }
 
   def organization; university_account.blank? ? nil : university_account.organization; end
 end

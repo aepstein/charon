@@ -4,12 +4,12 @@ class MemberSource < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy, :inverse_of => :member_source
   has_many :users, :through => :memberships
 
-  validates_presence_of :organization
-  validates_presence_of :role
-  validates_numericality_of :minimum_votes, :integer_only => true,
-    :greater_than_or_equal_to => 0
-  validates_numericality_of :external_committee_id, :integer_only => true,
-    :greater_than => 0
+  validates :organization, :presence => true
+  validates :role, :presence => true
+  validates :minimum_votes,
+    :numericality => { :integer_only => true, :greater_than_or_equal_to => 0 }
+  validates :external_committee_id,
+    :numericality => { :integer_only => true, :greater_than => 0 }
 
 end
 

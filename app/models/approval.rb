@@ -14,10 +14,11 @@ class Approval < ActiveRecord::Base
   scope :requests, where( :approvable_type => 'Request' )
   scope :at_or_after, lambda { |time| where( :created_at.gte => time ) }
 
-  validates_datetime :as_of
-  validates_uniqueness_of :approvable_id, :scope => [ :approvable_type, :user_id ]
-  validates_presence_of :approvable
-  validates_presence_of :user
+  validates :as_of, :timeliness => { :type => :datetime }
+  validates :approvable_id,
+    :uniqueness => { :scope => [ :approvable_type, :user_id ] }
+  validates :approvable, :presence => true
+  validates :user, :presence => true
   validate :approvable_must_not_change
 
   after_create :approve_approvable, :deliver_approval_notice, :fulfill_user

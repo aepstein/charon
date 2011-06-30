@@ -4,23 +4,6 @@ class Basis < ActiveRecord::Base
     :submissions_due_at
   attr_readonly :framework_id, :structure_id
 
-  default_scope :order => 'bases.name ASC'
-
-  scope :closed, lambda { where( 'closed_at < ?', Time.zone.now ) }
-  scope :open, lambda {
-    where( 'open_at < :t AND closed_at > :t', :t => Time.zone.now )
-  }
-  scope :upcoming, lambda {
-    where( 'open_at > ?', Time.zone.now )
-  }
-  scope :no_draft_request_for, lambda { |organization|
-    where(
-      'bases.id NOT IN (SELECT basis_id FROM requests ' +
-      'WHERE requests.status IN (?) AND requests.organization_id = ? )',
-      %w( started completed ),
-      organization.id )
-  }
-
   belongs_to :organization, :inverse_of => :bases
   belongs_to :structure, :inverse_of => :bases
   belongs_to :framework, :inverse_of => :bases
@@ -53,18 +36,34 @@ class Basis < ActiveRecord::Base
     end
   end
 
-  validates_uniqueness_of :name
-  validates_presence_of :name
-  validates_presence_of :organization
-  validates_presence_of :framework
-  validates_presence_of :structure
-  validates_presence_of :organization
-  validates_presence_of :contact_name
-  validates_format_of :contact_email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
-  validates_presence_of :contact_web
-  validates_datetime :open_at
-  validates_datetime :closed_at, :after => :open_at
-  validates_datetime :submissions_due_at, :before => :closed_at
+  validates :name, :presence => true, :uniqueness => true
+  validates :organization, :presence => true
+  validates :framework, :presence => true
+  validates :structure, :presence => true
+  validates :contact_name, :presence => true
+  validates :contact_email,
+    :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
+  validates :contact_web, :presence => true
+  validates :open_at, :timeliness => { :type => :datetime }
+  validates :closed_at, :timeliness => { :type => :datetime, :after => :open_at }
+  validates :submissions_due_at,
+    :timeliness => { :type => :datetime, :before => :closed_at }
+
+  default_scope :order => 'bases.name ASC'
+  scope :closed, lambda { where( 'closed_at < ?', Time.zone.now ) }
+  scope :open, lambda {
+    where( 'open_at < :t AND closed_at > :t', :t => Time.zone.now )
+  }
+  scope :upcoming, lambda {
+    where( 'open_at > ?', Time.zone.now )
+  }
+  scope :no_draft_request_for, lambda { |organization|
+    where(
+      'bases.id NOT IN (SELECT basis_id FROM requests ' +
+      'WHERE requests.status IN (?) AND requests.organization_id = ? )',
+      %w( started completed ),
+      organization.id )
+  }
 
   def open?
     (open_at < Time.zone.now) && (closed_at > Time.zone.now)

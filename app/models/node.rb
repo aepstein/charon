@@ -13,6 +13,19 @@ class Node < ActiveRecord::Base
     :item_quantity_limit, :parent_id, :category_id
   attr_readonly :structure_id
 
+  belongs_to :structure, :inverse_of => :nodes
+  belongs_to :category, :inverse_of => :nodes
+  has_and_belongs_to_many :document_types
+  has_many :items, :inverse_of => :node
+  acts_as_tree
+
+  validates :name, :presence => true,
+    :uniqueness => { :scope => [ :structure_id ] }
+  validates :structure, :presence => true
+  validates :requestable_type,
+    :inclusion => { :in => Node::ALLOWED_TYPES.values, :allow_blank => true }
+  validates :category, :presence => true
+
   default_scope :order => 'nodes.name ASC'
 
   scope :allowed_for_children_of, lambda { |request, parent_item|
@@ -24,18 +37,6 @@ class Node < ActiveRecord::Base
     where( "nodes.parent_id #{parent_node_sql} AND " +
            "nodes.item_quantity_limit > #{parent_item_count_sql}" )
   }
-
-  belongs_to :structure, :inverse_of => :nodes
-  belongs_to :category, :inverse_of => :nodes
-  has_and_belongs_to_many :document_types
-  has_many :items, :inverse_of => :node
-  acts_as_tree
-
-  validates_presence_of :name
-  validates_uniqueness_of :name, :scope => [:structure_id]
-  validates_presence_of :structure
-  validates_inclusion_of :requestable_type, :in => Node::ALLOWED_TYPES.values, :allow_blank => true
-  validates_presence_of :category
 
   def to_s; name; end
 

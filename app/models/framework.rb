@@ -1,11 +1,17 @@
 class Framework < ActiveRecord::Base
   attr_accessible :name, :requirements_attributes
 
-  default_scope order( 'frameworks.name ASC' )
-
   has_many :approvers, :inverse_of => :framework
   has_many :requirements, :inverse_of => :framework
   has_many :bases, :inverse_of => :framework
+
+  validates :name, :presence => true, :uniqueness => true
+
+  accepts_nested_attributes_for :requirements,
+    :reject_if => proc { |attributes| attributes['fulfillable_name'].blank? },
+    :allow_destroy => true
+
+  default_scope order( 'frameworks.name ASC' )
 
   scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
     joins( 'LEFT JOIN requirements ON requirements.framework_id = frameworks.id ' +
@@ -26,13 +32,6 @@ class Framework < ActiveRecord::Base
   scope :unfulfilled_for, lambda { |fulfiller, perspective, role_ids|
     with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
   }
-
-  accepts_nested_attributes_for :requirements,
-    :reject_if => proc { |attributes| attributes['fulfillable_name'].blank? },
-    :allow_destroy => true
-
-  validates_presence_of :name
-  validates_uniqueness_of :name
 
   def to_s; name; end
 

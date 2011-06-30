@@ -5,11 +5,14 @@ class Approver < ActiveRecord::Base
   belongs_to :framework, :inverse_of => :approvers
   belongs_to :role, :inverse_of => :approvers
 
-  validates_presence_of :framework
-  validates_presence_of :role
-  validates_inclusion_of :status, :in => Request.aasm_state_names.map(&:to_s)
-  validates_inclusion_of :perspective, :in => Edition::PERSPECTIVES
-  validates_uniqueness_of :role_id, :scope => [ :framework_id, :status, :perspective ]
+  validates :framework, :presence => true
+  validates :role, :presence => true
+  validates :status,
+    :inclusion => { :in => Request.aasm_state_names.map(&:to_s) }
+  validates :perspective,
+    :inclusion => { :in => Edition::PERSPECTIVES }
+  validates :role_id,
+    :uniqueness => { :scope => [ :framework_id, :status, :perspective ] }
 
   default_scope includes( :role ).order( 'roles.name ASC' )
 

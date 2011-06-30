@@ -48,8 +48,8 @@ class Organization < ActiveRecord::Base
 
   search_methods :name_contains
 
-  validates_presence_of :last_name
-  validates_uniqueness_of :last_name, :scope => :first_name
+  validates :last_name, :presence => true,
+    :uniqueness => { :scope => [ :first_name ] }
 
   def registration_criterions
     return [] unless registrations.current

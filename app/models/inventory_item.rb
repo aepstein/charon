@@ -21,14 +21,17 @@ class InventoryItem < ActiveRecord::Base
 
   search_methods :organization_name_contains
 
-  validates_presence_of :organization
-  validates_uniqueness_of :identifier, :scope => [ :organization_id ]
-  validates_numericality_of :purchase_price, :greater_than_or_equal_to => 0.0
-  validates_numericality_of :current_value, :greater_than_or_equal_to => 0.0
-  validates_presence_of :description
-  validates_date :acquired_on
-  validates_date :scheduled_retirement_on, :after => :acquired_on
-  validates_date :retired_on, :allow_blank => true, :after => :acquired_on
+  validates :organization, :presence => true
+  validates :identifier, :uniqueness => { :scope => [ :organization_id ] }
+  validates :purchase_price,
+    :numericality => { :greater_than_or_equal_to => 0.0 }
+  validates :current_value, :numericality => { :greater_than_or_equal_to => 0.0 }
+  validates :description, :presence => true
+  validates :acquired_on, :timeliness => { :type => :date }
+  validates :scheduled_retirement_on,
+    :timeliness => { :type => :date, :after => :acquired_on }
+  validates :retired_on, :timeliness => { :type => :date, :allow_blank => true,
+    :after => :acquired_on }
 
   before_validation :initialize_current_value, :on => :create
 

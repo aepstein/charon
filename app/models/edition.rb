@@ -45,6 +45,8 @@ class Edition < ActiveRecord::Base
   accepts_nested_attributes_for :external_equity_report
   accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['original'].blank? || attributes['original'].original_filename.blank? }
 
+  has_paper_trail :class_name => 'SecureVersion'
+
   validates :item, :presence => true
   validates :amount,
     :numericality => { :greater_than_or_equal_to => 0 }
@@ -85,38 +87,6 @@ class Edition < ActiveRecord::Base
     amounts.sort.first
   end
 
-  def amount_must_be_within_node_limit
-    return if item.nil? || amount.nil?
-    if amount > item.node.item_amount_limit
-      errors.add(:amount, " is greater than maximum for #{node}.")
-    end
-  end
-
-  def amount_must_be_within_requestable_max
-    return if requestable.nil? || amount.nil?
-    if amount > requestable.max_request then
-      errors.add(:amount, " is greater than the maximum request.")
-    end
-  end
-
-  def amount_must_be_within_original_edition
-    return unless amount && previous
-    if amount > previous.amount
-      errors.add(:amount, " is greater than original request amount.")
-    end
-  end
-
-  # Should not create an edition if there is no previous edition for the item
-  # * on create only
-  # * only if the perspective is not first or there is no item
-  def previous_edition_must_exist
-    return if previous_perspective.blank? || item.blank?
-    if previous.blank?
-      errors.add( :perspective, " is not allowed until there is a " +
-        "#{previous_perspective} edition for the item" )
-    end
-  end
-
   def requestable(force_reload=false)
     return nil if item.nil? || item.node.nil? || item.node.requestable_type.blank?
     self.send("#{item.node.requestable_type.underscore}",force_reload)
@@ -151,6 +121,38 @@ class Edition < ActiveRecord::Base
   def to_s; "#{perspective} edition of #{item}"; end
 
   private
+
+  def amount_must_be_within_node_limit
+    return if item.nil? || amount.nil?
+    if amount > item.node.item_amount_limit
+      errors.add(:amount, " is greater than maximum for #{node}.")
+    end
+  end
+
+  def amount_must_be_within_requestable_max
+    return if requestable.nil? || amount.nil?
+    if amount > requestable.max_request then
+      errors.add(:amount, " is greater than the maximum request.")
+    end
+  end
+
+  def amount_must_be_within_original_edition
+    return unless amount && previous
+    if amount > previous.amount
+      errors.add(:amount, " is greater than original request amount.")
+    end
+  end
+
+  # Should not create an edition if there is no previous edition for the item
+  # * on create only
+  # * only if the perspective is not first or there is no item
+  def previous_edition_must_exist
+    return if previous_perspective.blank? || item.blank?
+    if previous.blank?
+      errors.add( :perspective, " is not allowed until there is a " +
+        "#{previous_perspective} edition for the item" )
+    end
+  end
 
   # Use an instance variable to prevent infinite recursion
   def set_item_title
