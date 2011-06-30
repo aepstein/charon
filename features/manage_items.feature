@@ -111,7 +111,6 @@ Feature: Manage items
     And I log in as user: "admin"
     When I am on the items page for request: "focus"
     Then I should not see "Reviewer"
-    Then show me the page
     When I select "<node>" from "Add New <box>"
     And I press "Add <button>"
     And I fill in "Requestor amount" with "100"

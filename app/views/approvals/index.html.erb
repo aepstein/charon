@@ -5,7 +5,8 @@
 <br />
 
 <p>
-<% if permitted_to? :create, @approvable.approvals.build( :user => current_user ) -%>
+<% new_approval = @approvable.approvals.build; new_approval.user = current_user %>
+<% if permitted_to? :create, new_approval -%>
 <%= link_to 'New approval', new_polymorphic_path( [ @approvable, :approval ] ) %>
 <% end -%>
 </p>
