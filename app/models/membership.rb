@@ -2,7 +2,7 @@ class Membership < ActiveRecord::Base
   include UserNameLookup
   include OrganizationNameLookup
 
-  attr_accessible :user_id, :role_id, :active, :user_name
+  attr_accessible :role_id, :active, :user_name, :organization_name
   attr_readonly :registration_id, :member_source_id
 
   scope :ordered, includes( :user, :organization ).
