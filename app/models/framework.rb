@@ -1,5 +1,5 @@
 class Framework < ActiveRecord::Base
-  attr_accessible :name
+  attr_accessible :name, :requirements_attributes
 
   default_scope order( 'frameworks.name ASC' )
 
