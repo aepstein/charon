@@ -98,7 +98,7 @@ Feature: Manage items
       | released  | observer_requestor  | not see | not see | not see | not see |
       | released  | regular             | not see | not see | not see | not see |
 
-  Scenario Outline: Create or update an item with embedded edtion
+  Scenario Outline: Create or update an item with embedded edition
     Given an organization exists with last_name: "Applicant"
     And a structure exists
     And a node: "new" exists with name: "New", structure: the structure
@@ -109,8 +109,9 @@ Feature: Manage items
     And a request: "focus" exists with basis: the basis, organization: the organization
     And an item exists with node: node "existing", request: request "<request>"
     And I log in as user: "admin"
-    When I am on the items page for the request
+    When I am on the items page for request: "focus"
     Then I should not see "Reviewer"
+    Then show me the page
     When I select "<node>" from "Add New <box>"
     And I press "Add <button>"
     And I fill in "Requestor amount" with "100"

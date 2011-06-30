@@ -1,6 +1,7 @@
 class Item < ActiveRecord::Base
   #TODO conditionally make amount available based on user role
-  attr_accessible :node_id, :parent_id, :new_position, :amount
+  attr_accessible :node_id, :parent_id, :new_position, :amount,
+    :editions_attributes
   attr_readonly :request_id, :node_id, :parent_id
 
   belongs_to :node, :inverse_of => :items
@@ -25,10 +26,7 @@ class Item < ActiveRecord::Base
       end
       attributes['perspective'] ||= Edition::PERSPECTIVES.first
       previous_requestable_attributes ||= Hash.new
-      edition = build
-      Edition::UPDATABLE_ATTRIBUTES.each do |k|
-        edition.send( "#{k}=", attributes[k.to_s] ) unless attributes[k.to_s].blank?
-      end
+      edition = build( attributes )
       edition.build_requestable( previous_requestable_attributes )
       edition
     end
@@ -44,18 +42,15 @@ class Item < ActiveRecord::Base
   acts_as_list :scope => :parent_id
   acts_as_tree
 
-  attr_readonly :node_id
-  attr_readonly :parent_id
-  attr_readonly :perspective
-
   accepts_nested_attributes_for :editions
 
   delegate :requestors, :to => :request
 
-  validates_presence_of :title
-  validates_presence_of :node
-  validates_presence_of :request
-  validates_numericality_of :amount, :greater_than_or_equal_to => 0.0
+  validates :title, :presence => true
+  validates :node, :presence => true
+  validates :request, :presence => true
+  validates :amount,
+    :numericality => { :greater_than_or_equal_to => 0.0 }
   validate :node_must_be_allowed, :on => :create
 
   before_validation :set_title

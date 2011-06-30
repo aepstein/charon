@@ -4,7 +4,24 @@ class ItemsController < ApplicationController
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_item_from_request, :only => [ :new, :create ]
   before_filter :populate_editions, :only => [ :new, :edit ]
-  filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
+  filter_access_to :new, :edit, :destroy, :show, :attribute_check => true
+  # The following checks are necessary to assure the user has permission to
+  # create or update any editions he or she has asked to create or update
+  filter_access_to :create do
+    permitted_to! :create, @item
+    @item.editions.each { |edition| permitted_to! :create, edition }
+  end
+  filter_access_to :update do
+    permitted_to! :update, @item
+    @item.editions.each do |edition|
+      next unless edition.nested_changed?
+      if edition.new_record?
+        permitted_to! :create, edition
+      else
+        permitted_to! :update, edition
+      end
+    end
+  end
   filter_access_to :index do
     permitted_to!( :show, @request )
   end
@@ -114,10 +131,7 @@ class ItemsController < ApplicationController
 
   def populate_editions
     @item.editions.next
-    @item.editions.each do |edition|
-      edition.accessible = Edition::UPDATABLE_ATTRIBUTES
-      edition.documents.populate
-    end
+    @item.editions.each { |edition| edition.documents.populate }
   end
 end
 

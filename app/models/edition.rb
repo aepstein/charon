@@ -1,11 +1,11 @@
 class Edition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
-  UPDATABLE_ATTRIBUTES = [ :amount, :comment, :perspective,
+
+  attr_accessible :amount, :comment, :perspective,
     :administrative_expense_attributes, :local_event_expense_attributes,
     :speaker_expense_attributes, :travel_event_expense_attributes,
     :durable_good_expense_attributes, :publication_expense_attributes,
-    :external_equity_report_attributes, :documents_attributes ]
-
+    :external_equity_report_attributes, :documents_attributes
   attr_readonly :item_id, :perspective
 
   belongs_to :item, :inverse_of => :editions
@@ -60,6 +60,13 @@ class Edition < ActiveRecord::Base
   delegate :requestors, :to => :request
 
   after_save :set_item_title
+
+  def nested_changed?
+    return true if changed?
+    return true if requestable && requestable.changed?
+    documents.each { |document| return true if document.changed? }
+    false
+  end
 
   def title
     return requestable.title if requestable
