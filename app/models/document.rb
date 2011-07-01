@@ -7,6 +7,8 @@ class Document < ActiveRecord::Base
 
   mount_uploader :original, PdfUploader
 
+  has_paper_trail :class_name => 'SecureVersion'
+
   validates :original, :presence => true, :integrity => true,
     :file_size => { :maximum => :max_size }
   validates :edition, :presence => true
