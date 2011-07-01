@@ -39,6 +39,8 @@ class Item < ActiveRecord::Base
 
   scope :root, where( :parent_id => nil )
 
+  has_paper_trail :class_name => 'SecureVersion'
+
   acts_as_list :scope => :parent_id
   acts_as_tree
 

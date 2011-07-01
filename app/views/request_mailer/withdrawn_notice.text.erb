@@ -1,0 +1,6 @@
+Dear Officers of <%= @request.organization %>,
+
+This email is a confirmation that your request for <%= @request.basis %> was withdrawn by <%= @request.withdrawn_by_user %> at <%= @request.withdrawn_at.to_s :us_ordinal %>.
+
+To see it, please go to: <<%= link_to request_url(@request), request_url(@request) %>>.
+

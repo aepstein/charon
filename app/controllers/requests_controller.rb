@@ -26,6 +26,17 @@ class RequestsController < ApplicationController
     end
   end
 
+  # PUT /requests/:id/withdraw
+  def withdraw
+    @request.withdrawn_by_user = current_user
+    @request.withdraw!
+    flash[:notice] = 'Request was successfully withdrawn.'
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.xml { head :ok }
+    end
+  end
+
   def accept
     @request.accept!
     flash[:notice] = 'Request was successfully accepted.'

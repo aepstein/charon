@@ -1,13 +1,7 @@
 class Request < ActiveRecord::Base
   include Notifiable
-  notifiable_events :started, :completed, :submitted, :rejected, :accepted, :released
 
   attr_readonly :basis_id
-
-  has_paper_trail :class_name => 'SecureVersion'
-
-  default_scope includes( :organization, :basis ).
-    order( 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   belongs_to :basis, :inverse_of => :requests
   belongs_to :organization, :inverse_of => :requests
@@ -94,45 +88,20 @@ class Request < ActiveRecord::Base
   end
   has_many :editions, :through => :items
 
-  scope :organization_name_contains, lambda { |name|
-    scoped.merge Organization.name_contains( name )
-  }
-  scope :basis_name_contains, lambda { |name|
-    scoped.merge Basis.where( :name.like => name )
-  }
-  scope :incomplete_for_perspective, lambda { |perspective|
-    where( "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
-        "editions ON items.id = editions.item_id AND editions.perspective = ? " +
-        "WHERE items.request_id = requests.id AND editions.id IS NULL)", perspective )
-  }
-  scope :duplicate, where("requests.basis_id IN (SELECT basis_id FROM requests " +
-    "AS duplicates WHERE duplicates.organization_id = requests.organization_id " +
-    "AND requests.id <> duplicates.id)")
-  search_methods :organization_name_contains, :basis_name_contains
-
-  delegate :structure, :to => :basis
-  delegate :framework, :to => :basis
-  delegate :nodes, :to => :structure
-  delegate :contact_name, :to => :basis
-  delegate :contact_email, :to => :basis
-
   before_validation :set_approval_checkpoint, :on => :create
 
   validates :organization, :presence => true
-  validates_datetime :approval_checkpoint
+  validates :approval_checkpoint, :timeliness => { :type => :datetime }
   validates :basis, :presence => true
-
-  def must_have_open_basis
-    errors.add( :basis_id, 'must be an open basis.' ) unless basis.open?
-  end
-
-  attr_readonly :basis_id
-  attr_protected :status, :accepted_at, :approval_checkpoint, :rejected_at, :reject_message
 
   state_machine :status, :initial => :started do
 
     state :started, :completed, :submitted, :accepted, :reviewed, :certified,
       :released
+
+    state :withdrawn do
+      validates :withdrawn_by_user, :presence => true
+    end
 
     state :rejected do
       validates :reject_message, :presence => true
@@ -156,6 +125,10 @@ class Request < ActiveRecord::Base
       transition :completed => :submitted
     end
 
+    event :withdraw do
+      transition [ :completed, :submitted ] => :withdrawn
+    end
+
     event :accept do
       transition :submitted => :accepted
     end
@@ -174,12 +147,39 @@ class Request < ActiveRecord::Base
 
     after_transition :started => :completed, :do => :deliver_required_approval_notice
     after_transition :accepted => :reviewed, :do => :deliver_required_approval_notice
-    after_transition :completed => :submitted, :do => :reset_approval_checkpoint
-    after_transition :completed => :submitted, :do => :send_submitted_notice!
+    after_transition :completed => :submitted,
+      :do => [ :reset_approval_checkpoint, :send_submitted_notice! ]
     after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
     after_transition :certified => :released, :do => :send_released_notice!
+    after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
+    after_transition :except_to => same, :do => :timestamp_status!
 
   end
+
+  notifiable_events :started, :completed, :submitted, :rejected, :accepted,
+    :released, :withdrawn
+
+  has_paper_trail :class_name => 'SecureVersion'
+
+  default_scope includes( :organization, :basis ).
+    order( 'bases.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
+
+  scope :organization_name_contains, lambda { |name|
+    scoped.merge Organization.name_contains( name )
+  }
+  scope :basis_name_contains, lambda { |name|
+    scoped.merge Basis.where( :name.like => name )
+  }
+  scope :incomplete_for_perspective, lambda { |perspective|
+    where( "requests.id IN (SELECT request_id FROM items LEFT JOIN " +
+        "editions ON items.id = editions.item_id AND editions.perspective = ? " +
+        "WHERE items.request_id = requests.id AND editions.id IS NULL)", perspective )
+  }
+  scope :duplicate, where("requests.basis_id IN (SELECT basis_id FROM requests " +
+    "AS duplicates WHERE duplicates.organization_id = requests.organization_id " +
+    "AND requests.id <> duplicates.id)")
+
+  search_methods :organization_name_contains, :basis_name_contains
 
   # Send notices to all requests with a status
   # * Without second argument, limit to requests that have not yet received such
@@ -237,17 +237,6 @@ class Request < ActiveRecord::Base
     end
   end
 
-  def deliver_required_approval_notice
-    needed_approvals = users.unfulfilled(Approver.where( :quantity => nil )).map do |u|
-      a = Approval.new( :user => u )
-      a.approvable = self
-      a
-    end
-    needed_approvals.each do |approval|
-      ApprovalMailer.request_notice(approval).deliver
-    end
-  end
-
   def approvals_fulfilled?
     users.unfulfilled.length == 0
   end
@@ -265,17 +254,40 @@ class Request < ActiveRecord::Base
     update_attribute :approval_checkpoint, approvals.existing.last.created_at
   end
 
+  def contact_name; basis ? basis.contact_name : nil; end
+
+  def contact_email; basis ? basis.contact_email : nil; end
+
   def contact_to_email
-    "#{contact_name} <#{contact_email}>"
+    return nil unless basis
+    "#{basis.contact_name} <#{basis.contact_email}>"
   end
 
   def self.aasm_state_names
     [ :started, :completed, :submitted, :accepted, :reviewed, :certified,
-      :released, :rejected ]
+      :released, :rejected, :withdrawn ]
   end
 
   def to_s
     "Request of #{organization} from #{basis}"
   end
+
+  protected
+
+  def timestamp_status!
+    update_attribute( "#{status}_at", Time.zone.now ) if has_attribute? "#{status}_at"
+  end
+
+  def deliver_required_approval_notice
+    needed_approvals = users.unfulfilled(Approver.where( :quantity => nil )).map do |u|
+      a = Approval.new( :user => u )
+      a.approvable = self
+      a
+    end
+    needed_approvals.each do |approval|
+      ApprovalMailer.request_notice(approval).deliver
+    end
+  end
+
 end
 

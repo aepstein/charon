@@ -123,6 +123,10 @@ authorization do
       if_permitted_to :manage
       if_attribute :status => is { 'submitted' }
     end
+    has_permission_on [ :requests ], :to => :withdraw, :join_by => :and do
+      if_permitted_to :request
+      if_attribute :status => is_in { %w( completed submitted ) }
+    end
 
     has_permission_on [ :items ], :to => :allocate do
       if_permitted_to :allocate, :request

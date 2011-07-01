@@ -55,25 +55,29 @@ describe Request do
     @request.should_receive(:deliver_required_approval_notice)
     @request.approvable?.should be_true
     @request.approve!
-    @request.status.should == 'completed'
+    @request.status.should eql 'completed'
   end
 
-  xit "should call deliver_release_notice and set released_at on entering the released state" do
-    @request.status = 'certified'
-    @request.save
+  it "should call deliver_release_notice and set released_at on entering the released state" do
     m = Factory(:membership, :organization => @request.organization, :role => Factory(:requestor_role))
-    @request.should_receive(:deliver_release_notice)
+    @request.status = 'certified'
+    @request.save!
+    @request.reload
+    @request.status.should eql 'certified'
+    @request.should_receive(:send_released_notice!)
+#    @request.should_receive(:timestamp_status!)
     @request.released_at.should be_nil
-    @request.release.should == true
+    @request.release!
     @request.released_at.should_not be_nil
-    @request.status.should == 'released'
+    @request.reload
+    @request.status.should eql 'released'
   end
 
-  xit "should set accepted_at on entering accepted state" do
+  it "should set accepted_at on entering accepted state" do
     @request.status = 'submitted'
-    @request.save
+    @request.save!
     @request.accepted_at.should be_nil
-    @request.accept.should == true
+    @request.accept!
     @request.accepted_at.should_not be_nil
   end
 

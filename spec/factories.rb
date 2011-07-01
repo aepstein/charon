@@ -246,12 +246,12 @@ end
 
 Factory.define :item do |f|
   f.association :request
-  f.node { |item| item.association(:node, :structure => item.request.structure) }
+  f.node { |item| item.association(:node, :structure => item.request.basis.structure) }
 end
 
 Factory.define :attachable_item, :parent => :item do |f|
   f.association :request
-  f.node { |item| item.association(:attachable_node, :structure => item.request.structure) }
+  f.node { |item| item.association(:attachable_node, :structure => item.request.basis.structure) }
 end
 
 Factory.define :edition do |f|
