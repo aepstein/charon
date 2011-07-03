@@ -25,8 +25,8 @@ class RegistrationTerm < ActiveRecord::Base
   has_many :memberships, :through => :registrations do
     # Sets memberships' activation status to match registration setting
     def activate!
-      scoped.update_all "active = #{connection.quote current?}",
-        "registration_id IN (#{registration_ids.join ','})"
+      scoped.update_all "active = #{connection.quote proxy_owner.current?}",
+        "registration_id IN (#{proxy_owner.registration_ids.join ','})"
       reset
     end
   end

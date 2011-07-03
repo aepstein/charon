@@ -103,17 +103,16 @@ Feature: Manage request mailers
     And the email parts should contain "Dear Officers of Money Taking Club,"
     And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been processed and released for you to review."
     And the email parts should contain "A customized release message."
-@wip
+
   Scenario: Send notice regarding a withdrawn request
     Given all emails have been delivered
-    And request: "completed" has status: "submitted"
-    And a submitted notice email is sent for request: "completed"
+    And request: "completed" has withdrawn_by_user: user "officer", withdrawn_at: "2011-06-01 09:00:00"
+    And a withdrawn notice email is sent for request: "completed"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And 1 email should be delivered to "officer@example.com"
-    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been submitted"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been withdrawn"
     And the email parts should contain "Dear Officers of Money Taking Club,"
-    And the email parts should contain "This email is a confirmation that you have successfully submitted your request for Money Taking Fund."
-    And the email parts should contain "You should receive an additional notice when it is accepted for review."
+    And the email parts should contain "This email is a confirmation that your request for Money Taking Fund was withdrawn by Alpha Beta on June 1st, 2011 9:00am"
 

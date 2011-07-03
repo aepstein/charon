@@ -3,6 +3,7 @@ class Request < ActiveRecord::Base
 
   attr_readonly :basis_id
 
+  belongs_to :withdrawn_by_user, :class_name => 'User'
   belongs_to :basis, :inverse_of => :requests
   belongs_to :organization, :inverse_of => :requests
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
