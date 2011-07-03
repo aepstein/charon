@@ -114,5 +114,5 @@ Feature: Manage request mailers
     And 1 email should be delivered to "officer@example.com"
     And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been withdrawn"
     And the email parts should contain "Dear Officers of Money Taking Club,"
-    And the email parts should contain "This email is a confirmation that your request for Money Taking Fund was withdrawn by Alpha Beta on June 1st, 2011 9:00am"
+    And the email parts should contain "This email is a confirmation that your request for Money Taking Fund was withdrawn by Alpha Beta at June 1st, 2011 09:00am"
 

@@ -30,7 +30,11 @@ class Organization < ActiveRecord::Base
   end
   has_many :requests, :inverse_of => :organization do
     def creatable
-      proxy_owner.bases.requestable.map { |basis| build( :basis => basis ) }
+      proxy_owner.bases.requestable.map do |basis|
+        request = build
+        request.basis = basis
+        request
+      end
     end
   end
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all

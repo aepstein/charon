@@ -266,7 +266,7 @@ Node::ALLOWED_TYPES.each_value do |t|
   end
   Factory.define "#{t}Item".underscore.to_sym, :parent => :item do |f|
     f.association :request
-    f.node { |item| item.association("#{t}Node".underscore.to_sym, :structure => item.request.structure) }
+    f.node { |item| item.association("#{t}Node".underscore.to_sym, :structure => item.request.basis.structure) }
   end
   Factory.define "#{t}Edition".underscore.to_sym, :parent => :edition do |f|
     f.item { |edition| edition.association "#{t}Item".underscore.to_sym  }

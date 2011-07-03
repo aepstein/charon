@@ -1,6 +1,7 @@
 class Request < ActiveRecord::Base
   include Notifiable
 
+  attr_accessible :basis_id
   attr_readonly :basis_id
 
   belongs_to :withdrawn_by_user, :class_name => 'User'
