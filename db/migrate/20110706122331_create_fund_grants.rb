@@ -3,7 +3,7 @@ class CreateFundGrants < ActiveRecord::Migration
     create_table :fund_grants do |t|
       t.references :organization, :null => false
       t.references :fund_source, :null => false
-      t.string :state, :null => false, :default => 'new'
+      t.datetime :released_at
 
       t.timestamps
     end
