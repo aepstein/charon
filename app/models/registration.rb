@@ -118,7 +118,8 @@ class Registration < ActiveRecord::Base
   def adopt_organization
     if external_id? && organization.blank?
       self.organization = Organization.joins( :registrations ).merge(
-        Registration.unscoped.where( :external_id => external_id ) ).first
+        Registration.unscoped.where( :external_id => external_id ) ).
+        readonly(false).first
     end
     true
   end
