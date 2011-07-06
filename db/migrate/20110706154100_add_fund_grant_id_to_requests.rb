@@ -48,20 +48,6 @@ class AddFundGrantIdToRequests < ActiveRecord::Migration
     say_with_time "Remove deprecated references from fund_items" do
       remove_column :fund_items, :fund_request_id
     end
-
-
-    # TODO -- need to combine items
-    # Reassign editions to request
-    add_column :editions, :request_id, :integer
-    add_index :editions, [ :request_id, :item_id, : ]
-    execute <<-SQL
-      UPDATE editions
-    SQL
-    # Reassign items to fund_grant
-    remove_index :items, [ :request_id, :node_id ]
-    remove_index :items, :request_id
-    rename_column :items, :request_id, :fund_grant_id
-    add_index :items, [ :fund_grant_id, :node_id ], :unique => true
   end
 
   def self.down
