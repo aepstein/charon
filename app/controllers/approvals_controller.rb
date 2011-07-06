@@ -72,9 +72,9 @@ class ApprovalsController < ApplicationController
 
   def initialize_context
     @approval = Approval.find params[:id] if params[:id]
-    @request ||= Request.find(params[:request_id]) if params[:request_id]
+    @fund_request ||= FundRequest.find(params[:fund_request_id]) if params[:fund_request_id]
     @agreement ||= Agreement.find(params[:agreement_id]) if params[:agreement_id]
-    @approvable = @request || @agreement || @approval.approvable
+    @approvable = @fund_request || @agreement || @approval.approvable
     @user = User.find params[:user_id] if params[:user_id]
     add_breadcrumb @approvable, url_for( @approvable )
   end

@@ -1,5 +1,5 @@
 Feature: Manage structures
-  In order to Manage structure of request
+  In order to Manage structure of fund_request
   As an applicant
   I want a structure form
 

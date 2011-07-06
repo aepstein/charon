@@ -37,12 +37,12 @@ class AccountTransaction < ActiveRecord::Base
   end
 
   def organizations
-    Organization.joins( :bases, :university_accounts ).merge(
+    Organization.joins( :fund_sources, :university_accounts ).merge(
       UniversityAccount.unscoped.joins( :activity_accounts ).merge(
         ActivityAccount.unscoped.where( :id.in => adjustments.map( &:activity_account_id ) )
       )
     ).or.merge(
-      Basis.unscoped.joins( :activity_accounts ).where( :id.in => adjustments.map( &:activity_account_id ) )
+      FundSource.unscoped.joins( :activity_accounts ).where( :id.in => adjustments.map( &:activity_account_id ) )
     )
   end
 

@@ -1,21 +1,21 @@
 <% organization ||= false %>
   <%= table_row_tag do %>
     <% unless organization -%>
-    <td><%= inventory_item.organization %></td>
+    <td><%= inventory_fund_item.organization %></td>
     <% end -%>
-    <td><%= inventory_item.identifier %></td>
-    <td><%= inventory_item.description %></td>
-    <td><%= number_to_currency inventory_item.purchase_price %></td>
-    <td><%= number_to_currency inventory_item.current_value %></td>
-    <td><%= inventory_item.usable? ? 'Yes' : 'No' %></td>
-    <td><%= inventory_item.missing? ? 'Yes' : 'No' %></td>
-    <td><%= inventory_item.acquired_on.to_formatted_s( :rfc822 ) %></td>
-    <td><%= inventory_item.scheduled_retirement_on.to_formatted_s( :rfc822 ) %></td>
-    <td><%= inventory_item.retired_on? ? inventory_item.retired_on.to_formatted_s( :rfc822 ) : "" %></td>
-    <td><%= link_to 'Show', inventory_item %></td>
-    <td><%= link_to( 'Edit', edit_inventory_item_path( inventory_item )
-      ) if permitted_to?( :edit, inventory_item ) %></td>
-    <td><%= link_to( 'Destroy', inventory_item, :confirm => 'Are you sure?',
-      :method => :delete ) if permitted_to?( :destroy, inventory_item ) %></td>
+    <td><%= inventory_fund_item.identifier %></td>
+    <td><%= inventory_fund_item.description %></td>
+    <td><%= number_to_currency inventory_fund_item.purchase_price %></td>
+    <td><%= number_to_currency inventory_fund_item.current_value %></td>
+    <td><%= inventory_fund_item.usable? ? 'Yes' : 'No' %></td>
+    <td><%= inventory_fund_item.missing? ? 'Yes' : 'No' %></td>
+    <td><%= inventory_fund_item.acquired_on.to_formatted_s( :rfc822 ) %></td>
+    <td><%= inventory_fund_item.scheduled_retirement_on.to_formatted_s( :rfc822 ) %></td>
+    <td><%= inventory_fund_item.retired_on? ? inventory_fund_item.retired_on.to_formatted_s( :rfc822 ) : "" %></td>
+    <td><%= link_to 'Show', inventory_fund_item %></td>
+    <td><%= link_to( 'Edit', edit_inventory_fund_item_path( inventory_fund_item )
+      ) if permitted_to?( :edit, inventory_fund_item ) %></td>
+    <td><%= link_to( 'Destroy', inventory_fund_item, :confirm => 'Are you sure?',
+      :method => :delete ) if permitted_to?( :destroy, inventory_fund_item ) %></td>
   <% end %>
 

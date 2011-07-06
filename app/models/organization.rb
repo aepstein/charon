@@ -12,7 +12,7 @@ class Organization < ActiveRecord::Base
       select { |registration| registration.current? }.first
     end
   end
-  has_many :inventory_items, :dependent => :destroy, :inverse_of => :organization
+  has_many :inventory_fund_items, :dependent => :destroy, :inverse_of => :organization
   has_many :memberships, :dependent => :destroy, :inverse_of => :organization
   has_many :member_sources, :inverse_of => :organization
   has_many :roles, :through => :memberships do
@@ -23,17 +23,17 @@ class Organization < ActiveRecord::Base
       user_id_equals( user.id ).all.map(&:id)
     end
   end
-  has_many :bases, :inverse_of => :organization do
-    def requestable
-      Basis.open.no_draft_request_for( proxy_owner )
+  has_many :fund_sources, :inverse_of => :organization do
+    def fund_requestable
+      FundSource.open.no_draft_fund_request_for( proxy_owner )
     end
   end
-  has_many :requests, :inverse_of => :organization do
+  has_many :fund_requests, :inverse_of => :organization do
     def creatable
-      proxy_owner.bases.requestable.map do |basis|
-        request = build
-        request.basis = basis
-        request
+      proxy_owner.fund_sources.fund_requestable.map do |fund_source|
+        fund_request = build
+        fund_request.fund_source = fund_source
+        fund_request
       end
     end
   end

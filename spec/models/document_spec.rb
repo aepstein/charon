@@ -12,9 +12,9 @@ describe Document do
     Factory(:document).id.should_not be_nil
   end
 
-  it "should not save without an edition" do
+  it "should not save without an fund_edition" do
     document = Factory(:document)
-    document.edition = nil
+    document.fund_edition = nil
     document.save.should eql false
   end
 
@@ -24,7 +24,7 @@ describe Document do
     document.save.should eql false
   end
 
-  it "should not create if it conflicts with an existing document type for an edition" do
+  it "should not create if it conflicts with an existing document type for an fund_edition" do
     document = Factory(:document)
     duplicate = document.clone
     duplicate.save.should eql false

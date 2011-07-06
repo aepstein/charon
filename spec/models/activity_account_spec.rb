@@ -14,11 +14,11 @@ describe ActivityAccount do
     @account.save.should be_false
   end
 
-  it 'should not save with a duplicate university account for given basis and category' do
-    @account.basis = Factory(:basis)
+  it 'should not save with a duplicate university account for given fund_source and category' do
+    @account.fund_source = Factory(:fund_source)
     @account.category = Factory(:category)
     @account.save!
-    duplicate = Factory.build( :activity_account, :basis => @account.basis,
+    duplicate = Factory.build( :activity_account, :fund_source => @account.fund_source,
       :university_account => @account.university_account,
       :category => @account.category )
     duplicate.save.should be_false

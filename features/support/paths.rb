@@ -21,10 +21,10 @@ module NavigationHelpers
       edit_polymorphic_path( [model($1)] )
 
     when /^#{capture_model} new #{capture_factory} page for #{capture_model}$/
-      new_polymorphic_path( [ model($3), $2 ] ) + "?request[basis_id]=#{model($1).id}"
+      new_polymorphic_path( [ model($3), $2 ] ) + "?fund_request[fund_source_id]=#{model($1).id}"
 
     when /^#{capture_model} #{capture_plural_factory} page for #{capture_model}$/
-      polymorphic_path( [ model($3), $2 ] ) + "?request[basis_id]=#{model($1).id}"
+      polymorphic_path( [ model($3), $2 ] ) + "?fund_request[fund_source_id]=#{model($1).id}"
 
     when /^the new #{capture_factory} page$/
       new_polymorphic_path( [$1] )
@@ -41,8 +41,8 @@ module NavigationHelpers
     when /^the(?: (\w+))? page for #{capture_model}$/
       polymorphic_path( [$1, model($2)] )
 
-    when /the items page/
-      request_items_path(Request.find(:first))
+    when /the fund_items page/
+      fund_request_fund_items_path(FundRequest.find(:first))
 
     when /the profile page/
       profile_path

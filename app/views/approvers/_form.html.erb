@@ -1,8 +1,8 @@
   <%= render "shared/error_messages", :target => form.object %>
   <%= form.inputs do %>
-  <%= form.input :perspective, :as => :select, :collection => Edition::PERSPECTIVES %>
+  <%= form.input :perspective, :as => :select, :collection => FundEdition::PERSPECTIVES %>
   <%= form.input :role %>
-  <%= form.input :status, :as => :select, :collection => Request.aasm_state_names %>
+  <%= form.input :status, :as => :select, :collection => FundRequest.aasm_state_names %>
   <%= form.input :quantity %>
   <% end %>
   <%= form.buttons %>

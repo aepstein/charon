@@ -1,0 +1,14 @@
+<h2>Listing fund_sources for <%=h @organization %></h2>
+
+<%= will_paginate @fund_sources %>
+
+<%= render :partial => "fund_sources", :object => @fund_sources %>
+
+<%= will_paginate @fund_sources %>
+
+<br />
+
+<p>
+<%= link_to( 'New fund_source', new_organization_fund_source_path( @organization ) ) if permitted_to?( :create, @organization.fund_sources.build ) %>
+</p>
+

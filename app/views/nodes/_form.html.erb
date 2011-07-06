@@ -3,11 +3,11 @@
   <%= form.input :parent, :label => "Parent Node", :collection => form.object.structure.nodes,
     :input_html => { :include_blank => true } %>
   <%= form.input :name %>
-  <%= form.input :requestable_type, :label => "Type of request calculation form",
+  <%= form.input :fund_requestable_type, :label => "Type of fund_request calculation form",
     :collection => Node::ALLOWED_TYPES, :input_html => { :include_blank => false } %>
   <%= form.input :category %>
-  <%= form.input :item_amount_limit %>
-  <%= form.input :item_quantity_limit %>
+  <%= form.input :fund_item_amount_limit %>
+  <%= form.input :fund_item_quantity_limit %>
   <%= form.input :document_types, :as => :check_boxes,
     :hint => 'What types of supporting documentation should be submitted?' %>
   <% end %>

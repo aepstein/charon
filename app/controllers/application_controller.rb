@@ -10,8 +10,8 @@ class ApplicationController < ActionController::Base
 
   def permission_denied
     flash[:error] = "You are not allowed to perform the requested action."
-    if @request
-      flash[:error] += " " + unfulfilled_requirements_for_request(@request)
+    if @fund_request
+      flash[:error] += " " + unfulfilled_requirements_for_fund_request(@fund_request)
     end
     redirect_to profile_url
   end
@@ -37,16 +37,16 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def unfulfilled_requirements_for_request(request)
-    perspective = request.perspective_for current_user
-    perspective ||= Edition::PERSPECTIVES.first
-    for_user = request.unfulfilled_requirements_for current_user
+  def unfulfilled_requirements_for_fund_request(fund_request)
+    perspective = fund_request.perspective_for current_user
+    perspective ||= FundEdition::PERSPECTIVES.first
+    for_user = fund_request.unfulfilled_requirements_for current_user
     out = ""
     unless for_user.length == 0
       out << "You must fulfill the following requirements: #{for_user.join '; '}."
     end
-    organization = request.send(perspective)
-    for_organization = request.unfulfilled_requirements_for organization
+    organization = fund_request.send(perspective)
+    for_organization = fund_request.unfulfilled_requirements_for organization
     unless for_organization.length == 0
       out << "#{organization} must fulfill the following requirements: #{for_organization.join '; '}."
     end
@@ -90,7 +90,7 @@ class ApplicationController < ActionController::Base
 
   def store_location
     return if self.class == UserSessionsController
-    session[:return_to] = request.request_uri
+    session[:return_to] = fund_request.fund_request_uri
   end
 
   def redirect_back_or_default(default)

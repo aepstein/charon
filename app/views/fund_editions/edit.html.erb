@@ -1,0 +1,15 @@
+<h2>Editing fund_edition for <%=h @fund_edition.fund_item %></h2>
+
+<hr/>
+
+<%= semantic_form_for(@fund_edition) do |f| %>
+  <%= render :partial => "form", :object => f %>
+<% end %>
+
+<hr/>
+
+<p>
+<%= link_to 'Show', @fund_edition %> |
+<%= link_to 'Back', fund_request_fund_items_path(@fund_edition.fund_item.fund_request) %>
+</p>
+

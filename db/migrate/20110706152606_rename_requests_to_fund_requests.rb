@@ -1,12 +1,12 @@
 class RenameRequestsToFundRequests < ActiveRecord::Migration
   def self.up
     rename_table :requests, :fund_requests
-    # Refactor references
     say_with_time 'Refactoring references from request_id to fund_request_id' do
+      # The indices do not need to be re-created because we are getting rid of
+      # the direct association.
       remove_index :items, [ :request_id, :node_id ]
-      remove_index :items, :request_id # We won't restore this one
+      remove_index :items, :request_id
       rename_column :items, :request_id, :fund_request_id
-      add_index :items, [ :request_id, :node_id ], :unique => true
     end
   end
 

@@ -1,0 +1,5 @@
+<% level ||= 3 %>
+<%= content_tag "h#{level}", "#{detailed.perspective.titleize} fund_edition" %>
+
+<%= render :partial => 'fund_editions/detail', :object => detailed %>
+

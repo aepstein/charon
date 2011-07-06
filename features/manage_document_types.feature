@@ -1,5 +1,5 @@
 Feature: Manage document_types
-  In order to identify and specify standards for documents to requests
+  In order to identify and specify standards for documents to fund_requests
   As a paperless organization
   I want to create manage and delete document types
 

@@ -33,14 +33,14 @@ class User < ActiveRecord::Base
     def agreements
       self.select { |approval| approval.approvable_type == 'Agreement' }
     end
-    def requests
-      self.select { |approval| approval.approvable_type == 'Request' }
+    def fund_requests
+      self.select { |approval| approval.approvable_type == 'FundRequest' }
     end
     def agreement_ids
       self.agreements.map(&:approvable_id)
     end
-    def request_ids
-      self.requests.map(&:approvable_id)
+    def fund_request_ids
+      self.fund_requests.map(&:approvable_id)
     end
   end
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all do
@@ -58,21 +58,21 @@ class User < ActiveRecord::Base
       Membership.where( :user_id => proxy_owner.id,
         :organization_id.in => organizations.map(&:id) ).active.map(&:role)
     end
-    def requestor_in?(organization)
-      requestor_in_ids( organization ).length > 0
+    def fund_requestor_in?(organization)
+      fund_requestor_in_ids( organization ).length > 0
     end
     def reviewer_in?(organization)
       reviewer_in_ids( organization ).length > 0
     end
-    def requestor_in_ids(organization)
-      ids_in_perspective organization, 'requestor'
+    def fund_requestor_in_ids(organization)
+      ids_in_perspective organization, 'fund_requestor'
     end
     def reviewer_in_ids(organization)
       ids_in_perspective organization, 'reviewer'
     end
     def ids_in_perspective( organization, perspective )
       names = case perspective
-      when 'requestor'
+      when 'fund_requestor'
         Role::REQUESTOR
       when 'reviewer'
         Role::REVIEWER
@@ -111,9 +111,9 @@ class User < ActiveRecord::Base
   after_save :import_complex_ldap_attributes, :fulfill
   after_update :unfulfill
 
-  def requests; Request.organization_id_equals_any( organization_ids ); end
+  def fund_requests; FundRequest.organization_id_equals_any( organization_ids ); end
 
-  def request_ids; requests.map(&:id); end
+  def fund_request_ids; fund_requests.map(&:id); end
 
   def initialize_password
     reset_password if password.blank?

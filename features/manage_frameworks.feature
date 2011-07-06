@@ -1,5 +1,5 @@
 Feature: Manage frameworks
-  In order to maintain permission frameworks for different request scenarios
+  In order to maintain permission frameworks for different fund_request scenarios
   As a security-minded institution
   I want to create, show, delete, and list frameworks
 
@@ -42,18 +42,18 @@ Feature: Manage frameworks
     And I am on the new framework page
     When I fill in "Name" with "safc framework"
     And I select "Key Agreement" from "Criterion"
-    And I check "requestor"
+    And I check "fund_requestor"
     And I select "President" from "Role"
     And I press "Create"
     Then I should see "Framework was successfully created."
     And I should see "Name: safc framework"
-    And I should see "Key Agreement required for President in requestor organization"
+    And I should see "Key Agreement required for President in fund_requestor organization"
     When I follow "Edit"
     And I fill in "Name" with "gpsafc framework"
     And I choose "Yes"
     And I press "Update"
     Then I should see "Framework was successfully updated."
-    And I should not see "Key Agreement required for President in requestor organization"
+    And I should not see "Key Agreement required for President in fund_requestor organization"
     And I should see "Name: gpsafc framework"
 
   Scenario: Delete framework

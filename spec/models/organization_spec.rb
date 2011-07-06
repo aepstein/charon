@@ -15,14 +15,14 @@ describe Organization do
     @organization.save.should be_false
   end
 
-  it "should have a requests.creatable method that returns requests that can be made" do
-    basis = Factory(:basis)
-    started_request = Factory(:request, :organization => @organization)
-    closed_basis = Factory(:basis, :open_at => DateTime.now - 1.year, :closed_at => DateTime.now - 1.day)
-    requests = @organization.requests.creatable
-    requests.length.should == 1
-    requests.first.class.should == Request
-    requests.first.basis.should eql basis
+  it "should have a fund_requests.creatable method that returns fund_requests that can be made" do
+    fund_source = Factory(:fund_source)
+    started_fund_request = Factory(:fund_request, :organization => @organization)
+    closed_fund_source = Factory(:fund_source, :open_at => DateTime.now - 1.year, :closed_at => DateTime.now - 1.day)
+    fund_requests = @organization.fund_requests.creatable
+    fund_requests.length.should == 1
+    fund_requests.first.class.should == FundRequest
+    fund_requests.first.fund_source.should eql fund_source
   end
 
   it "should reformat last_name of organizations such that An|A|The|Cornell are moved to first_name" do

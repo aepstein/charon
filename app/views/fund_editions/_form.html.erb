@@ -1,0 +1,47 @@
+  <%= render "shared/error_messages", :target => form.object %>
+
+  <%= form.inputs :name => 'Basic Information' do %>
+    <% if form.object.new_record? -%>
+      <%= form.input :perspective, :as => :hidden %>
+    <% end -%>
+    <% if form.object.fund_requestable %>
+    <%= form.semantic_fields_for form.object.fund_requestable.class.to_s.underscore.to_sym do |fund_requestable_form| %>
+      <%= render :partial => "#{form.object.fund_requestable.class.to_s.tableize}/form", :object => fund_requestable_form %>
+    <% end %>
+    <% end %>
+  <% end %>
+
+  <%= form.inputs :name => 'Supporting Documents' do %>
+    <%= form.semantic_fields_for :documents do |document_form| %>
+      <%= document_form.input :document_type_id, :as => :hidden %>
+      <%= document_form.input :original, :as => :file,
+        :label => document_form.object.fund_edition.perspective.titleize + ' ' +
+          document_form.object.document_type.to_s %>
+      <%= document_form.hidden_field :original_cache %>
+    <% end %>
+  <% end %>
+
+  <%= form.inputs :name => 'Calculations' do %>
+    <% if form.object.fund_requestable %>
+    <li>
+    <%= render :partial => "#{form.object.fund_requestable.class.to_s.tableize}/calculation", :object => form.object.fund_requestable %>
+    </li>
+    <% end %>
+    <li>
+    <p>Maximum fund_request: <%=h number_to_currency(form.object.max_fund_request) %></p>
+    </li>
+  <% end %>
+
+  <%= form.inputs :name => 'Funding Amount and Comments' do %>
+  <% if form.object.fund_item.node.nil? || ( form.object.fund_item.node.fund_item_amount_limit == 0 ) %>
+  <% form.object.amount = 0.0 %>
+  <%= form.input :amount, :as => :hidden %>
+  <li>
+  <p>No fund_request amount may be specified for this fund_item.</p>
+  </li>
+  <% else %>
+  <%= form.input :amount, :label => "#{form.object.perspective.capitalize} amount" %>
+  <% end %>
+  <%= form.input :comment, :label => "#{form.object.perspective.capitalize} comment" %>
+  <% end %>
+

@@ -10,7 +10,7 @@ module SpecRequirementScenarios
       fulfiller = Factory(fulfiller_type.underscore.to_sym)
       @fulfillers[fulfiller] = fulfillable_types.map do |type|
         Factory( :requirement, :framework => @framework, :fulfillable => Factory(type.underscore.to_sym),
-          :perspectives => [ Edition::PERSPECTIVES.first ] )
+          :perspectives => [ FundEdition::PERSPECTIVES.first ] )
       end
       @unfulfillers[fulfiller] = Factory(fulfiller_type.underscore.to_sym)
     end
@@ -29,10 +29,10 @@ module SpecRequirementScenarios
     @unlimited_role = Factory(:role)
     @framework = Factory(:framework)
     @limited_requirement = Factory(:requirement, :fulfillable => @limited_fulfillable,
-      :framework => @framework, :perspectives => [ Edition::PERSPECTIVES.first ],
+      :framework => @framework, :perspectives => [ FundEdition::PERSPECTIVES.first ],
       :role => @limited_role )
     @unlimited_requirement = Factory(:requirement, :fulfillable => @unlimited_fulfillable,
-      :framework => @framework, :perspectives => [ Edition::PERSPECTIVES.first ] )
+      :framework => @framework, :perspectives => [ FundEdition::PERSPECTIVES.first ] )
     @all = Factory(fulfiller_type.underscore.to_sym)
     Factory(:fulfillment, :fulfiller => @all, :fulfillable => @limited_fulfillable)
     Factory(:fulfillment, :fulfiller => @all, :fulfillable => @unlimited_fulfillable)

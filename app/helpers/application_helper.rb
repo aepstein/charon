@@ -27,8 +27,8 @@ module ApplicationHelper
     link_to user.name, "http://www.cornell.edu/search/index.cfm?tab=people&netid=#{user.net_id}"
   end
 
-  def link_to_unapprove_request(request)
-    approval = request.approvals.where( :user_id => current_user.id).first
+  def link_to_unapprove_fund_request(fund_request)
+    approval = fund_request.approvals.where( :user_id => current_user.id).first
     if approval && permitted_to?( :destroy, approval )
       return link_to 'Unapprove', approval, :confirm => 'Are you sure?', :method => :delete
     end

@@ -1,0 +1,14 @@
+  <%= table_row_tag do %>
+    <td><%=h fund_item.title %><% if fund_item.title != fund_item.node.name %> (<%=h fund_item.node.name %>)<% end %></td>
+    <td><%= render :partial => 'fund_items/new_fund_item',
+                   :object => fund_item.fund_request.fund_items.build( :parent_id => fund_item.id ) %></td>
+    <td><%= link_to( 'Edit', edit_fund_item_path( fund_item )
+                     ) if permitted_to?( :edit, fund_item ) %></td>
+    <td><%= link_to( 'Destroy', fund_item, :confirm => 'Are you sure?', :method => :delete
+                     ) if permitted_to?( :destroy, fund_item ) %></td>
+  <% end %>
+
+  <%= render :partial => 'fund_items/fund_item',
+             :collection => fund_item.fund_request.fund_items.children_of(fund_item).
+               reject { |i| i.new_record? } %>
+

@@ -9,8 +9,8 @@ describe AdministrativeExpense do
     @expense.id.should_not be_nil
   end
 
-  it "should not save without a edition" do
-    @expense.edition = nil
+  it "should not save without a fund_edition" do
+    @expense.fund_edition = nil
     @expense.save.should == false
   end
 

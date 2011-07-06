@@ -16,7 +16,7 @@ class Requirement < ActiveRecord::Base
         'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
         "fulfillments.fulfiller_id = #{fulfiller.id}" ).
     group( 'requirements.id' ).
-    where( "requirements.perspectives_mask & #{2**Edition::PERSPECTIVES.index(perspective)} > 0 " +
+    where( "requirements.perspectives_mask & #{2**FundEdition::PERSPECTIVES.index(perspective)} > 0 " +
       "AND requirements.fulfillable_type IN (#{fulfiller.class.quoted_fulfillable_types}) AND " +
       ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
       "requirements.role_id IN (#{role_ids.join ','}) )" : "requirements.role_id IS NULL" ) )
@@ -60,11 +60,11 @@ class Requirement < ActiveRecord::Base
       self.perspectives_mask = 0
       return []
     end
-    self.perspectives_mask = (perspectives & Edition::PERSPECTIVES).map { |p| 2**Edition::PERSPECTIVES.index(p) }.sum
+    self.perspectives_mask = (perspectives & FundEdition::PERSPECTIVES).map { |p| 2**FundEdition::PERSPECTIVES.index(p) }.sum
   end
 
   def perspectives
-    Edition::PERSPECTIVES.reject { |p| ((perspectives_mask || 0) & 2**Edition::PERSPECTIVES.index(p)).zero? }
+    FundEdition::PERSPECTIVES.reject { |p| ((perspectives_mask || 0) & 2**FundEdition::PERSPECTIVES.index(p)).zero? }
   end
 
   def perspective=(perspective); self.perspectives = [perspective]; end

@@ -29,90 +29,90 @@ Feature: Manage approvals
       | owner   | not see | not see | see     |
       | regular | see     | not see | not see |
 
-  Scenario Outline: Test permissions for approvals of requests
+  Scenario Outline: Test permissions for approvals of fund_requests
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
     And an organization: "observer" exists with last_name: "Observer"
     And a manager_role: "manager" exists
-    And a requestor_role: "requestor" exists
+    And a fund_requestor_role: "fund_requestor" exists
     And a reviewer_role: "reviewer" exists
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
     And a user: "source_reviewer" exists
     And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
-    And a user: "applicant_requestor" exists
-    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
-    And a user: "observer_requestor" exists
-    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
+    And a user: "applicant_fund_requestor" exists
+    And a membership exists with user: user "applicant_fund_requestor", organization: organization "applicant", role: role "fund_requestor"
+    And a user: "observer_fund_requestor" exists
+    And a membership exists with user: user "observer_fund_requestor", organization: organization "observer", role: role "fund_requestor"
     And a membership exists with user: user "owner", organization: organization "applicant", role: role "<owner>"
-    And a basis exists with name: "Annual", organization: organization "source"
-    And a request exists with basis: the basis, organization: organization "applicant"
-    And an approval exists with user: user "owner", approvable: the request
-    And the request has status: "<status>"
+    And a fund_source exists with name: "Annual", organization: organization "source"
+    And a fund_request exists with fund_source: the fund_source, organization: organization "applicant"
+    And an approval exists with user: user "owner", approvable: the fund_request
+    And the fund_request has status: "<status>"
     And I log in as user: "<user>"
     And I am on the page for the approval
     Then I should <show> authorized
-    Given I am on the approvals page for the request
+    Given I am on the approvals page for the fund_request
     Then I should <show> authorized
     And I should <create> "New approval"
     And I should <destroy> "Destroy"
-    Given I am on the new approval page for the request
+    Given I am on the new approval page for the fund_request
     Then I should <create> authorized
-    Given I post on the approvals page for the request
+    Given I post on the approvals page for the fund_request
     Then I should <create> authorized
     Given I delete on the page for the approval
     Then I should <destroy> authorized
     Examples:
       | owner     | status    | user                | create  | destroy | show    |
-      | requestor | started   | admin               | not see | see     | see     |
-      | requestor | started   | source_manager      | not see | see     | see     |
-      | requestor | started   | source_reviewer     | not see | not see | see     |
-      | requestor | started   | applicant_requestor | see     | see     | see     |
-      | requestor | started   | owner               | not see | see     | see     |
-      | requestor | started   | observer_requestor  | not see | not see | not see |
-      | requestor | started   | regular             | not see | not see | not see |
-      | requestor | completed | admin               | not see | see     | see     |
-      | requestor | completed | source_manager      | not see | see     | see     |
-      | requestor | completed | source_reviewer     | not see | not see | see     |
-      | requestor | completed | applicant_requestor | see     | not see | see     |
-      | requestor | completed | owner               | not see | see     | see     |
-      | requestor | completed | observer_requestor  | not see | not see | not see |
-      | requestor | completed | regular             | not see | not see | not see |
-      | requestor | submitted | admin               | not see | see     | see     |
-      | requestor | submitted | source_manager      | not see | see     | see     |
-      | requestor | submitted | source_reviewer     | not see | not see | see     |
-      | requestor | submitted | applicant_requestor | not see | not see | see     |
-      | requestor | submitted | owner               | not see | not see | see     |
-      | requestor | submitted | observer_requestor  | not see | not see | not see |
-      | requestor | submitted | regular             | not see | not see | not see |
-      | requestor | accepted  | admin               | see     | see     | see     |
-      | requestor | accepted  | source_manager      | not see | see     | see     |
-      | requestor | accepted  | source_reviewer     | see     | not see | see     |
-      | requestor | accepted  | applicant_requestor | not see | not see | see     |
-      | requestor | accepted  | owner               | not see | not see | see     |
-      | requestor | accepted  | observer_requestor  | not see | not see | not see |
-      | requestor | accepted  | regular             | not see | not see | not see |
-      | requestor | reviewed  | admin               | see     | see     | see     |
-      | requestor | reviewed  | source_manager      | not see | see     | see     |
-      | requestor | reviewed  | source_reviewer     | see     | not see | see     |
-      | requestor | reviewed  | applicant_requestor | not see | not see | see     |
-      | requestor | reviewed  | owner               | not see | not see | see     |
-      | requestor | reviewed  | observer_requestor  | not see | not see | not see |
-      | requestor | reviewed  | regular             | not see | not see | not see |
-      | requestor | certified | admin               | not see | see     | see     |
-      | requestor | certified | source_manager      | not see | see     | see     |
-      | requestor | certified | source_reviewer     | not see | not see | see     |
-      | requestor | certified | applicant_requestor | not see | not see | see     |
-      | requestor | certified | observer_requestor  | not see | not see | not see |
-      | requestor | certified | owner               | not see | not see | see     |
-      | requestor | certified | regular             | not see | not see | not see |
-      | requestor | released  | admin               | not see | see     | see     |
-      | requestor | released  | source_manager      | not see | see     | see     |
-      | requestor | released  | source_reviewer     | not see | not see | see     |
-      | requestor | released  | applicant_requestor | not see | not see | see     |
-      | requestor | released  | owner               | not see | not see | see     |
-      | requestor | released  | observer_requestor  | not see | not see | not see |
-      | requestor | released  | regular             | not see | not see | not see |
+      | fund_requestor | started   | admin               | not see | see     | see     |
+      | fund_requestor | started   | source_manager      | not see | see     | see     |
+      | fund_requestor | started   | source_reviewer     | not see | not see | see     |
+      | fund_requestor | started   | applicant_fund_requestor | see     | see     | see     |
+      | fund_requestor | started   | owner               | not see | see     | see     |
+      | fund_requestor | started   | observer_fund_requestor  | not see | not see | not see |
+      | fund_requestor | started   | regular             | not see | not see | not see |
+      | fund_requestor | completed | admin               | not see | see     | see     |
+      | fund_requestor | completed | source_manager      | not see | see     | see     |
+      | fund_requestor | completed | source_reviewer     | not see | not see | see     |
+      | fund_requestor | completed | applicant_fund_requestor | see     | not see | see     |
+      | fund_requestor | completed | owner               | not see | see     | see     |
+      | fund_requestor | completed | observer_fund_requestor  | not see | not see | not see |
+      | fund_requestor | completed | regular             | not see | not see | not see |
+      | fund_requestor | submitted | admin               | not see | see     | see     |
+      | fund_requestor | submitted | source_manager      | not see | see     | see     |
+      | fund_requestor | submitted | source_reviewer     | not see | not see | see     |
+      | fund_requestor | submitted | applicant_fund_requestor | not see | not see | see     |
+      | fund_requestor | submitted | owner               | not see | not see | see     |
+      | fund_requestor | submitted | observer_fund_requestor  | not see | not see | not see |
+      | fund_requestor | submitted | regular             | not see | not see | not see |
+      | fund_requestor | accepted  | admin               | see     | see     | see     |
+      | fund_requestor | accepted  | source_manager      | not see | see     | see     |
+      | fund_requestor | accepted  | source_reviewer     | see     | not see | see     |
+      | fund_requestor | accepted  | applicant_fund_requestor | not see | not see | see     |
+      | fund_requestor | accepted  | owner               | not see | not see | see     |
+      | fund_requestor | accepted  | observer_fund_requestor  | not see | not see | not see |
+      | fund_requestor | accepted  | regular             | not see | not see | not see |
+      | fund_requestor | reviewed  | admin               | see     | see     | see     |
+      | fund_requestor | reviewed  | source_manager      | not see | see     | see     |
+      | fund_requestor | reviewed  | source_reviewer     | see     | not see | see     |
+      | fund_requestor | reviewed  | applicant_fund_requestor | not see | not see | see     |
+      | fund_requestor | reviewed  | owner               | not see | not see | see     |
+      | fund_requestor | reviewed  | observer_fund_requestor  | not see | not see | not see |
+      | fund_requestor | reviewed  | regular             | not see | not see | not see |
+      | fund_requestor | certified | admin               | not see | see     | see     |
+      | fund_requestor | certified | source_manager      | not see | see     | see     |
+      | fund_requestor | certified | source_reviewer     | not see | not see | see     |
+      | fund_requestor | certified | applicant_fund_requestor | not see | not see | see     |
+      | fund_requestor | certified | observer_fund_requestor  | not see | not see | not see |
+      | fund_requestor | certified | owner               | not see | not see | see     |
+      | fund_requestor | certified | regular             | not see | not see | not see |
+      | fund_requestor | released  | admin               | not see | see     | see     |
+      | fund_requestor | released  | source_manager      | not see | see     | see     |
+      | fund_requestor | released  | source_reviewer     | not see | not see | see     |
+      | fund_requestor | released  | applicant_fund_requestor | not see | not see | see     |
+      | fund_requestor | released  | owner               | not see | not see | see     |
+      | fund_requestor | released  | observer_fund_requestor  | not see | not see | not see |
+      | fund_requestor | released  | regular             | not see | not see | not see |
 
   Scenario: Register new approval of an agreement
     Given an agreement exists with name: "safc"
@@ -126,14 +126,14 @@ Feature: Manage approvals
     When I press "Confirm Approval"
     Then I should see "Approval was successfully created."
 
-  Scenario: Register new approval of a request
+  Scenario: Register new approval of a fund_request
     Given a user exists
-    And a requestor_role exists
+    And a fund_requestor_role exists
     And an organization: "applicant" exists
-    And a membership exists with user: the user, role: the requestor_role, organization: the organization
-    And a request exists with organization: the organization
+    And a membership exists with user: the user, role: the fund_requestor_role, organization: the organization
+    And a fund_request exists with organization: the organization
     And I log in as the user
-    And I am on the new approval page for the request
+    And I am on the new approval page for the fund_request
     And I press "Confirm Approval"
     Then I should see "Approval was successfully created."
 

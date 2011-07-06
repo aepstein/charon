@@ -14,7 +14,7 @@ class Structure < ActiveRecord::Base
       self.select { |n| n.parent == node }
     end
   end
-  has_many :bases, :inverse_of => :structure
+  has_many :fund_sources, :inverse_of => :structure
   has_many :categories, :through => :nodes, :uniq => true
 
   validates :name, :presence => true, :uniqueness => true

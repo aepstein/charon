@@ -1,0 +1,27 @@
+<% if permitted_to? :show, fund_edition %>
+    <%= table_row_tag false do %>
+      <td><%= fund_edition.perspective.capitalize %> fund_edition</td>
+      <% if fund_edition.new_record? then %>
+      <td colspan="2" align="center"><em>None yet.</em></td>
+      <% if read_only %>
+      <td>&nbsp;</td>
+      <% end %>
+      <% else %>
+      <td><%=h number_to_currency fund_edition.amount %></td>
+      <td><%=h fund_edition.comment %></td>
+      <% if read_only %>
+      <td>&nbsp;</td>
+      <% end %>
+      <% end %>
+      <td>&nbsp;</td>
+    <% end %>
+    <% if show_detail && fund_edition.fund_requestable %>
+    <% table_row_tag false do %>
+    <td colspan="3">
+    <%= render_fund_requestable_detail fund_edition.fund_requestable %>
+    </td>
+    <td colspan="2">
+    <% end %>
+    <% end %>
+<% end %>
+

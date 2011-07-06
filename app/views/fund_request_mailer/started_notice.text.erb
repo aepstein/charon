@@ -1,0 +1,24 @@
+Dear Officers of <%= @fund_request.organization %>,
+
+This email is to inform you that your <%= @fund_request %> has been started, but requires further action before it will be considered submitted.
+
+You may make changes to the fund_request here <<%= fund_request_fund_items_url(@fund_request) %>>.
+
+When the fund_request is ready for submission, any of the following may approve it here <<%= new_polymorphic_url([@fund_request, 'approval']) %>>:
+
+<% @fund_request.users.required_for_status('completed').each do |user| -%>
+ * <%= user.name %>
+<% end -%>
+
+<% if @fund_request.fund_source.submissions_due_at && @fund_request.fund_source.submissions_due_at > DateTime.now -%>
+The next deadline for submissions is <%= @fund_request.fund_source.submissions_due_at.to_s :us_ordinal %>.
+<% end -%>
+
+<% if @fund_request.fund_source.contact_web -%>
+More information is available here <<%= @fund_request.fund_source.contact_web %>>.
+<% end -%>
+
+Sincerely,
+
+<%= @fund_request.fund_source.contact_name %>
+

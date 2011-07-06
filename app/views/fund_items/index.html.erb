@@ -1,0 +1,20 @@
+<style type="text/css">
+table td { padding: 4px; }
+</style>
+
+<h2>Listing fund_items for <%=h @fund_request %></h2>
+
+<%= render :partial => "fund_items", :object => @fund_request.fund_items.root, :locals => {
+  :show_detail => false, :read_only => false
+} %>
+
+<%= render :partial => 'new_fund_item', :object => @fund_request.fund_items.build %>
+
+</table>
+
+<p>
+<%= link_to "Back to #{@fund_request.organization}", @fund_request.organization %> |
+<%= link_to "Back to #{@fund_request}", @fund_request %> |
+<%= link_to "Back to #{@fund_request.fund_source}", @fund_request.fund_source %>
+</p>
+

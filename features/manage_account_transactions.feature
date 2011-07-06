@@ -12,7 +12,7 @@ Scenario:
   And a category: "social" exists with name: "Social"
   And a category: "expense" exists with name: "Expense"
   And an organization: "grantor" exists with last_name: "Grantor"
-  And a basis: "budget" exists with name: "Annual Budget", organization: organization "grantor"
+  And a fund_source: "budget" exists with name: "Annual Budget", organization: organization "grantor"
   And an organization: "recipient" exists with last_name: "Recipient"
   And a university_account: "recipient" exists with organization: organization "recipient"
   And an activity_account: "administrative" exists with category: category "administrative", university_account: university_account "recipient"

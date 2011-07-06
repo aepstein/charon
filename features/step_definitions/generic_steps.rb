@@ -11,11 +11,11 @@ Given /^(?:|I )(put|post|delete) on (.+)$/ do |method, page_name|
 end
 
 Then /^I should see authorized$/ do
-  Then %{I should not see "You are not allowed to perform the requested action."}
+  Then %{I should not see "You are not allowed to perform the fund_requested action."}
 end
 
 Then /^I should not see authorized$/ do
-  Then %{I should see "You are not allowed to perform the requested action."}
+  Then %{I should see "You are not allowed to perform the fund_requested action."}
 end
 
 When /^I follow "(.+)" for the (\d+)(?:st|nd|rd|th) #{capture_factory}(?: for #{capture_model})?$/ do |link, position, subject, context|

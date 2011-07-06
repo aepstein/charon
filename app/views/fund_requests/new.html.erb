@@ -1,0 +1,10 @@
+<h2>New fund_request for <%= @fund_request.organization %></h2>
+
+<%= semantic_form_for( @fund_request, :url => organization_fund_requests_path(@fund_request.organization) ) do |f| %>
+  <%= render :partial => 'form', :object => f %>
+<% end %>
+
+<p>
+<%= link_to 'Back', profile_organization_path( @fund_request.organization ) %>
+</p>
+

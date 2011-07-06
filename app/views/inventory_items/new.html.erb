@@ -1,12 +1,12 @@
-<h2>New inventory item</h2>
+<h2>New inventory fund_item</h2>
 
-<%= semantic_form_for( @inventory_item,
-  :url => organization_inventory_items_path( @inventory_item.organization ) ) do |f| %>
-  <%= render :partial => "inventory_items/form", :object => f %>
+<%= semantic_form_for( @inventory_fund_item,
+  :url => organization_inventory_fund_items_path( @inventory_fund_item.organization ) ) do |f| %>
+  <%= render :partial => "inventory_fund_items/form", :object => f %>
 <% end %>
 
 <p>
-<%= link_to "List inventory items for #{@inventory_item.organization}",
-  organization_inventory_items_path( @inventory_item.organization ) %>
+<%= link_to "List inventory fund_items for #{@inventory_fund_item.organization}",
+  organization_inventory_fund_items_path( @inventory_fund_item.organization ) %>
 </p>
 

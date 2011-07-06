@@ -1,7 +1,7 @@
-Feature: Manage editions
-  In order to calculate and track transaction requests
-  As a requestor or reviewer
-  I want to create, update, and show editions
+Feature: Manage fund_editions
+  In order to calculate and track transaction fund_requests
+  As a fund_requestor or reviewer
+  I want to create, update, and show fund_editions
 
-#TODO -- do we need an editions controller?
+#TODO -- do we need an fund_editions controller?
 

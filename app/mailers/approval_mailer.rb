@@ -19,7 +19,7 @@ class ApprovalMailer < ActionMailer::Base
     )
   end
 
-  def request_notice(approval)
+  def fund_request_notice(approval)
     @approval = approval
     mail(
       :to => approval.user.email,

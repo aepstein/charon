@@ -5,8 +5,8 @@ class LocalEventExpensesController < ApplicationController
   end
 
   def index
-    @events = LocalEventExpense.find( :all, :include => { :edition => { :item => { :request => { :organization => :users } } } },
-      :conditions => ['editions.perspective = ? AND local_event_expenses.date >= ?', 'reviewer', Date.today - 1.weeks],
+    @events = LocalEventExpense.find( :all, :include => { :fund_edition => { :fund_item => { :fund_request => { :organization => :users } } } },
+      :conditions => ['fund_editions.perspective = ? AND local_event_expenses.date >= ?', 'reviewer', Date.today - 1.weeks],
       :order => 'local_event_expenses.date ASC' )
     page = params[:page] ? params[:page] : 1
     respond_to do |format|
@@ -20,8 +20,8 @@ class LocalEventExpensesController < ApplicationController
                        event.location,
                        event.uup_required? ? 'Y' : 'N',
                        event.purpose,
-                       event.requestor.name,
-                       event.requestor.users.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
+                       event.fund_requestor.name,
+                       event.fund_requestor.users.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
           end
         end
         send_data csv_string, :disposition => "attachment; filename=local_events.csv"

@@ -1,25 +1,25 @@
-# Renders PDF supporting document report for a request
+# Renders PDF supporting document report for a fund_request
 class DocumentsReport < Prawn::Document
-  attr_accessor :request
+  attr_accessor :fund_request
   attr_accessor :documents
   attr_accessor :rows
-  attr_accessor :item_rows
+  attr_accessor :fund_item_rows
 
-  def initialize(request)
-    self.request = request
+  def initialize(fund_request)
+    self.fund_request = fund_request
     self.documents = Hash.new
     super( :page_size => 'LETTER' )
   end
 
-  def rowify_items( items )
-    items.each do |item|
-      item_rows << rows.length
-      rows << [ item.title, '', '' ]
-      documents[item] = item.documents.
-        where( 'editions.perspective = ?', Edition::PERSPECTIVES.first ).all
-      item.node.document_types.each do |type|
+  def rowify_fund_items( fund_items )
+    fund_items.each do |fund_item|
+      fund_item_rows << rows.length
+      rows << [ fund_item.title, '', '' ]
+      documents[fund_item] = fund_item.documents.
+        where( 'fund_editions.perspective = ?', FundEdition::PERSPECTIVES.first ).all
+      fund_item.node.document_types.each do |type|
         rows << [ type.name,
-          ( documents[item].map(&:document_type).include?( type ) ? 'Yes' : 'No' ),
+          ( documents[fund_item].map(&:document_type).include?( type ) ? 'Yes' : 'No' ),
           '' ]
       end
     end
@@ -27,11 +27,11 @@ class DocumentsReport < Prawn::Document
 
   def to_pdf
     text "Supporting Documentation Checklist", :align => :center, :size => 16
-    text "#{request} (ID##{request.id})", :align => :center, :size => 16
+    text "#{fund_request} (ID##{fund_request.id})", :align => :center, :size => 16
     font 'Helvetica', :size => 10 do
-      self.rows = [ [ 'Item/Document Type', 'E-filed?', "Staff Use Only\nReceived?" ] ]
-      self.item_rows = Array.new
-      rowify_items( request.items )
+      self.rows = [ [ 'FundItem/Document Type', 'E-filed?', "Staff Use Only\nReceived?" ] ]
+      self.fund_item_rows = Array.new
+      rowify_fund_items( fund_request.fund_items )
       table rows, :header => true, :width => 540 do |table|
         table.row(0).background_color = '000000'
         table.row(0).text_color = 'FFFFFF'
@@ -41,11 +41,11 @@ class DocumentsReport < Prawn::Document
         table.rows(0..(table.row_length - 2)).border_bottom_width = 0.1
         table.rows(1..(table.row_length - 1)).border_top_width = 0.1
         table.column(2).background_color = 'DDDDDD'
-        item_rows.each do |item_row|
-          table.row(item_row).background_color = 'DDDDDD'
-          table.row(item_row).borders = [:top, :bottom]
-          table.row(item_row).column(0).borders = [ :top, :bottom, :left ]
-          table.row(item_row).column(2).borders = [ :top, :bottom, :right ]
+        fund_item_rows.each do |fund_item_row|
+          table.row(fund_item_row).background_color = 'DDDDDD'
+          table.row(fund_item_row).borders = [:top, :bottom]
+          table.row(fund_item_row).column(0).borders = [ :top, :bottom, :left ]
+          table.row(fund_item_row).column(2).borders = [ :top, :bottom, :right ]
         end
       end
     end

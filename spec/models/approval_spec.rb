@@ -31,11 +31,11 @@ describe Approval do
   end
 
   it "should have agreeements named scope that returns only agreements" do
-    request_approval = Factory(:approval, {:approvable => Factory(:request)})
+    fund_request_approval = Factory(:approval, {:approvable => Factory(:fund_request)})
     agreement_approval = Factory(:approval, {:approvable => Factory(:agreement)})
     approvals = Approval.agreements
     approvals.should include( agreement_approval )
-    approvals.should_not include( request_approval )
+    approvals.should_not include( fund_request_approval )
     approvals.size.should == 1
   end
 

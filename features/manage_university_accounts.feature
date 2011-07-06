@@ -1,4 +1,4 @@
-Feature: Manage requests
+Feature: Manage fund_requests
   In order to track university accounts associated with organizations
   As a staff member
   I want to manage university accounts
@@ -9,8 +9,8 @@ Feature: Manage requests
   Scenario Outline: Test permissions for university_accounts controller
     Given an organization exists
     And a user: "member" exists
-    And a requestor_role exists
-    And a membership exists with user: user "member", organization: the organization, role: the requestor_role
+    And a fund_requestor_role exists
+    And a membership exists with user: user "member", organization: the organization, role: the fund_requestor_role
     And a user: "regular" exists
     And a university_account exists with department_code: "A00", subledger_code: "0000", organization: the organization
     And I log in as user: "<user>"
@@ -80,7 +80,7 @@ Feature: Manage requests
     Given I am on the university_accounts page
     And I fill in "Subledger code" with "01"
     And I press "Search"
-    Then I should see the following inventory_items:
+    Then I should see the following inventory_fund_items:
       | Organization | Department code | Subledger code |
       | First Club   | A00             | 0001           |
       | Last Club    | B00             | 0001           |

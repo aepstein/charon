@@ -11,7 +11,7 @@ class Approval < ActiveRecord::Base
     order( 'users.last_name ASC, users.first_name ASC, users.middle_name ASC' )
 
   scope :agreements, where( :approvable_type => 'Agreement' )
-  scope :requests, where( :approvable_type => 'Request' )
+  scope :fund_requests, where( :approvable_type => 'FundRequest' )
   scope :at_or_after, lambda { |time| where( :created_at.gte => time ) }
 
   validates :as_of, :timeliness => { :type => :datetime }
@@ -33,7 +33,7 @@ class Approval < ActiveRecord::Base
     @as_of.to_datetime
   end
 
-  def to_s; "Approval of #{user} for #{request}"; end
+  def to_s; "Approval of #{user} for #{fund_request}"; end
 
   protected
 

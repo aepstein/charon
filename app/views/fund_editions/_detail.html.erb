@@ -1,0 +1,27 @@
+<% unless (detail.fund_item.node.fund_item_amount_limit == 0.0) -%>
+<p>
+  <b>Maximum fund_request:</b> <%= number_to_currency detail.max_fund_request -%>
+</p>
+
+<p>
+  <b><%= detail.perspective.titleize %> amount:</b> <%=h number_to_currency(detail.amount) %>
+</p>
+
+<% end -%>
+<p>
+  <b><%= detail.perspective.titleize %> comment:</b>
+</p>
+
+<%=markdown detail.comment %>
+
+<% if detail.fund_requestable %>
+<%= render :partial => "#{detail.fund_requestable.class.to_s.tableize}/detail",
+  :object => detail.fund_requestable %>
+<%= render :partial => "#{detail.fund_requestable.class.to_s.tableize}/calculation",
+  :object => detail.fund_requestable %>
+<% end %>
+
+<% unless detail.documents.empty? %>
+  <%= render :partial => 'documents/documents', :object => detail.documents %>
+<% end %>
+

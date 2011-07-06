@@ -1,17 +1,17 @@
-class InventoryItem < ActiveRecord::Base
+class InventoryFundItem < ActiveRecord::Base
   attr_accessible :purchase_price, :current_value, :description, :identifier,
     :comments, :usable, :missing, :acquired_on, :scheduled_retirement_on,
     :retired_on
   attr_readonly :organization_id
 
-  belongs_to :organization, :inverse_of => :inventory_items
+  belongs_to :organization, :inverse_of => :inventory_fund_items
 
   has_paper_trail :class_name => 'SecureVersion'
 
   default_scope includes(:organization).
     order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
-    'inventory_items.identifier ASC, inventory_items.acquired_on ASC, ' +
-    'inventory_items.description ASC' )
+    'inventory_fund_items.identifier ASC, inventory_fund_items.acquired_on ASC, ' +
+    'inventory_fund_items.description ASC' )
 
   scope :active, where( :retired_on => nil)
   scope :retired, where( :retired_on.ne => nil )

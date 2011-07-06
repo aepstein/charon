@@ -2,13 +2,13 @@ class TravelEventExpense < ActiveRecord::Base
   attr_accessible :date, :title, :location, :purpose, :travelers_per_group,
     :number_of_groups, :distance, :nights_of_lodging, :per_person_fees,
     :per_group_fees
-  attr_readonly :edition_id
+  attr_readonly :fund_edition_id
 
-  belongs_to :edition, :inverse_of => :travel_event_expense
+  belongs_to :fund_edition, :inverse_of => :travel_event_expense
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  validates :edition, :presence => true
+  validates :fund_edition, :presence => true
   validates :date, :timeliness => { :type => :date }
   validates :title, :presence => true
   validates :location, :presence => true
@@ -51,7 +51,7 @@ class TravelEventExpense < ActiveRecord::Base
     Charon::Application.app_config['expenses']['travel']['lodging'] * participants * nights_of_lodging
   end
 
-  def max_request
+  def max_fund_request
     total_person_fees + total_group_fees + travel_cost + lodging_cost
   end
 

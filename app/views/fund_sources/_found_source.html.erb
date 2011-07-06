@@ -1,0 +1,9 @@
+  <%= table_row_tag do %>
+    <td><%=h fund_source.name %></td>
+    <td><%=h fund_source.open_at %></td>
+    <td><%=h fund_source.closed_at %></td>
+    <td><%= link_to 'Show', fund_source %></td>
+    <td><%= link_to( 'Edit', edit_fund_source_path(fund_source) ) if permitted_to?( :edit, fund_source ) %></td>
+    <td><%= link_to( 'Destroy', fund_source, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, fund_source ) %></td>
+  <% end %>
+

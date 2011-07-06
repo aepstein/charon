@@ -1,4 +1,4 @@
-Feature: Manage requests
+Feature: Manage fund_requests
   In order to track inventories of organizations
   As an organization officer or staff
   I want to manage activity_reports
@@ -9,8 +9,8 @@ Feature: Manage requests
   Scenario Outline: Test permissions for activity_reports controller
     Given an organization exists
     And a user: "member" exists
-    And a requestor_role exists
-    And a membership exists with user: user "member", organization: the organization, role: the requestor_role
+    And a fund_requestor_role exists
+    And a membership exists with user: user "member", organization: the organization, role: the fund_requestor_role
     And a user: "regular" exists
     And an activity_report exists with description: "Then", organization: the organization
     And a current_activity_report exists with description: "Now", organization: the organization
@@ -105,7 +105,7 @@ Feature: Manage requests
       | Last Club    | Concerto    |
       | Last Club    | Concert     |
     Given I am on the activity_reports page for organization: "first"
-    Then I should see the following requests:
+    Then I should see the following fund_requests:
       | Description |
       | Musical     |
       | Play        |

@@ -1,0 +1,9 @@
+<h2><%=h @fund_edition %></h2>
+
+<%= render :partial => "fund_edition", :object => @fund_edition %>
+
+<p>
+<%= link_to 'Edit', edit_fund_edition_path(@fund_edition) %> |
+<%= link_to 'Back', fund_request_fund_items_path(@fund_edition.fund_item.fund_request) %>
+</p>
+

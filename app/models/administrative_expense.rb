@@ -6,13 +6,13 @@ class AdministrativeExpense < ActiveRecord::Base
   }
 
   attr_accessible :copies, :repairs_restocking, :mailbox_wsh, :chalk, :sun_ads
-  attr_readonly :edition_id
+  attr_readonly :fund_edition_id
 
-  belongs_to :edition, :inverse_of => :administrative_expense
+  belongs_to :fund_edition, :inverse_of => :administrative_expense
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  validates :edition, :presence => true
+  validates :fund_edition, :presence => true
   validates :copies, :numericality => { :only_integer => true,
     :greater_than_or_equal_to => 0 }
   validates :chalk, :numericality => { :only_integer => true,
@@ -33,7 +33,7 @@ class AdministrativeExpense < ActiveRecord::Base
     Charon::Application.app_config['expenses']['general']['chalk'] * chalk
   end
 
-	def max_request
+	def max_fund_request
 	  return 0.0 unless repairs_restocking && mailbox_wsh && chalk_expense && sun_ads
 		copies_expense + chalk_expense + sun_ads + repairs_restocking + mailbox_wsh
   end

@@ -1,13 +1,13 @@
 class SpeakerExpense < ActiveRecord::Base
   attr_accessible :title, :distance, :number_of_travelers, :nights_of_lodging,
     :engagement_fee, :dignitary
-  attr_readonly :edition_id
+  attr_readonly :fund_edition_id
 
-  belongs_to :edition, :inverse_of => :speaker_expense
+  belongs_to :fund_edition, :inverse_of => :speaker_expense
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  validates :edition, :presence => true
+  validates :fund_edition, :presence => true
   validates :title, :presence => true
   validates :distance,
     :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
@@ -33,7 +33,7 @@ class SpeakerExpense < ActiveRecord::Base
     Charon::Application.app_config['expenses']['speaker']['meals'] * number_of_travelers * nights_of_lodging
   end
 
-	def max_request
+	def max_fund_request
 	  return 0.0 unless engagement_fee
     engagement_fee + travel_cost + basic_lodging_cost + meals_cost
   end

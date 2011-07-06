@@ -1,0 +1,38 @@
+<h3><%= fund_edition.perspective.titleize %> fund_edition</h3>
+
+<% unless (fund_edition.fund_item.node.fund_item_amount_limit == 0.0) -%>
+<p>
+  <b>Maximum fund_request:</b> <%= number_to_currency fund_edition.max_fund_request -%>
+</p>
+
+<p>
+  <b><%= fund_edition.perspective.titleize %> amount:</b> <%=h number_to_currency(fund_edition.amount) %>
+</p>
+
+<% end -%>
+<p>
+  <b><%= fund_edition.perspective.titleize %> comment:</b>
+</p>
+
+<%=markdown fund_edition.comment %>
+
+<% if fund_edition.fund_requestable %>
+<%= render :partial => "#{fund_edition.fund_requestable.class.to_s.tableize}/#{fund_edition.fund_requestable.class.to_s.underscore}",
+           :object => fund_edition.fund_requestable %>
+<% end %>
+
+<% unless fund_edition.documents.empty? %>
+<h2>Attached Documents</h2>
+
+<table>
+<thead>
+  <tr>
+    <th>Type</th>
+  </tr>
+</thead>
+<tbody>
+<%= render :partial => 'documents/document', :collection => fund_edition.documents %>
+</tbody>
+</table>
+<% end %>
+

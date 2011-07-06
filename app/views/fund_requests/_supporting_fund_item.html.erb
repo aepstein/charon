@@ -1,0 +1,12 @@
+<tr>
+  <td colspan="3"><%= supporting_fund_item %></td>
+</tr>
+<% supporting_fund_item.node.document_types.each do |document_type| %>
+<tr>
+  <td><%=h document_type %></td>
+  <td><%= supporting_fund_item.fund_editions.for_perspective('fund_requestor').documents.for_type?( document_type ) %></td>
+  <td>&nbsp;&nbsp;</td>
+</tr>
+<% end %>
+<%= render :partial => 'supporting_fund_item', :collection => supporting_fund_item.children %>
+

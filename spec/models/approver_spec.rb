@@ -27,14 +27,14 @@ describe Approver do
   it "should not save with invalid status" do
     approver = Factory(:approver)
     approver.status = 'invalid'
-    Request.aasm_state_names.should_not include(approver.status)
+    FundRequest.aasm_state_names.should_not include(approver.status)
     approver.save.should be_false
   end
 
   it "should not save with invalid perspective" do
     approver = Factory(:approver)
     approver.perspective = 'invalid'
-    Edition::PERSPECTIVES.should_not include(approver.perspective)
+    FundEdition::PERSPECTIVES.should_not include(approver.perspective)
     approver.save.should == false
   end
 
@@ -48,12 +48,12 @@ describe Approver do
     [ [0,'all'], [1,'half'], [2,'no'], [1,'no_reviewed'], [0, 'all_reviewed'] ].each do |s|
       quantity, scenario = *s
       send("#{scenario}_approvers_scenario",true)
-      %w( completed reviewed ).should include @request.status
-      scope = Approver.unfulfilled_for( @request )
+      %w( completed reviewed ).should include @fund_request.status
+      scope = Approver.unfulfilled_for( @fund_request )
       scope.length.should eql quantity
-      scope.should include @quota if quantity == 2 && @request.status == 'completed'
-      scope.should include @all if quantity > 0 && @request.status == 'completed'
-      scope.should include @review if quantity > 0 && @request.status == 'reviewed'
+      scope.should include @quota if quantity == 2 && @fund_request.status == 'completed'
+      scope.should include @all if quantity > 0 && @fund_request.status == 'completed'
+      scope.should include @review if quantity > 0 && @fund_request.status == 'reviewed'
     end
   end
 
@@ -61,11 +61,11 @@ describe Approver do
     [ [0,'no'], [1,'half'], [2,'all'], [0,'no_reviewed'], [1,'all_reviewed'] ].each do |s|
       quantity, scenario = *s
       send("#{scenario}_approvers_scenario",true)
-      scope = Approver.fulfilled_for( @request )
+      scope = Approver.fulfilled_for( @fund_request )
       scope.length.should eql quantity
-      scope.should include @all if quantity == 2 && @request.status == 'completed'
-      scope.should include @quota if quantity > 0 && @request.status == 'completed'
-      scope.should include @review if quantity > 0 && @request.status == 'reviewed'
+      scope.should include @all if quantity == 2 && @fund_request.status == 'completed'
+      scope.should include @quota if quantity > 0 && @fund_request.status == 'completed'
+      scope.should include @review if quantity > 0 && @fund_request.status == 'reviewed'
     end
   end
 

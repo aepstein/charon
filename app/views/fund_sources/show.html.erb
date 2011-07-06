@@ -1,0 +1,82 @@
+<h2><%=h @fund_source %></h2>
+
+<p>
+  <b>Name:</b> <%=h @fund_source.name %>
+</p>
+
+<p>
+  <b>Framework:</b> <%=h @fund_source.framework %>
+</p>
+
+<p>
+  <b>Structure:</b> <%=h @fund_source.structure %>
+</p>
+
+<p>
+  <b>Contact name:</b> <%=h @fund_source.contact_name %>
+</p>
+
+<p>
+  <b>Contact email:</b> <%=h @fund_source.contact_email %>
+</p>
+
+<p>
+  <b>Contact web:</b> <%=h @fund_source.contact_web %>
+</p>
+
+<p>
+  <b>Organization:</b> <%=h @fund_source.organization %>
+</p>
+
+<p>
+  <b>Open at:</b> <%=h @fund_source.open_at %>
+</p>
+
+<p>
+  <b>Submissions due at:</b> <%=h @fund_source.submissions_due_at %>
+</p>
+
+<p>
+  <b>Closed at:</b> <%=h @fund_source.closed_at %>
+</p>
+
+<% if permitted_to? :review, @fund_source  -%>
+<p>
+  <b>Release message:</b> (included in notices sent to fund_requestor members when fund_request is released)
+</p>
+
+<%= markdown @fund_source.release_message %>
+
+  <h3>FundRequests overview</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Status</th>
+        <th>Quantity</th>
+        <th>FundRequestor Amount</th>
+        <th>Reviewer Amount</th>
+        <th>Allocation Amount</th>
+      </tr>
+    </thead>
+    <% FundRequest.aasm_state_names.each do |status| %>
+      <%= table_row_tag do %>
+        <td><%=h status %></td>
+        <td><%= @fund_source.fund_requests.with_status( status ).size %></td>
+        <td><%= number_to_currency( @fund_source.fund_requests.amount_for_perspective_and_status('fund_requestor',status) ) %></td>
+        <td><%= number_to_currency( @fund_source.fund_requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
+        <td><%= number_to_currency( @fund_source.fund_requests.fund_item_amount_for_status(status) ) %></td>
+      <% end %>
+    <% end %>
+  </table>
+
+<% end -%>
+<p>
+<% if permitted_to? :edit, @fund_source -%>
+<%= link_to( 'Edit', edit_fund_source_path(@fund_source) ) %> |
+<% end -%>
+<% if permitted_to? :review, @fund_source -%>
+<%= nested_index @fund_source, :fund_requests, [ :duplicate ] %> |
+<% end -%>
+<%= link_to 'Back', organization_fund_sources_path( @fund_source.organization ) %>
+</p>
+

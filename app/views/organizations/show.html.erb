@@ -13,8 +13,8 @@
 </p>
 
 <p>
-  <b><%= Edition::PERSPECTIVES.first.capitalize %> frameworks:</b>
-  <% @organization.frameworks( Edition::PERSPECTIVES.first ).each do |framework| %>
+  <b><%= FundEdition::PERSPECTIVES.first.capitalize %> frameworks:</b>
+  <% @organization.frameworks( FundEdition::PERSPECTIVES.first ).each do |framework| %>
   <li><%=h framework %></li>
   <% end %>
   </ul>
@@ -41,11 +41,11 @@
 <% if permitted_to? :manage, @organization %>
 <%= link_to 'List university accounts', organization_university_accounts_path(@organization) %> |
 <% end %>
-<%= nested_index @organization, :requests, [ :duplicate ] %> |
+<%= nested_index @organization, :fund_requests, [ :duplicate ] %> |
 <%= link_to 'List registrations', organization_registrations_path(@organization) %> |
-<%= link_to 'List bases', organization_bases_path(@organization) %> |
+<%= link_to 'List fund_sources', organization_fund_sources_path(@organization) %> |
 <%= link_to 'List fulfillments', organization_fulfillments_path(@organization) %> |
-<%= nested_index @organization, :inventory_items, [ :active, :retired ] %> |
+<%= nested_index @organization, :inventory_fund_items, [ :active, :retired ] %> |
 <%= link_to 'List activity accounts', organization_activity_accounts_path(@organization) %> |
 <%= link_to 'Back', organizations_path %>
 </p>

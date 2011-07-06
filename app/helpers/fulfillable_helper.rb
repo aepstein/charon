@@ -23,7 +23,7 @@ module FulfillableHelper
     end
     context_statements = []
     contexts.each do |framework, actions|
-      context_statements << "#{actions.join ', '} #{framework} requests"
+      context_statements << "#{actions.join ', '} #{framework} fund_requests"
     end
     "in order to #{context_statements.join ', '}"
   end

@@ -10,8 +10,8 @@ Feature: Manage activity accounts
     Given an organization: "source" exists
     And an organization: "recipient" exists
     And a user: "member" exists
-    And a requestor_role exists
-    And a membership exists with user: user "member", organization: organization "recipient", role: the requestor_role
+    And a fund_requestor_role exists
+    And a membership exists with user: user "member", organization: organization "recipient", role: the fund_requestor_role
     And a user: "recipient_manager" exists
     And a manager_role exists
     And a membership exists with user: user "recipient_manager", organization: organization "recipient", role: the manager_role
@@ -44,7 +44,7 @@ Feature: Manage activity accounts
     Examples:
       | user              | create  | update  | show    | destroy | show_ua |
       | admin             | see     | see     | see     | see     | see     |
-# TODO: source manager tests should utilize basis rather than university account as context
+# TODO: source manager tests should utilize fund_source rather than university account as context
 #      | source_manager    | not see | see     | see     | see     | see     |
       | recipient_manager | not see | not see | see     | not see | see     |
       | member            | not see | not see | see     | not see | not see |
@@ -53,27 +53,27 @@ Feature: Manage activity accounts
   Scenario: Create and update university_accounts
     Given a university_account: "first" exists with department_code: "A00", subledger_code: "0001"
     And a university_account: "second" exists with department_code: "B00", subledger_code: "0002"
-    And a basis exists with name: "SAFC"
-    And a basis exists with name: "ISPB"
+    And a fund_source exists with name: "SAFC"
+    And a fund_source exists with name: "ISPB"
     And a category exists with name: "SAFC Local Event"
     And a category exists with name: "ISPB Food"
     And I log in as user: "admin"
     And I am on the new activity_account page for university_account: "first"
-    When I select "SAFC" from "Basis"
+    When I select "SAFC" from "FundSource"
     And I select "SAFC Local Event" from "Category"
     And I press "Create"
     Then I should see "Activity account was successfully created."
     And I should see "University account: A00-0001"
-    And I should see "Basis: SAFC"
+    And I should see "FundSource: SAFC"
     And I should see "Category: SAFC Local Event"
     When I follow "Edit"
     And I select "B00-0002" from "University account"
-    And I select "ISPB" from "Basis"
+    And I select "ISPB" from "FundSource"
     And I select "ISPB Food" from "Category"
     And I press "Update"
     Then I should see "Activity account was successfully updated."
     And I should see "University account: B00-0002"
-    And I should see "Basis: ISPB"
+    And I should see "FundSource: ISPB"
     And I should see "Category: ISPB Food"
 
 #  Scenario: List and delete university accounts

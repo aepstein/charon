@@ -46,7 +46,7 @@ end
 
 Factory.define :approval do |f|
   f.association :user
-  f.association :approvable, :factory => :request
+  f.association :approvable, :factory => :fund_request
   f.as_of { |approval| approval.approvable.updated_at + 1.second }
 end
 
@@ -54,7 +54,7 @@ Factory.define :approver do |f|
   f.association :framework
   f.association :role
   f.status 'submitted'
-  f.perspective Edition::PERSPECTIVES.first
+  f.perspective FundEdition::PERSPECTIVES.first
 end
 
 Factory.define :category do |f|
@@ -64,8 +64,8 @@ end
 Factory.define :document do |f|
   f.original { Rack::Test::UploadedFile.new(
     "#{::Rails.root}/features/support/assets/small.pdf", 'application/pdf' ) }
-  f.association :edition, :factory => :attachable_edition
-  f.document_type { |d| d.edition.document_types.first }
+  f.association :fund_edition, :factory => :attachable_fund_edition
+  f.document_type { |d| d.fund_edition.document_types.first }
 end
 
 Factory.define :document_type do |f|
@@ -135,12 +135,12 @@ Factory.define :requirement do |f|
   f.association :fulfillable, :factory => :agreement
 end
 
-Factory.define :requestor_requirement, :parent => :requirement do |f|
-  f.perspectives [ Edition::PERSPECTIVES.first ]
+Factory.define :fund_requestor_requirement, :parent => :requirement do |f|
+  f.perspectives [ FundEdition::PERSPECTIVES.first ]
 end
 
 Factory.define :reviewer_requirement, :parent => :requirement do |f|
-  f.perspectives [ Edition::PERSPECTIVES.last ]
+  f.perspectives [ FundEdition::PERSPECTIVES.last ]
 end
 
 Factory.define :safc_eligible_registration, :parent => :registration do |f|
@@ -171,7 +171,7 @@ Factory.define :role do |f|
   f.sequence(:name) { |n| "role #{n}" }
 end
 
-Factory.define :requestor_role, :parent => :role do |f|
+Factory.define :fund_requestor_role, :parent => :role do |f|
   f.name Role::REQUESTOR.first
 end
 
@@ -209,7 +209,7 @@ end
 
 Factory.define :node do |f|
   f.sequence(:name) { |n| "node #{n}" }
-  f.item_quantity_limit 1
+  f.fund_item_quantity_limit 1
   f.association :structure
   f.association :category
 end
@@ -218,8 +218,8 @@ Factory.define :attachable_node, :parent => :node do |f|
   f.document_types { |node| [ node.association(:document_type) ] }
 end
 
-Factory.define :basis do |f|
-  f.sequence(:name) { |n| "Basis #{n}" }
+Factory.define :fund_source do |f|
+  f.sequence(:name) { |n| "FundSource #{n}" }
   f.association :organization
   f.association :framework
   f.association :structure
@@ -231,68 +231,68 @@ Factory.define :basis do |f|
   f.contact_web "http://example.com"
 end
 
-Factory.define :past_basis, :parent => :basis do |f|
+Factory.define :past_fund_source, :parent => :fund_source do |f|
   f.open_at { Time.zone.today - 1.year }
 end
 
-Factory.define :future_basis, :parent => :basis do |f|
+Factory.define :future_fund_source, :parent => :fund_source do |f|
   f.open_at { Time.zone.today + 1.month }
 end
 
-Factory.define :request do |f|
-  f.association :basis
+Factory.define :fund_request do |f|
+  f.association :fund_source
   f.association :organization
 end
 
-Factory.define :item do |f|
-  f.association :request
-  f.node { |item| item.association(:node, :structure => item.request.basis.structure) }
+Factory.define :fund_item do |f|
+  f.association :fund_request
+  f.node { |fund_item| fund_item.association(:node, :structure => fund_item.fund_request.fund_source.structure) }
 end
 
-Factory.define :attachable_item, :parent => :item do |f|
-  f.association :request
-  f.node { |item| item.association(:attachable_node, :structure => item.request.basis.structure) }
+Factory.define :attachable_fund_item, :parent => :fund_item do |f|
+  f.association :fund_request
+  f.node { |fund_item| fund_item.association(:attachable_node, :structure => fund_item.fund_request.fund_source.structure) }
 end
 
-Factory.define :edition do |f|
+Factory.define :fund_edition do |f|
   f.amount 0.0
-  f.perspective 'requestor'
-  f.association :item
+  f.perspective 'fund_requestor'
+  f.association :fund_item
 end
 
 Node::ALLOWED_TYPES.each_value do |t|
   Factory.define "#{t}Node".underscore.to_sym, :parent => :node do |f|
-    f.requestable_type t
+    f.fund_requestable_type t
   end
-  Factory.define "#{t}Item".underscore.to_sym, :parent => :item do |f|
-    f.association :request
-    f.node { |item| item.association("#{t}Node".underscore.to_sym, :structure => item.request.basis.structure) }
+  Factory.define "#{t}FundItem".underscore.to_sym, :parent => :fund_item do |f|
+    f.association :fund_request
+    f.node { |fund_item| fund_item.association("#{t}Node".underscore.to_sym, :structure => fund_item.fund_request.fund_source.structure) }
   end
-  Factory.define "#{t}Edition".underscore.to_sym, :parent => :edition do |f|
-    f.item { |edition| edition.association "#{t}Item".underscore.to_sym  }
+  Factory.define "#{t}FundEdition".underscore.to_sym, :parent => :fund_edition do |f|
+    f.fund_item { |fund_edition| fund_edition.association "#{t}FundItem".underscore.to_sym  }
   end
 end
 
-Factory.define :attachable_edition, :parent => :edition do |f|
-  f.association :item, :factory => :attachable_item
+Factory.define :attachable_fund_edition, :parent => :fund_edition do |f|
+  f.association :fund_item, :factory => :attachable_fund_item
 end
 
 Factory.define :administrative_expense do |f|
-  f.association :edition, :factory => :administrative_expense_edition
+  f.association :fund_edition, :factory => :administrative_expense_fund_edition
   f.copies 100
   f.repairs_restocking 100
   f.mailbox_wsh 25
 end
 
 Factory.define :durable_good_expense do |f|
-  f.association :edition, :factory => :durable_good_expense_edition
+  f.association :fund_edition, :factory => :durable_good_expense_fund_edition
   f.description 'a durable good'
   f.quantity 1.5
   f.price 1.5
 end
 
 Factory.define :local_event_expense do |f|
-  f.association :edition, :factory => :local_event_expense_edition
+  f.association :fund_edition, :factory => :local_event_expense_fund_edition
   f.date Time.zone.today + 2.months
   f.title 'An Event'
   f.location 'Willard Straight Hall'
@@ -304,7 +304,7 @@ Factory.define :local_event_expense do |f|
 end
 
 Factory.define :publication_expense do |f|
-  f.association :edition, :factory => :publication_expense_edition
+  f.association :fund_edition, :factory => :publication_expense_fund_edition
   f.title 'Publication'
   f.number_of_issues 3
   f.copies_per_issue 500
@@ -313,7 +313,7 @@ Factory.define :publication_expense do |f|
 end
 
 Factory.define :travel_event_expense do |f|
-  f.association :edition, :factory => :travel_event_expense_edition
+  f.association :fund_edition, :factory => :travel_event_expense_fund_edition
   f.date Time.zone.today + 2.months
   f.title "A tournament"
   f.location 'Los Angeles, CA'
@@ -327,7 +327,7 @@ Factory.define :travel_event_expense do |f|
 end
 
 Factory.define :speaker_expense do |f|
-  f.association :edition, :factory => :speaker_expense_edition
+  f.association :fund_edition, :factory => :speaker_expense_fund_edition
   f.title 'An Important Person'
   f.distance 204
   f.number_of_travelers 1
@@ -336,10 +336,10 @@ Factory.define :speaker_expense do |f|
 end
 
 Factory.define :external_equity_report do |f|
-  f.association :edition, :factory => :external_equity_report_edition
+  f.association :fund_edition, :factory => :external_equity_report_fund_edition
 end
 
-Factory.define :inventory_item do |f|
+Factory.define :inventory_fund_item do |f|
   f.association :organization
   f.sequence(:identifier) { |n| "id##{n}" }
   f.description "Boots"

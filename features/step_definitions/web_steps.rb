@@ -4,7 +4,7 @@
 # These step definitions are thin wrappers around the Capybara/Webrat API that lets you
 # visit pages, interact with widgets and make assertions about page content.
 #
-# If you use these step definitions as basis for your features you will quickly end up
+# If you use these step definitions as fund_source for your features you will quickly end up
 # with features that are:
 #
 # * Hard to maintain

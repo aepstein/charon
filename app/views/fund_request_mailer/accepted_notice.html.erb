@@ -1,0 +1,13 @@
+<p>
+Dear Officers of <%= @fund_request.organization %>,
+</p>
+
+<p>
+This email is a confirmation that your fund_request for <%=h @fund_request.fund_source %> has been accepted for review.
+You will receive additional notice when a determination is released.
+</p>
+
+<p>
+To see it, please go to: &lt;<%= link_to fund_request_url(@fund_request), fund_request_url(@fund_request) %>&gt;.
+</p>
+

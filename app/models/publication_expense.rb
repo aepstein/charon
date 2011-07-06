@@ -1,13 +1,13 @@
 class PublicationExpense < ActiveRecord::Base
   attr_accessible :title, :number_of_issues, :copies_per_issue, :price_per_copy,
     :cost_per_issue
-  attr_readonly :edition_id
+  attr_readonly :fund_edition_id
 
-  belongs_to :edition, :inverse_of => :publication_expense
+  belongs_to :fund_edition, :inverse_of => :publication_expense
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  validates :edition, :presence => true
+  validates :fund_edition, :presence => true
   validates :title, :presence => true
   validates :number_of_issues,
     :numericality => { :only_integer => true, :greater_than => 0 }
@@ -28,7 +28,7 @@ class PublicationExpense < ActiveRecord::Base
     price_per_copy * total_copies
   end
 
-	def max_request
+	def max_fund_request
 	  return 0.0 unless number_of_issues && cost_per_issue
 	  number_of_issues * cost_per_issue
   end

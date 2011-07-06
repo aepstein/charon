@@ -45,8 +45,8 @@ describe ExternalEquityReport do
     @report.net_equity.should eql 9.09
   end
 
-  it 'should not save without an edition' do
-    @report.edition = nil
+  it 'should not save without an fund_edition' do
+    @report.fund_edition = nil
     @report.save.should be_false
   end
 end

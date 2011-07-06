@@ -1,5 +1,5 @@
 Feature: Manage organizations
-  In order to Manage requests for an organization
+  In order to Manage fund_requests for an organization
   As a member of an organization
   I want the organization profile page
 
@@ -21,7 +21,7 @@ Feature: Manage organizations
 #    And I am logged in as "admin" with password "secret"
 #    And I am on the profile page for organization: "<organization>"
 #    Then I should <see> "The organization has unfulfilled requirements that may limit what it is able to do:"
-#    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration in order to create, update SAFC requests. Click here to update the registration."
+#    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration in order to create, update SAFC fund_requests. Click here to update the registration."
 #    Examples:
 #      | organization | see     |
 #      | qualified    | not see |
@@ -32,9 +32,9 @@ Feature: Manage organizations
     And a manager_role exists
     And a user: "manager" exists
     And a membership exists with organization: the organization, user: user "manager", role: the manager_role
-    And a requestor_role exists
-    And a user: "requestor" exists
-    And a membership exists with organization: the organization, user: user "requestor", role: the requestor_role
+    And a fund_requestor_role exists
+    And a user: "fund_requestor" exists
+    And a membership exists with organization: the organization, user: user "fund_requestor", role: the fund_requestor_role
     And a reviewer_role exists
     And a user: "reviewer" exists
     And a membership exists with organization: the organization, user: user "reviewer", role: the reviewer_role
@@ -64,43 +64,43 @@ Feature: Manage organizations
       | user      | create  | update  | destroy | show | profile |
       | admin     | see     | see     | see     | see  | see     |
       | manager   | not see | see     | see     | see  | see     |
-      | requestor | not see | not see | not see | see  | see     |
+      | fund_requestor | not see | not see | not see | see  | see     |
       | reviewer  | not see | not see | not see | see  | see     |
       | regular   | not see | not see | not see | see  | not see |
 
-  Scenario Outline: Show headings for requests appropriately based on requests status
+  Scenario Outline: Show headings for fund_requests appropriately based on fund_requests status
     Given an organization exists
-    And a basis exists with name: "Focus Basis"
-    And a user: "requestor" exists
-    And a requestor_role exists
-    And a membership exists with organization: the organization, user: user "requestor", role: the requestor_role
-    And a request exists with organization: the organization, basis: the basis, status: "<status>"
+    And a fund_source exists with name: "Focus FundSource"
+    And a user: "fund_requestor" exists
+    And a fund_requestor_role exists
+    And a membership exists with organization: the organization, user: user "fund_requestor", role: the fund_requestor_role
+    And a fund_request exists with organization: the organization, fund_source: the fund_source, status: "<status>"
     And I log in as user: "<user>"
     And I am on the profile page for the organization
-    Then I should <creatable> "Bases for you to make new requests"
-    And I should <started> "Requests you have started"
-    And I should <completed> "Requests you have completed"
-    And I should <submitted> "Requests you have submitted"
-    And I should <accepted> "Requests that have been accepted for review"
-    And I should <released> "Requests that have been released"
-    And I should see "Focus Basis"
+    Then I should <creatable> "FundSources for you to make new fund_requests"
+    And I should <started> "FundRequests you have started"
+    And I should <completed> "FundRequests you have completed"
+    And I should <submitted> "FundRequests you have submitted"
+    And I should <accepted> "FundRequests that have been accepted for review"
+    And I should <released> "FundRequests that have been released"
+    And I should see "Focus FundSource"
     Examples:
       | user      | status    | creatable | started | completed | submitted | accepted | released |
       | admin     | started   | not see   | see     | not see   | not see   | not see  | not see  |
       | admin     | completed | not see   | not see | see       | not see   | not see  | not see  |
-      | requestor | started   | not see   | see     | not see   | not see   | not see  | not see  |
-      | requestor | completed | not see   | not see | see       | not see   | not see  | not see  |
-      | requestor | submitted | see       | not see | not see   | see       | not see  | not see  |
-      | requestor | accepted  | see       | not see | not see   | not see   | see      | not see  |
-      | requestor | reviewed  | see       | not see | not see   | not see   | see      | not see  |
-      | requestor | certified | see       | not see | not see   | not see   | see      | not see  |
-      | requestor | released  | see       | not see | not see   | not see   | not see  | see      |
+      | fund_requestor | started   | not see   | see     | not see   | not see   | not see  | not see  |
+      | fund_requestor | completed | not see   | not see | see       | not see   | not see  | not see  |
+      | fund_requestor | submitted | see       | not see | not see   | see       | not see  | not see  |
+      | fund_requestor | accepted  | see       | not see | not see   | not see   | see      | not see  |
+      | fund_requestor | reviewed  | see       | not see | not see   | not see   | see      | not see  |
+      | fund_requestor | certified | see       | not see | not see   | not see   | see      | not see  |
+      | fund_requestor | released  | see       | not see | not see   | not see   | not see  | see      |
 
   Scenario Outline: Register a new organization and edit
     Given a current_registration exists with name: "Cornell Club", registered: true
-    And a framework exists with name: "Budget Requests"
+    And a framework exists with name: "Budget FundRequests"
     And a registration_criterion exists with type_of_member: "undergrads", minimal_percentage: 0, must_register: true
-    And a requestor_requirement exists with fulfillable: the registration_criterion, framework: the framework
+    And a fund_requestor_requirement exists with fulfillable: the registration_criterion, framework: the framework
     And I log in as user: "admin"
     And I am on the new organization <context>
     When I fill in "First name" with "Cornell"
@@ -120,7 +120,7 @@ Feature: Manage organizations
     And I should see "First name: The Cornell"
     And I should see "Last name: Night Club"
     And I should see "Club sport? No"
-    And I should <registered> "Budget Requests"
+    And I should <registered> "Budget FundRequests"
     And I should <registered> "Registered? Yes"
     Examples:
       | context                           | registered |

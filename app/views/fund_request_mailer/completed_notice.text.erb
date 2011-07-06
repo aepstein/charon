@@ -1,0 +1,24 @@
+Dear Officers of <%= @fund_request.organization %>,
+
+This email is to inform you that your <%= @fund_request %> has been completed, but requires further action before it will be considered submitted.
+
+The following people must approve the fund_request before it is considered submitted:
+
+<% @fund_request.users.unfulfilled( Approver.where( :quantity => nil ) ).each do |user| -%>
+ * <%= user.name %>
+<% end -%>
+
+They may approve the fund_request here <<%= new_polymorphic_url( [ @fund_request, 'approval' ] ) %>>.
+
+<% if @fund_request.fund_source.submissions_due_at && @fund_request.fund_source.submissions_due_at > DateTime.now -%>
+The next deadline for submissions is <%= @fund_request.fund_source.submissions_due_at.to_s :us_ordinal %>.
+<% end -%>
+
+<% if @fund_request.fund_source.contact_web -%>
+More information is available here <<%= @fund_request.fund_source.contact_web %>>.
+<% end -%>
+
+Sincerely,
+
+<%= @fund_request.fund_source.contact_name %>
+

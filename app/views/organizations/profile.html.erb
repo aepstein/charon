@@ -1,61 +1,61 @@
 <h2><%=h @organization %> Profile</h2>
 
-<% unless @organization.requests.creatable.empty? %>
-<h3>Bases for you to make new requests</h3>
+<% unless @organization.fund_requests.creatable.empty? %>
+<h3>FundSources for you to make new fund_requests</h3>
 
-<p>Choose a new request you would like to create and get started on:</p>
+<p>Choose a new fund_request you would like to create and get started on:</p>
 
-<%= render :partial => 'requests/requests',
-  :object => @organization.requests.creatable,
+<%= render :partial => 'fund_requests/fund_requests',
+  :object => @organization.fund_requests.creatable,
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.with_status(:started).empty? %>
-<h3>Requests you have started</h3>
+<% unless @organization.fund_requests.with_status(:started).empty? %>
+<h3>FundRequests you have started</h3>
 
-<p>Choose a request below to examine and modify its items:</p>
+<p>Choose a fund_request below to examine and modify its fund_items:</p>
 
-<%= render :partial => 'requests/requests',
-  :object => @organization.requests.with_status(:started),
+<%= render :partial => 'fund_requests/fund_requests',
+  :object => @organization.fund_requests.with_status(:started),
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.with_status(:completed).empty? %>
-<h3>Requests you have completed, but are still awaiting approvals</h3>
+<% unless @organization.fund_requests.with_status(:completed).empty? %>
+<h3>FundRequests you have completed, but are still awaiting approvals</h3>
 
-<p>If you need to make changes, each person who has approved the request must unapprove it.</p>
+<p>If you need to make changes, each person who has approved the fund_request must unapprove it.</p>
 
-<%= render :partial => 'requests/requests',
-  :object => @organization.requests.with_status(:completed),
+<%= render :partial => 'fund_requests/fund_requests',
+  :object => @organization.fund_requests.with_status(:completed),
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.with_status(:submitted).empty? %>
-<h3>Requests you have submitted and are waiting to be accepted</h3>
+<% unless @organization.fund_requests.with_status(:submitted).empty? %>
+<h3>FundRequests you have submitted and are waiting to be accepted</h3>
 
-<p>You may view details of any of the following requests, although reviews have not yet been released:</p>
+<p>You may view details of any of the following fund_requests, although reviews have not yet been released:</p>
 
-<%= render :partial => 'requests/requests',
-  :object => @organization.requests.with_status(:submitted),
+<%= render :partial => 'fund_requests/fund_requests',
+  :object => @organization.fund_requests.with_status(:submitted),
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.where( :status.in => %w( accepted reviewed certified ) ).empty? %>
-<h3>Requests that have been accepted for review</h3>
+<% unless @organization.fund_requests.where( :status.in => %w( accepted reviewed certified ) ).empty? %>
+<h3>FundRequests that have been accepted for review</h3>
 
-<p>You may view details of any of the following requests, although reviews have not yet been released:</p>
+<p>You may view details of any of the following fund_requests, although reviews have not yet been released:</p>
 
-<%= render :partial => 'requests/requests',
-  :object => @organization.requests.where( :status.in => %w( accepted reviewed certified ) ),
+<%= render :partial => 'fund_requests/fund_requests',
+  :object => @organization.fund_requests.where( :status.in => %w( accepted reviewed certified ) ),
   :locals => { :organization => @organization, :status => true } %>
 <% end %>
 
-<% unless @organization.requests.with_status(:released).empty? %>
-<h3>Requests that have been released</h3>
+<% unless @organization.fund_requests.with_status(:released).empty? %>
+<h3>FundRequests that have been released</h3>
 
-<p>Results are available for the following requests:</p>
+<p>Results are available for the following fund_requests:</p>
 
-<%= render :partial => 'requests/requests', :object => @organization.requests.with_status(:released), :locals => {
+<%= render :partial => 'fund_requests/fund_requests', :object => @organization.fund_requests.with_status(:released), :locals => {
   :organization => @organization, :status => true
 } %>
 <% end %>

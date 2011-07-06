@@ -42,8 +42,8 @@ describe PublicationExpense do
     @expense.save.should == false
   end
 
-  it "should not save without a edition" do
-    @expense.edition = nil
+  it "should not save without a fund_edition" do
+    @expense.fund_edition = nil
     @expense.save.should == false
   end
 end

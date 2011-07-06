@@ -1,7 +1,0 @@
-  <% level ||= 3 %>
-  <%= content_tag "h#{level}", h(detailed.to_s) %>
-  <%= render :partial => 'items/detail', :object => detailed,
-    :locals => { :level => ( level + 1 ) } %>
-
-  <%= render :partial => 'items/detailed', :collection => detailed.children %>
-

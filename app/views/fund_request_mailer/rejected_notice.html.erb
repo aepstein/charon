@@ -1,0 +1,13 @@
+<p>
+Dear Officers of <%= @fund_request.organization %>,
+</p>
+
+<p>
+This email is to inform you that your <%=h @fund_request %> has been rejected.
+To see it, please go to: &lt;<%= link_to fund_request_url(@fund_request), fund_request_url(@fund_request) %>&gt;.
+</p>
+
+<p><b>Why the fund_request was rejected:</b></p>
+
+<%=markdown @fund_request.reject_message %>
+

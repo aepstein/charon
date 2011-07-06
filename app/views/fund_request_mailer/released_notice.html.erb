@@ -1,0 +1,11 @@
+<p>
+Dear Officers of <%= @fund_request.organization %>,
+</p>
+
+<p>
+This email is to inform you that your <%=h @fund_request %> has been processed and released for you to review.
+To see it, please go to: &lt;<%= link_to fund_request_url(@fund_request), fund_request_url(@fund_request) %>&gt;.
+</p>
+
+<%=markdown @fund_request.fund_source.release_message %>
+

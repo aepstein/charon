@@ -2,7 +2,7 @@
   :collection => Requirement.fulfillable_names,
   :hint => 'What criterion must be fulfilled?',
   :input_html => { :allow_blank => true } %>
-<%= form.input :perspectives, :as => :check_boxes, :collection => Edition::PERSPECTIVES,
+<%= form.input :perspectives, :as => :check_boxes, :collection => FundEdition::PERSPECTIVES,
   :hint => 'To which organization perspectives does this apply?' %>
 <%= form.input :role,
   :input_html => { :allow_blank => true },

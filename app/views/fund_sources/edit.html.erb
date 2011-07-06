@@ -1,0 +1,11 @@
+<h2>Editing fund_source for <%=h @fund_source.organization %></h2>
+
+<%= semantic_form_for(@fund_source) do |f| %>
+  <%= render :partial => 'form', :object => f %>
+<% end %>
+
+<p>
+<%= link_to 'Show', @fund_source %> |
+<%= link_to 'Back', organization_fund_sources_path( @fund_source.organization ) %>
+</p>
+

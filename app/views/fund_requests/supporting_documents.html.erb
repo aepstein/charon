@@ -1,0 +1,15 @@
+<h2>Supporting documents checklist</h2>
+
+<p>FundRequest: <%=h @fund_request %>
+
+<table>
+  <tr>
+    <th>Document</th>
+    <th>Online</th>
+    <th>Pages Included</th>
+  </tr>
+
+  <%= render :partial => 'supporting_fund_item', :collection => @fund_request.fund_items.root %>
+
+</table>
+

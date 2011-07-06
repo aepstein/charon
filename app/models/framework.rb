@@ -3,7 +3,7 @@ class Framework < ActiveRecord::Base
 
   has_many :approvers, :inverse_of => :framework
   has_many :requirements, :inverse_of => :framework
-  has_many :bases, :inverse_of => :framework
+  has_many :fund_sources, :inverse_of => :framework
 
   validates :name, :presence => true, :uniqueness => true
 
@@ -15,7 +15,7 @@ class Framework < ActiveRecord::Base
 
   scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
     joins( 'LEFT JOIN requirements ON requirements.framework_id = frameworks.id ' +
-      "AND requirements.perspectives_mask & #{2**Edition::PERSPECTIVES.index(perspective)} > 0 " +
+      "AND requirements.perspectives_mask & #{2**FundEdition::PERSPECTIVES.index(perspective)} > 0 " +
       "AND requirements.fulfillable_type IN (#{fulfiller.class.quoted_fulfillable_types}) AND " +
       ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
       "requirements.role_id IN (#{role_ids.join ','}) ) " : "requirements.role_id IS NULL " ) +
