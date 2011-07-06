@@ -42,12 +42,13 @@ class RegistrationTerm < ActiveRecord::Base
   # * Update fulfillments for registration criterions
   # * Update activation status for memberships
   def update_dependencies
-    return if current_changed?
+    return true unless current_changed?
     RegistrationCriterion.all.each do |criterion|
       criterion.fulfill
       criterion.unfulfill
     end
     memberships.activate!
+    true
   end
 
 end
