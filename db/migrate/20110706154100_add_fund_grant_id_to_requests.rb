@@ -1,10 +1,10 @@
 class AddFundGrantIdToRequests < ActiveRecord::Migration
   def self.up
-    say 'Set up fund_grants corresponding to existing fund_requests'
+    say 'Add fund_grants corresponding to existing fund_requests'
     execute <<-SQL
-      INSERT INTO fund_grants ( organization_id, fund_source_id, state,
+      INSERT INTO fund_grants ( organization_id, fund_source_id,
         created_at, updated_at )
-      SELECT DISTINCT organization_id, fund_source_id, 'new', MIN(created_at),
+      SELECT DISTINCT organization_id, fund_source_id, MIN(created_at),
         MAX(updated_at) FROM fund_requests GROUP BY organization_id, fund_source_id
     SQL
 
@@ -19,6 +19,14 @@ class AddFundGrantIdToRequests < ActiveRecord::Migration
       )
     SQL
     change_column :fund_requests, :fund_grant_id, :integer, :null => false
+
+    say 'Mark fund grants released according to corresponding request flag'
+    execute <<-SQL
+      UPDATE fund_grants SET released_at = (
+        SELECT MAX( released_at ) FROM fund_requests WHERE
+        fund_grant_id = fund_grants.id
+      )
+    SQL
 
     say 'Remove deprecated references from fund_requests'
     remove_index :fund_requests, :name => 'index_requests_on_fund_source_id_and_state'
