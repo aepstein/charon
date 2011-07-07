@@ -9,7 +9,7 @@ class Node < ActiveRecord::Base
     'Speaker' => 'SpeakerExpense'
   }
 
-  attr_accessible :name, :fund_requestable_type, :fund_item_amount_limit,
+  attr_accessible :name, :requestable_type, :fund_item_amount_limit,
     :fund_item_quantity_limit, :parent_id, :category_id
   attr_readonly :structure_id
 
@@ -22,7 +22,7 @@ class Node < ActiveRecord::Base
   validates :name, :presence => true,
     :uniqueness => { :scope => [ :structure_id ] }
   validates :structure, :presence => true
-  validates :fund_requestable_type,
+  validates :requestable_type,
     :inclusion => { :in => Node::ALLOWED_TYPES.values, :allow_blank => true }
   validates :category, :presence => true
 

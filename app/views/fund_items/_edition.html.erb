@@ -15,10 +15,10 @@
       <% end %>
       <td>&nbsp;</td>
     <% end %>
-    <% if show_detail && fund_edition.fund_requestable %>
+    <% if show_detail && fund_edition.requestable %>
     <% table_row_tag false do %>
     <td colspan="3">
-    <%= render_fund_requestable_detail fund_edition.fund_requestable %>
+    <%= render_requestable_detail fund_edition.requestable %>
     </td>
     <td colspan="2">
     <% end %>

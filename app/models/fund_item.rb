@@ -22,12 +22,12 @@ class FundItem < ActiveRecord::Base
         return nil if last.perspective == FundEdition::PERSPECTIVES.last
         attributes = last.attributes.merge( attributes )
         attributes['perspective'] = FundEdition::PERSPECTIVES[ FundEdition::PERSPECTIVES.index(last.perspective) + 1 ]
-        previous_fund_requestable_attributes = last.fund_requestable.attributes if last.fund_requestable
+        previous_requestable_attributes = last.requestable.attributes if last.requestable
       end
       attributes['perspective'] ||= FundEdition::PERSPECTIVES.first
-      previous_fund_requestable_attributes ||= Hash.new
+      previous_requestable_attributes ||= Hash.new
       fund_edition = build( attributes )
-      fund_edition.build_fund_requestable( previous_fund_requestable_attributes )
+      fund_edition.build_requestable( previous_requestable_attributes )
       fund_edition
     end
     def existing

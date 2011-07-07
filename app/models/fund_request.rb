@@ -1,55 +1,22 @@
 class FundRequest < ActiveRecord::Base
   include Notifiable
 
-  attr_accessible :fund_source_id
-  attr_readonly :fund_source_id
+  attr_accessible :fund_grant_attributes
+  attr_readonly :fund_grant_id
 
-  belongs_to :withdrawn_by_user, :class_name => 'User'
   belongs_to :fund_source, :inverse_of => :fund_requests
+  belongs_to :fund_grant, :inverse_of => :fund_requests
+  belongs_to :fund_queue, :inverse_of => :fund_requests
   belongs_to :organization, :inverse_of => :fund_requests
+  belongs_to :withdrawn_by_user, :class_name => 'User'
+
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
     def existing
       self.reject { |approval| approval.new_record? }
     end
   end
-  has_many :users, :through => :approvals do
-    def for_perspective( perspective )
-      ( Membership.includes(:user).
-          where( :active => true, :organization_id => proxy_owner.send(perspective).id ) &
-          Role.where( :name.in => Role::REQUESTOR ) ).map(&:user)
-    end
-    def fulfilled( approvers = Approver )
-      approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
-    end
-    def unfulfilled( approvers = Approver )
-      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
-    end
-    def required_for_status( status )
-      approvers_to_users( Approver.where( :framework_id => proxy_owner.fund_source.framework_id,
-        :status => status, :quantity => nil ) )
-    end
-    protected
-    def after_checkpoint
-      where( 'approvals.created_at > ?', proxy_owner.approval_checkpoint )
-    end
-    def approvers_to_users(approvers)
-      approvers_organized = approvers.inject({}) do |memo, approver|
-        memo[approver.perspective] ||= Array.new
-        memo[approver.perspective] << approver.role_id
-        memo
-      end
-      approvers_fragments = Array.new
-      approvers_organized.each do |perspective, role_ids|
-        approvers_fragments << ( "( memberships.organization_id = #{proxy_owner.send(perspective).id} " +
-          "AND memberships.role_id IN (#{role_ids.join(',')}) )" )
-      end
-      return Array.new if approvers.length == 0
-      User.joins( :memberships).where( approvers_fragments.join(' OR ') +
-        " AND memberships.active = #{connection.quote true}" ).all - self
-    end
-  end
-  has_many :fund_items, :dependent => :destroy, :order => 'fund_items.position ASC',
-    :inverse_of => :fund_request do
+  has_many :fund_editions, :dependent => :destroy, :inverse_of => :fund_request
+  has_many :fund_items, :through => :fund_grant, :order => 'fund_items.position ASC' do
     def children_of(parent_fund_item)
       self.select { |fund_item| fund_item.parent_id == parent_fund_item.id }
     end
@@ -88,13 +55,51 @@ class FundRequest < ActiveRecord::Base
       cap
     end
   end
-  has_many :fund_editions, :through => :fund_items
+  has_many :users, :through => :approvals do
+    def for_perspective( perspective )
+      ( Membership.includes(:user).
+          where( :active => true, :organization_id => proxy_owner.send(perspective).id ) &
+          Role.where( :name.in => Role::REQUESTOR ) ).map(&:user)
+    end
+    def fulfilled( approvers = Approver )
+      approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
+    end
+    def unfulfilled( approvers = Approver )
+      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
+    end
+    def required_for_status( status )
+      approvers_to_users( Approver.where( :framework_id => proxy_owner.fund_source.framework_id,
+        :status => status, :quantity => nil ) )
+    end
+    protected
+    def after_checkpoint
+      where( 'approvals.created_at > ?', proxy_owner.approval_checkpoint )
+    end
+    def approvers_to_users(approvers)
+      approvers_organized = approvers.inject({}) do |memo, approver|
+        memo[approver.perspective] ||= Array.new
+        memo[approver.perspective] << approver.role_id
+        memo
+      end
+      approvers_fragments = Array.new
+      approvers_organized.each do |perspective, role_ids|
+        approvers_fragments << ( "( memberships.organization_id = #{proxy_owner.send(perspective).id} " +
+          "AND memberships.role_id IN (#{role_ids.join(',')}) )" )
+      end
+      return Array.new if approvers.length == 0
+      User.joins( :memberships).where( approvers_fragments.join(' OR ') +
+        " AND memberships.active = #{connection.quote true}" ).all - self
+    end
+  end
+
+  accepts_nested_attributes_for :fund_grant
 
   before_validation :set_approval_checkpoint, :on => :create
 
   validates :organization, :presence => true
   validates :approval_checkpoint, :timeliness => { :type => :datetime }
   validates :fund_source, :presence => true
+  validate :fund_source_must_be_same_for_grant_and_queue
 
   state_machine :initial => :started do
 
@@ -103,6 +108,11 @@ class FundRequest < ActiveRecord::Base
 
     state :withdrawn do
       validates :withdrawn_by_user, :presence => true
+    end
+
+    state :accepted do
+      validates :fund_queue, :presence => true
+      validates :fund_queue_id, :uniqueness => { :scope => [ :fund_grant_id ] }
     end
 
     state :rejected do
@@ -150,7 +160,8 @@ class FundRequest < ActiveRecord::Base
     after_transition :started => :completed, :do => :deliver_required_approval_notice
     after_transition :accepted => :reviewed, :do => :deliver_required_approval_notice
     after_transition :completed => :submitted,
-      :do => [ :reset_approval_checkpoint, :send_submitted_notice! ]
+      :do => [ :reset_approval_checkpoint, :send_submitted_notice!, :accept ]
+    after_transition [ :completed, :submitted ] => :accepted, :do => :adopt_queue!
     after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
     after_transition :certified => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
@@ -205,10 +216,10 @@ class FundRequest < ActiveRecord::Base
   def perspective_for( fulfiller )
     case fulfiller.class.to_s.to_sym
     when :User
-      return 'fund_requestor' if fulfiller.roles.fund_requestor_in? organization
+      return 'requestor' if fulfiller.roles.fund_requestor_in? organization
       return 'reviewer' if fund_source && fulfiller.roles.reviewer_in?( fund_source.organization )
     when :Organization
-      return 'fund_requestor' if fulfiller == organization
+      return 'requestor' if fulfiller == organization
       return 'reviewer' if fund_source && ( fulfiller == fund_source.organization )
     else
       raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
@@ -256,6 +267,9 @@ class FundRequest < ActiveRecord::Base
     update_attribute :approval_checkpoint, approvals.existing.last.created_at
   end
 
+  # Returns the closest future queue
+  def adoptable_queue; fund_grant.fund_source.fund_queues.active; end
+
   def contact_name; fund_source ? fund_source.contact_name : nil; end
 
   def contact_email; fund_source ? fund_source.contact_email : nil; end
@@ -271,10 +285,22 @@ class FundRequest < ActiveRecord::Base
   end
 
   def to_s
-    "FundRequest of #{organization} from #{fund_source}"
+    "Request of #{organization} from #{fund_source}"
   end
 
   protected
+
+  def fund_source_must_be_same_for_grant_and_queue
+    return if fund_grant.blank? || fund_queue.blank?
+    if fund_grant.fund_source != fund_queue.fund_source
+      errors.add :fund_queue, " does not have the same fund source as the associated fund grant."
+    end
+  end
+
+  # Assigns this request to the next future queue for processing
+  def adopt_queue
+    update_attribute :fund_queue, adoptable_queue if fund_queue.blank?
+  end
 
   def timestamp_status!
     update_attribute( "#{status}_at", Time.zone.now ) if has_attribute? "#{status}_at"

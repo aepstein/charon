@@ -19,10 +19,10 @@ describe Node do
     @node.save.should be_false
   end
 
-  it "should not validate with an invalid fund_requestable_type" do
-    fund_requestable_type = 'invalid'
-    Node::ALLOWED_TYPES.should_not include(fund_requestable_type)
-    node = Factory.build(:node, { :fund_requestable_type => fund_requestable_type })
+  it "should not validate with an invalid requestable_type" do
+    requestable_type = 'invalid'
+    Node::ALLOWED_TYPES.should_not include(requestable_type)
+    node = Factory.build(:node, { :requestable_type => requestable_type })
     node.valid?.should == false
   end
 

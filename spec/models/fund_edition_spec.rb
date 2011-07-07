@@ -43,15 +43,15 @@ describe FundEdition do
     @fund_edition.max_fund_request.should eql @fund_edition.fund_item.node.fund_item_amount_limit
   end
 
-  it "should not save with an amount higher than fund_requestable.max_fund_request" do
+  it "should not save with an amount higher than requestable.max_fund_request" do
     detail = Factory(:administrative_expense)
     detail.id.should_not be_nil
     fund_edition = detail.fund_edition
-    fund_edition.fund_requestable(true).should_not be_nil
-    fund_edition.fund_requestable.stub!(:max_fund_request).and_return(50.0)
+    fund_edition.requestable(true).should_not be_nil
+    fund_edition.requestable.stub!(:max_fund_request).and_return(50.0)
     fund_edition.amount = 500.0
     fund_edition.save.should eql false
-    fund_edition.max_fund_request.should eql fund_edition.fund_requestable.max_fund_request
+    fund_edition.max_fund_request.should eql fund_edition.requestable.max_fund_request
   end
 
   it "should not save with an amount higher than original fund_edition amount" do
@@ -66,10 +66,10 @@ describe FundEdition do
     review.max_fund_request.should eql original.amount
   end
 
-  it "should have a title method that returns the fund_requestable title if defined, nil otherwise" do
+  it "should have a title method that returns the requestable title if defined, nil otherwise" do
     title = 'a title'
     fund_edition = Factory(:administrative_expense).fund_edition
-    fund_edition.fund_requestable(true).should_not be_nil
+    fund_edition.requestable(true).should_not be_nil
     fund_edition.title.should be_nil
     fund_edition.administrative_expense.stub!(:title).and_return(nil)
     fund_edition.title.should be_nil

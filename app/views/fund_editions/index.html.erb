@@ -12,7 +12,7 @@
 <% @fund_editions.each do |fund_edition| %>
   <tr>
     <td><%=h fund_edition.fund_item_id %></td>
-    <td><%=h fund_edition.fund_item.node.fund_requestable_type %></td>
+    <td><%=h fund_edition.fund_item.node.requestable_type %></td>
     <td><%=h fund_edition.amount %></td>
     <td><%=h fund_edition.comment %></td>
     <td><%=h fund_edition.stage %></td>

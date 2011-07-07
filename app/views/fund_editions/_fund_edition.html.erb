@@ -16,9 +16,9 @@
 
 <%=markdown fund_edition.comment %>
 
-<% if fund_edition.fund_requestable %>
-<%= render :partial => "#{fund_edition.fund_requestable.class.to_s.tableize}/#{fund_edition.fund_requestable.class.to_s.underscore}",
-           :object => fund_edition.fund_requestable %>
+<% if fund_edition.requestable %>
+<%= render :partial => "#{fund_edition.requestable.class.to_s.tableize}/#{fund_edition.requestable.class.to_s.underscore}",
+           :object => fund_edition.requestable %>
 <% end %>
 
 <% unless fund_edition.documents.empty? %>

@@ -1,2 +1,3 @@
-module InventoryFundItemsHelper
+module InventoryItemsHelper
 end
+

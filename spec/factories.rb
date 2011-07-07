@@ -92,6 +92,66 @@ Factory.define :fulfillment do |f|
   f.fulfillable { |r| r.association(:agreement) }
 end
 
+Factory.define :fund_item do |f|
+  f.association :fund_grant
+  f.node { |fund_item|
+    fund_item.association :node,
+      :structure => fund_item.fund_grant.fund_source.structure
+  }
+end
+
+Factory.define :fund_edition do |f|
+  f.amount 0.0
+  f.perspective 'requestor'
+  f.fund_request { |edition|
+    if edition.fund_item
+      g = edition.fund_item.fund_grant
+      g.fund_requests.first || edition.association( :fund_request, :fund_grant => g )
+    else
+      edition.association( :fund_request )
+    end
+  }
+  f.fund_item { |edition|
+    edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
+  }
+end
+
+Factory.define :fund_grant do |f|
+  f.association :fund_source
+  f.association :organization
+end
+
+Factory.define :fund_queue do |f|
+  f.association :fund_source
+  f.submit_at { |q| q.fund_source + 2.days }
+  f.release_at { |q| q.submit_at + 1.week }
+end
+
+Factory.define :fund_request do |f|
+  f.association :fund_grant
+end
+
+Factory.define :fund_source do |f|
+  f.sequence(:name) { |n| "FundSource #{n}" }
+  f.association :organization
+  f.association :framework
+  f.association :structure
+  f.open_at { |b| Time.zone.today - 1.days }
+  f.closed_at { |b| b.open_at + 2.days }
+  f.submissions_due_at { |b| b.closed_at - 1.days }
+  f.contact_name "a contact"
+  f.contact_email "contact@example.com"
+  f.contact_web "http://example.com"
+end
+
+Factory.define :past_fund_source, :parent => :fund_source do |f|
+  f.open_at { Time.zone.today - 1.year }
+end
+
+Factory.define :future_fund_source, :parent => :fund_source do |f|
+  f.open_at { Time.zone.today + 1.month }
+end
+
 Factory.define :safc_framework, :parent => :framework do |f|
   f.must_register true
   f.member_percentage 60
@@ -171,7 +231,7 @@ Factory.define :role do |f|
   f.sequence(:name) { |n| "role #{n}" }
 end
 
-Factory.define :fund_requestor_role, :parent => :role do |f|
+Factory.define :requestor_role, :parent => :role do |f|
   f.name Role::REQUESTOR.first
 end
 
@@ -209,7 +269,7 @@ end
 
 Factory.define :node do |f|
   f.sequence(:name) { |n| "node #{n}" }
-  f.fund_item_quantity_limit 1
+  f.item_quantity_limit 1
   f.association :structure
   f.association :category
 end
@@ -218,46 +278,9 @@ Factory.define :attachable_node, :parent => :node do |f|
   f.document_types { |node| [ node.association(:document_type) ] }
 end
 
-Factory.define :fund_source do |f|
-  f.sequence(:name) { |n| "FundSource #{n}" }
-  f.association :organization
-  f.association :framework
-  f.association :structure
-  f.open_at { |b| Time.zone.today - 1.days }
-  f.closed_at { |b| b.open_at + 2.days }
-  f.submissions_due_at { |b| b.closed_at - 1.days }
-  f.contact_name "a contact"
-  f.contact_email "contact@example.com"
-  f.contact_web "http://example.com"
-end
-
-Factory.define :past_fund_source, :parent => :fund_source do |f|
-  f.open_at { Time.zone.today - 1.year }
-end
-
-Factory.define :future_fund_source, :parent => :fund_source do |f|
-  f.open_at { Time.zone.today + 1.month }
-end
-
-Factory.define :fund_request do |f|
-  f.association :fund_source
-  f.association :organization
-end
-
-Factory.define :fund_item do |f|
-  f.association :fund_request
-  f.node { |fund_item| fund_item.association(:node, :structure => fund_item.fund_request.fund_source.structure) }
-end
-
 Factory.define :attachable_fund_item, :parent => :fund_item do |f|
   f.association :fund_request
   f.node { |fund_item| fund_item.association(:attachable_node, :structure => fund_item.fund_request.fund_source.structure) }
-end
-
-Factory.define :fund_edition do |f|
-  f.amount 0.0
-  f.perspective 'fund_requestor'
-  f.association :fund_item
 end
 
 Node::ALLOWED_TYPES.each_value do |t|

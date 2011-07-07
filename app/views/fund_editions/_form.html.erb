@@ -4,9 +4,9 @@
     <% if form.object.new_record? -%>
       <%= form.input :perspective, :as => :hidden %>
     <% end -%>
-    <% if form.object.fund_requestable %>
-    <%= form.semantic_fields_for form.object.fund_requestable.class.to_s.underscore.to_sym do |fund_requestable_form| %>
-      <%= render :partial => "#{form.object.fund_requestable.class.to_s.tableize}/form", :object => fund_requestable_form %>
+    <% if form.object.requestable %>
+    <%= form.semantic_fields_for form.object.requestable.class.to_s.underscore.to_sym do |requestable_form| %>
+      <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form", :object => requestable_form %>
     <% end %>
     <% end %>
   <% end %>
@@ -22,9 +22,9 @@
   <% end %>
 
   <%= form.inputs :name => 'Calculations' do %>
-    <% if form.object.fund_requestable %>
+    <% if form.object.requestable %>
     <li>
-    <%= render :partial => "#{form.object.fund_requestable.class.to_s.tableize}/calculation", :object => form.object.fund_requestable %>
+    <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/calculation", :object => form.object.requestable %>
     </li>
     <% end %>
     <li>

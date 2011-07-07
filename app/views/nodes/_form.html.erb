@@ -3,7 +3,7 @@
   <%= form.input :parent, :label => "Parent Node", :collection => form.object.structure.nodes,
     :input_html => { :include_blank => true } %>
   <%= form.input :name %>
-  <%= form.input :fund_requestable_type, :label => "Type of fund_request calculation form",
+  <%= form.input :requestable_type, :label => "Type of fund_request calculation form",
     :collection => Node::ALLOWED_TYPES, :input_html => { :include_blank => false } %>
   <%= form.input :category %>
   <%= form.input :fund_item_amount_limit %>

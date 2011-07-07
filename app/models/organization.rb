@@ -4,17 +4,27 @@ class Organization < ActiveRecord::Base
   attr_accessible :first_name, :last_name, :club_sport
 
   has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
-  has_many :university_accounts, :dependent => :destroy, :inverse_of => :organization
   has_many :activity_accounts, :through => :university_accounts
-  has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
+  has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
+  has_many :fund_grants, :dependent => :destroy, :inverse_of => :organization do
+    def creatable
+      proxy_owner.fund_sources.requestable.map do |fund_source|
+        grant = build
+        grant.fund_source = fund_source
+        grant
+      end
+    end
+  end
+  has_many :fund_requests, :through => :fund_grants
+  has_many :fund_sources, :inverse_of => :organization
+  has_many :inventory_items, :dependent => :destroy, :inverse_of => :organization
+  has_many :memberships, :dependent => :destroy, :inverse_of => :organization
+  has_many :member_sources, :inverse_of => :organization
   has_many :registrations, :dependent => :nullify, :inverse_of => :organization do
     def current
       select { |registration| registration.current? }.first
     end
   end
-  has_many :inventory_fund_items, :dependent => :destroy, :inverse_of => :organization
-  has_many :memberships, :dependent => :destroy, :inverse_of => :organization
-  has_many :member_sources, :inverse_of => :organization
   has_many :roles, :through => :memberships do
     def user_id_equals( id )
       scoped.where( 'memberships.user_id = ?', id )
@@ -23,21 +33,8 @@ class Organization < ActiveRecord::Base
       user_id_equals( user.id ).all.map(&:id)
     end
   end
-  has_many :fund_sources, :inverse_of => :organization do
-    def fund_requestable
-      FundSource.open.no_draft_fund_request_for( proxy_owner )
-    end
-  end
-  has_many :fund_requests, :inverse_of => :organization do
-    def creatable
-      proxy_owner.fund_sources.fund_requestable.map do |fund_source|
-        fund_request = build
-        fund_request.fund_source = fund_source
-        fund_request
-      end
-    end
-  end
-  has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
+  has_many :university_accounts, :dependent => :destroy, :inverse_of => :organization
+  has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
 
   before_validation :format_name
 

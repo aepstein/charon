@@ -14,11 +14,11 @@
 
 <%=markdown detail.comment %>
 
-<% if detail.fund_requestable %>
-<%= render :partial => "#{detail.fund_requestable.class.to_s.tableize}/detail",
-  :object => detail.fund_requestable %>
-<%= render :partial => "#{detail.fund_requestable.class.to_s.tableize}/calculation",
-  :object => detail.fund_requestable %>
+<% if detail.requestable %>
+<%= render :partial => "#{detail.requestable.class.to_s.tableize}/detail",
+  :object => detail.requestable %>
+<%= render :partial => "#{detail.requestable.class.to_s.tableize}/calculation",
+  :object => detail.requestable %>
 <% end %>
 
 <% unless detail.documents.empty? %>
