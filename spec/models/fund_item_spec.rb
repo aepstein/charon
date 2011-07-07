@@ -11,15 +11,15 @@ describe FundItem do
 
   it "should not save if there are already too many corresponding root fund_items" do
     first = Factory(:fund_item)
-    second = Factory.build(:fund_item, :fund_request => first.fund_request, :node => first.node)
+    second = Factory.build(:fund_item, :fund_grant => first.fund_grant, :node => first.node)
     second.save.should be_false
   end
 
   it "should not save if there are already too many corresponding fund_items under parent" do
     parent = Factory(:fund_item)
     child_node = Factory(:node, :parent => parent.node, :structure => parent.node.structure )
-    first = Factory(:fund_item, :fund_request => parent.fund_request, :parent => parent, :node => child_node)
-    second = Factory.build(:fund_item, :fund_request => parent.fund_request, :parent => parent, :node => child_node)
+    first = Factory(:fund_item, :fund_grant => parent.fund_grant, :parent => parent, :node => child_node)
+    second = Factory.build(:fund_item, :fund_grant => parent.fund_grant, :parent => parent, :node => child_node)
     second.save.should be_false
   end
 
@@ -38,24 +38,24 @@ describe FundItem do
     fund_item.title.should eql fund_item.node.name
   end
 
-  it "should call fund_request.touch on save" do
-    @fund_item.fund_request
-    @fund_item.should_receive(:belongs_to_touch_after_save_or_destroy_for_fund_request)
+  it "should call fund_grant.touch on save" do
+    @fund_item.fund_grant
+    @fund_item.should_receive(:belongs_to_touch_after_save_or_destroy_for_fund_grant)
     @fund_item.save!
   end
 
   it "should save to the end of the list by default and act as list" do
     first = @fund_item
     first.save!
-    fund_request = @fund_item.fund_request
+    fund_grant = @fund_item.fund_grant
     node = @fund_item.node
     node.fund_item_quantity_limit = 3
     node.save
-    second = @fund_item.fund_request.fund_items.build
+    second = @fund_item.fund_grant.fund_items.build
     second.node = node
     second.save!
     @fund_item.reload
-    third = @fund_item.fund_request.fund_items.build
+    third = @fund_item.fund_grant.fund_items.build
     third.node = node
     third.save!
     first.position.should eql 1

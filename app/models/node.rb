@@ -35,7 +35,7 @@ class Node < ActiveRecord::Base
       "(SELECT COUNT(*) FROM fund_items WHERE fund_items.fund_grant_id = #{fund_grant.id} AND " +
       "fund_items.node_id = nodes.id AND fund_items.parent_id #{parent_fund_item_sql})"
     where( "nodes.parent_id #{parent_node_sql} AND " +
-           "nodes.fund_item_quantity_limit > #{parent_fund_item_count_sql}" )
+           "nodes.item_quantity_limit > #{parent_fund_item_count_sql}" )
   }
 
   def to_s; name; end
