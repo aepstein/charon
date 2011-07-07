@@ -28,11 +28,11 @@ class Node < ActiveRecord::Base
 
   default_scope :order => 'nodes.name ASC'
 
-  scope :allowed_for_children_of, lambda { |fund_request, parent_fund_item|
+  scope :allowed_for_children_of, lambda { |fund_grant, parent_fund_item|
     parent_node_sql = parent_fund_item.nil? ? "IS NULL" : "= #{parent_fund_item.node_id}"
     parent_fund_item_sql = parent_fund_item.nil? ? "IS NULL" : "= #{parent_fund_item.id}"
     parent_fund_item_count_sql =
-      "(SELECT COUNT(*) FROM fund_items WHERE fund_items.fund_request_id = #{fund_request.id} AND " +
+      "(SELECT COUNT(*) FROM fund_items WHERE fund_items.fund_grant_id = #{fund_grant.id} AND " +
       "fund_items.node_id = nodes.id AND fund_items.parent_id #{parent_fund_item_sql})"
     where( "nodes.parent_id #{parent_node_sql} AND " +
            "nodes.fund_item_quantity_limit > #{parent_fund_item_count_sql}" )

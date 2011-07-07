@@ -5,7 +5,7 @@ class FundItem < ActiveRecord::Base
   attr_readonly :fund_request_id, :node_id, :parent_id
 
   belongs_to :node, :inverse_of => :fund_items
-  belongs_to :fund_request, :touch => true, :inverse_of => :fund_items
+  belongs_to :fund_grant, :touch => true, :inverse_of => :fund_items
   has_many :fund_editions, :inverse_of => :fund_item do
     def for_perspective( perspective )
       self.each do |v|
@@ -46,11 +46,9 @@ class FundItem < ActiveRecord::Base
 
   accepts_nested_attributes_for :fund_editions
 
-  delegate :fund_requestors, :to => :fund_request
-
   validates :title, :presence => true
   validates :node, :presence => true
-  validates :fund_request, :presence => true
+  validates :fund_grant, :presence => true
   validates :amount,
     :numericality => { :greater_than_or_equal_to => 0.0 }
   validate :node_must_be_allowed, :on => :create
@@ -74,7 +72,7 @@ class FundItem < ActiveRecord::Base
   end
 
   def allowed_nodes
-    Node.allowed_for_children_of( fund_request, parent ).where( :structure_id => fund_request.fund_source.structure_id )
+    Node.allowed_for_children_of( fund_grant, parent ).where( :structure_id => fund_grant.fund_source.structure_id )
   end
 
   def node_must_be_allowed

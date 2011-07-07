@@ -2,20 +2,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe FundItem do
   before(:each) do
-    fund_source = Factory(:fund_source)
-    node = fund_source.structure.nodes.build
-    Factory.attributes_for(:node).merge( :category => Factory(:category)
-      ).each do |k,v|
-      node.send "#{k}=", v
-    end
-    node.save!
-    fund_request = Factory(:fund_request, :fund_source => fund_source)
-    @fund_item = fund_request.fund_items.build
-    @fund_item.node = node
+    @fund_item = Factory.build(:fund_item)
   end
 
   it "should save with valid attributes" do
-    Factory(:fund_item).id.should_not be_nil
+    @fund_item.save!
   end
 
   it "should not save if there are already too many corresponding root fund_items" do
