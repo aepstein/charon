@@ -17,6 +17,45 @@ class FundRequest < ActiveRecord::Base
   end
   has_many :fund_editions, :dependent => :destroy, :inverse_of => :fund_request
   has_many :fund_items, :through => :fund_grant, :order => 'fund_items.position ASC' do
+
+    # Allocate items according to specified preferences
+    # * iterate through items according to specified priority
+    # * limit allocations to cap if specified
+    # * if request covers only some items, reduce cap by amount currently
+    #   allocated to other items
+    def allocate!(cap = nil)
+      if cap
+        exclusion = where( :id.not_in => proxy_owner.fund_editions.final.
+          map( &:fund_item_id ) ).sum( :amount )
+        cap -= exclusion if exclusion
+      end
+      root.includes( :fund_editions ).each do |fund_item|
+          cap = allocate_fund_item( fund_item, cap )
+      end
+    end
+
+    # Allocate an item and any children for which a final edition is present
+    # * allocate the item if a final edition is present in the request
+    # * apply cap if one is specified and deduct allocation from cap
+    # * recursively call to each child, passing on remaining cap
+    def allocate_fund_item!(fund_item, cap = nil)
+      fund_edition = fund_item.fund_editions.for_request( proxy_owner ).last
+      if fund_edition.perspective == PERSPECTIVES.last
+        max = ( (fund_edition) ? fund_edition.amount : 0.0 )
+        if cap
+          min = (cap > 0.0) ? cap : 0.0
+          fund_item.amount = ( ( max > min ) ? min : max )
+          cap -= fund_item.amount
+        else
+          fund_item.amount = max
+        end
+        fund_item.save! if fund_item.changed?
+      end
+      children_of(fund_item).each { |c| cap = allocate_fund_item!(c, cap) }
+      return nil unless cap
+      cap
+    end
+
     def children_of(parent_fund_item)
       self.select { |fund_item| fund_item.parent_id == parent_fund_item.id }
     end
@@ -33,26 +72,6 @@ class FundRequest < ActiveRecord::Base
     end
     def initialize_next_fund_edition
       root.each { |fund_item| fund_item.initialize_next_fund_edition }
-    end
-    def allocate(cap = nil)
-      root.each do |fund_item|
-        cap = allocate_fund_item(fund_item, cap)
-      end
-    end
-    def allocate_fund_item(fund_item, cap = nil)
-      fund_edition = fund_item.fund_editions.for_perspective('reviewer')
-      max = ( (fund_edition) ? fund_edition.amount : 0.0 )
-      if cap
-        min = (cap > 0.0) ? cap : 0.0
-        fund_item.amount = ( ( max > min ) ? min : max )
-        cap -= fund_item.amount
-      else
-        fund_item.amount = max
-      end
-      fund_item.save if fund_item.changed?
-      children_of(fund_item).each { |c| cap = allocate_fund_item(c, cap) }
-      return nil unless cap
-      cap
     end
   end
   has_many :users, :through => :approvals do

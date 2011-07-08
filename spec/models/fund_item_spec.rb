@@ -23,16 +23,6 @@ describe FundItem do
     second.save.should be_false
   end
 
-  it "should have a fund_editions.perspectives method that returns perspectives of fund_editions represented" do
-    fund_item = Factory(:fund_item)
-    fund_item.fund_editions.next.perspective.should eql 'fund_requestor'
-    fund_item = Factory(:fund_edition).fund_item
-    fund_item.reload
-    fund_item.fund_editions.perspectives.size.should eql 1
-    fund_item.fund_editions.perspectives.first.should eql 'fund_requestor'
-    fund_item.fund_editions.next.perspective.should eql 'reviewer'
-  end
-
   it "should set its title from the node" do
     fund_item = Factory(:fund_item)
     fund_item.title.should eql fund_item.node.name
@@ -49,7 +39,7 @@ describe FundItem do
     first.save!
     fund_grant = @fund_item.fund_grant
     node = @fund_item.node
-    node.fund_item_quantity_limit = 3
+    node.item_quantity_limit = 3
     node.save
     second = @fund_item.fund_grant.fund_items.build
     second.node = node
@@ -69,29 +59,11 @@ describe FundItem do
     third.position.should eql 2
   end
 
-  it "should have an initialize_next_fund_edition that initialize the next fund_edition in each child and in self" do
-    first = @fund_item
-    first.save!
-    fund_request = @fund_item.fund_request
-    node = @fund_item.node
-    node.fund_item_quantity_limit = 2
-    node.save
-    child_node = node.structure.nodes.build
-    Factory.attributes_for(:node).merge( :parent_id => node.id,
-      :category => Factory(:category) ).each do |k,v|
-      child_node.send "#{k}=", v
-    end
-    child_node.save!
-    second = @fund_item.fund_request.fund_items.build
-    second.node = node
-    second.save!
-    child = @fund_item.fund_request.fund_items.build
-    child.node = child_node
-    child.parent = first
-    child.save!
-    first.initialize_next_fund_edition
-    first.fund_editions.first.class.should eql FundEdition
-    first.children.first.fund_editions.first.class.should eql FundEdition
+  context 'fund_editions association' do
+    pending 'for_request'
+    pending 'previous_to'
+    pending 'next_to'
   end
+
 end
 

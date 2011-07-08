@@ -7,31 +7,38 @@ class FundItem < ActiveRecord::Base
   belongs_to :node, :inverse_of => :fund_items
   belongs_to :fund_grant, :touch => true, :inverse_of => :fund_items
   has_many :fund_editions, :inverse_of => :fund_item do
-    def for_perspective( perspective )
-      self.each do |v|
-        return v if v.perspective == perspective
-      end
-      nil
+
+    # Editions associated with a specific request
+    # * sorts by perspective sequence
+    def for_request( request )
+      select { |edition| edition.fund_request == request &&
+        edition.perspective }.
+      sort { |x, y| FundEdition::PERSPECTIVES.index(x.perspective) <=>
+        FundEdition::PERSPECTIVES.index(y.perspective) }
     end
-    def perspectives
-      self.map { |v| v.perspective }
+
+    # Previous edition relative to a specified edition
+    def previous_to( edition )
+      for_request( edition.request ).
+      select { |e| e.perspective == edition.previous_perspective }.first
     end
-    def next(attributes = {})
-      if last then
-        return last if last.new_record?
-        return nil if last.perspective == FundEdition::PERSPECTIVES.last
-        attributes = last.attributes.merge( attributes )
-        attributes['perspective'] = FundEdition::PERSPECTIVES[ FundEdition::PERSPECTIVES.index(last.perspective) + 1 ]
-        previous_requestable_attributes = last.requestable.attributes if last.requestable
-      end
-      attributes['perspective'] ||= FundEdition::PERSPECTIVES.first
-      previous_requestable_attributes ||= Hash.new
-      fund_edition = build( attributes )
-      fund_edition.build_requestable( previous_requestable_attributes )
-      fund_edition
+
+    # Next edition relative to a specified edition
+    def next_to( edition )
+      for_request( edition.request ).
+      select { |e| e.perspective == edition.next_perspective }.first
     end
-    def existing
-      self.reject { |fund_edition| fund_edition.new_record? }
+
+    # This was formerly next( attributes = {} )
+    # Build the next edition of the item for specified request
+    # * nil if last edition already built or last edition of request is not
+    #   yet saved
+    # * optionally applies attributes by mass assignment
+    def build_next_for_fund_request(request, attributes = {})
+      next_edition = for_request( request ).last.next
+      return nil if next_edition.blank?
+      next_edition.attributes = attributes
+      next_edition
     end
   end
   has_many :documents, :through => :fund_editions
@@ -54,22 +61,10 @@ class FundItem < ActiveRecord::Base
   validate :node_must_be_allowed, :on => :create
 
   before_validation :set_title
+  #TODO: acts_as_list gem might enable us to remove
   after_save :move_to_new_position
 
   attr_accessor :new_position
-
-  def initialize_next_fund_edition
-    children.each { |fund_item| fund_item.initialize_next_fund_edition }
-    fund_editions.next
-  end
-
-  def set_title
-    if fund_editions.first && fund_editions.first.title?
-      self.title = fund_editions.first.title
-    elsif title.blank? && node
-      self.title = node.name
-    end
-  end
 
   def allowed_nodes
     Node.allowed_for_children_of( fund_grant, parent ).where( :structure_id => fund_grant.fund_source.structure_id )
@@ -82,8 +77,21 @@ class FundItem < ActiveRecord::Base
 
   def to_s; title; end
 
-  private
+  protected
 
+  # Set the title automatically
+  # * TODO: flexible_budgets: should use requestor title in latest requestor edition
+  # * edition-supplied title from first edition, if available
+  # * node name if nothing else is available
+  def set_title
+    if fund_editions.first && fund_editions.first.title?
+      self.title ||= fund_editions.first.title
+    elsif node
+      self.title ||= node.name
+    end
+  end
+
+  # TODO: new acts_as_list gem might enable us to remove
   def move_to_new_position
     unless new_position.blank? || ( (np = new_position.to_i) == position )
       self.new_position = nil

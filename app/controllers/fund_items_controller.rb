@@ -110,19 +110,19 @@ class FundItemsController < ApplicationController
   def initialize_context
     @fund_item = FundItem.find( params[:id], :include => { :fund_editions => :documents } ) if params[:id]
     @fund_request = FundRequest.find params[:fund_request_id] if params[:fund_request_id]
-    @fund_request ||= @fund_item.fund_request if @fund_item
+    @fund_grant ||= @fund_item.fund_grant if @fund_item
     @fund_item.attributes = params[:fund_item] if @fund_item && params[:fund_item]
     if @fund_request
       add_breadcrumb @fund_request.organization.name, url_for( @fund_request.organization )
       add_breadcrumb "#{@fund_request.fund_source.name} fund_request", url_for( @fund_request )
-      add_breadcrumb 'FundItems', fund_request_fund_items_path( @fund_request )
+      add_breadcrumb 'Items', fund_request_fund_items_path( @fund_request )
     end
   end
 
   def initialize_index
     @fund_items = @fund_request.fund_items.root if @fund_request
     @fund_items ||= FundItem.scoped.order( "fund_items.position ASC" )
-    # Skip explicit permissions check because if you can see the fund_request, you can see fund_items
+    # No with_permissions scope: Can see items if can see request
   end
 
   def new_fund_item_from_fund_request
@@ -130,7 +130,7 @@ class FundItemsController < ApplicationController
   end
 
   def populate_fund_editions
-    @fund_item.fund_editions.next
+    @fund_item.fund_editions.build_next_for_fund_request @fund_request
     @fund_item.fund_editions.each { |fund_edition| fund_edition.documents.populate }
   end
 end

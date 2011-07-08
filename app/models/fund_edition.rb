@@ -51,6 +51,9 @@ class FundEdition < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
+  scope :initial, where( :perspective => PERSPECTIVES.first )
+  scope :final, where( :perspective => PERSPECTIVES.last )
+
   validates :fund_item, :presence => true
   validates :fund_request, :presence => true
   validates :amount,
@@ -109,14 +112,35 @@ class FundEdition < ActiveRecord::Base
   end
 
   def previous_perspective
-    return nil unless perspective && perspective != PERSPECTIVES.first &&
-      PERSPECTIVES.include?( perspective )
+    return nil unless perspective
     PERSPECTIVES[PERSPECTIVES.index(perspective) - 1]
   end
 
+  def next_perspective
+    return nil unless perspective
+    PERSPECTIVES[PERSPECTIVES.index(perspective) + 1]
+  end
+
+  # Returns the next edition relative to this edition
+  # * nil if this edition is new or last
+  # * next if it does exist
+  # * build new with attributes from this edition if next does not exist
+  #   (built edition lives in the fund_item, not the fund_request)
+  def next
+    return nil unless persisted? && next_perspective
+    next_edition = fund_item.fund_editions.next_to self
+    return next_edition unless next_edition.blank?
+    next_edition = fund_item.fund_editions.build( attributes )
+    next_edition.attributes = requestable.attributes unless requestable.blank?
+    next_edition.perspective = next_perspective
+    next_edition
+  end
+
+  # Returns the previous edition relative to this edition
+  # * nil if this edition is first
   def previous
     return nil unless previous_perspective
-    fund_item.fund_editions.where( :perspective => previous_perspective ).first
+    fund_item.fund_editions.previous_to( self )
   end
 
   def to_s; "#{perspective} fund_edition of #{fund_item}"; end

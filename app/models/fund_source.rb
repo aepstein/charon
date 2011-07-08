@@ -22,8 +22,13 @@ class FundSource < ActiveRecord::Base
   end
   # TODO allocation methods need flexible_budgets rework
   has_many :fund_requests, :through => :fund_grants do
-    def allocate_with_caps(state, club_sport, other)
-      with_state( state ).includes( :organization, { :fund_items => :fund_editions } ).each do |r|
+
+    # Allocate all requests associated with this fund source
+    # * apply club_sport and other caps according to how organizations are recorded
+    # * TODO: this method should be relocated to the fund_queue with which
+    #   allocated requests are associated
+    def allocate_with_caps(club_sport, other)
+      with_state( :certified ).includes( :organization, { :fund_items => :fund_editions } ).each do |r|
         if r.organization.club_sport?
           r.fund_items.allocate club_sport
         else
@@ -31,12 +36,16 @@ class FundSource < ActiveRecord::Base
         end
       end
     end
+
+    # TODO: relocate to queue, deduct amounts previously requested where appropriate
     def amount_for_perspective_and_status(perspective, status)
       sub = "SELECT fund_items.id FROM fund_items INNER JOIN fund_requests WHERE fund_request_id = fund_requests.id " +
             "AND fund_source_id = ? AND fund_requests.status = ?"
       FundEdition.where(:perspective => perspective).
         where( "fund_item_id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
     end
+
+    # TODO: should be calculated through items
     def fund_item_amount_for_status(status)
       sub = "SELECT fund_items.id FROM fund_items INNER JOIN fund_requests WHERE fund_request_id = fund_requests.id " +
             "AND fund_source_id = ? AND fund_requests.status = ?"
