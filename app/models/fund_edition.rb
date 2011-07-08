@@ -1,5 +1,5 @@
 class FundEdition < ActiveRecord::Base
-  PERSPECTIVES = %w( fund_requestor reviewer )
+  PERSPECTIVES = %w( requestor reviewer )
 
   attr_accessible :amount, :comment, :perspective,
     :administrative_expense_attributes, :local_event_expense_attributes,
@@ -83,9 +83,9 @@ class FundEdition < ActiveRecord::Base
 
   def max_fund_request
     amounts = []
-    amounts << fund_item.node.fund_item_amount_limit if fund_item && fund_item.node
+    amounts << fund_item.node.item_amount_limit if fund_item && fund_item.node
     amounts << requestable.max_fund_request if requestable
-    unless perspective.blank? || perspective == FundEdition::PERSPECTIVES.first
+    unless previous_perspective.blank?
       amounts << fund_item.fund_editions.where( :perspective => FundEdition::PERSPECTIVES[FundEdition::PERSPECTIVES.index(perspective) - 1] ).first.amount
     end
     amounts.sort.first
@@ -111,29 +111,31 @@ class FundEdition < ActiveRecord::Base
     self.send("#{fund_item.node.requestable_type.underscore}=",requestable)
   end
 
-  def previous_perspective
+  # Returns the index in the PERSPECTIVES sequence for this edition
+  def perspective_index
     return nil unless perspective
-    PERSPECTIVES[PERSPECTIVES.index(perspective) - 1]
+    PERSPECTIVES.index(perspective)
   end
 
+  # Returns the perspective of previous edition in sequence
+  # * returns nil if this is initial edition
+  def previous_perspective
+    return nil unless i = perspective_index && i && i > 0
+    PERSPECTIVES[i - 1]
+  end
+
+  # Returns the perspective of next_perspective edition in sequence
+  # * returns nil if this is final edition
   def next_perspective
-    return nil unless perspective
-    PERSPECTIVES[PERSPECTIVES.index(perspective) + 1]
+    return nil unless i = perspective_index
+    PERSPECTIVES[i + 1]
   end
 
   # Returns the next edition relative to this edition
-  # * nil if this edition is new or last
-  # * next if it does exist
-  # * build new with attributes from this edition if next does not exist
-  #   (built edition lives in the fund_item, not the fund_request)
+  # * nil if this edition is last
   def next
-    return nil unless persisted? && next_perspective
-    next_edition = fund_item.fund_editions.next_to self
-    return next_edition unless next_edition.blank?
-    next_edition = fund_item.fund_editions.build( attributes )
-    next_edition.attributes = requestable.attributes unless requestable.blank?
-    next_edition.perspective = next_perspective
-    next_edition
+    return nil unless next_perspective
+    fund_item.fund_editions.next_to( self )
   end
 
   # Returns the previous edition relative to this edition
@@ -145,7 +147,7 @@ class FundEdition < ActiveRecord::Base
 
   def to_s; "#{perspective} fund_edition of #{fund_item}"; end
 
-  private
+  protected
 
   def item_and_request_must_have_same_grant
     return if fund_item.blank? || fund_request.blank?
@@ -155,9 +157,9 @@ class FundEdition < ActiveRecord::Base
   end
 
   def amount_must_be_within_node_limit
-    return if fund_item.nil? || amount.nil?
-    if amount > fund_item.node.fund_item_amount_limit
-      errors.add(:amount, " is greater than maximum for #{node}.")
+    return if amount.blank? || fund_item.blank? || fund_item.node.blank?
+    if amount > fund_item.node.item_amount_limit
+      errors.add(:amount, " is greater than maximum for #{fund_item.node}.")
     end
   end
 
@@ -179,7 +181,7 @@ class FundEdition < ActiveRecord::Base
   # * on create only
   # * only if the perspective is not first or there is no fund_item
   def previous_edition_must_exist
-    return if previous_perspective.blank? || fund_item.blank?
+    return unless previous_perspective && fund_item
     if previous.blank?
       errors.add( :perspective, " is not allowed until there is a " +
         "#{previous_perspective} fund_edition for the fund_item" )

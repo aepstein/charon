@@ -19,24 +19,36 @@ class FundItem < ActiveRecord::Base
 
     # Previous edition relative to a specified edition
     def previous_to( edition )
-      for_request( edition.request ).
+      for_request( edition.fund_request ).
       select { |e| e.perspective == edition.previous_perspective }.first
     end
 
     # Next edition relative to a specified edition
     def next_to( edition )
-      for_request( edition.request ).
+      for_request( edition.fund_request ).
       select { |e| e.perspective == edition.next_perspective }.first
     end
 
     # This was formerly next( attributes = {} )
     # Build the next edition of the item for specified request
-    # * nil if last edition already built or last edition of request is not
-    #   yet saved
     # * optionally applies attributes by mass assignment
+    # * raises exceptions if last edition is new record or final perspective
     def build_next_for_fund_request(request, attributes = {})
-      next_edition = for_request( request ).last.next
-      return nil if next_edition.blank?
+      last_edition = for_request( request ).last
+      if last_edition.new_record?
+        raise ActiveRecord::ActiveRecordError,
+          'Last position is a new record.'
+      end
+      if last_edition.next_perspective.nil?
+        raise ActiveRecord::ActiveRecordError,
+          'Last position has final perspective.'
+      end
+      next_edition = build
+      next_edition.perspective = last_edition.next_perspective
+      next_edition.fund_request = request
+      unless last_edition.requestable.blank?
+        next_edition.requestable_attributes = last_edition.requestable_attributes
+      end
       next_edition.attributes = attributes
       next_edition
     end

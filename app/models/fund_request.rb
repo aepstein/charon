@@ -4,10 +4,8 @@ class FundRequest < ActiveRecord::Base
   attr_accessible :fund_grant_attributes
   attr_readonly :fund_grant_id
 
-  belongs_to :fund_source, :inverse_of => :fund_requests
   belongs_to :fund_grant, :inverse_of => :fund_requests
   belongs_to :fund_queue, :inverse_of => :fund_requests
-  belongs_to :organization, :inverse_of => :fund_requests
   belongs_to :withdrawn_by_user, :class_name => 'User'
 
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
@@ -115,9 +113,8 @@ class FundRequest < ActiveRecord::Base
 
   before_validation :set_approval_checkpoint, :on => :create
 
-  validates :organization, :presence => true
+  validates :fund_grant, :presence => true
   validates :approval_checkpoint, :timeliness => { :type => :datetime }
-  validates :fund_source, :presence => true
   validate :fund_source_must_be_same_for_grant_and_queue
 
   state_machine :initial => :started do
@@ -193,7 +190,7 @@ class FundRequest < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  default_scope includes( :organization, :fund_source ).
+  default_scope includes( :fund_grant => [ :organization, :fund_source ] ).
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   scope :organization_name_contains, lambda { |name|
@@ -207,8 +204,8 @@ class FundRequest < ActiveRecord::Base
         "fund_editions ON fund_items.id = fund_editions.fund_item_id AND fund_editions.perspective = ? " +
         "WHERE fund_items.fund_request_id = fund_requests.id AND fund_editions.id IS NULL)", perspective )
   }
-  scope :duplicate, where("fund_requests.fund_source_id IN (SELECT fund_source_id FROM fund_requests " +
-    "AS duplicates WHERE duplicates.organization_id = fund_requests.organization_id " +
+  scope :duplicate, where("fund_requests.fund_grant_id IN (SELECT fund_grant_id FROM fund_requests " +
+    "AS duplicates WHERE duplicates.fund_grant_id = fund_requests.fund_grant_id " +
     "AND fund_requests.id <> duplicates.id)")
 
   search_methods :organization_name_contains, :fund_source_name_contains
@@ -228,18 +225,24 @@ class FundRequest < ActiveRecord::Base
     fund_requests.each { |fund_request| fund_request.send("send_#{status}_notice!") }
   end
 
-  alias :fund_requestor :organization
+  # Organization associated with this request in requestor perspective
+  def requestor
+    fund_grant ? fund_grant.organization : nil
+  end
 
-  def reviewer; fund_source ? fund_source.organization : nil; end
+  # Organization associated with this request in reviewer perspective
+  def reviewer
+    fund_grant && fund_grant.fund_source ? fund_grant.organization : nil
+  end
 
   def perspective_for( fulfiller )
     case fulfiller.class.to_s.to_sym
     when :User
-      return 'requestor' if fulfiller.roles.fund_requestor_in? organization
-      return 'reviewer' if fund_source && fulfiller.roles.reviewer_in?( fund_source.organization )
+      return 'requestor' if fulfiller.roles.requestor_in? requestor
+      return 'reviewer' if fulfiller.roles.reviewer_in? reviewer
     when :Organization
-      return 'requestor' if fulfiller == organization
-      return 'reviewer' if fund_source && ( fulfiller == fund_source.organization )
+      return 'requestor' if fulfiller == requestor
+      return 'reviewer' if fulfiller == reviewer
     else
       raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
     end
@@ -248,13 +251,13 @@ class FundRequest < ActiveRecord::Base
 
   def unfulfilled_requirements_for( fulfiller )
     perspective = perspective_for( fulfiller )
-    return [] unless perspective && fund_source
+    return [] unless perspective && fund_grant && fund_grant.fund_source
     case fulfiller.class.to_s.to_sym
-    when :User
-      fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective,
+  when :User
+      fund_grant.fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective,
         fulfiller.roles.ids_in_perspective( send(perspective), perspective ) )
     when :Organization
-      fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective, [] )
+      fund_grant.fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective, [] )
     else
       raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
     end
@@ -304,7 +307,8 @@ class FundRequest < ActiveRecord::Base
   end
 
   def to_s
-    "Request of #{organization} from #{fund_source}"
+    return super if fund_grant.blank?
+    "Request of #{fund_grant.organization} from #{fund_grant.fund_source}"
   end
 
   protected

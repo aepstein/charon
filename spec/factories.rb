@@ -112,7 +112,9 @@ Factory.define :fund_edition do |f|
     end
   }
   f.fund_item { |edition|
-    edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
+    i = edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
+    i.fund_editions.reset
+    i
   }
 end
 
@@ -284,13 +286,19 @@ Factory.define :attachable_fund_item, :parent => :fund_item do |f|
 end
 
 Node::ALLOWED_TYPES.each_value do |t|
+
   Factory.define "#{t}Node".underscore.to_sym, :parent => :node do |f|
-    f.fund_requestable_type t
+    f.requestable_type t
   end
+
   Factory.define "#{t}FundItem".underscore.to_sym, :parent => :fund_item do |f|
-    f.association :fund_request
-    f.node { |fund_item| fund_item.association("#{t}Node".underscore.to_sym, :structure => fund_item.fund_request.fund_source.structure) }
+    f.association :fund_grant
+    f.node { |fund_item|
+      fund_item.association("#{t}Node".underscore.to_sym,
+        :structure => fund_item.fund_grant.fund_source.structure)
+    }
   end
+
   Factory.define "#{t}FundEdition".underscore.to_sym, :parent => :fund_edition do |f|
     f.fund_item { |fund_edition| fund_edition.association "#{t}FundItem".underscore.to_sym  }
   end
