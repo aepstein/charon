@@ -61,8 +61,6 @@ class FundItem < ActiveRecord::Base
   validate :node_must_be_allowed, :on => :create
 
   before_validation :set_title
-  #TODO: acts_as_list gem might enable us to remove
-  after_save :move_to_new_position
 
   attr_accessor :new_position
 
@@ -88,14 +86,6 @@ class FundItem < ActiveRecord::Base
       self.title ||= fund_editions.first.title
     elsif node
       self.title ||= node.name
-    end
-  end
-
-  # TODO: new acts_as_list gem might enable us to remove
-  def move_to_new_position
-    unless new_position.blank? || ( (np = new_position.to_i) == position )
-      self.new_position = nil
-      insert_at np
     end
   end
 
