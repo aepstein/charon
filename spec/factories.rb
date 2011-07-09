@@ -114,6 +114,10 @@ Factory.define :fund_edition do |f|
   f.fund_item { |edition|
     edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
   }
+  f.after_create { |edition|
+    edition.fund_request.fund_editions.reset
+    edition.fund_item.fund_editions.reset
+  }
 end
 
 Factory.define :fund_grant do |f|
