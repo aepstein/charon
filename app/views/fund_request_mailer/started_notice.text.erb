@@ -6,7 +6,7 @@ You may make changes to the fund_request here <<%= fund_request_fund_items_url(@
 
 When the fund_request is ready for submission, any of the following may approve it here <<%= new_polymorphic_url([@fund_request, 'approval']) %>>:
 
-<% @fund_request.users.required_for_status('completed').each do |user| -%>
+<% @fund_request.users.required_for_state('completed').each do |user| -%>
  * <%= user.name %>
 <% end -%>
 

@@ -19,15 +19,15 @@ class Approver < ActiveRecord::Base
   scope :with_approvals_for, lambda { |fund_request|
     joins( "LEFT JOIN memberships ON approvers.role_id = memberships.role_id " +
       "AND memberships.active = #{connection.quote true} " +
-      "AND ( (memberships.organization_id = #{fund_request.organization.id} AND approvers.perspective = 'fund_requestor') OR " +
-      "(memberships.organization_id = #{fund_request.fund_source.organization.id} AND approvers.perspective = 'reviewer') ) " +
+      "AND ( (memberships.organization_id = #{fund_request.fund_grant.organization.id} AND approvers.perspective = 'requestor') OR " +
+      "(memberships.organization_id = #{fund_request.fund_grant.fund_source.organization.id} AND approvers.perspective = 'reviewer') ) " +
       "LEFT JOIN approvals ON memberships.user_id = approvals.user_id AND " +
       "approvals.approvable_type = #{connection.quote 'FundRequest'} AND " +
       "approvals.approvable_id = #{fund_request.id} AND approvals.created_at > " +
       "#{connection.quote fund_request.approval_checkpoint}" ).
     group( 'approvers.id' ).
     where( 'approvers.framework_id = ? AND approvers.status = ?',
-      fund_request.fund_source.framework_id, fund_request.status )
+      fund_request.fund_grant.fund_source.framework_id, fund_request.state )
   }
   scope :satisfied, having('COUNT(approvals.user_id) >= approvers.quantity OR ' +
     '(approvers.quantity IS NULL AND COUNT(approvals.user_id) >= COUNT(memberships.user_id) )')

@@ -84,9 +84,9 @@ class FundRequest < ActiveRecord::Base
     def unfulfilled( approvers = Approver )
       approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
     end
-    def required_for_status( status )
+    def required_for_state( state )
       approvers_to_users( Approver.where( :framework_id => proxy_owner.fund_source.framework_id,
-        :status => status, :quantity => nil ) )
+        :state => state, :quantity => nil ) )
     end
     protected
     def after_checkpoint
@@ -181,7 +181,7 @@ class FundRequest < ActiveRecord::Base
     after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
     after_transition :certified => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
-    after_transition :except_to => same, :do => :timestamp_status!
+    after_transition :except_to => same, :do => :timestamp_state!
 
   end
 
@@ -199,30 +199,30 @@ class FundRequest < ActiveRecord::Base
   scope :fund_source_name_contains, lambda { |name|
     scoped.merge FundSource.where( :name.like => name )
   }
-  scope :incomplete_for_perspective, lambda { |perspective|
-    where( "fund_requests.id IN (SELECT fund_request_id FROM fund_items LEFT JOIN " +
-        "fund_editions ON fund_items.id = fund_editions.fund_item_id AND fund_editions.perspective = ? " +
-        "WHERE fund_items.fund_request_id = fund_requests.id AND fund_editions.id IS NULL)", perspective )
-  }
+  scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
+    "fund_request_id = fund_requests.id AND perspective = ?) > " +
+    "(SELECT COUNT(*) FROM fund_editions WHERE " +
+    "fund_request_id = fund_requests.id perspective = ?)",
+    FundEdition::PERSPECTIVES.first, FundEdition::PERSPECTIVES.last) }
   scope :duplicate, where("fund_requests.fund_grant_id IN (SELECT fund_grant_id FROM fund_requests " +
     "AS duplicates WHERE duplicates.fund_grant_id = fund_requests.fund_grant_id " +
     "AND fund_requests.id <> duplicates.id)")
 
   search_methods :organization_name_contains, :fund_source_name_contains
 
-  # Send notices to all fund_requests with a status
+  # Send notices to all fund_requests with a state
   # * Without second argument, limit to fund_requests that have not yet received such
   #   notice
   # * With second argument, limit to fund_requests that have not yet received such
   #   notice or have received such notice before specified date
-  def self.notify_unnotified!( status, since = nil )
-    fund_requests = FundRequest.scoped.with_status( status )
+  def self.notify_unnotified!( state, since = nil )
+    fund_requests = FundRequest.scoped.with_state( state )
     if since.blank?
-      fund_requests = fund_requests.send("no_#{status}_notice")
+      fund_requests = fund_requests.send("no_#{state}_notice")
     else
-      fund_requests = fund_requests.send("no_#{status}_notice_since", since)
+      fund_requests = fund_requests.send("no_#{state}_notice_since", since)
     end
-    fund_requests.each { |fund_request| fund_request.send("send_#{status}_notice!") }
+    fund_requests.each { |fund_request| fund_request.send("send_#{state}_notice!") }
   end
 
   # Organization associated with this request in requestor perspective
@@ -263,12 +263,19 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
+  # Is the request sufficiently complete to approve?
+  # * for started request: an edition must exist for every grant item, but not
+  #   necessarily in this request
+  # * for accepted request: must have final edition for each initial edition
+  #   submitted
   def approvable?
-    case status
+    case state
     when 'started'
-      !FundRequest.incomplete_for_perspective('fund_requestor').include?(self)
+      fund_grant.fund_items.where( 'fund_items.id NOT IN ' +
+        '(SELECT fund_item_id FROM fund_editions)' ).empty?
     else
-      !FundRequest.incomplete_for_perspective('reviewer').include?(self)
+      fund_editions.where(:perspective => FundEdition::PERSPECTIVES.first).count ==
+      fund_editions.where(:perspective => FundEdition::PERSPECTIVES.last).count
     end
   end
 
@@ -325,8 +332,8 @@ class FundRequest < ActiveRecord::Base
     update_attribute :fund_queue, adoptable_queue if fund_queue.blank?
   end
 
-  def timestamp_status!
-    update_attribute( "#{status}_at", Time.zone.now ) if has_attribute? "#{status}_at"
+  def timestamp_state!
+    update_attribute( "#{state}_at", Time.zone.now ) if has_attribute? "#{state}_at"
   end
 
   def deliver_required_approval_notice

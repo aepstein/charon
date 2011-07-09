@@ -15,7 +15,7 @@ When the fund_request is ready for submission, any of the following <%= link_to 
 </p>
 
 <ul>
-<% @fund_request.users.required_for_status('completed').each do |user| -%>
+<% @fund_request.users.required_for_state('completed').each do |user| -%>
 <li><%= user.name %></li>
 <% end -%>
 </ul>

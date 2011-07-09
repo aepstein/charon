@@ -9,19 +9,23 @@ describe FundRequest do
     @fund_request = Factory.build(:fund_request)
   end
 
-  it "should create a new instance given valid attributes" do
-    @fund_request.save.should eql true
-  end
+  context 'validation' do
 
-  it "should not save without an organization" do
-    @fund_request.organization = nil
-    @fund_request.save.should eql false
-  end
+    it "should create a new instance given valid attributes" do
+      @fund_request.save!
+    end
 
-  it "should not save with an invalid approval_checkpoint" do
-    @fund_request.save
-    @fund_request.approval_checkpoint = nil
-    @fund_request.save.should eql false
+    it "should not save without an organization" do
+      @fund_request.organization = nil
+      @fund_request.save.should be_false
+    end
+
+    it "should not save with an invalid approval_checkpoint" do
+      @fund_request.save
+      @fund_request.approval_checkpoint = nil
+      @fund_request.save.should be_false
+    end
+
   end
 
   it "should reset approval checkpoint on transition to submitted" do
@@ -32,14 +36,14 @@ describe FundRequest do
     first_approval.user = Factory(:user)
     first_approval.save!
     @fund_request.reload
-    @fund_request.status.should eql 'completed'
+    @fund_request.state.should eql 'completed'
     sleep 1
     last = @fund_request.approvals.build( :as_of => @fund_request.updated_at )
     last.user = Factory(:user)
     last.save!
     @fund_request.reload
     initial.should_not eql last.created_at
-    @fund_request.status.should eql 'submitted'
+    @fund_request.state.should eql 'submitted'
     @fund_request.approval_checkpoint.should > initial
   end
 
@@ -55,26 +59,26 @@ describe FundRequest do
     @fund_request.should_receive(:deliver_required_approval_notice)
     @fund_request.approvable?.should be_true
     @fund_request.approve!
-    @fund_request.status.should eql 'completed'
+    @fund_request.state.should eql 'completed'
   end
 
   it "should call deliver_release_notice and set released_at on entering the released state" do
-    m = Factory(:membership, :organization => @fund_request.organization, :role => Factory(:fund_requestor_role))
-    @fund_request.status = 'certified'
+    m = Factory(:membership, :organization => @fund_request.fund_grant.organization, :role => Factory(:fund_requestor_role))
+    @fund_request.state = 'certified'
     @fund_request.save!
     @fund_request.reload
-    @fund_request.status.should eql 'certified'
+    @fund_request.state.should eql 'certified'
     @fund_request.should_receive(:send_released_notice!)
-#    @fund_request.should_receive(:timestamp_status!)
+#    @fund_request.should_receive(:timestamp_state!)
     @fund_request.released_at.should be_nil
     @fund_request.release!
     @fund_request.released_at.should_not be_nil
     @fund_request.reload
-    @fund_request.status.should eql 'released'
+    @fund_request.state.should eql 'released'
   end
 
   it "should set accepted_at on entering accepted state" do
-    @fund_request.status = 'submitted'
+    @fund_request.state = 'submitted'
     @fund_request.save!
     @fund_request.accepted_at.should be_nil
     @fund_request.accept!
@@ -86,7 +90,7 @@ describe FundRequest do
     first_fund_edition.amount = 100.0
     first_fund_edition.save
     first_fund_item = first_fund_edition.fund_item
-    first_fund_item.node.fund_item_quantity_limit = 3
+    first_fund_item.node.item_quantity_limit = 3
     first_fund_item.node.save
     second_fund_item = first_fund_item.clone
     second_fund_item.position = nil
@@ -112,25 +116,26 @@ describe FundRequest do
     fund_request.fund_items.last.amount.should eql 0
   end
 
-  it 'should have an incomplete_for_perspective scope that returns fund_requests that are incomplete for a perspective' do
-    complete = Factory(:fund_edition).fund_item.fund_request
+  it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do
+    #TODO logic has changed for flexible_budgets
+    complete = Factory(:fund_edition).fund_request
     complete.fund_editions.should_not be_empty
-    incomplete = Factory(:fund_item).fund_request
+    incomplete = Factory(:fund_request, :fund_grant => Factory(:fund_item).fund_grant )
     incomplete.fund_editions.should be_empty
-    FundRequest.incomplete_for_perspective('fund_requestor').should_not include complete
-    FundRequest.incomplete_for_perspective('reviewer').should include complete
-    FundRequest.incomplete_for_perspective('fund_requestor').should include incomplete
-    FundRequest.incomplete_for_perspective('reviewer').should include incomplete
+    FundRequest.incomplete.should_not include complete
+    FundRequest.incomplete.should include complete
+    FundRequest.incomplete.should include incomplete
+    FundRequest.incomplete.should include incomplete
   end
 
   it 'should have an approvable? method that will not allow approval if there are missing fund_editions' do
-    complete = Factory(:fund_edition).fund_item.fund_request
-    incomplete = Factory(:fund_item).fund_request
-    reviewed = Factory(:fund_edition).fund_item.fund_request
-    reviewed.status = 'accepted'
+    complete = Factory(:fund_edition).fund_request
+    incomplete = Factory(:fund_request, :fund_grant => Factory(:fund_item).fund_grant)
+    reviewed = Factory(:fund_edition).fund_request
+    reviewed.state = 'accepted'
     Factory(:fund_edition, :perspective => 'reviewer', :fund_item => reviewed.fund_items.first)
-    unreviewed = Factory(:fund_edition).fund_item.fund_request
-    unreviewed.status = 'accepted'
+    unreviewed = Factory(:fund_edition).fund_request
+    unreviewed.state = 'accepted'
     complete.approvable?.should be_true
     incomplete.approvable?.should be_false
     reviewed.approvable?.should be_true
@@ -181,7 +186,7 @@ describe FundRequest do
   end
 
   it 'should have a notify_unnotified! class method' do
-    other_status = Factory(:fund_request, :status => 'completed')
+    other_state = Factory(:fund_request, :state => 'completed')
     unnotified = Factory(:fund_request)
     notified_before = Factory(:fund_request)
     notified_before.update_attribute :started_notice_at, 1.week.ago

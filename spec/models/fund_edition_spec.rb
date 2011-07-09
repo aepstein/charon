@@ -81,6 +81,15 @@ describe FundEdition do
   end
 
   context 'siblings' do
+    it 'should return apppropriate values for previous_perspective and next_perspective' do
+      @fund_edition.perspective = FundEdition::PERSPECTIVES.first
+      @fund_edition.previous_perspective.should be_nil
+      @fund_edition.next_perspective.should eql FundEdition::PERSPECTIVES.last
+      @fund_edition.perspective = FundEdition::PERSPECTIVES.last
+      @fund_edition.previous_perspective.should eql FundEdition::PERSPECTIVES.first
+      @fund_edition.next_perspective.should be_nil
+    end
+
     it 'next should return nil if next edition is new' do
       next_edition = Factory.build( :fund_edition,
         :perspective => FundEdition::PERSPECTIVES.last,
