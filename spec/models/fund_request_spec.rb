@@ -15,8 +15,8 @@ describe FundRequest do
       @fund_request.save!
     end
 
-    it "should not save without an organization" do
-      @fund_request.organization = nil
+    it "should not save without a fund_grant" do
+      @fund_request.fund_grant = nil
       @fund_request.save.should be_false
     end
 
@@ -63,7 +63,7 @@ describe FundRequest do
   end
 
   it "should call deliver_release_notice and set released_at on entering the released state" do
-    m = Factory(:membership, :organization => @fund_request.fund_grant.organization, :role => Factory(:fund_requestor_role))
+    m = Factory(:membership, :organization => @fund_request.fund_grant.organization, :role => Factory(:requestor_role))
     @fund_request.state = 'certified'
     @fund_request.save!
     @fund_request.reload
@@ -96,7 +96,7 @@ describe FundRequest do
     second_fund_item.position = nil
     second_fund_item.save
     e = second_fund_item.fund_editions.build
-    Factory.attributes_for(:fund_edition, :amount => 100.0 ).each do |k, v|
+    Factory.build(:fund_edition, :amount => 100.0 ).attributes.each do |k, v|
       e.send("#{k}=", v)
     end
     e.save!
@@ -155,7 +155,7 @@ describe FundRequest do
   end
 
   it 'should have a perspective_for method that identifies a user\'s perspective' do
-    fund_requestor_role = Factory(:fund_requestor_role)
+    fund_requestor_role = Factory(:requestor_role)
     reviewer_role = Factory(:reviewer_role)
     fund_requestor_organization = Factory(:organization)
     reviewer_organization = Factory(:organization)
@@ -175,9 +175,7 @@ describe FundRequest do
 
   it 'should have a duplicate scope' do
     @fund_request.save
-    duplicate = Factory(:fund_request, :fund_source => @fund_request.fund_source, :organization => @fund_request.organization)
-    same_organization = Factory(:fund_request, :organization => @fund_request.organization)
-    same_fund_source = Factory(:fund_request, :fund_source => @fund_request.fund_source)
+    duplicate = Factory(:fund_request, :fund_grant => @fund_request.fund_grant)
     different = Factory(:fund_request)
     duplicates = FundRequest.duplicate
     duplicates.count.should eql 2

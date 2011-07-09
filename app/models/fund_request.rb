@@ -202,7 +202,7 @@ class FundRequest < ActiveRecord::Base
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
     "fund_request_id = fund_requests.id AND perspective = ?) > " +
     "(SELECT COUNT(*) FROM fund_editions WHERE " +
-    "fund_request_id = fund_requests.id perspective = ?)",
+    "fund_request_id = fund_requests.id AND perspective = ?)",
     FundEdition::PERSPECTIVES.first, FundEdition::PERSPECTIVES.last) }
   scope :duplicate, where("fund_requests.fund_grant_id IN (SELECT fund_grant_id FROM fund_requests " +
     "AS duplicates WHERE duplicates.fund_grant_id = fund_requests.fund_grant_id " +
@@ -299,9 +299,9 @@ class FundRequest < ActiveRecord::Base
   # Returns the closest future queue
   def adoptable_queue; fund_grant.fund_source.fund_queues.active; end
 
-  def contact_name; fund_source ? fund_source.contact_name : nil; end
+  def contact_name; fund_grant && fund_grant.fund_source ? fund_grant.fund_source.contact_name : nil; end
 
-  def contact_email; fund_source ? fund_source.contact_email : nil; end
+  def contact_email; fund_grant && fund_grant.fund_source ? fund_grant.fund_source.contact_email : nil; end
 
   def contact_to_email
     return nil unless fund_source

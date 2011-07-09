@@ -6,10 +6,11 @@ module SpecApproverScenarios
     @all_required ||= Factory(:role, :name => Role::REQUESTOR.last )
     @quota = Factory(:approver, :framework => @framework, :role => @quota_required, :quantity => 1, :status => 'completed')
     @all = Factory(:approver, :framework => @framework, :role => @all_required, :status => 'completed')
-    @fund_request = Factory(:fund_request, :fund_source => Factory(:fund_source, :framework => @framework), :status => 'completed' )
+    @fund_grant = Factory(:fund_grant, :fund_source => Factory(:fund_source, :framework => @framework))
+    @fund_request = Factory(:fund_request, :fund_grant => @fund_grant, :status => 'completed' )
     @fund_request.approval_checkpoint = @fund_request.created_at - 1.minute
     @fund_request.save!
-    fund_requestor = @fund_request.organization
+    fund_requestor = @fund_grant.organization
     @quota_fulfilled = Factory(:membership, :role => @quota_required, :organization => fund_requestor).user
     @quota_unfulfilled = Factory(:membership, :role => @quota_required, :organization => fund_requestor).user
     @all_fulfilled = Factory(:membership, :role => @all_required, :organization => fund_requestor).user
@@ -40,8 +41,8 @@ module SpecApproverScenarios
     @fund_request.save!
     @reviewer ||= Factory(:role, :name => Role::REVIEWER.first )
     @review = Factory(:approver, :framework => @framework, :role => @reviewer, :status => 'reviewed', :quantity => 1, :perspective => FundEdition::PERSPECTIVES.last )
-    @reviewer_unfulfilled = Factory(:membership, :role => @reviewer, :organization => @fund_request.fund_source.organization ).user
-    Factory(:membership, :role => @reviewer, :organization => @fund_request.fund_source.organization, :user => @all_fulfilled )
+    @reviewer_unfulfilled = Factory(:membership, :role => @reviewer, :organization => @fund_grant.fund_source.organization ).user
+    Factory(:membership, :role => @reviewer, :organization => @fund_grant.fund_source.organization, :user => @all_fulfilled )
   end
 
   def all_reviewed_approvers_scenario(reset_checkpoint=false)
