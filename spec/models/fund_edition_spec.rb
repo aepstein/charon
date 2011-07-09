@@ -61,12 +61,13 @@ describe FundEdition do
 
     it "should not save with an amount higher than original fund_edition amount" do
       original = Factory(:fund_edition)
-      original.fund_item.reload
+      original.reload
       review = original.fund_item.fund_editions.
         build_next_for_fund_request( original.fund_request )
       review.amount = ( original.amount + 1.0 )
       review.perspective.should eql 'reviewer'
       review.amount.should > original.amount
+      review.previous.should eql original
       review.save.should be_false
       review.errors.first.should eql [:amount, " is greater than original fund_request amount."]
       review.max_fund_request.should eql original.amount

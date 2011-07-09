@@ -112,9 +112,7 @@ Factory.define :fund_edition do |f|
     end
   }
   f.fund_item { |edition|
-    i = edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
-    i.fund_editions.reset
-    i
+    edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
   }
 end
 
