@@ -120,7 +120,8 @@ class FundEdition < ActiveRecord::Base
   # Returns the perspective of previous edition in sequence
   # * returns nil if this is initial edition
   def previous_perspective
-    return nil unless i = perspective_index && i && i > 0
+    i = perspective_index
+    return nil unless i && i > 0
     PERSPECTIVES[i - 1]
   end
 
