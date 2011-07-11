@@ -28,11 +28,5 @@ describe FundGrant do
     duplicate.save.should be_false
   end
 
-  it 'should not save an invalid released_at value' do
-    @fund_grant.save!
-    @fund_grant.released_at = 'blah'
-    @fund_grant.save.should be_false
-  end
-
 end
 
