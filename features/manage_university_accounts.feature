@@ -80,7 +80,7 @@ Feature: Manage fund_requests
     Given I am on the university_accounts page
     And I fill in "Subledger code" with "01"
     And I press "Search"
-    Then I should see the following inventory_fund_items:
+    Then I should see the following inventory_items:
       | Organization | Department code | Subledger code |
       | First Club   | A00             | 0001           |
       | Last Club    | B00             | 0001           |

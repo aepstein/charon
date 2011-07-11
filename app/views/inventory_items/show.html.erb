@@ -1,52 +1,52 @@
 <p>
-  <b>Organization:</b> <%=h @inventory_fund_item.organization %>
+  <b>Organization:</b> <%=h @inventory_item.organization %>
 </p>
 
 <p>
-  <b>Purchase price:</b> <%=h number_to_currency @inventory_fund_item.purchase_price %>
+  <b>Purchase price:</b> <%=h number_to_currency @inventory_item.purchase_price %>
 </p>
 
 <p>
-  <b>Current value:</b> <%=h number_to_currency @inventory_fund_item.current_value %>
+  <b>Current value:</b> <%=h number_to_currency @inventory_item.current_value %>
 </p>
 
 <p>
-  <b>Description:</b> <%=h @inventory_fund_item.description %>
+  <b>Description:</b> <%=h @inventory_item.description %>
 </p>
 
 <p>
-  <b>Identifier:</b> <%=h @inventory_fund_item.identifier %>
+  <b>Identifier:</b> <%=h @inventory_item.identifier %>
 </p>
 
 <p><b>Comments:</b></p>
 
-<%=markdown @inventory_fund_item.comments %>
+<%=markdown @inventory_item.comments %>
 
 <p>
-  <b>Usable?</b> <%=h @inventory_fund_item.usable? ? "Usable" : "Not usable" %>
+  <b>Usable?</b> <%=h @inventory_item.usable? ? "Usable" : "Not usable" %>
 </p>
 
 <p>
-  <b>Missing?</b> <%=h @inventory_fund_item.missing? ? "Missing" : "Not missing" %>
+  <b>Missing?</b> <%=h @inventory_item.missing? ? "Missing" : "Not missing" %>
 </p>
 
 <p>
-  <b>Acquired on:</b> <%=h @inventory_fund_item.acquired_on.to_formatted_s :long %>
+  <b>Acquired on:</b> <%=h @inventory_item.acquired_on.to_formatted_s :long %>
 </p>
 
 <p>
-  <b>Scheduled retirement on:</b> <%= @inventory_fund_item.scheduled_retirement_on.to_formatted_s :long %>
+  <b>Scheduled retirement on:</b> <%= @inventory_item.scheduled_retirement_on.to_formatted_s :long %>
 </p>
 
-<% if @inventory_fund_item.retired_on? -%>
+<% if @inventory_item.retired_on? -%>
 <p>
-  <b>Retired on:</b> <%=h @inventory_fund_item.retired_on.to_formatted_s :long %>
+  <b>Retired on:</b> <%=h @inventory_item.retired_on.to_formatted_s :long %>
 </p>
 
 <% end -%>
 <p>
-<%= link_to 'Edit', edit_inventory_fund_item_path(@inventory_fund_item) %> |
-<%= link_to "List inventory fund_items for #{@inventory_fund_item.organization}",
-  organization_inventory_fund_items_path( @inventory_fund_item.organization ) %>
+<%= link_to 'Edit', edit_inventory_item_path(@inventory_item) %> |
+<%= link_to "List inventory fund_items for #{@inventory_item.organization}",
+  organization_inventory_items_path( @inventory_item.organization ) %>
 </p>
 

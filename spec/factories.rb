@@ -372,7 +372,7 @@ Factory.define :external_equity_report do |f|
   f.association :fund_edition, :factory => :external_equity_report_fund_edition
 end
 
-Factory.define :inventory_fund_item do |f|
+Factory.define :inventory_item do |f|
   f.association :organization
   f.sequence(:identifier) { |n| "id##{n}" }
   f.description "Boots"
