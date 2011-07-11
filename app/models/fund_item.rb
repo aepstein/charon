@@ -19,14 +19,12 @@ class FundItem < ActiveRecord::Base
 
     # Previous edition relative to a specified edition
     def previous_to( edition )
-      return nil unless edition.previous_perspective
       for_request( edition.fund_request ).
       select { |e| e.perspective == edition.previous_perspective }.first
     end
 
     # Next edition relative to a specified edition
     def next_to( edition )
-      return nil unless edition.next_perspective
       for_request( edition.fund_request ).
       select { |e| e.perspective == edition.next_perspective }.first
     end

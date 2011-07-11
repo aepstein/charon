@@ -173,11 +173,13 @@ class FundRequest < ActiveRecord::Base
       transition [ :started, :completed, :submitted ] => :rejected
     end
 
+    before_transition all - [ :accepted ] => :accepted, :do => :adopt_queue
+
     after_transition :started => :completed, :do => :deliver_required_approval_notice
     after_transition :accepted => :reviewed, :do => :deliver_required_approval_notice
     after_transition :completed => :submitted,
       :do => [ :reset_approval_checkpoint, :send_submitted_notice!, :accept ]
-    after_transition [ :completed, :submitted ] => :accepted, :do => :adopt_queue!
+#    after_transition [ :completed, :submitted ] => :accepted, :do => :adopt_queue!
     after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
     after_transition :certified => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
@@ -304,8 +306,8 @@ class FundRequest < ActiveRecord::Base
   def contact_email; fund_grant && fund_grant.fund_source ? fund_grant.fund_source.contact_email : nil; end
 
   def contact_to_email
-    return nil unless fund_source
-    "#{fund_source.contact_name} <#{fund_source.contact_email}>"
+    return nil unless fund_grant && fund_grant.fund_source
+    "#{fund_grant.fund_source.contact_name} <#{fund_grant.fund_source.contact_email}>"
   end
 
   def self.aasm_state_names
@@ -329,7 +331,7 @@ class FundRequest < ActiveRecord::Base
 
   # Assigns this request to the next future queue for processing
   def adopt_queue
-    update_attribute :fund_queue, adoptable_queue if fund_queue.blank?
+    self.fund_queue ||= adoptable_queue
   end
 
   def timestamp_state!

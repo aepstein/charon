@@ -53,7 +53,7 @@ end
 Factory.define :approver do |f|
   f.association :framework
   f.association :role
-  f.status 'submitted'
+  f.state 'submitted'
   f.perspective FundEdition::PERSPECTIVES.first
 end
 
@@ -127,7 +127,7 @@ end
 
 Factory.define :fund_queue do |f|
   f.association :fund_source
-  f.submit_at { |q| q.fund_source + 2.days }
+  f.submit_at { |q| q.fund_source.open_at + 2.days }
   f.release_at { |q| q.submit_at + 1.week }
 end
 

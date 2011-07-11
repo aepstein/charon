@@ -78,6 +78,8 @@ describe FundRequest do
   end
 
   it "should set accepted_at on entering accepted state" do
+    Factory(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
+    @fund_request.fund_grant.fund_source.fund_queues.reset
     @fund_request.state = 'submitted'
     @fund_request.save!
     @fund_request.accepted_at.should be_nil
@@ -87,6 +89,7 @@ describe FundRequest do
 
   it "should have fund_items.allocate which enforces caps" do
     first_fund_edition = Factory(:fund_edition)
+    fund_request = first_fund_edition.fund_request
     first_fund_edition.amount = 100.0
     first_fund_edition.save
     first_fund_item = first_fund_edition.fund_item
@@ -96,7 +99,8 @@ describe FundRequest do
     second_fund_item.position = nil
     second_fund_item.save
     e = second_fund_item.fund_editions.build
-    Factory.build(:fund_edition, :amount => 100.0 ).attributes.each do |k, v|
+    Factory.build(:fund_edition, :amount => 100.0, :fund_request => fund_request ).
+      attributes.each do |k, v|
       e.send("#{k}=", v)
     end
     e.save!
@@ -104,7 +108,6 @@ describe FundRequest do
     first_fund_item.fund_editions.next.save!
     second_fund_item.reload
     second_fund_item.fund_editions.next.save!
-    fund_request = first_fund_item.fund_request
     fund_request.fund_items.allocate(150.0)
     fund_request.fund_items.first.amount.should eql 100
     fund_request.fund_items.last.amount.should eql 50
@@ -117,14 +120,12 @@ describe FundRequest do
   end
 
   it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do
-    #TODO logic has changed for flexible_budgets
-    complete = Factory(:fund_edition).fund_request
-    complete.fund_editions.should_not be_empty
-    incomplete = Factory(:fund_request, :fund_grant => Factory(:fund_item).fund_grant )
-    incomplete.fund_editions.should be_empty
+    initial = Factory(:fund_edition)
+    Factory(:fund_edition, :fund_request => initial.fund_request,
+      :fund_item => initial.fund_item, :perspective => FundEdition::PERSPECTIVES.last )
+    complete = initial.fund_request
+    incomplete = Factory(:fund_edition).fund_request
     FundRequest.incomplete.should_not include complete
-    FundRequest.incomplete.should include complete
-    FundRequest.incomplete.should include incomplete
     FundRequest.incomplete.should include incomplete
   end
 
@@ -164,7 +165,9 @@ describe FundRequest do
     Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization, :user => conflictor)
     reviewer = Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization).user
     fund_source = Factory(:fund_source, :organization => reviewer_organization)
-    fund_request = Factory(:fund_request, :fund_source => fund_source, :organization => fund_requestor_organization)
+    fund_grant = Factory(:fund_grant, :fund_source => fund_source,
+      :organization => fund_requestor_organization)
+    fund_request = Factory(:fund_request, :fund_grant => fund_grant)
     [
       [ fund_requestor, 'fund_requestor' ], [ conflictor, 'fund_requestor' ], [ reviewer, 'reviewer' ],
       [ fund_requestor_organization, 'fund_requestor' ], [ reviewer_organization, 'reviewer' ]
