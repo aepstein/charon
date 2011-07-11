@@ -118,71 +118,78 @@ class FundRequest < ActiveRecord::Base
   validates :approval_checkpoint, :timeliness => { :type => :datetime }
   validate :fund_source_must_be_same_for_grant_and_queue
 
-  state_machine :initial => :started do
+  state_machine :review_state, :initial => :unreviewed,
+    :namespace => 'review' do
 
-    state :started, :completed, :submitted, :accepted, :reviewed, :certified,
-      :released
+    state :unreviewed, :tentative, :ready
+
+    event :approve do
+      transition :assigned => :tentative, :if => :approvable?
+      transition :tentative => :ready, :if => :approvals_fulfilled?
+      transition :tentative => same
+    end
+
+    event :unapprove do
+      transition :tentative => :assigned, :if => :approvals_unfulfilled?
+      transition :tentative => same
+    end
+
+    after_transition :assigned => :tentative, :do => :deliver_required_approval_notice
+  end
+
+  state_machine :request_state, :initial => :started do
+
+    state :finalized, :released, :started, :tentative
 
     state :withdrawn do
       validates :withdrawn_by_user, :presence => true
-    end
-
-    state :accepted do
-      validates :fund_queue, :presence => true
-      validates :fund_queue_id, :uniqueness => { :scope => [ :fund_grant_id ] }
     end
 
     state :rejected do
       validates :reject_message, :presence => true
     end
 
+    state :submitted do
+      validates :fund_queue, :presence => true
+      validates :fund_queue_id, :uniqueness => { :scope => [ :fund_grant_id ] }
+    end
+
     event :approve do
-      transition :started => :completed, :if => :approvable?
-      transition :accepted => :reviewed, :if => :approvable?
-      transition :completed => :submitted, :if => :approvals_fulfilled?
-      transition :reviewed => :certified, :if => :approvals_fulfilled?
-      transition [ :completed, :reviewed ] => same
+      transition :started => :tentative, :if => :approvable?
+      transition :tentative => :submitted, :if => [ :approvals_fulfilled?, :adoptable_queue ]
+      transition :tentative => :finalized, :if => :approvals_fulfilled?
+      transition :tentative => same
     end
 
     event :unapprove do
-      transition :completed => :started, :if => :approvals_unfulfilled?
-      transition :reviewed => :accepted, :if => :approvals_unfulfilled?
-      transition [ :completed, :reviewed ] => same
+      transition :tentative => :started, :if => :approvals_unfulfilled?
+      transition :tentative => same
     end
 
     event :submit do
-      transition :completed => :submitted
+      transition :tentative => :submitted
     end
 
     event :withdraw do
-      transition [ :completed, :submitted ] => :withdrawn
-    end
-
-    event :accept do
-      transition :submitted => :accepted
-    end
-
-    event :certify do
-      transition :reviewed => :certified
+      transition [ :tentative, :finalized ] => :withdrawn
     end
 
     event :release do
-      transition :certified => :released
+      transition :submitted => :released, :if => :releasable?
     end
 
     event :reject do
-      transition [ :started, :completed, :submitted ] => :rejected
+      transition [ :finalized, :submitted ] => :rejected
     end
 
-    before_transition all - [ :accepted ] => :accepted, :do => :adopt_queue
+    before_transition all - [ :submitted ] => :submitted, :do => :adopt_queue
 
-    after_transition :started => :completed, :do => :deliver_required_approval_notice
-    after_transition :accepted => :reviewed, :do => :deliver_required_approval_notice
-    after_transition :completed => :submitted,
-      :do => [ :reset_approval_checkpoint, :send_submitted_notice!, :accept ]
+    after_transition :started => :tentative, :do => :deliver_required_approval_notice
+    after_transition :tentative => :submitted,
+      :do => [ :reset_approval_checkpoint, :send_submitted_notice!, :assign ]
 #    after_transition [ :completed, :submitted ] => :accepted, :do => :adopt_queue!
     after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
-    after_transition :certified => :released, :do => :send_released_notice!
+    after_transition all - [ :released ] => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
     after_transition :except_to => same, :do => :timestamp_state!
 
@@ -310,6 +317,10 @@ class FundRequest < ActiveRecord::Base
     return nil unless fund_grant && fund_grant.fund_source
     "#{fund_grant.fund_source.contact_name} <#{fund_grant.fund_source.contact_email}>"
   end
+
+  # Is the request ready for release?
+  # * based on status of review state machine
+  def releasable?; review_state? :ready; end
 
   def self.aasm_state_names
     [ :started, :completed, :submitted, :accepted, :reviewed, :certified,

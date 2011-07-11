@@ -8,6 +8,12 @@ class CreateFundQueues < ActiveRecord::Migration
       t.timestamps
     end
     add_index :fund_queues, [ :fund_source_id, :submit_at ], :unique => true
+
+    say 'Add default fund_queue for each fund_source closure point'
+    execute <<-SQL
+      INSERT INTO fund_queues ( fund_source_id, submit_at, release_at )
+      SELECT id, closed_at, closed_at FROM fund_sources
+    SQL
   end
 
   def self.down
