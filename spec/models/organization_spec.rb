@@ -7,7 +7,7 @@ describe Organization do
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:organization).new_record?.should == false
+    Factory(:organization).new_record?.should be_false
   end
 
   it 'should not save without a last_name' do
@@ -17,11 +17,14 @@ describe Organization do
 
   it "should have a fund_requests.creatable method that returns fund_requests that can be made" do
     fund_source = Factory(:fund_source)
-    started_fund_request = Factory(:fund_request, :organization => @organization)
-    closed_fund_source = Factory(:fund_source, :open_at => DateTime.now - 1.year, :closed_at => DateTime.now - 1.day)
+    fund_grant = Factory(:fund_grant, :fund_source => fund_source,
+      :organization => @organization)
+    started_fund_request = Factory(:fund_request, :fund_grant => fund_grant)
+    closed_fund_source = Factory(:fund_source,
+      :open_at => Time.zone.now - 1.year, :closed_at => Time.zone.now - 1.day)
     fund_requests = @organization.fund_requests.creatable
-    fund_requests.length.should == 1
-    fund_requests.first.class.should == FundRequest
+    fund_requests.length.should eql 1
+    fund_requests.first.class.should eql FundRequest
     fund_requests.first.fund_source.should eql fund_source
   end
 
