@@ -3,7 +3,8 @@ class SplitFundRequestStatesIntoRequestAndReviewState < ActiveRecord::Migration
     remove_index :fund_requests, [ :fund_grant_id, :state ]
     rename_column :fund_requests, :state, :request_state
     add_column :fund_requests, :review_state, :string
-    add_index :fund_requests, [ :fund_grant_id, :request_state, :review_state ]
+    add_index :fund_requests, [ :fund_grant_id, :request_state, :review_state ],
+      :name => 'index_grant_states'
 
     say 'Setting up new review_state field'
     execute <<-SQL
