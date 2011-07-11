@@ -65,7 +65,7 @@ Factory.define :document do |f|
   f.original { Rack::Test::UploadedFile.new(
     "#{::Rails.root}/features/support/assets/small.pdf", 'application/pdf' ) }
   f.association :fund_edition, :factory => :attachable_fund_edition
-  f.document_type { |d| d.fund_edition.document_types.first }
+  f.document_type { |d| d.fund_edition.fund_item.node.document_types.first }
 end
 
 Factory.define :document_type do |f|
@@ -283,8 +283,9 @@ Factory.define :attachable_node, :parent => :node do |f|
 end
 
 Factory.define :attachable_fund_item, :parent => :fund_item do |f|
-  f.association :fund_request
-  f.node { |fund_item| fund_item.association(:attachable_node, :structure => fund_item.fund_request.fund_grant.fund_source.structure) }
+  f.association :fund_grant
+  f.node { |fund_item| fund_item.association(:attachable_node,
+    :structure => fund_item.fund_grant.fund_source.structure) }
 end
 
 Node::ALLOWED_TYPES.each_value do |t|

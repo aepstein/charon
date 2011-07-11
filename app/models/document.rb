@@ -25,8 +25,9 @@ class Document < ActiveRecord::Base
   private
 
   def document_type_must_be_allowed_by_fund_edition
-    return if fund_edition.blank? || document_type.blank?
-    unless fund_edition.document_types.include?( document_type )
+    return if fund_edition.blank? || fund_edition.fund_item.blank? ||
+      fund_edition.fund_item.node.blank? || document_type.blank?
+    unless fund_edition.fund_item.node.document_types.include?( document_type )
       errors.add( :document_type, "is not a valid document type for #{fund_edition}" )
     end
   end
