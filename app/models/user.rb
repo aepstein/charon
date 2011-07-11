@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
       Membership.where( :user_id => proxy_owner.id,
         :organization_id.in => organizations.map(&:id) ).active.map(&:role)
     end
-    def fund_requestor_in?(organization)
+    def requestor_in?(organization)
       fund_requestor_in_ids( organization ).length > 0
     end
     def reviewer_in?(organization)

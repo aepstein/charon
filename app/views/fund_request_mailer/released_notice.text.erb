@@ -1,6 +1,6 @@
-Dear Officers of <%= @fund_request.organization %>,
+Dear Officers of <%= @fund_request.fund_grant.organization %>,
 
 This email is to inform you that your <%= @fund_request %> has been processed and released for you to review.  To see it, please go to: <<%= fund_request_url @fund_request %>>.
 
-<%= @fund_request.fund_source.release_message %>
+<%= @fund_request.fund_grant.fund_source.release_message %>
 

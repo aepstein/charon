@@ -113,8 +113,8 @@ class FundItemsController < ApplicationController
     @fund_grant ||= @fund_item.fund_grant if @fund_item
     @fund_item.attributes = params[:fund_item] if @fund_item && params[:fund_item]
     if @fund_request
-      add_breadcrumb @fund_request.organization.name, url_for( @fund_request.organization )
-      add_breadcrumb "#{@fund_request.fund_source.name} fund_request", url_for( @fund_request )
+      add_breadcrumb @fund_request.fund_grant.organization.name, url_for( @fund_request.fund_grant.organization )
+      add_breadcrumb "#{@fund_request.fund_grant.fund_source.name} fund_request", url_for( @fund_request )
       add_breadcrumb 'Items', fund_request_fund_items_path( @fund_request )
     end
   end

@@ -159,9 +159,9 @@ class FundRequestsController < ApplicationController
   def initialize_context
     @fund_request = FundRequest.find params[:id] if params[:id]
     @fund_source = FundSource.find params[:fund_source_id] if params[:fund_source_id]
-    @fund_source ||= @fund_request.fund_source if @fund_request
+    @fund_source ||= @fund_request.fund_grant.fund_source if @fund_request
     @organization = Organization.find params[:organization_id] if params[:organization_id]
-    @organization ||= @fund_request.organization if @organization
+    @organization ||= @fund_request.fund_grant.organization if @organization
     @context = @fund_source || @organization
   end
 
@@ -193,9 +193,9 @@ class FundRequestsController < ApplicationController
       csv << ( ['organizations', 'independent?','club sport?','status','fund_request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
       @search.each do |fund_request|
         next unless permitted_to?( :review, fund_request )
-        csv << ( [ fund_request.organization.name,
-                   ( fund_request.organization.independent? ? 'Yes' : 'No' ),
-                   ( fund_request.organization.club_sport? ? 'Yes' : 'No' ),
+        csv << ( [ fund_request.fund_grant.organization.name,
+                   ( fund_request.fund_grant.organization.independent? ? 'Yes' : 'No' ),
+                   ( fund_request.fund_grant.organization.club_sport? ? 'Yes' : 'No' ),
                    fund_request.status,
                    "#{fund_request.fund_editions.where(:perspective => 'fund_requestor').sum('amount')}",
                    "#{fund_request.fund_editions.where(:perspective => 'reviewer').sum('amount')}",

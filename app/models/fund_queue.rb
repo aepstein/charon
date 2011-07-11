@@ -13,7 +13,7 @@ class FundQueue < ActiveRecord::Base
     :timeliness => { :type => :datetime, :before => :release_at,
       :after => :open_at }
 
-  def open_at; basis.open_at if basis; end
+  def open_at; fund_source.open_at if fund_source; end
 
 end
 

@@ -1,6 +1,6 @@
-Dear Officers of <%= @fund_request.organization %>,
+Dear Officers of <%= @fund_request.fund_grant.organization %>,
 
-This email is a confirmation that you have successfully submitted your fund_request for <%= @fund_request.fund_source.to_s %>.  You should receive an additional notice when it is accepted for review.
+This email is a confirmation that you have successfully submitted your fund_request for <%= @fund_request.fund_grant.fund_source.to_s %>.  You should receive an additional notice when it is accepted for review.
 
 To see it, please go to: <<%= fund_request_url @fund_request %>>.
 

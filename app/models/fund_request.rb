@@ -27,8 +27,8 @@ class FundRequest < ActiveRecord::Base
           map( &:fund_item_id ) ).sum( :amount )
         cap -= exclusion if exclusion
       end
-      root.includes( :fund_editions ).each do |fund_item|
-          cap = allocate_fund_item( fund_item, cap )
+      includes( :fund_editions ).where(:parent_id => nil).each do |fund_item|
+          cap = allocate_fund_item! fund_item, cap
       end
     end
 
@@ -38,7 +38,7 @@ class FundRequest < ActiveRecord::Base
     # * recursively call to each child, passing on remaining cap
     def allocate_fund_item!(fund_item, cap = nil)
       fund_edition = fund_item.fund_editions.for_request( proxy_owner ).last
-      if fund_edition.perspective == PERSPECTIVES.last
+      if fund_edition.perspective == FundEdition::PERSPECTIVES.last
         max = ( (fund_edition) ? fund_edition.amount : 0.0 )
         if cap
           min = (cap > 0.0) ? cap : 0.0
@@ -85,8 +85,9 @@ class FundRequest < ActiveRecord::Base
       approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
     end
     def required_for_state( state )
-      approvers_to_users( Approver.where( :framework_id => proxy_owner.fund_source.framework_id,
-        :state => state, :quantity => nil ) )
+      approvers_to_users( Approver.where( :framework_id => proxy_owner.
+        fund_grant.fund_source.framework_id, :state => state,
+        :quantity => nil ) )
     end
     protected
     def after_checkpoint

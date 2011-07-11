@@ -284,7 +284,7 @@ end
 
 Factory.define :attachable_fund_item, :parent => :fund_item do |f|
   f.association :fund_request
-  f.node { |fund_item| fund_item.association(:attachable_node, :structure => fund_item.fund_request.fund_source.structure) }
+  f.node { |fund_item| fund_item.association(:attachable_node, :structure => fund_item.fund_request.fund_grant.fund_source.structure) }
 end
 
 Node::ALLOWED_TYPES.each_value do |t|

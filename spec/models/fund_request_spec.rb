@@ -87,34 +87,31 @@ describe FundRequest do
     @fund_request.accepted_at.should_not be_nil
   end
 
-  it "should have fund_items.allocate which enforces caps" do
+  it "should have fund_items.allocate! which enforces caps" do
     first_fund_edition = Factory(:fund_edition)
     fund_request = first_fund_edition.fund_request
     first_fund_edition.amount = 100.0
-    first_fund_edition.save
+    first_fund_edition.save!
     first_fund_item = first_fund_edition.fund_item
     first_fund_item.node.item_quantity_limit = 3
     first_fund_item.node.save
     second_fund_item = first_fund_item.clone
-    second_fund_item.position = nil
-    second_fund_item.save
-    e = second_fund_item.fund_editions.build
-    Factory.build(:fund_edition, :amount => 100.0, :fund_request => fund_request ).
-      attributes.each do |k, v|
-      e.send("#{k}=", v)
-    end
+    second_fund_item.save!
+    e = second_fund_item.fund_editions.build( :amount => 100.0,
+      :perspective => 'requestor' )
+    e.fund_request = fund_request
     e.save!
     first_fund_item.reload
-    first_fund_item.fund_editions.next.save!
+    first_fund_item.fund_editions.build_next_for_fund_request(fund_request).save!
     second_fund_item.reload
-    second_fund_item.fund_editions.next.save!
-    fund_request.fund_items.allocate(150.0)
+    second_fund_item.fund_editions.build_next_for_fund_request(fund_request).save!
+    fund_request.fund_items.allocate!(150.0)
     fund_request.fund_items.first.amount.should eql 100
     fund_request.fund_items.last.amount.should eql 50
-    fund_request.fund_items.allocate(nil)
+    fund_request.fund_items.allocate!
     fund_request.fund_items.first.amount.should eql 100
     fund_request.fund_items.last.amount.should eql 100
-    fund_request.fund_items.allocate(0.0)
+    fund_request.fund_items.allocate!(0.0)
     fund_request.fund_items.first.amount.should eql 0
     fund_request.fund_items.last.amount.should eql 0
   end
@@ -156,28 +153,28 @@ describe FundRequest do
   end
 
   it 'should have a perspective_for method that identifies a user\'s perspective' do
-    fund_requestor_role = Factory(:requestor_role)
+    requestor_role = Factory(:requestor_role)
     reviewer_role = Factory(:reviewer_role)
-    fund_requestor_organization = Factory(:organization)
+    requestor_organization = Factory(:organization)
     reviewer_organization = Factory(:organization)
-    fund_requestor = Factory(:membership, :role => fund_requestor_role, :active => true, :organization => fund_requestor_organization).user
-    conflictor = Factory(:membership, :role => fund_requestor_role, :active => true, :organization => fund_requestor_organization).user
+    requestor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
+    conflictor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
     Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization, :user => conflictor)
     reviewer = Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization).user
     fund_source = Factory(:fund_source, :organization => reviewer_organization)
     fund_grant = Factory(:fund_grant, :fund_source => fund_source,
-      :organization => fund_requestor_organization)
+      :organization => requestor_organization)
     fund_request = Factory(:fund_request, :fund_grant => fund_grant)
     [
-      [ fund_requestor, 'fund_requestor' ], [ conflictor, 'fund_requestor' ], [ reviewer, 'reviewer' ],
-      [ fund_requestor_organization, 'fund_requestor' ], [ reviewer_organization, 'reviewer' ]
+      [ requestor, 'requestor' ], [ conflictor, 'requestor' ], [ reviewer, 'reviewer' ],
+      [ requestor_organization, 'requestor' ], [ reviewer_organization, 'reviewer' ]
     ].each do |scenario|
       fund_request.perspective_for( scenario.first ).should eql scenario.last
     end
   end
 
   it 'should have a duplicate scope' do
-    @fund_request.save
+    @fund_request.save!
     duplicate = Factory(:fund_request, :fund_grant => @fund_request.fund_grant)
     different = Factory(:fund_request)
     duplicates = FundRequest.duplicate

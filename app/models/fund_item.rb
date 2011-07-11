@@ -44,12 +44,12 @@ class FundItem < ActiveRecord::Base
           'Last position has final perspective.'
       end
       next_edition = build
-      next_edition.perspective = last_edition.next_perspective
-      next_edition.fund_request = request
       unless last_edition.requestable.blank?
         next_edition.requestable_attributes = last_edition.requestable_attributes
       end
-      next_edition.attributes = attributes
+      next_edition.attributes = last_edition.attributes.merge( attributes )
+      next_edition.perspective = last_edition.next_perspective
+      next_edition.fund_request = request
       next_edition
     end
   end

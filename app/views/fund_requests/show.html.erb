@@ -1,6 +1,6 @@
 <h2><%= @fund_request %></h2>
 
-<p>FundSource: <%= @fund_request.fund_source %></p>
+<p>FundSource: <%= @fund_request.fund_grant.fund_source %></p>
 <p>Status: <%= @fund_request.status %></p>
 <p>FundRequestor total: <%= number_to_currency @fund_request.fund_editions.where( :perspective => 'fund_requestor').sum('fund_editions.amount') %></p>
 <% if permitted_to?( :review, @fund_request ) || @fund_request.released? -%>
@@ -14,7 +14,7 @@
   </tr>
   </thead>
   <tbody>
-  <% @fund_request.fund_source.structure.categories.each do |category| -%>
+  <% @fund_request.fund_grant.fund_source.structure.categories.each do |category| -%>
   <% table_row_tag do -%>
     <td><%= category.name %></td>
     <td><%= number_to_currency @fund_request.fund_items.allocation_for_category(category) %></td>
@@ -72,10 +72,10 @@ This fund_request is now submitted for review.
 </ul>
 
 <% end -%>
-<% if @fund_request.organization.registrations.current -%>
-<h3>Membership information for <%=h @fund_request.organization %></h3>
+<% if @fund_request.fund_grant.organization.registrations.current -%>
+<h3>Membership information for <%=h @fund_request.fund_grant.organization %></h3>
 <dl>
-<%= render :partial => 'registrations/membership', :object => @fund_request.organization.registrations.current %>
+<%= render :partial => 'registrations/membership', :object => @fund_request.fund_grant.organization.registrations.current %>
 </dl>
 
 <% end -%>
@@ -85,8 +85,8 @@ This fund_request is now submitted for review.
            :locals => { :user => true, :approvable => false } %>
 
 <p>
-<%= link_to h("Back to #{@fund_request.organization}"), @fund_request.organization %> |
-<%= link_to h("Back to #{@fund_request.organization} profile"), profile_organization_path(@fund_request.organization) %> |
+<%= link_to h("Back to #{@fund_request.fund_grant.organization}"), @fund_request.fund_grant.organization %> |
+<%= link_to h("Back to #{@fund_request.fund_grant.organization} profile"), profile_organization_path(@fund_request.fund_grant.organization) %> |
 <%= link_to "Manage fund_items", fund_request_fund_items_path(@fund_request) %> |
 <%= link_to 'Edit', edit_fund_request_path(@fund_request) %>
 </p>

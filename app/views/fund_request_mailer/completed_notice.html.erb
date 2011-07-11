@@ -1,5 +1,5 @@
 <p>
-Dear Officers of <%= @fund_request.organization %>,
+Dear Officers of <%= @fund_request.fund_grant.organization %>,
 </p>
 
 <p>
@@ -16,15 +16,15 @@ The following people must <%= link_to 'approve the fund_request', new_polymorphi
 <% end -%>
 </ul>
 
-<% if @fund_request.fund_source.submissions_due_at && @fund_request.fund_source.submissions_due_at > DateTime.now %>
+<% if @fund_request.fund_grant.fund_source.submissions_due_at && @fund_request.fund_grant.fund_source.submissions_due_at > DateTime.now %>
 <p>
-The next deadline for submissions is <%= @fund_request.fund_source.submissions_due_at.to_s :us_ordinal %>.
+The next deadline for submissions is <%= @fund_request.fund_grant.fund_source.submissions_due_at.to_s :us_ordinal %>.
 </p>
 <% end %>
 
-<% if @fund_request.fund_source.contact_web %>
+<% if @fund_request.fund_grant.fund_source.contact_web %>
 <p>
-More information is available <%= link_to 'here', @fund_request.fund_source.contact_web %>.
+More information is available <%= link_to 'here', @fund_request.fund_grant.fund_source.contact_web %>.
 </p>
 <% end %>
 
@@ -33,6 +33,6 @@ Sincerely,
 </p>
 
 <p>
-<%= @fund_request.fund_source.contact_name %>
+<%= @fund_request.fund_grant.fund_source.contact_name %>
 </p>
 

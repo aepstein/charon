@@ -1,9 +1,9 @@
 <p>
-Dear Officers of <%= @fund_request.organization %>,
+Dear Officers of <%= @fund_request.fund_grant.organization %>,
 </p>
 
 <p>
-This email is a confirmation that you have successfully submitted your fund_request for <%=h @fund_request.fund_source.to_s %>.
+This email is a confirmation that you have successfully submitted your fund_request for <%=h @fund_request.fund_grant.fund_source.to_s %>.
 You should receive an additional notice when it is accepted for review.
 </p>
 
