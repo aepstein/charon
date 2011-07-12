@@ -15,6 +15,11 @@ class User < ActiveRecord::Base
     where( 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',
       approvable.class.to_s, approvable.id )
   }
+  scope :not_approved, lambda { |approvable|
+    where( "users.id NOT IN ( SELECT user_id FROM approvals WHERE " +
+      "approvable_type = ? AND approvable_id = ? )", approvable.class.to_s,
+      approvable.id )
+  }
   scope :name_contains, lambda { |name|
     sql = %w( first_name middle_name last_name net_id ).map do |field|
       "users.#{field} LIKE :name"

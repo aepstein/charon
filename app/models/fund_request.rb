@@ -78,30 +78,18 @@ class FundRequest < ActiveRecord::Base
         :organization_id => proxy_owner.send(perspective).id ).
         merge( Role.where( :name.in => Role::REQUESTOR ) ) ).map(&:user)
     end
+    # Returns users who have fulfilled unquantified approver requirements
     def fulfilled( approvers = Approver.unscoped )
-      approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
+      User.scoped.joins('INNER JOIN approvers').
+      merge( approvers.unquantified.fulfilled_for( proxy_owner ).merge(
+        Approval.unscoped.where( :created_at.gt => proxy_owner.approval_checkpoint)
+      ) ).where( 'users.id = memberships.user_id' ).group('memberships.user_id')
     end
+    # Returns users who have not fulfilled unquantified approver requirements
     def unfulfilled( approvers = Approver.unscoped )
-      approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
-    end
-    protected
-    def after_checkpoint
-      where( 'approvals.created_at > ?', proxy_owner.approval_checkpoint )
-    end
-    def approvers_to_users(approvers)
-      approvers_organized = approvers.inject({}) do |memo, approver|
-        memo[approver.perspective] ||= Array.new
-        memo[approver.perspective] << approver.role_id
-        memo
-      end
-      approvers_fragments = Array.new
-      approvers_organized.each do |perspective, role_ids|
-        approvers_fragments << ( "( memberships.organization_id = #{proxy_owner.send(perspective).id} " +
-          "AND memberships.role_id IN (#{role_ids.join(',')}) )" )
-      end
-      return Array.new if approvers.length == 0
-      User.joins( :memberships).where( approvers_fragments.join(' OR ') +
-        " AND memberships.active = #{connection.quote true}" ).all - self
+      User.scoped.not_approved( proxy_owner ).joins('INNER JOIN approvers').
+      merge( approvers.unquantified.unfulfilled_for( proxy_owner ) ).
+      where( 'users.id = memberships.user_id' ).group('memberships.user_id')
     end
   end
 
