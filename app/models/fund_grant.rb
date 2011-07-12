@@ -16,5 +16,12 @@ class FundGrant < ActiveRecord::Base
   validates :fund_source_id, :uniqueness => { :scope => :organization_id }
   validates :released_at,
     :timeliness => { :type => :datetime, :allow_blank => true }
+
+  # Organization associated with this grant in requestor perspective
+  def requestor; organization; end
+
+  # Organization associated with this grant in reviewer perspective
+  def reviewer; fund_source ? fund_source.organization : nil; end
+
 end
 

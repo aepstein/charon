@@ -1,7 +1,6 @@
   <%= table_row_tag do %>
     <td><%=h approver.perspective %></td>
     <td><%=h approver.role %></td>
-    <td><%=h approver.status %></td>
     <td><%= link_to 'Show', approver %></td>
     <td><%= link_to( 'Edit', edit_approver_path(approver) ) if permitted_to?( :update, approver ) %></td>
     <td><%= link_to( 'Destroy', approver, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, approver ) %></td>

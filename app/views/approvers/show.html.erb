@@ -11,10 +11,6 @@
 </p>
 
 <p>
-  <b>Status:</b> <%=h @approver.status %>
-</p>
-
-<p>
 <% if permitted_to? :edit, @approver -%>
 <%= link_to 'Edit', edit_approver_path(@approver) %> |
 <% end -%>

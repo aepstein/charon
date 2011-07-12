@@ -2,7 +2,6 @@
   <%= form.inputs do %>
   <%= form.input :perspective, :as => :select, :collection => FundEdition::PERSPECTIVES %>
   <%= form.input :role %>
-  <%= form.input :status, :as => :select, :collection => FundRequest.aasm_state_names %>
   <%= form.input :quantity %>
   <% end %>
   <%= form.buttons %>

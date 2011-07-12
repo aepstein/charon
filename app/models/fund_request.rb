@@ -120,7 +120,7 @@ class FundRequest < ActiveRecord::Base
     after_transition :assigned => :tentative, :do => :deliver_required_approval_notice
   end
 
-  state_machine :state, :initial => :started do
+  state_machine :initial => :started do
 
     state :finalized, :released, :started, :tentative
 
@@ -165,12 +165,12 @@ class FundRequest < ActiveRecord::Base
       transition [ :finalized, :submitted ] => :rejected
     end
 
-    before_transition all - [ :submitted ] => :submitted, :do => :adopt_queue
+    before_transition all - [ :submitted ] => :submitted,
+      :do => [ :adopt_queue, :set_approval_checkpoint ]
 
     after_transition :started => :tentative, :do => :deliver_required_approval_notice
     after_transition all - [ :submitted ] => :submitted,
-      :do => [ :reset_approval_checkpoint, :send_submitted_notice! ]
-    after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
+      :do => [ :send_submitted_notice! ]
     after_transition all - [ :released ] => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
     after_transition :except_to => same, :do => :timestamp_state!
@@ -219,12 +219,12 @@ class FundRequest < ActiveRecord::Base
 
   # Organization associated with this request in requestor perspective
   def requestor
-    fund_grant ? fund_grant.organization : nil
+    fund_grant ? fund_grant.requestor : nil
   end
 
   # Organization associated with this request in reviewer perspective
   def reviewer
-    fund_grant && fund_grant.fund_source ? fund_grant.organization : nil
+    fund_grant ? fund_grant.reviewer : nil
   end
 
   def perspective_for( fulfiller )
@@ -274,22 +274,16 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  def approvals_fulfilled?
-    users.unfulfilled.length == 0
-  end
+  # Are there any approval criteria that have not been fulfilled for current
+  # tentative status?
+  def approvals_fulfilled?; Approver.unfulfilled_for( self ).length == 0; end
 
-  def approvals_unfulfilled?
-    users.fulfilled.length == 0
-  end
+  # Are there any approval criteria that have been fulfilled for current
+  # tentative status?
+  def approvals_unfulfilled?; Approver.fulfilled_for( self ).length == 0; end
 
-  def set_approval_checkpoint
-    self.approval_checkpoint = Time.zone.now
-  end
-
-  def reset_approval_checkpoint
-    return if approvals.existing.last.nil?
-    update_attribute :approval_checkpoint, approvals.existing.last.created_at
-  end
+  # Sets approval checkpoint to current time
+  def set_approval_checkpoint; self.approval_checkpoint = Time.zone.now; end
 
   # Returns the closest future queue
   def adoptable_queue; fund_grant.fund_source.fund_queues.active; end
@@ -309,13 +303,8 @@ class FundRequest < ActiveRecord::Base
 
   # What is the perspective of approvers this request is waiting on
   def approver_perspective
-    return FundEdition::PERSPECTIVES.first if state? :tentative
     return FundEdition::PERSPECTIVES.last if review_state? :tentative
-  end
-
-  def self.aasm_state_names
-    [ :started, :completed, :submitted, :accepted, :reviewed, :certified,
-      :released, :rejected, :withdrawn ]
+    FundEdition::PERSPECTIVES.first
   end
 
   def to_s
@@ -337,18 +326,17 @@ class FundRequest < ActiveRecord::Base
     self.fund_queue ||= adoptable_queue
   end
 
+  # Timestamp state change if appropriate
   def timestamp_state!
     update_attribute( "#{state}_at", Time.zone.now ) if has_attribute? "#{state}_at"
   end
 
+  # Delivers approval required notice to each user who must approve the request
   def deliver_required_approval_notice
-    needed_approvals = users.unfulfilled(Approver.where( :quantity => nil )).map do |u|
-      a = Approval.new
-      a.user = u
-      a.approvable = self
-      a
-    end
-    needed_approvals.each do |approval|
+    users.unfulfilled.each do |user|
+      approval = Approval.new
+      approval.user = user
+      approval.approvable = self
       ApprovalMailer.fund_request_notice(approval).deliver
     end
   end
