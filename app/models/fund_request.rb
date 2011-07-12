@@ -78,16 +78,11 @@ class FundRequest < ActiveRecord::Base
         :organization_id => proxy_owner.send(perspective).id ).
         merge( Role.where( :name.in => Role::REQUESTOR ) ) ).map(&:user)
     end
-    def fulfilled( approvers = Approver )
+    def fulfilled( approvers = Approver.unscoped )
       approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
     end
-    def unfulfilled( approvers = Approver )
+    def unfulfilled( approvers = Approver.unscoped )
       approvers_to_users( approvers.unfulfilled_for( proxy_owner ) ) - all
-    end
-    def required_for_state( state )
-      approvers_to_users( Approver.where( :framework_id => proxy_owner.
-        fund_grant.fund_source.framework_id, :state => state,
-        :quantity => nil ) )
     end
     protected
     def after_checkpoint
@@ -137,7 +132,7 @@ class FundRequest < ActiveRecord::Base
     after_transition :assigned => :tentative, :do => :deliver_required_approval_notice
   end
 
-  state_machine :request_state, :initial => :started do
+  state_machine :state, :initial => :started do
 
     state :finalized, :released, :started, :tentative
 
@@ -326,7 +321,7 @@ class FundRequest < ActiveRecord::Base
 
   # What is the perspective of approvers this request is waiting on
   def approver_perspective
-    return FundEdition::PERSPECTIVES.first if request_state? :tentative
+    return FundEdition::PERSPECTIVES.first if state? :tentative
     return FundEdition::PERSPECTIVES.last if review_state? :tentative
   end
 

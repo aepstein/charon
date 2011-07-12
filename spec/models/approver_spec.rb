@@ -15,19 +15,12 @@ describe Approver do
   it "should not save without framework" do
     approver = Factory(:approver)
     approver.framework = nil
-    approver.save.should == false
+    approver.save.should be_false
   end
 
   it "should not save without role" do
     approver = Factory(:approver)
     approver.role = nil
-    approver.save.should == false
-  end
-
-  it "should not save with invalid state" do
-    approver = Factory(:approver)
-    approver.state = 'invalid'
-    FundRequest.aasm_state_names.should_not include(approver.state)
     approver.save.should be_false
   end
 
@@ -35,25 +28,25 @@ describe Approver do
     approver = Factory(:approver)
     approver.perspective = 'invalid'
     FundEdition::PERSPECTIVES.should_not include(approver.perspective)
-    approver.save.should == false
+    approver.save.should be_false
   end
 
   it "should not save duplicate approvers" do
     original = Factory(:approver)
     second = original.clone
-    second.save.should == false
+    second.save.should be_false
   end
 
   it 'should have an unfulfilled_for scope that returns unfulfilled approver conditions' do
     [ [0,'all'], [1,'half'], [2,'no'], [1,'no_reviewed'], [0, 'all_reviewed'] ].each do |s|
       quantity, scenario = *s
       send("#{scenario}_approvers_scenario",true)
-      %w( completed reviewed ).should include @fund_request.state
+      [ @fund_request.state, @fund_request.review_state ].should include 'tentative'
       scope = Approver.unfulfilled_for( @fund_request )
       scope.length.should eql quantity
-      scope.should include @quota if quantity == 2 && @fund_request.state == 'completed'
-      scope.should include @all if quantity > 0 && @fund_request.state == 'completed'
-      scope.should include @review if quantity > 0 && @fund_request.state == 'reviewed'
+      scope.should include @quota if quantity == 2 && @fund_request.state == 'tentative'
+      scope.should include @all if quantity > 0 && @fund_request.state == 'tentative'
+      scope.should include @review if quantity > 0 && @fund_request.review_state == 'tentative'
     end
   end
 
@@ -63,9 +56,9 @@ describe Approver do
       send("#{scenario}_approvers_scenario",true)
       scope = Approver.fulfilled_for( @fund_request )
       scope.length.should eql quantity
-      scope.should include @all if quantity == 2 && @fund_request.state == 'completed'
-      scope.should include @quota if quantity > 0 && @fund_request.state == 'completed'
-      scope.should include @review if quantity > 0 && @fund_request.state == 'reviewed'
+      scope.should include @all if quantity == 2 && @fund_request.state == 'tentative'
+      scope.should include @quota if quantity > 0 && @fund_request.state == 'tentative'
+      scope.should include @review if quantity > 0 && @fund_request.review_state == 'tentative'
     end
   end
 

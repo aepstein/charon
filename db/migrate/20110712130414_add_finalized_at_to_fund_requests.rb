@@ -7,7 +7,7 @@ class AddFinalizedAtToFundRequests < ActiveRecord::Migration
       UPDATE fund_requests SET finalized_at = (SELECT MAX(created_at)
       FROM approvals WHERE approvable_type = 'FundRequest' AND
       approvable_id = fund_requests.id)
-      WHERE request_state = 'finalized'
+      WHERE state = 'finalized'
     SQL
   end
 

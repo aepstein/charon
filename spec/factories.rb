@@ -53,7 +53,6 @@ end
 Factory.define :approver do |f|
   f.association :framework
   f.association :role
-  f.state 'submitted'
   f.perspective FundEdition::PERSPECTIVES.first
 end
 
