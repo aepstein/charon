@@ -1,6 +1,6 @@
 class AddFinalizedAtToFundRequests < ActiveRecord::Migration
   def self.up
-#    add_column :fund_requests, :finalized_at, :datetime
+    add_column :fund_requests, :finalized_at, :datetime
 
     say 'Populating finalized_at for finalized requests'
     execute <<-SQL
