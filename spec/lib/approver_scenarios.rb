@@ -6,7 +6,10 @@ module SpecApproverScenarios
     @all_required ||= Factory(:role, :name => Role::REQUESTOR.last )
     @quota = Factory(:approver, :framework => @framework, :role => @quota_required, :quantity => 1)
     @all = Factory(:approver, :framework => @framework, :role => @all_required)
-    @fund_grant = Factory(:fund_grant, :fund_source => Factory(:fund_source, :framework => @framework))
+    @fund_source = Factory(:fund_source, :framework => @framework)
+    @fund_queue = Factory(:fund_queue, :fund_source => @fund_source)
+    @fund_source.fund_queues.reset
+    @fund_grant = Factory(:fund_grant, :fund_source => @fund_source)
     @fund_request = Factory(:fund_request, :fund_grant => @fund_grant)
     @fund_request.approval_checkpoint = @fund_request.created_at - 1.minute
     @fund_request.save!
@@ -37,6 +40,7 @@ module SpecApproverScenarios
 
   def no_reviewed_approvers_scenario(reset_checkpoint=false)
     all_approvers_scenario
+    @fund_request.submit!
     @fund_request.review_state = 'tentative'
     @fund_request.save!
     @reviewer ||= Factory(:role, :name => Role::REVIEWER.first )
