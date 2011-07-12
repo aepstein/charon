@@ -22,6 +22,7 @@ module SpecApproverScenarios
 
   def no_approvers_scenario(reset_checkpoint=false)
     setup_approvers_scenario
+    @fund_request.state = 'tentative'
   end
 
   def half_approvers_scenario(reset_checkpoint=false)

@@ -32,11 +32,11 @@ class Approver < ActiveRecord::Base
       "approvals.approvable_id = #{fund_request.id} AND approvals.created_at > " +
       "#{connection.quote fund_request.approval_checkpoint}" )
   }
-  scope :satisfied, group( 'approvers.id', 'approvers.quantity' ).
+  scope :satisfied, group( 'approvers.id' ).
     having('COUNT(approvals.user_id) >= approvers.quantity OR ' +
     '(approvers.quantity IS NULL AND COUNT(approvals.user_id) >= ' +
     'COUNT(memberships.user_id) )')
-  scope :unsatisfied, group( 'approvers.id', 'approvers.quantity' ).
+  scope :unsatisfied, group( 'approvers.id' ).
     having( '( COUNT(approvals.user_id) < approvers.quantity ) OR ' +
     '(approvers.quantity IS NULL AND COUNT(approvals.user_id) < ' +
     'COUNT(memberships.user_id) )' )

@@ -83,13 +83,13 @@ class FundRequest < ActiveRecord::Base
       User.scoped.joins('INNER JOIN approvers').
       merge( approvers.unquantified.fulfilled_for( proxy_owner ).merge(
         Approval.unscoped.where( :created_at.gt => proxy_owner.approval_checkpoint)
-      ) ).where( 'users.id = memberships.user_id' ).group('memberships.user_id')
+      ) ).where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
     end
     # Returns users who have not fulfilled unquantified approver requirements
     def unfulfilled( approvers = Approver.unscoped )
       User.scoped.not_approved( proxy_owner ).joins('INNER JOIN approvers').
       merge( approvers.unquantified.unfulfilled_for( proxy_owner ) ).
-      where( 'users.id = memberships.user_id' ).group('memberships.user_id')
+      where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
     end
   end
 
