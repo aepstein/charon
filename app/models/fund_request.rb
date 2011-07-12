@@ -74,9 +74,9 @@ class FundRequest < ActiveRecord::Base
   end
   has_many :users, :through => :approvals do
     def for_perspective( perspective )
-      ( Membership.includes(:user).
-          where( :active => true, :organization_id => proxy_owner.send(perspective).id ) &
-          Role.where( :name.in => Role::REQUESTOR ) ).map(&:user)
+      ( Membership.includes(:user).where( :active => true,
+        :organization_id => proxy_owner.send(perspective).id ).
+        merge( Role.where( :name.in => Role::REQUESTOR ) ) ).map(&:user)
     end
     def fulfilled( approvers = Approver )
       approvers_to_users( approvers.fulfilled_for( proxy_owner ) ) & after_checkpoint
@@ -185,9 +185,8 @@ class FundRequest < ActiveRecord::Base
     before_transition all - [ :submitted ] => :submitted, :do => :adopt_queue
 
     after_transition :started => :tentative, :do => :deliver_required_approval_notice
-    after_transition :tentative => :submitted,
-      :do => [ :reset_approval_checkpoint, :send_submitted_notice!, :assign ]
-#    after_transition [ :completed, :submitted ] => :accepted, :do => :adopt_queue!
+    after_transition all - [ :submitted ] => :submitted,
+      :do => [ :reset_approval_checkpoint, :send_submitted_notice! ]
     after_transition :reviewed => :certified, :do => :reset_approval_checkpoint
     after_transition all - [ :released ] => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
@@ -259,6 +258,9 @@ class FundRequest < ActiveRecord::Base
     nil
   end
 
+  # What requirements must the user or organization fulfill in order to have
+  # privileges for this request?
+  # * fulfiller is a user or organization
   def unfulfilled_requirements_for( fulfiller )
     perspective = perspective_for( fulfiller )
     return [] unless perspective && fund_grant && fund_grant.fund_source
@@ -321,6 +323,12 @@ class FundRequest < ActiveRecord::Base
   # Is the request ready for release?
   # * based on status of review state machine
   def releasable?; review_state? :ready; end
+
+  # What is the perspective of approvers this request is waiting on
+  def approver_perspective
+    return FundEdition::PERSPECTIVES.first if request_state? :tentative
+    return FundEdition::PERSPECTIVES.last if review_state? :tentative
+  end
 
   def self.aasm_state_names
     [ :started, :completed, :submitted, :accepted, :reviewed, :certified,

@@ -7,12 +7,10 @@ class Approver < ActiveRecord::Base
 
   validates :framework, :presence => true
   validates :role, :presence => true
-  validates :state,
-    :inclusion => { :in => FundRequest.aasm_state_names.map(&:to_s) }
   validates :perspective,
     :inclusion => { :in => FundEdition::PERSPECTIVES }
   validates :role_id,
-    :uniqueness => { :scope => [ :framework_id, :state, :perspective ] }
+    :uniqueness => { :scope => [ :framework_id, :perspective ] }
 
   default_scope includes( :role ).order( 'roles.name ASC' )
 
@@ -26,8 +24,8 @@ class Approver < ActiveRecord::Base
       "approvals.approvable_id = #{fund_request.id} AND approvals.created_at > " +
       "#{connection.quote fund_request.approval_checkpoint}" ).
     group( 'approvers.id' ).
-    where( 'approvers.framework_id = ? AND approvers.state = ?',
-      fund_request.fund_grant.fund_source.framework_id, fund_request.state )
+    where( :framework_id => fund_request.fund_grant.fund_source.framework_id,
+      :perspective => fund_request.approver_perspective )
   }
   scope :satisfied, having('COUNT(approvals.user_id) >= approvers.quantity OR ' +
     '(approvers.quantity IS NULL AND COUNT(approvals.user_id) >= COUNT(memberships.user_id) )')
