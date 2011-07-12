@@ -23,7 +23,7 @@ class FundRequest < ActiveRecord::Base
     #   allocated to other items
     def allocate!(cap = nil)
       if cap
-        exclusion = where( :id.not_in => proxy_owner.fund_editions.final.
+        exclusion = proxy_owner.fund_grant.fund_items.where( :id.not_in => proxy_owner.fund_editions.final.
           map( &:fund_item_id ) ).sum( :amount )
         cap -= exclusion if exclusion
       end
