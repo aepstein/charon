@@ -135,14 +135,14 @@ class FundEdition < ActiveRecord::Base
   # Returns the next edition relative to this edition
   # * nil if this edition is last
   def next
-    return nil unless next_perspective
+    return nil unless fund_item && next_perspective
     fund_item.fund_editions.next_to( self )
   end
 
   # Returns the previous edition relative to this edition
   # * nil if this edition is first
   def previous
-    return nil unless previous_perspective
+    return nil unless fund_item && previous_perspective
     fund_item.fund_editions.previous_to( self )
   end
 

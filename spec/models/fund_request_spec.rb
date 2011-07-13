@@ -85,29 +85,29 @@ describe FundRequest do
     node = Factory(:node, :item_quantity_limit => 3)
     source = Factory(:fund_source, :structure => node.structure)
     grant = Factory(:fund_grant, :fund_source => source)
-    request = Factory(:fund_request, :fund_grant => grant)
+    fund_request = Factory(:fund_request, :fund_grant => grant)
     first_fund_edition = Factory(:fund_edition, :amount => 100.0,
-      :fund_request => request)
+      :fund_request => fund_request)
     first_fund_item = first_fund_edition.fund_item
-    second_fund_edition = Factory(:fund_edition, :fund_request => request,
+    second_fund_edition = Factory(:fund_edition, :fund_request => fund_request,
       :amount => 100.0 )
     second_fund_item = second_fund_edition.fund_item
     first_fund_item.fund_editions.reset
-    first_fund_item.fund_editions.build_next_for_fund_request(request).save!
+    first_fund_item.fund_editions.build_next_for_fund_request(fund_request).save!
     second_fund_item.fund_editions.reset
-    second_fund_item.fund_editions.build_next_for_fund_request(request).save!
-    request.reload
-    request.fund_items.length.should eql 2
-    request.fund_editions.length.should eql 4
-    request.fund_items.allocate!(150.0)
-    request.fund_items.first.amount.should eql 100
-    request.fund_items.last.amount.should eql 50
-    request.fund_items.allocate!
-    request.fund_items.first.amount.should eql 100
-    request.fund_items.last.amount.should eql 100
-    request.fund_items.allocate!(0.0)
-    request.fund_items.first.amount.should eql 0
-    request.fund_items.last.amount.should eql 0
+    second_fund_item.fund_editions.build_next_for_fund_request(fund_request).save!
+    fund_request.reload
+    fund_request.fund_items.length.should eql 2
+    fund_request.fund_editions.length.should eql 4
+    fund_request.fund_items.allocate!(150.0)
+    fund_request.fund_items.first.amount.should eql 100
+    fund_request.fund_items.last.amount.should eql 50
+    fund_request.fund_items.allocate!
+    fund_request.fund_items.first.amount.should eql 100
+    fund_request.fund_items.last.amount.should eql 100
+    fund_request.fund_items.allocate!(0.0)
+    fund_request.fund_items.first.amount.should eql 0
+    fund_request.fund_items.last.amount.should eql 0
   end
 
   it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do

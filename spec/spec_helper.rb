@@ -9,8 +9,12 @@ Spork.prefork do
   RSpec.configure do |config|
     config.mock_with :rspec
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
-    config.use_transactional_fixtures = true
+    config.use_transactional_fixtures = false
     config.include ActionDispatch::TestProcess
+    config.before(:each) do
+      DatabaseCleaner.strategy = :truncation, {:except => %w[ neighborhoods ]}
+      DatabaseCleaner.clean
+    end
   end
 end
 
