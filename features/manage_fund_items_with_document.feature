@@ -1,6 +1,6 @@
 Feature: Manage fund_items with document
   In order to attach documentation to fund_requests
-  As a fund_requestor or reviewer
+  As a requestor or reviewer
   I want to include documents in fund_editions
 
   Background:

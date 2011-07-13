@@ -9,8 +9,8 @@ Feature: Manage fund_requests
   Scenario Outline: Test permissions for university_accounts controller
     Given an organization exists
     And a user: "member" exists
-    And a fund_requestor_role exists
-    And a membership exists with user: user "member", organization: the organization, role: the fund_requestor_role
+    And a requestor_role exists
+    And a membership exists with user: user "member", organization: the organization, role: the requestor_role
     And a user: "regular" exists
     And a university_account exists with department_code: "A00", subledger_code: "0000", organization: the organization
     And I log in as user: "<user>"

@@ -9,8 +9,8 @@ Feature: Manage fund_requests
   Scenario Outline: Test permissions for activity_reports controller
     Given an organization exists
     And a user: "member" exists
-    And a fund_requestor_role exists
-    And a membership exists with user: user "member", organization: the organization, role: the fund_requestor_role
+    And a requestor_role exists
+    And a membership exists with user: user "member", organization: the organization, role: the requestor_role
     And a user: "regular" exists
     And an activity_report exists with description: "Then", organization: the organization
     And a current_activity_report exists with description: "Now", organization: the organization

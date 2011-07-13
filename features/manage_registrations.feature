@@ -8,13 +8,13 @@ Feature: Manage registrations
     And a user: "regular" exists
 
   Scenario Outline: Test permissions for registrations controller actions
-    Given a user: "fund_requestor" exists
+    Given a user: "requestor" exists
     And an organization exists with last_name: "Alternate Club"
     And a registration_term exists
     And a registration exists with name: "Cool Club", registration_term: the registration_term, organization: the organization
     And there are no roles
-    And a fund_requestor_role exists
-    And a membership exists with registration: the registration, user: user "fund_requestor", role: the fund_requestor_role
+    And a requestor_role exists
+    And a membership exists with registration: the registration, user: user "requestor", role: the requestor_role
     And I log in as user: "<user>"
     Given I am on the page for the registration
     Then I should <show> authorized
@@ -27,7 +27,7 @@ Feature: Manage registrations
     Examples:
       | user           | show    |
       | admin          | see     |
-      | fund_requestor      | see     |
+      | requestor      | see     |
       | regular        | not see |
 
   Scenario: Search registrations

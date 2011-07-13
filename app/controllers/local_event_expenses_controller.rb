@@ -20,8 +20,8 @@ class LocalEventExpensesController < ApplicationController
                        event.location,
                        event.uup_required? ? 'Y' : 'N',
                        event.purpose,
-                       event.fund_requestor.name,
-                       event.fund_requestor.users.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
+                       event.requestor.name,
+                       event.requestor.users.uniq.map { |u| "#{u} (#{u.net_id})" }.join(", ") ] )
           end
         end
         send_data csv_string, :disposition => "attachment; filename=local_events.csv"

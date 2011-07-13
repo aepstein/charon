@@ -9,8 +9,8 @@ Feature: Manage fund_requests
   Scenario Outline: Test permissions for inventory_items controller
     Given an organization exists
     And a user: "member" exists
-    And a fund_requestor_role exists
-    And a membership exists with user: user "member", organization: the organization, role: the fund_requestor_role
+    And a requestor_role exists
+    And a membership exists with user: user "member", organization: the organization, role: the requestor_role
     And a user: "regular" exists
     And an inventory_item exists with description: "Boots", organization: the organization
     And an inventory_item exists with description: "Socks", organization: the organization, acquired_on: "2010-01-01", retired_on: "2010-02-01"

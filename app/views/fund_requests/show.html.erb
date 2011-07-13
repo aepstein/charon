@@ -2,7 +2,7 @@
 
 <p>FundSource: <%= @fund_request.fund_grant.fund_source %></p>
 <p>Status: <%= @fund_request.status %></p>
-<p>FundRequestor total: <%= number_to_currency @fund_request.fund_editions.where( :perspective => 'fund_requestor').sum('fund_editions.amount') %></p>
+<p>FundRequestor total: <%= number_to_currency @fund_request.fund_editions.where( :perspective => 'requestor').sum('fund_editions.amount') %></p>
 <% if permitted_to?( :review, @fund_request ) || @fund_request.released? -%>
 <p>Reviewer total: <%= number_to_currency @fund_request.fund_editions.where( :perspective => 'reviewer').sum('fund_editions.amount') %></p>
 <p>Allocation total (after caps): <%= number_to_currency @fund_request.fund_items.sum('fund_items.amount') %></p>
@@ -29,7 +29,7 @@
 <% if @fund_request.status == 'started' %>
 <p>
 Below is a listing of fund_items in your fund_request.  You may add, move (re-prioritize),
-and delete fund_items.  For each fund_item, you should also add fund_requestor fund_edition specifiying
+and delete fund_items.  For each fund_item, you should also add requestor fund_edition specifiying
 details about that fund_item, including the amount you are fund_requesting.
 </p>
 

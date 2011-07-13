@@ -1,7 +1,7 @@
 #TODO withdrawal functional testing
 Feature: Manage fund_requests
   In order to prepare, review, and generate transactions
-  As a fund_requestor or reviewer
+  As a requestor or reviewer
   I want to manage fund_requests
 
   Background:
@@ -9,12 +9,12 @@ Feature: Manage fund_requests
 
   Scenario Outline: Test how permissions failures are reported to the user
     Given an organization: "reviewer" exists with last_name: "Funding Source"
-    And an organization: "fund_requestor" exists with last_name: "Applicant"
-    And a fund_requestor_role exists
+    And an organization: "requestor" exists with last_name: "Applicant"
+    And a requestor_role exists
     And a reviewer_role exists
-    And a user: "fund_requestor" exists with status: "grad"
+    And a user: "requestor" exists with status: "grad"
     And a user: "reviewer" exists with status: "grad"
-    And a membership exists with role: the fund_requestor_role, active: true, organization: organization "fund_requestor", user: user "fund_requestor"
+    And a membership exists with role: the requestor_role, active: true, organization: organization "requestor", user: user "requestor"
     And a membership exists with role: the reviewer_role, active: true, organization: organization "reviewer", user: user "reviewer"
     And a framework exists with name: "Annual"
     And an agreement exists with name: "Key Agreement"
@@ -22,7 +22,7 @@ Feature: Manage fund_requests
     And a registration_criterion exists with must_register: true, minimal_percentage: 15, type_of_member: "undergrads"
     And a requirement exists with framework: the framework, perspectives: nil, perspective: "<perspective>", role: the <perspective>_role, fulfillable: the <fulfillable>
     And a fund_source exists with organization: organization "reviewer", framework: the framework
-    And a fund_request exists with fund_source: the fund_source, organization: organization "fund_requestor"
+    And a fund_request exists with fund_source: the fund_source, organization: organization "requestor"
     And I log in as user: "<user>"
     When I am on the page for the fund_request
     Then I should <show> authorized
@@ -33,26 +33,26 @@ Feature: Manage fund_requests
     And I should <registration> "No less than 15 percent of members provided in the current registration must be undergrads and the registration must be approved required for <perspective> organization."
     Examples:
       | user      | perspective | fulfillable            | show    | u_mesg  | status  | agreement | o_mesg  | o_name    | registration |
-      | admin     | fund_requestor   | user_status_criterion  | see     | not see | not see | not see   | not see | Applicant | not see      |
-      | fund_requestor | fund_requestor   | user_status_criterion  | not see | see     | see     | not see   | not see | Applicant | not see      |
-      | fund_requestor | fund_requestor   | agreement              | not see | see     | not see | see       | not see | Applicant | not see      |
-      | fund_requestor | fund_requestor   | registration_criterion | not see | not see | not see | not see   | see     | Applicant | see          |
+      | admin     | requestor   | user_status_criterion  | see     | not see | not see | not see   | not see | Applicant | not see      |
+      | requestor | requestor   | user_status_criterion  | not see | see     | see     | not see   | not see | Applicant | not see      |
+      | requestor | requestor   | agreement              | not see | see     | not see | see       | not see | Applicant | not see      |
+      | requestor | requestor   | registration_criterion | not see | not see | not see | not see   | see     | Applicant | see          |
 
   Scenario Outline: Test permissions for fund_requests controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
     And an organization: "observer" exists with last_name: "Observer"
     And a manager_role: "manager" exists
-    And a fund_requestor_role: "fund_requestor" exists
+    And a requestor_role: "requestor" exists
     And a reviewer_role: "reviewer" exists
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
     And a user: "source_reviewer" exists
     And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
-    And a user: "applicant_fund_requestor" exists
-    And a membership exists with user: user "applicant_fund_requestor", organization: organization "applicant", role: role "fund_requestor"
-    And a user: "observer_fund_requestor" exists
-    And a membership exists with user: user "observer_fund_requestor", organization: organization "observer", role: role "fund_requestor"
+    And a user: "applicant_requestor" exists
+    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
+    And a user: "observer_requestor" exists
+    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
     And a <tense>fund_source exists with name: "Annual", organization: organization "source"
     And a fund_request: "annual" exists with fund_source: the fund_source, organization: organization "applicant", status: "<status>"
@@ -83,28 +83,28 @@ Feature: Manage fund_requests
       |       | started   | admin               | see     | see     | see     | not see | not see | see     |
       |       | started   | source_manager      | see     | see     | see     | not see | not see | see     |
       |       | started   | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | started   | applicant_fund_requestor | see     | see     | see     | not see | not see | see     |
-      | past_ | started   | applicant_fund_requestor | not see | not see | see     | not see | not see | not see |
-      |       | started   | observer_fund_requestor  | not see | not see | not see | not see | not see | not see |
+      |       | started   | applicant_requestor | see     | see     | see     | not see | not see | see     |
+      | past_ | started   | applicant_requestor | not see | not see | see     | not see | not see | not see |
+      |       | started   | observer_requestor  | not see | not see | not see | not see | not see | not see |
       |       | started   | regular             | not see | not see | not see | not see | not see | not see |
       |       | completed | admin               | see     | see     | see     | not see | see     | see     |
       |       | completed | source_manager      | see     | see     | see     | not see | see     | see     |
       |       | completed | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | completed | applicant_fund_requestor | see     | not see | see     | not see | not see | not see |
-      | past_ | completed | applicant_fund_requestor | not see | not see | see     | not see | not see | not see |
-      |       | completed | observer_fund_requestor  | not see | not see | not see | not see | not see | not see |
+      |       | completed | applicant_requestor | see     | not see | see     | not see | not see | not see |
+      | past_ | completed | applicant_requestor | not see | not see | see     | not see | not see | not see |
+      |       | completed | observer_requestor  | not see | not see | not see | not see | not see | not see |
       |       | completed | regular             | not see | not see | not see | not see | not see | not see |
       |       | submitted | admin               | see     | see     | see     | see     | see     | see     |
       |       | submitted | source_manager      | see     | see     | see     | see     | see     | see     |
       |       | submitted | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | submitted | applicant_fund_requestor | see     | not see | see     | not see | not see | not see |
-      |       | submitted | observer_fund_requestor  | not see | not see | not see | not see | not see | not see |
+      |       | submitted | applicant_requestor | see     | not see | see     | not see | not see | not see |
+      |       | submitted | observer_requestor  | not see | not see | not see | not see | not see | not see |
       |       | submitted | regular             | not see | not see | not see | not see | not see | not see |
       |       | accepted  | admin               | see     | see     | see     | not see | not see | see     |
       |       | accepted  | source_manager      | see     | see     | see     | not see | not see | see     |
       |       | accepted  | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | accepted  | applicant_fund_requestor | see     | not see | see     | not see | not see | not see |
-      |       | accepted  | observer_fund_requestor  | not see | not see | not see | not see | not see | not see |
+      |       | accepted  | applicant_requestor | see     | not see | see     | not see | not see | not see |
+      |       | accepted  | observer_requestor  | not see | not see | not see | not see | not see | not see |
       |       | accepted  | regular             | not see | not see | not see | not see | not see | not see |
 
   Scenario: Create and update fund_requests

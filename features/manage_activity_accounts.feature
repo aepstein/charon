@@ -10,8 +10,8 @@ Feature: Manage activity accounts
     Given an organization: "source" exists
     And an organization: "recipient" exists
     And a user: "member" exists
-    And a fund_requestor_role exists
-    And a membership exists with user: user "member", organization: organization "recipient", role: the fund_requestor_role
+    And a requestor_role exists
+    And a membership exists with user: user "member", organization: organization "recipient", role: the requestor_role
     And a user: "recipient_manager" exists
     And a manager_role exists
     And a membership exists with user: user "recipient_manager", organization: organization "recipient", role: the manager_role

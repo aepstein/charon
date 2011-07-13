@@ -197,7 +197,7 @@ class FundRequestsController < ApplicationController
                    ( fund_request.fund_grant.organization.independent? ? 'Yes' : 'No' ),
                    ( fund_request.fund_grant.organization.club_sport? ? 'Yes' : 'No' ),
                    fund_request.status,
-                   "#{fund_request.fund_editions.where(:perspective => 'fund_requestor').sum('amount')}",
+                   "#{fund_request.fund_editions.where(:perspective => 'requestor').sum('amount')}",
                    "#{fund_request.fund_editions.where(:perspective => 'reviewer').sum('amount')}",
                    "#{fund_request.fund_items.sum('fund_items.amount')}" ] + Category.all.map { |c| "#{fund_request.fund_items.allocation_for_category(c)}" } )
       end

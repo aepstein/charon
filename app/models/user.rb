@@ -64,20 +64,20 @@ class User < ActiveRecord::Base
         :organization_id.in => organizations.map(&:id) ).active.map(&:role)
     end
     def requestor_in?(organization)
-      fund_requestor_in_ids( organization ).length > 0
+      requestor_in_ids( organization ).length > 0
     end
     def reviewer_in?(organization)
       reviewer_in_ids( organization ).length > 0
     end
-    def fund_requestor_in_ids(organization)
-      ids_in_perspective organization, 'fund_requestor'
+    def requestor_in_ids(organization)
+      ids_in_perspective organization, 'requestor'
     end
     def reviewer_in_ids(organization)
       ids_in_perspective organization, 'reviewer'
     end
     def ids_in_perspective( organization, perspective )
       names = case perspective
-      when 'fund_requestor'
+      when 'requestor'
         Role::REQUESTOR
       when 'reviewer'
         Role::REVIEWER

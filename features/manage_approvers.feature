@@ -40,13 +40,13 @@ Feature: Manage approvers
   Scenario: Register new approver and update
     Given I log in as user: "admin"
     And I am on the new approver page for framework: "safc"
-    When I select "fund_requestor" from "Perspective"
+    When I select "requestor" from "Perspective"
     And I select "president" from "Role"
     And I select "completed" from "Status"
     And I press "Create"
     Then I should see "Approver was successfully created."
     And I should see "Framework: safc"
-    And I should see "Perspective: fund_requestor"
+    And I should see "Perspective: requestor"
     And I should see "Role: president"
     And I should see "Status: completed"
     When I follow "Edit"
@@ -63,15 +63,15 @@ Feature: Manage approvers
   Scenario: Delete approver
     Given a role: "vice-president" exists with name: "vice-president"
     And a role: "advisor" exists with name: "advisor"
-    And an approver exists with framework: framework "safc", role: role "vice-president", status: "completed", perspective: "fund_requestor"
-    And an approver exists with framework: framework "safc", role: role "treasurer", status: "completed", perspective: "fund_requestor"
-    And an approver exists with framework: framework "safc", role: role "president", status: "completed", perspective: "fund_requestor"
-    And an approver exists with framework: framework "safc", role: role "advisor", status: "completed", perspective: "fund_requestor"
+    And an approver exists with framework: framework "safc", role: role "vice-president", status: "completed", perspective: "requestor"
+    And an approver exists with framework: framework "safc", role: role "treasurer", status: "completed", perspective: "requestor"
+    And an approver exists with framework: framework "safc", role: role "president", status: "completed", perspective: "requestor"
+    And an approver exists with framework: framework "safc", role: role "advisor", status: "completed", perspective: "requestor"
     And I log in as user: "admin"
     When I follow "Destroy" for the 3rd approver for framework: "safc"
     Then I should see the following approvers:
       | Perspective | Role           | Status    |
-      | fund_requestor   | advisor        | completed |
-      | fund_requestor   | president      | completed |
-      | fund_requestor   | vice-president | completed |
+      | requestor   | advisor        | completed |
+      | requestor   | president      | completed |
+      | requestor   | vice-president | completed |
 

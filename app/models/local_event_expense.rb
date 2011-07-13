@@ -21,7 +21,7 @@ class LocalEventExpense < ActiveRecord::Base
   validates :services_cost,
     :numericality => { :greater_than_or_equal_to => 0 }
 
-  delegate :fund_requestor, :to => :fund_request
+  delegate :requestor, :to => :fund_request
   delegate :fund_request, :to => :fund_edition
 
   def copies_cost

@@ -11,16 +11,16 @@ Feature: Manage fund_sources
     Given an organization: "applicant" exists with last_name: "Applicant"
     And an organization: "observer" exists with last_name: "Observer"
     And a manager_role: "manager" exists
-    And a fund_requestor_role: "fund_requestor" exists
+    And a requestor_role: "requestor" exists
     And a reviewer_role: "reviewer" exists
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
     And a user: "source_reviewer" exists
     And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
-    And a user: "applicant_fund_requestor" exists
-    And a membership exists with user: user "applicant_fund_requestor", organization: organization "applicant", role: role "fund_requestor"
-    And a user: "observer_fund_requestor" exists
-    And a membership exists with user: user "observer_fund_requestor", organization: organization "observer", role: role "fund_requestor"
+    And a user: "applicant_requestor" exists
+    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
+    And a user: "observer_requestor" exists
+    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
     And a <fund_source>fund_source: "current" exists with name: "Opportunity", organization: organization "source"
     And a fund_request exists with fund_source: the fund_source, organization: organization "applicant"
@@ -48,17 +48,17 @@ Feature: Manage fund_sources
       |         | admin              | see     | see     | see      | see     |
       |         | source_manager     | see     | see     | see      | see     |
       |         | source_reviewer    | not see | not see | not see  | see     |
-      |         | observer_fund_requestor | not see | not see | not see  | see     |
+      |         | observer_requestor | not see | not see | not see  | see     |
       |         | regular            | not see | not see | not see  | see     |
       | past_   | admin              | see     | see     | see      | see     |
       | past_   | source_manager     | see     | see     | see      | see     |
       | past_   | source_reviewer    | not see | not see | not see  | see     |
-      | past_   | observer_fund_requestor | not see | not see | not see  | not see |
+      | past_   | observer_requestor | not see | not see | not see  | not see |
       | past_   | regular            | not see | not see | not see  | not see |
       | future_ | admin              | see     | see     | see      | see     |
       | future_ | source_manager     | see     | see     | see      | see     |
       | future_ | source_reviewer    | not see | not see | not see  | see     |
-      | future_ | observer_fund_requestor | not see | not see | not see  | not see |
+      | future_ | observer_requestor | not see | not see | not see  | not see |
       | future_ | regular            | not see | not see | not see  | not see |
 
   Scenario: Register new fund_source and update

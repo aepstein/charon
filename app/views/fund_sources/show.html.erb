@@ -42,7 +42,7 @@
 
 <% if permitted_to? :review, @fund_source  -%>
 <p>
-  <b>Release message:</b> (included in notices sent to fund_requestor members when fund_request is released)
+  <b>Release message:</b> (included in notices sent to requestor members when fund_request is released)
 </p>
 
 <%= markdown @fund_source.release_message %>
@@ -62,7 +62,7 @@
       <%= table_row_tag do %>
         <td><%=h status %></td>
         <td><%= @fund_source.fund_requests.with_status( status ).size %></td>
-        <td><%= number_to_currency( @fund_source.fund_requests.amount_for_perspective_and_status('fund_requestor',status) ) %></td>
+        <td><%= number_to_currency( @fund_source.fund_requests.amount_for_perspective_and_status('requestor',status) ) %></td>
         <td><%= number_to_currency( @fund_source.fund_requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
         <td><%= number_to_currency( @fund_source.fund_requests.fund_item_amount_for_status(status) ) %></td>
       <% end %>

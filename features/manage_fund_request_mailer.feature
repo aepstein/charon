@@ -9,21 +9,21 @@ Feature: Manage fund_request mailers
     And a role: "treasurer" exists with name: "treasurer"
     And a role: "officer" exists with name: "officer"
     And a role: "commissioner" exists with name: "commissioner"
-    And an approver exists with framework: the framework, role: role "president", perspective: "fund_requestor", status: "completed"
-    And an approver exists with framework: the framework, role: role "treasurer", perspective: "fund_requestor", status: "completed"
-    And an organization: "fund_requestor" exists with last_name: "Money Taking Club"
+    And an approver exists with framework: the framework, role: role "president", perspective: "requestor", status: "completed"
+    And an approver exists with framework: the framework, role: role "treasurer", perspective: "requestor", status: "completed"
+    And an organization: "requestor" exists with last_name: "Money Taking Club"
     And an organization: "reviewer" exists with last_name: "Money Giving Club"
     And a fund_source exists with framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized release message."
-    And a fund_request: "started" exists with fund_source: the fund_source, organization: organization "fund_requestor"
-    And a fund_request: "completed" exists with fund_source: the fund_source, status: "completed", organization: organization "fund_requestor"
+    And a fund_request: "started" exists with fund_source: the fund_source, organization: organization "requestor"
+    And a fund_request: "completed" exists with fund_source: the fund_source, status: "completed", organization: organization "requestor"
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
     And a user: "treasurer" exists with email: "treasurer@example.com", first_name: "Jane", last_name: "Doe"
     And a user: "officer" exists with email: "officer@example.com", first_name: "Alpha", last_name: "Beta"
     And a user: "old_president" exists with email: "old_president@example.com", first_name: "Jane", last_name: "Jacobs"
-    And a membership exists with organization: organization "fund_requestor", role: role "president", user: user "president", active: true
-    And a membership exists with organization: organization "fund_requestor", role: role "treasurer", user: user "treasurer", active: true
-    And a membership exists with organization: organization "fund_requestor", role: role "officer", user: user "officer", active: true
-    And a membership exists with organization: organization "fund_requestor", role: role "president", user: user "old_president", active: false
+    And a membership exists with organization: organization "requestor", role: role "president", user: user "president", active: true
+    And a membership exists with organization: organization "requestor", role: role "treasurer", user: user "treasurer", active: true
+    And a membership exists with organization: organization "requestor", role: role "officer", user: user "officer", active: true
+    And a membership exists with organization: organization "requestor", role: role "president", user: user "old_president", active: false
     And an approval exists with approvable: fund_request "completed", user: user "president"
 
   Scenario: Send notice regarding a started fund_request

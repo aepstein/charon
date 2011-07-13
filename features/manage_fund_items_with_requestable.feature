@@ -1,6 +1,6 @@
 Feature: Manage fund_items with fund_requestable
   In order to calculate and track transaction fund_requests
-  As a fund_requestor or reviewer
+  As a requestor or reviewer
   I want to create, update, and show fund_editions
 
   Background:

@@ -11,26 +11,26 @@ Feature: Manage fund_items
     And an organization: "applicant" exists with last_name: "Applicant"
     And an organization: "observer" exists with last_name: "Observer"
     And a manager_role: "manager" exists
-    And a fund_requestor_role: "fund_requestor" exists
+    And a requestor_role: "requestor" exists
     And a reviewer_role: "reviewer" exists
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
     And a user: "source_reviewer" exists
     And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
-    And a user: "applicant_fund_requestor" exists
-    And a membership exists with user: user "applicant_fund_requestor", organization: organization "applicant", role: role "fund_requestor"
-    And a user: "observer_fund_requestor" exists
-    And a membership exists with user: user "observer_fund_requestor", organization: organization "observer", role: role "fund_requestor"
+    And a user: "applicant_requestor" exists
+    And a membership exists with user: user "applicant_requestor", organization: organization "applicant", role: role "requestor"
+    And a user: "observer_requestor" exists
+    And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "conflictor" exists
     And a membership exists with user: user "conflictor", organization: organization "source", role: role "reviewer"
-    And a membership exists with user: user "conflictor", organization: organization "applicant", role: role "fund_requestor"
+    And a membership exists with user: user "conflictor", organization: organization "applicant", role: role "requestor"
     And a user: "regular" exists
     And a structure exists
     And a node: "root" exists with structure: the structure, name: "Root"
     And a fund_source exists with name: "Annual", organization: organization "source", structure: the structure
     And a fund_request exists with fund_source: the fund_source, organization: organization "applicant", status: "<status>"
     And an fund_item: "root" exists with fund_request: the fund_request, node: node "root"
-    And an fund_edition exists with fund_item: fund_item "root", perspective: "fund_requestor"
+    And an fund_edition exists with fund_item: fund_item "root", perspective: "requestor"
     And I log in as user: "<user>"
     And I am on the new fund_item page for the fund_request
     Then I should <create> authorized
@@ -51,51 +51,51 @@ Feature: Manage fund_items
       | started   | admin               | see     | see     | see     | see     |
       | started   | source_manager      | see     | see     | see     | see     |
       | started   | source_reviewer     | not see | not see | see     | not see |
-      | started   | applicant_fund_requestor | see     | see     | see     | see     |
+      | started   | applicant_requestor | see     | see     | see     | see     |
       | started   | conflictor          | see     | see     | see     | see     |
-      | started   | observer_fund_requestor  | not see | not see | not see | not see |
+      | started   | observer_requestor  | not see | not see | not see | not see |
       | started   | regular             | not see | not see | not see | not see |
       | completed | admin               | see     | see     | see     | see     |
       | completed | source_manager      | see     | see     | see     | see     |
       | completed | source_reviewer     | not see | not see | see     | not see |
-      | completed | applicant_fund_requestor | not see | not see | see     | not see |
+      | completed | applicant_requestor | not see | not see | see     | not see |
       | completed | conflictor          | not see | not see | see     | not see |
-      | completed | observer_fund_requestor  | not see | not see | not see | not see |
+      | completed | observer_requestor  | not see | not see | not see | not see |
       | completed | regular             | not see | not see | not see | not see |
       | submitted | admin               | see     | see     | see     | see     |
       | submitted | source_manager      | see     | see     | see     | see     |
       | submitted | source_reviewer     | not see | not see | see     | not see |
-      | submitted | applicant_fund_requestor | not see | not see | see     | not see |
+      | submitted | applicant_requestor | not see | not see | see     | not see |
       | submitted | conflictor          | not see | not see | see     | not see |
-      | submitted | observer_fund_requestor  | not see | not see | not see | not see |
+      | submitted | observer_requestor  | not see | not see | not see | not see |
       | submitted | regular             | not see | not see | not see | not see |
       | accepted  | admin               | see     | see     | see     | see     |
       | accepted  | source_manager      | see     | see     | see     | see     |
       | accepted  | source_reviewer     | not see | see     | see     | not see |
-      | accepted  | applicant_fund_requestor | not see | not see | see     | not see |
+      | accepted  | applicant_requestor | not see | not see | see     | not see |
       | accepted  | conflictor          | not see | not see | see     | not see |
-      | accepted  | observer_fund_requestor  | not see | not see | not see | not see |
+      | accepted  | observer_requestor  | not see | not see | not see | not see |
       | accepted  | regular             | not see | not see | not see | not see |
       | reviewed  | admin               | see     | see     | see     | see     |
       | reviewed  | source_manager      | see     | see     | see     | see     |
       | reviewed  | source_reviewer     | not see | not see | see     | not see |
-      | reviewed  | applicant_fund_requestor | not see | not see | see     | not see |
+      | reviewed  | applicant_requestor | not see | not see | see     | not see |
       | reviewed  | conflictor          | not see | not see | see     | not see |
-      | reviewed  | observer_fund_requestor  | not see | not see | not see | not see |
+      | reviewed  | observer_requestor  | not see | not see | not see | not see |
       | reviewed  | regular             | not see | not see | not see | not see |
       | certified | admin               | see     | see     | see     | see     |
       | certified | source_manager      | see     | see     | see     | see     |
       | certified | source_reviewer     | not see | not see | see     | not see |
-      | certified | applicant_fund_requestor | not see | not see | see     | not see |
+      | certified | applicant_requestor | not see | not see | see     | not see |
       | certified | conflictor          | not see | not see | see     | not see |
-      | certified | observer_fund_requestor  | not see | not see | not see | not see |
+      | certified | observer_requestor  | not see | not see | not see | not see |
       | certified | regular             | not see | not see | not see | not see |
       | released  | admin               | see     | see     | see     | see     |
       | released  | source_manager      | see     | see     | see     | see     |
       | released  | source_reviewer     | not see | not see | see     | not see |
-      | released  | applicant_fund_requestor | not see | not see | see     | not see |
+      | released  | applicant_requestor | not see | not see | see     | not see |
       | released  | conflictor          | not see | not see | see     | not see |
-      | released  | observer_fund_requestor  | not see | not see | not see | not see |
+      | released  | observer_requestor  | not see | not see | not see | not see |
       | released  | regular             | not see | not see | not see | not see |
 
   Scenario Outline: Create or update an fund_item with embedded fund_edition
@@ -141,11 +141,11 @@ Feature: Manage fund_items
     Given an organization exists with last_name: "Applicant"
     And a fund_request exists with organization: the organization
     And an fund_item exists with fund_request: the fund_request
-    And an fund_edition exists with fund_item: the fund_item, perspective: "fund_requestor"
+    And an fund_edition exists with fund_item: the fund_item, perspective: "requestor"
     And an fund_edition exists with fund_item: the fund_item, perspective: "reviewer"
     And a user exists with admin: true
-    And a fund_requestor_role exists
-    And a membership exists with user: the user, role: the fund_requestor_role, organization: the organization
+    And a requestor_role exists
+    And a membership exists with user: the user, role: the requestor_role, organization: the organization
     And I log in as the user
     When I am on the edit page for the fund_item
     And I fill in "FundRequestor amount" with "100"

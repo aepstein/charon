@@ -13,11 +13,11 @@ module SpecApproverScenarios
     @fund_request = Factory(:fund_request, :fund_grant => @fund_grant)
     @fund_request.approval_checkpoint = @fund_request.created_at - 1.minute
     @fund_request.save!
-    fund_requestor = @fund_grant.organization
-    @quota_fulfilled = Factory(:membership, :role => @quota_required, :organization => fund_requestor).user
-    @quota_unfulfilled = Factory(:membership, :role => @quota_required, :organization => fund_requestor).user
-    @all_fulfilled = Factory(:membership, :role => @all_required, :organization => fund_requestor).user
-    @all_unfulfilled = Factory(:membership, :role => @all_required, :organization => fund_requestor).user
+    requestor = @fund_grant.organization
+    @quota_fulfilled = Factory(:membership, :role => @quota_required, :organization => requestor).user
+    @quota_unfulfilled = Factory(:membership, :role => @quota_required, :organization => requestor).user
+    @all_fulfilled = Factory(:membership, :role => @all_required, :organization => requestor).user
+    @all_unfulfilled = Factory(:membership, :role => @all_required, :organization => requestor).user
   end
 
   def no_approvers_scenario(reset_checkpoint=false)
