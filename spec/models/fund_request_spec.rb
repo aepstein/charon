@@ -82,32 +82,29 @@ describe FundRequest do
   end
 
   it "should have fund_items.allocate! which enforces caps" do
-    node = Factory(:node, :item_quantity_limit => 3)
-    source = Factory(:fund_source, :structure => node.structure)
-    grant = Factory(:fund_grant, :fund_source => source)
-    fund_request = Factory(:fund_request, :fund_grant => grant)
-    first_fund_edition = Factory(:fund_edition, :amount => 100.0,
-      :fund_request => fund_request)
-    first_fund_item = first_fund_edition.fund_item
-    second_fund_edition = Factory(:fund_edition, :fund_request => fund_request,
-      :amount => 100.0 )
-    second_fund_item = second_fund_edition.fund_item
-    first_fund_item.fund_editions.reset
-    first_fund_item.fund_editions.build_next_for_fund_request(fund_request).save!
-    second_fund_item.fund_editions.reset
-    second_fund_item.fund_editions.build_next_for_fund_request(fund_request).save!
-    fund_request.reload
-    fund_request.fund_items.length.should eql 2
-    fund_request.fund_editions.length.should eql 4
-    fund_request.fund_items.allocate!(150.0)
-    fund_request.fund_items.first.amount.should eql 100
-    fund_request.fund_items.last.amount.should eql 50
-    fund_request.fund_items.allocate!
-    fund_request.fund_items.first.amount.should eql 100
-    fund_request.fund_items.last.amount.should eql 100
-    fund_request.fund_items.allocate!(0.0)
-    fund_request.fund_items.first.amount.should eql 0
-    fund_request.fund_items.last.amount.should eql 0
+    ::Rails.logger.info 'starting problem test'
+    @fund_request.save!
+    first_fund_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
+    second_fund_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
+    2.times do |i|
+      first_fund_item.fund_editions.build_next_for_fund_request( @fund_request,
+        { :amount => 100.0 } ).save!
+      second_fund_item.fund_editions.build_next_for_fund_request( @fund_request,
+        { :amount => 100.0 } ).save!
+    end
+    @fund_request.reload
+    @fund_request.fund_items.length.should eql 2
+    @fund_request.fund_editions.length.should eql 4
+    @fund_request.fund_items.allocate!(150.0)
+    @fund_request.fund_items.first.amount.should eql 100
+    @fund_request.fund_items.last.amount.should eql 50
+    @fund_request.fund_items.allocate!
+    @fund_request.fund_items.first.amount.should eql 100
+    @fund_request.fund_items.last.amount.should eql 100
+    @fund_request.fund_items.allocate!(0.0)
+    @fund_request.fund_items.first.amount.should eql 0
+    @fund_request.fund_items.last.amount.should eql 0
+    ::Rails.logger.info 'ending problem test'
   end
 
   it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do
@@ -120,18 +117,28 @@ describe FundRequest do
     FundRequest.incomplete.should include incomplete
   end
 
-  it 'should have an approvable? method that will not allow approval if there are missing fund_editions' do
-    complete = Factory(:fund_edition).fund_request
-    incomplete = Factory(:fund_request, :fund_grant => Factory(:fund_item).fund_grant)
-    reviewed = Factory(:fund_edition).fund_request
-    reviewed.state = 'submitted'
-    Factory(:fund_edition, :perspective => 'reviewer', :fund_item => reviewed.fund_items.first)
-    unreviewed = Factory(:fund_edition).fund_request
-    unreviewed.state = 'submitted'
-    complete.approvable?.should be_true
-    incomplete.approvable?.should be_false
-    reviewed.approvable?.should be_true
-    unreviewed.approvable?.should be_false
+  it 'should have an approvable? method that will not allow approval of started request unless all new items have an edition' do
+    @fund_request.save!
+    item = Factory(:fund_edition, :fund_request => @fund_request).fund_item
+    @fund_request.approvable?.should be_true
+    second_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
+    @fund_request.reload
+    @fund_request.approvable?.should be_false
+  end
+
+  it 'should have an approvable? method that will not allow approval of submitted requests unless all initial editions have corresponding finals' do
+    queue = Factory(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
+    @fund_request.fund_grant.fund_source.reload
+    @fund_request.fund_queue = queue
+    @fund_request.state = 'submitted'
+    @fund_request.save!
+    item = Factory(:fund_edition, :fund_request => @fund_request).fund_item
+    @fund_request.reload
+    @fund_request.approvable?.should be_false
+    item.reload
+    item.fund_editions.build_next_for_fund_request( @fund_request ).save!
+    @fund_request.reload
+    @fund_request.approvable?.should be_true
   end
 
   it 'should have users.unfulfilled method that returns users eligible towards current unfulfilled unquantified approver conditions' do

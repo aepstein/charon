@@ -35,6 +35,12 @@ class FundItem < ActiveRecord::Base
     # * raises exceptions if last edition is new record or final perspective
     def build_next_for_fund_request(request, attributes = {})
       last_edition = for_request( request ).last
+      if last_edition.blank?
+        next_edition = build( attributes )
+        next_edition.fund_request = request
+        next_edition.perspective = FundEdition::PERSPECTIVES.first
+        return next_edition
+      end
       if last_edition.new_record?
         raise ActiveRecord::ActiveRecordError,
           'Last position is a new record.'
