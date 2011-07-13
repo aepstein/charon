@@ -82,7 +82,6 @@ describe FundRequest do
   end
 
   it "should have fund_items.allocate! which enforces caps" do
-    ::Rails.logger.info 'starting problem test'
     @fund_request.save!
     first_fund_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
     second_fund_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
@@ -104,7 +103,6 @@ describe FundRequest do
     @fund_request.fund_items.allocate!(0.0)
     @fund_request.fund_items.first.amount.should eql 0
     @fund_request.fund_items.last.amount.should eql 0
-    ::Rails.logger.info 'ending problem test'
   end
 
   it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do
