@@ -24,8 +24,9 @@ class FundRequest < ActiveRecord::Base
     # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
-        exclusion = proxy_owner.fund_grant.fund_items.where( :id.not_in => proxy_owner.fund_editions.final.
-          map( &:fund_item_id ) ).sum( :amount )
+        exclusion = proxy_owner.fund_grant.fund_items.where(
+            :id.not_in => proxy_owner.fund_editions.final.map( &:fund_item_id )
+          ).sum( :amount )
         cap -= exclusion if exclusion
       end
       includes( :fund_editions ).where(:parent_id => nil).each do |fund_item|
