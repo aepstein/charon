@@ -1,389 +1,406 @@
-require 'factory_girl'
+require 'factory_data'
 
-Factory.define :account_adjustment do |f|
-  f.association :account_transaction
-  f.association :activity_account
-  f.amount 0.0
-end
+FactoryGirl.define do
 
-Factory.define :account_transaction do |f|
-  f.effective_on { |t| Time.zone.today }
-end
+  factory :account_adjustment do
+    association :account_transaction
+    association :activity_account
+    amount 0.0
+  end
 
-Factory.define :activity_account do |f|
-  f.association :university_account
-end
+  factory :account_transaction do
+    effective_on { |t| Time.zone.today }
+  end
 
-Factory.define :activity_report do |f|
-  f.association :organization
-  f.sequence( :description ) { |n| "activity #{n}" }
-  f.number_of_grads 10
-  f.number_of_undergrads 15
-  f.number_of_others 0
-  f.starts_on { |report| Time.zone.today - 1.month }
-  f.ends_on { |report| report.starts_on + 1.day }
-end
+  factory :activity_account do
+    association :university_account
+  end
 
-Factory.define :current_activity_report, :parent => :activity_report do |f|
-  f.starts_on { |report| Time.zone.today }
-end
+  factory :activity_report do
+    association :organization
+    sequence( :description ) { |n| "activity #{n}" }
+    number_of_grads 10
+    number_of_undergrads 15
+    number_of_others 0
+    starts_on { |report| Time.zone.today - 1.month }
+    ends_on { |report| report.starts_on + 1.day }
 
-Factory.define :future_activity_report, :parent => :activity_report do |f|
-  f.starts_on { |report| Time.zone.today + 1.month }
-end
-
-Factory.define :address do |f|
-  f.association :addressable, :factory => :user
-  f.sequence(:label) { |n| "Address #{n}" }
-end
-
-Factory.define :agreement do |f|
-  f.sequence(:name) { |n| "Agreement #{n}" }
-  f.content "Text of an agreement"
-  f.contact_name "a contact"
-  f.contact_email "contact@example.com"
-end
-
-Factory.define :approval do |f|
-  f.association :user
-  f.association :approvable, :factory => :fund_request
-  f.as_of { |approval| approval.approvable.updated_at + 1.second }
-end
-
-Factory.define :approver do |f|
-  f.association :framework
-  f.association :role
-  f.perspective FundEdition::PERSPECTIVES.first
-end
-
-Factory.define :category do |f|
-  f.sequence(:name) { |n| "Category #{n}" }
-end
-
-Factory.define :document do |f|
-  f.original { Rack::Test::UploadedFile.new(
-    "#{::Rails.root}/features/support/assets/small.pdf", 'application/pdf' ) }
-  f.association :fund_edition, :factory => :attachable_fund_edition
-  f.document_type { |d| d.fund_edition.fund_item.node.document_types.first }
-end
-
-Factory.define :document_type do |f|
-  f.sequence(:name) { |n| "Document Type #{n}" }
-  f.max_size_quantity 1
-  f.max_size_unit DocumentType::UNITS.last
-end
-
-Factory.define :organization do |f|
-  f.sequence(:last_name) { |n| "Organization #{n}"}
-end
-
-Factory.define :registered_organization, :parent => :organization do |f|
-  f.registrations { |o| [ o.association(:current_registration, :registered => true) ] }
-  f.after_create { |o| o.registrations.reset }
-end
-
-Factory.define :framework do |f|
-  f.sequence(:name) { |n| "Sequence #{n}" }
-end
-
-Factory.define :fulfillment do |f|
-  f.fulfiller { |r| r.association(:user) }
-  f.fulfillable { |r| r.association(:agreement) }
-end
-
-Factory.define :fund_item do |f|
-  f.association :fund_grant
-  f.node { |fund_item|
-    fund_item.association :node,
-      :structure => fund_item.fund_grant.fund_source.structure
-  }
-end
-
-Factory.define :fund_edition do |f|
-  f.amount 0.0
-  f.perspective 'requestor'
-  f.fund_request { |edition|
-    if edition.fund_item
-      g = edition.fund_item.fund_grant
-      g.fund_requests.first || edition.association( :fund_request, :fund_grant => g )
-    else
-      edition.association( :fund_request )
+    factory :current_activity_report do
+      starts_on { |report| Time.zone.today }
+      ends_on { |report| report.starts_on + 1.day }
     end
-  }
-  f.fund_item { |edition|
-    edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
-  }
-  f.after_create { |edition|
-    edition.fund_request.fund_editions.reset
-    edition.fund_item.fund_editions.reset
-  }
-end
 
-Factory.define :fund_grant do |f|
-  f.association :fund_source
-  f.association :organization
-end
+    factory :future_activity_report do
+      starts_on { |report| Time.zone.today + 1.month }
+      ends_on { |report| report.starts_on + 1.day }
+    end
 
-Factory.define :fund_queue do |f|
-  f.association :fund_source
-  f.submit_at { |q| q.fund_source.open_at + 2.days }
-  f.release_at { |q| q.submit_at + 1.week }
-end
-
-Factory.define :fund_request do |f|
-  f.association :fund_grant
-end
-
-Factory.define :fund_source do |f|
-  f.sequence(:name) { |n| "FundSource #{n}" }
-  f.association :organization
-  f.association :framework
-  f.association :structure
-  f.open_at { |b| Time.zone.today - 1.days }
-  f.closed_at { |b| b.open_at + 2.days }
-  f.submissions_due_at { |b| b.closed_at - 1.days }
-  f.contact_name "a contact"
-  f.contact_email "contact@example.com"
-  f.contact_web "http://example.com"
-end
-
-Factory.define :past_fund_source, :parent => :fund_source do |f|
-  f.open_at { Time.zone.today - 1.year }
-end
-
-Factory.define :future_fund_source, :parent => :fund_source do |f|
-  f.open_at { Time.zone.today + 1.month }
-end
-
-Factory.define :safc_framework, :parent => :framework do |f|
-  f.must_register true
-  f.member_percentage 60
-  f.member_percentage_type 'undergrads'
-end
-
-Factory.define :gpsafc_framework, :parent => :framework do |f|
-  f.must_register true
-  f.member_percentage 40
-  f.member_percentage_type 'grads'
-end
-
-Factory.define :registration do |f|
-  f.sequence(:name) { |n| "Registered Organization #{n}" }
-  f.sequence(:external_id) { |i| i }
-  f.number_of_undergrads 1
-end
-
-Factory.define :current_registration, :parent => :registration do |f|
-  f.association :registration_term, :factory => :current_registration_term
-end
-
-Factory.define :registration_term do |f|
-  f.sequence(:external_id) { |i| i }
-  f.sequence(:description) { |n| "Registration term #{n}" }
-  f.current false
-end
-
-Factory.define :current_registration_term, :parent => :registration_term do |f|
-  f.current true
-end
-
-Factory.define :registration_criterion do |f|
-  f.must_register true
-  f.minimal_percentage 10
-  f.type_of_member 'undergrads'
-end
-
-Factory.define :requirement do |f|
-  f.association :framework
-  f.association :fulfillable, :factory => :agreement
-end
-
-Factory.define :fund_requestor_requirement, :parent => :requirement do |f|
-  f.perspectives [ FundEdition::PERSPECTIVES.first ]
-end
-
-Factory.define :reviewer_requirement, :parent => :requirement do |f|
-  f.perspectives [ FundEdition::PERSPECTIVES.last ]
-end
-
-Factory.define :safc_eligible_registration, :parent => :registration do |f|
-  f.registered true
-  f.number_of_undergrads 50
-end
-
-Factory.define :gpsafc_eligible_registration, :parent => :registration do |f|
-  f.registered true
-  f.number_of_grads 50
-end
-
-Factory.define :user do |f|
-  f.first_name "John"
-  f.sequence(:last_name) { |n| "Doe #{n}"}
-  f.sequence(:net_id) { |n| "zzz#{n}"}
-  f.password "secret"
-  f.password_confirmation { |u| u.password }
-  f.status "undergrad"
-  f.ldap_entry false
-end
-
-Factory.define :user_status_criterion do |f|
-  f.statuses [ 'undergrad' ]
-end
-
-Factory.define :role do |f|
-  f.sequence(:name) { |n| "role #{n}" }
-end
-
-Factory.define :requestor_role, :parent => :role do |f|
-  f.name Role::REQUESTOR.first
-end
-
-Factory.define :reviewer_role, :parent => :role do |f|
-  f.name Role::REVIEWER.first
-end
-
-Factory.define :manager_role, :parent => :role do |f|
-  f.name Role::MANAGER.first
-end
-
-Factory.define :membership do |f|
-  f.active true
-  f.association :user
-  f.association :role
-  f.association :organization
-end
-
-Factory.define :registered_membership, :class => 'Membership' do |f|
-  f.association :user
-  f.association :role
-  f.association :registration
-end
-
-Factory.define :member_source do |f|
-  f.association :organization
-  f.association :role
-  f.minimum_votes 0
-  f.external_committee_id 1
-end
-
-Factory.define :structure do |f|
-  f.sequence(:name) { |n| "Structure #{n}" }
-end
-
-Factory.define :node do |f|
-  f.sequence(:name) { |n| "node #{n}" }
-  f.item_quantity_limit 1
-  f.association :structure
-  f.association :category
-end
-
-Factory.define :attachable_node, :parent => :node do |f|
-  f.document_types { |node| [ node.association(:document_type) ] }
-end
-
-Factory.define :attachable_fund_item, :parent => :fund_item do |f|
-  f.association :fund_grant
-  f.node { |fund_item| fund_item.association(:attachable_node,
-    :structure => fund_item.fund_grant.fund_source.structure) }
-end
-
-Node::ALLOWED_TYPES.each_value do |t|
-
-  Factory.define "#{t}Node".underscore.to_sym, :parent => :node do |f|
-    f.requestable_type t
   end
 
-  Factory.define "#{t}FundItem".underscore.to_sym, :parent => :fund_item do |f|
-    f.association :fund_grant
-    f.node { |fund_item|
-      fund_item.association("#{t}Node".underscore.to_sym,
-        :structure => fund_item.fund_grant.fund_source.structure)
+  factory :address do
+    association :addressable, :factory => :user
+    sequence(:label) { |n| "Address #{n}" }
+  end
+
+  factory :agreement do
+    sequence(:name) { |n| "Agreement #{n}" }
+    content "Text of an agreement"
+    contact_name "a contact"
+    contact_email "contact@example.com"
+  end
+
+  factory :approval do
+    association :user
+    association :approvable, :factory => :fund_request
+    as_of { |approval| approval.approvable.updated_at + 1.second }
+  end
+
+  factory :approver do
+    association :framework
+    association :role
+    perspective { FundEdition::PERSPECTIVES.first }
+  end
+
+  factory :category do
+    sequence(:name) { |n| "Category #{n}" }
+  end
+
+  factory :document do
+    original { Rack::Test::UploadedFile.new(
+      "#{::Rails.root}/features/support/assets/small.pdf", 'application/pdf' ) }
+    association :fund_edition, :factory => :attachable_fund_edition
+    document_type { |d| d.fund_edition.fund_item.node.document_types.first }
+  end
+
+  factory :document_type do
+    sequence(:name) { |n| "Document Type #{n}" }
+    max_size_quantity 1
+    max_size_unit DocumentType::UNITS.last
+  end
+
+  factory :framework do
+    sequence(:name) { |n| "Sequence #{n}" }
+
+    factory :safc_framework do
+      must_register true
+      member_percentage 60
+      member_percentage_type 'undergrads'
+    end
+
+    factory :gpsafc_framework do
+      must_register true
+      member_percentage 40
+      member_percentage_type 'grads'
+    end
+  end
+
+  factory :fulfillment do
+    fulfiller { |r| r.association(:user) }
+    fulfillable { |r| r.association(:agreement) }
+  end
+
+  factory :fund_edition do
+    amount 0.0
+    perspective 'requestor'
+    fund_request { |edition|
+      if edition.fund_item
+        g = edition.fund_item.fund_grant
+        g.fund_requests.first || edition.association( :fund_request, :fund_grant => g )
+      else
+        edition.association( :fund_request )
+      end
     }
+    fund_item { |edition|
+      edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
+    }
+    after_create { |edition|
+      edition.fund_request.fund_editions.reset
+      edition.fund_item.fund_editions.reset
+    }
+
+    factory :attachable_fund_edition do
+      fund_item { |edition|
+        edition.association :attachable_fund_item,
+          :fund_grant => edition.fund_request.fund_grant
+      }
+    end
+
+    FactoryData::ALLOWED_NODE_TYPES.each do |t|
+      factory "#{t}FundEdition".underscore.to_sym do
+        fund_item do |fund_edition|
+          fund_edition.association "#{t}FundItem".underscore.to_sym,
+            :fund_grant => fund_edition.fund_request.fund_grant
+        end
+      end
+    end
   end
 
-  Factory.define "#{t}FundEdition".underscore.to_sym, :parent => :fund_edition do |f|
-    f.fund_item { |fund_edition| fund_edition.association "#{t}FundItem".underscore.to_sym  }
+  factory :fund_grant do
+    association :fund_source
+    association :organization
   end
-end
 
-Factory.define :attachable_fund_edition, :parent => :fund_edition do |f|
-  f.association :fund_item, :factory => :attachable_fund_item
-end
+  factory :fund_item do
+    association :fund_grant
+    node { |fund_item|
+      fund_item.association :node,
+        :structure => fund_item.fund_grant.fund_source.structure
+    }
 
-Factory.define :administrative_expense do |f|
-  f.association :fund_edition, :factory => :administrative_expense_fund_edition
-  f.copies 100
-  f.repairs_restocking 100
-  f.mailbox_wsh 25
-end
+    factory :attachable_fund_item do
+      association :fund_grant
+      node { |fund_item| fund_item.association(:attachable_node,
+        :structure => fund_item.fund_grant.fund_source.structure) }
+    end
 
-Factory.define :durable_good_expense do |f|
-  f.association :fund_edition, :factory => :durable_good_expense_fund_edition
-  f.description 'a durable good'
-  f.quantity 1.5
-  f.price 1.5
-end
+    FactoryData::ALLOWED_NODE_TYPES.each do |t|
+      factory "#{t}FundItem".underscore.to_sym do
+        association :fund_grant
+        node { |fund_item|
+          fund_item.association("#{t}Node".underscore.to_sym,
+            :structure => fund_item.fund_grant.fund_source.structure)
+        }
+      end
+    end
+  end
 
-Factory.define :local_event_expense do |f|
-  f.association :fund_edition, :factory => :local_event_expense_fund_edition
-  f.date Time.zone.today + 2.months
-  f.title 'An Event'
-  f.location 'Willard Straight Hall'
-  f.purpose 'To do something fun'
-  f.number_of_attendees 50
-  f.price_per_attendee 5.50
-  f.copies_quantity 500
-  f.services_cost 1102
-end
+  factory :fund_queue do
+    association :fund_source
+    submit_at { |q| q.fund_source.open_at + 2.days }
+    release_at { |q| q.submit_at + 1.week }
+  end
 
-Factory.define :publication_expense do |f|
-  f.association :fund_edition, :factory => :publication_expense_fund_edition
-  f.title 'Publication'
-  f.number_of_issues 3
-  f.copies_per_issue 500
-  f.price_per_copy 4.00
-  f.cost_per_issue 2809.09
-end
+  factory :fund_request do
+    association :fund_grant
+  end
 
-Factory.define :travel_event_expense do |f|
-  f.association :fund_edition, :factory => :travel_event_expense_fund_edition
-  f.date Time.zone.today + 2.months
-  f.title "A tournament"
-  f.location 'Los Angeles, CA'
-  f.purpose 'To compete'
-  f.travelers_per_group 5
-  f.number_of_groups 2
-  f.distance 6388
-  f.nights_of_lodging 3
-  f.per_person_fees 25.00
-  f.per_group_fees 125.00
-end
+  factory :fund_source do
+    sequence(:name) { |n| "FundSource #{n}" }
+    association :organization
+    association :framework
+    association :structure
+    open_at { |b| Time.zone.today - 1.days }
+    closed_at { |b| b.open_at + 2.days }
+    submissions_due_at { |b| b.closed_at - 1.days }
+    contact_name "a contact"
+    contact_email "contact@example.com"
+    contact_web "http://example.com"
 
-Factory.define :speaker_expense do |f|
-  f.association :fund_edition, :factory => :speaker_expense_fund_edition
-  f.title 'An Important Person'
-  f.distance 204
-  f.number_of_travelers 1
-  f.nights_of_lodging 10
-  f.engagement_fee 1000
-end
+    factory :past_fund_source do
+      open_at { Time.zone.today - 1.year }
+    end
 
-Factory.define :external_equity_report do |f|
-  f.association :fund_edition, :factory => :external_equity_report_fund_edition
-end
+    factory :future_fund_source do
+      open_at { Time.zone.today + 1.month }
+    end
+  end
 
-Factory.define :inventory_item do |f|
-  f.association :organization
-  f.sequence(:identifier) { |n| "id##{n}" }
-  f.description "Boots"
-  f.acquired_on Time.zone.today
-  f.scheduled_retirement_on { |r| r.acquired_on + 1.year }
-  f.purchase_price 100.0
-end
+  factory :inventory_item do
+    association :organization
+    sequence(:identifier) { |n| "id##{n}" }
+    description "Boots"
+    acquired_on { Time.zone.today }
+    scheduled_retirement_on { |r| r.acquired_on + 1.year }
+    purchase_price 100.0
+  end
 
-Factory.define :university_account do |f|
-  f.association :organization
-  f.department_code 'S52'
-  f.sequence(:subledger_code) { |n| n.to_s.rjust( 4, '0' ) }
+  factory :organization do
+    sequence(:last_name) { |n| "Organization #{n}"}
+
+    factory :registered_organization do
+      registrations { |o| [ o.association(:current_registration, :registered => true) ] }
+      after_create { |o| o.registrations.reset }
+    end
+  end
+
+  factory :registration do
+    sequence(:name) { |n| "Registered Organization #{n}" }
+    sequence(:external_id) { |i| i }
+    number_of_undergrads 1
+
+    factory :current_registration do
+      association :registration_term, :factory => :current_registration_term
+
+      factory :safc_eligible_registration do
+        registered true
+        number_of_undergrads 50
+      end
+
+      factory :gpsafc_eligible_registration do
+        registered true
+        number_of_grads 50
+      end
+    end
+  end
+
+  factory :registration_term do
+    sequence(:external_id) { |i| i }
+    sequence(:description) { |n| "Registration term #{n}" }
+    current false
+
+    factory :current_registration_term do
+      current true
+    end
+  end
+
+  factory :registration_criterion do
+    must_register true
+    minimal_percentage 10
+    type_of_member 'undergrads'
+  end
+
+  factory :requirement do
+    association :framework
+    association :fulfillable, :factory => :agreement
+
+    factory :requestor_requirement do
+      perspectives [ FundEdition::PERSPECTIVES.first ]
+    end
+
+    factory :reviewer_requirement do
+      perspectives [ FundEdition::PERSPECTIVES.last ]
+    end
+  end
+
+  factory :user do
+    first_name "John"
+    sequence(:last_name) { |n| "Doe #{n}"}
+    sequence(:net_id) { |n| "zzz#{n}"}
+    password "secret"
+    password_confirmation { |u| u.password }
+    status "undergrad"
+    ldap_entry false
+  end
+
+  factory :user_status_criterion do
+    statuses [ 'undergrad' ]
+  end
+
+  factory :role do
+    sequence(:name) { |n| "role #{n}" }
+
+    factory :requestor_role do
+      name { Role::REQUESTOR.first }
+    end
+
+    factory :reviewer_role do
+      name { Role::REVIEWER.first }
+    end
+
+    factory :manager_role do
+      name { Role::MANAGER.first }
+    end
+  end
+
+  factory :membership do
+    active true
+    association :user
+    association :role
+    association :organization
+  end
+
+  factory :node do
+    sequence(:name) { |n| "node #{n}" }
+    item_quantity_limit 1
+    association :structure
+    association :category
+
+    factory :attachable_node do
+      document_types { |node| [ node.association(:document_type) ] }
+    end
+
+    FactoryData::ALLOWED_NODE_TYPES.each do |t|
+      factory "#{t}Node".underscore.to_sym do
+        requestable_type t
+      end
+    end
+  end
+
+  factory :registered_membership, :class => 'Membership' do
+    association :user
+    association :role
+    association :registration
+  end
+
+  factory :member_source do
+    association :organization
+    association :role
+    minimum_votes 0
+    external_committee_id 1
+  end
+
+  factory :structure do
+    sequence(:name) { |n| "Structure #{n}" }
+  end
+
+  factory :university_account do
+    association :organization
+    department_code 'S52'
+    sequence(:subledger_code) { |n| n.to_s.rjust( 4, '0' ) }
+  end
+
+  # Expense calculators
+  factory :administrative_expense do
+    association :fund_edition, :factory => :administrative_expense_fund_edition
+    copies 100
+    repairs_restocking 100
+    mailbox_wsh 25
+  end
+
+  factory :durable_good_expense do
+    association :fund_edition, :factory => :durable_good_expense_fund_edition
+    description 'a durable good'
+    quantity 1.5
+    price 1.5
+  end
+
+  factory :local_event_expense do
+    association :fund_edition, :factory => :local_event_expense_fund_edition
+    date Time.zone.today + 2.months
+    title 'An Event'
+    location 'Willard Straight Hall'
+    purpose 'To do something fun'
+    number_of_attendees 50
+    price_per_attendee 5.50
+    copies_quantity 500
+    services_cost 1102
+  end
+
+  factory :publication_expense do
+    association :fund_edition, :factory => :publication_expense_fund_edition
+    title 'Publication'
+    number_of_issues 3
+    copies_per_issue 500
+    price_per_copy 4.00
+    cost_per_issue 2809.09
+  end
+
+  factory :travel_event_expense do
+    association :fund_edition, :factory => :travel_event_expense_fund_edition
+    date Time.zone.today + 2.months
+    title "A tournament"
+    location 'Los Angeles, CA'
+    purpose 'To compete'
+    travelers_per_group 5
+    number_of_groups 2
+    distance 6388
+    nights_of_lodging 3
+    per_person_fees 25.00
+    per_group_fees 125.00
+  end
+
+  factory :speaker_expense do
+    association :fund_edition, :factory => :speaker_expense_fund_edition
+    title 'An Important Person'
+    distance 204
+    number_of_travelers 1
+    nights_of_lodging 10
+    engagement_fee 1000
+  end
+
+  factory :external_equity_report do
+    association :fund_edition, :factory => :external_equity_report_fund_edition
+  end
+
 end
 

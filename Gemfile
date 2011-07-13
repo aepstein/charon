@@ -34,8 +34,10 @@ group :test do
   gem 'rspec'
   gem 'rspec-rails'
   gem 'spork'
-  gem 'factory_girl', '= 1.3.2'
-  gem 'factory_girl_rails'
+#  gem 'factory_girl', '= 1.3.2'
+  gem 'factory_girl', '~> 2.0.0.rc4', :require => false
+#  gem 'factory_girl_rails'
+  gem 'factory_girl_rails', '~> 1.1.rc1'
   gem 'pickle'
   gem 'email_spec'
   gem 'launchy'
