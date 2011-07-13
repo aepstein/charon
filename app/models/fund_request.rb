@@ -21,6 +21,7 @@ class FundRequest < ActiveRecord::Base
     # * limit allocations to cap if specified
     # * if request covers only some items, reduce cap by amount currently
     #   allocated to other items
+    # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
         exclusion = proxy_owner.fund_grant.fund_items.where( :id.not_in => proxy_owner.fund_editions.final.
@@ -30,6 +31,7 @@ class FundRequest < ActiveRecord::Base
       includes( :fund_editions ).where(:parent_id => nil).each do |fund_item|
           cap = allocate_fund_item! fund_item, cap
       end
+      reset
     end
 
     # Allocate an item and any children for which a final edition is present
@@ -50,7 +52,6 @@ class FundRequest < ActiveRecord::Base
         fund_item.save! if fund_item.changed?
       end
       children_of(fund_item).each { |c| cap = allocate_fund_item!(c, cap) }
-      return nil unless cap
       cap
     end
 
