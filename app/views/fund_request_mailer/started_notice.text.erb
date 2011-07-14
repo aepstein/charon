@@ -10,10 +10,6 @@ When the fund_request is ready for submission, any of the following may approve 
  * <%= user.name %>
 <% end -%>
 
-<% if @fund_request.fund_grant.fund_source.submissions_due_at && @fund_request.fund_grant.fund_source.submissions_due_at > Time.zone.now -%>
-The next deadline for submissions is <%= @fund_request.fund_grant.fund_source.submissions_due_at.to_s :us_ordinal %>.
-<% end -%>
-
 <% if @fund_request.fund_grant.fund_source.contact_web -%>
 More information is available here <<%= @fund_request.fund_grant.fund_source.contact_web %>>.
 <% end -%>
