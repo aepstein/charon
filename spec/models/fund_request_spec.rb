@@ -10,7 +10,6 @@ describe FundRequest do
   end
 
   context 'validation' do
-
     it "should create a new instance given valid attributes" do
       @fund_request.save!
     end
@@ -25,7 +24,6 @@ describe FundRequest do
       @fund_request.approval_checkpoint = nil
       @fund_request.save.should be_false
     end
-
   end
 
   it "should reset approval checkpoint on transition to submitted" do

@@ -1,0 +1,45 @@
+<h2>Listing fund_grants</h2>
+
+<%= form_for :search, :url => polymorphic_path( [ @context, :fund_grants ] ), :html => { :method => :get } do |f| %>
+  <% unless @fund_source -%>
+  <p>
+    <%= f.label :fund_source_name_contains, 'FundSource' %>
+    <%= f.text_field :fund_source_name_contains %>
+  </p>
+  <% end -%>
+  <% unless @organization -%>
+  <p>
+    <%= f.label :organization_name_contains, 'Organization' %>
+    <%= f.text_field :organization_name_contains %>
+  </p>
+  <% end -%>
+  <p>
+    <%= f.label :status_equals, 'Status' %>
+    <%= f.select :status_equals, FundGrant.aasm_state_names, { :include_blank => true } %>
+  </p>
+  <p>
+    <%= f.submit 'Search' %>
+  </p>
+<% end %>
+
+<%= will_paginate @fund_grants %>
+
+<hr/>
+
+<%= render :partial => "fund_grants", :object => @fund_grants, :locals => { :fund_source => @fund_source } %>
+
+<hr/>
+
+<%= will_paginate @fund_grants %>
+
+<hr/>
+
+<p>
+<% if @organization -%>
+<%= link_to h("Back to #{@organization}"), @organization %> |
+<% end -%>
+<% if @fund_source -%>
+<%= link_to h("Back to #{@fund_source}"), @fund_source %> |
+<% end -%>
+</p>
+

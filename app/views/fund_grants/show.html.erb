@@ -1,0 +1,93 @@
+<h2><%= @fund_grant %></h2>
+
+<p>FundSource: <%= @fund_grant.fund_grant.fund_source %></p>
+<p>Status: <%= @fund_grant.status %></p>
+<p>FundGrantor total: <%= number_to_currency @fund_grant.fund_editions.where( :perspective => 'requestor').sum('fund_editions.amount') %></p>
+<% if permitted_to?( :review, @fund_grant ) || @fund_grant.released? -%>
+<p>Reviewer total: <%= number_to_currency @fund_grant.fund_editions.where( :perspective => 'reviewer').sum('fund_editions.amount') %></p>
+<p>Allocation total (after caps): <%= number_to_currency @fund_grant.fund_items.sum('fund_items.amount') %></p>
+<table>
+  <thead>
+  <tr>
+    <th>Category</th>
+    <th>Allocation (after caps)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @fund_grant.fund_grant.fund_source.structure.categories.each do |category| -%>
+  <% table_row_tag do -%>
+    <td><%= category.name %></td>
+    <td><%= number_to_currency @fund_grant.fund_items.allocation_for_category(category) %></td>
+  <% end -%>
+  <% end -%>
+  </tbody>
+</table>
+
+<p>Note: Higher priority fund_items are allocated before lower priorities until the allocation cap is reached.</p>
+<% end -%>
+
+<% if @fund_grant.status == 'started' %>
+<p>
+Below is a listing of fund_items in your fund_grant.  You may add, move (re-prioritize),
+and delete fund_items.  For each fund_item, you should also add requestor fund_edition specifiying
+details about that fund_item, including the amount you are fund_granting.
+</p>
+
+<p>
+When you are finished, instruct the appropriate officers of your organization to
+approve this fund_grant.  After the fund_grant is approved, you cannot change it.
+</p>
+<% elsif @fund_grant.status == 'completed' %>
+<p>
+This fund_grant is now frozen because it has been approved by one or more authorized officers.
+Its status will advance to <em>submitted</em> once all required approvals are
+registered.
+</p>
+<% else %>
+<% if permitted_to? :review -%>
+<% if @fund_grant.status == 'accepted' -%>
+<p>
+This fund_grant is accepted for review by the commission.
+</p>
+<% end -%>
+<% else -%>
+<p>
+This fund_grant is now submitted for review.
+</p>
+<% end -%>
+<% end -%>
+
+<h3>FundItems</h3>
+
+<%= render :partial => 'fund_items/detailed', :collection => @fund_grant.fund_items.root,
+  :locals => { :level => 4 } %>
+
+<% unless @fund_grant.users.unfulfilled(Approver.where( :quantity => nil )).length == 0 -%>
+<h2>Who must approve</h2>
+<p>The following users must approve before the fund_grant may be considered submitted.</p>
+<ul>
+  <% @fund_grant.users.unfulfilled(Approver.where( :quantity => nil )).each do |user| -%>
+  <li><%=h user %></li>
+  <% end -%>
+</ul>
+
+<% end -%>
+<% if @fund_grant.fund_grant.organization.registrations.current -%>
+<h3>Membership information for <%=h @fund_grant.fund_grant.organization %></h3>
+<dl>
+<%= render :partial => 'registrations/membership', :object => @fund_grant.fund_grant.organization.registrations.current %>
+</dl>
+
+<% end -%>
+<h3>Who has approved</h3>
+
+<%= render :partial => 'approvals/approvals', :object => @fund_grant.approvals.includes(:user).all,
+           :locals => { :user => true, :approvable => false } %>
+
+<p>
+<%= link_to h("Back to #{@fund_grant.fund_grant.organization}"), @fund_grant.fund_grant.organization %> |
+<%= link_to h("Back to #{@fund_grant.fund_grant.organization} profile"), profile_organization_path(@fund_grant.fund_grant.organization) %> |
+<%= link_to "Manage fund_items", fund_grant_fund_items_path(@fund_grant) %> |
+<%= link_to 'Edit', edit_fund_grant_path(@fund_grant) %>
+</p>
+

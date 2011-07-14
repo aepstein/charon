@@ -1,0 +1,33 @@
+<% status ||= false %>
+<% fund_source ||= false %>
+<% organization ||= false %>
+
+<%= table_row_tag do %>
+  <% unless fund_source %>
+  <td><%= fund_grant.fund_grant.fund_source.name %></td>
+  <% end %>
+  <% unless organization %>
+  <td><%= fund_grant.fund_grant.organization %></td>
+  <% end %>
+  <% unless status %>
+  <td><%= fund_grant.status %></td>
+  <% end %>
+  <% if fund_grant.new_record? -%>
+  <td>
+    <%= form_for fund_grant, :url => organization_fund_grants_path(fund_grant.fund_grant.organization) do |f| %>
+      <%= f.hidden_field :fund_source_id %>
+      <%= f.submit 'Create' %>
+    <% end %>
+  </td>
+  <% else -%>
+  <td/>
+  <td><%= link_to 'Show Detail', fund_grant %></td>
+  <td><%= link_to 'Manage FundItems', fund_grant_fund_items_path(fund_grant) %></td>
+  <td><%= link_to( 'Destroy', fund_grant, :confirm => 'Are you sure you wish to destroy?', :method => :delete) if permitted_to? :destroy, fund_grant %></td>
+  <td><%= link_to( 'Approve', new_fund_grant_approval_path( fund_grant ) ) if permitted_to?( :approve, fund_grant ) && fund_grant.approvals.where( :user_id => current_user.id ).empty? %></td>
+  <td><%= link_to_unapprove_fund_grant(fund_grant) %></td>
+  <td><%= link_to( 'Accept', accept_fund_grant_path(fund_grant), :confirm => 'Are you sure you wish to accept?', :method => :put ) if permitted_to? :accept, fund_grant %></td>
+  <td><%= link_to( 'Reject', reject_fund_grant_path(fund_grant) ) if permitted_to?( :reject, fund_grant ) %></td>
+  <% end -%>
+<% end %>
+
