@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Structure do
   before(:each) do
-    @structure = Factory(:structure)
+    @structure = create(:structure)
   end
 
   it "should create a new instance given valid attributes" do
@@ -15,7 +15,7 @@ describe Structure do
   end
 
   it 'should not save with a duplicate name' do
-    duplicate = Factory.build( :structure, :name => @structure.name )
+    duplicate = build( :structure, :name => @structure.name )
     duplicate.save.should be_false
   end
 

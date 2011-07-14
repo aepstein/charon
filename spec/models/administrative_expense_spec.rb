@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe AdministrativeExpense do
   before(:each) do
-    @expense = Factory(:administrative_expense)
+    @expense = create(:administrative_expense)
   end
 
   it "should create a new instance given valid attributes" do

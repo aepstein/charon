@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe InventoryItem do
   before(:each) do
-    @inventory_item = Factory(:inventory_item)
+    @inventory_item = create(:inventory_item)
   end
 
   it "should create a new instance given valid attributes" do
@@ -17,7 +17,7 @@ describe InventoryItem do
   it 'should not save with a duplicate identifier' do
     @inventory_item.identifier = 'Boat1'
     @inventory_item.save
-    duplicate = Factory.build(:inventory_item, :organization => @inventory_item.organization)
+    duplicate = build(:inventory_item, :organization => @inventory_item.organization)
     duplicate.identifier = @inventory_item.identifier
     duplicate.save.should be_false
   end

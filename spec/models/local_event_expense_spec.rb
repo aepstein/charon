@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe LocalEventExpense do
   before(:each) do
-    @expense = Factory(:local_event_expense)
+    @expense = create(:local_event_expense)
   end
 
   it "should create a new instance given valid attributes" do

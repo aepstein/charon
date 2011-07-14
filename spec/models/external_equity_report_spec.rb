@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ExternalEquityReport do
   before(:each) do
-    @report = Factory(:external_equity_report)
+    @report = create(:external_equity_report)
   end
 
   it "should create a new instance given valid attributes" do

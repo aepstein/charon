@@ -5,24 +5,24 @@ describe Address do
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:address).id.should_not be_nil
+    create(:address).id.should_not be_nil
   end
 
   it "should not save without associated addressable" do
-    address = Factory(:address)
+    address = create(:address)
     address.addressable = nil
     address.save.should == false
   end
 
   it "should not save without a label" do
-    address = Factory(:address)
+    address = create(:address)
     address.label = nil
     address.save.should == false
   end
 
   it "should not save a duplicate label per addressable" do
-    address = Factory(:address)
-    duplicate = Factory.build(:address)
+    address = create(:address)
+    duplicate = build(:address)
     duplicate.addressable = address.addressable
     duplicate.label = address.label
     duplicate.save.should == false

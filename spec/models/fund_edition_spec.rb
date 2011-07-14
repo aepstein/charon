@@ -2,38 +2,38 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe FundEdition do
   before(:each) do
-    @fund_edition = Factory(:fund_edition)
+    @fund_edition = create(:fund_edition)
   end
 
   it "should save with valid attributes" do
-    Factory(:fund_edition).id.should_not be_nil
+    create(:fund_edition).id.should_not be_nil
   end
 
   context 'validations' do
 
     it "should not save without an fund_item" do
-      fund_edition = Factory(:fund_edition)
+      fund_edition = create(:fund_edition)
       fund_edition.fund_item = nil
       fund_edition.save.should be_false
     end
 
     it "should not save with an invalid perspective" do
-      fund_edition = Factory(:fund_edition)
+      fund_edition = create(:fund_edition)
       fund_edition.perspective = 'invalid'
       FundEdition::PERSPECTIVES.should_not include(fund_edition.perspective)
       fund_edition.save.should be_false
     end
 
     it "should not save with a duplicate perspective for fund_item" do
-      fund_edition = Factory(:fund_edition)
-      duplicate_fund_edition = Factory.build( :fund_edition,
+      fund_edition = create(:fund_edition)
+      duplicate_fund_edition = build( :fund_edition,
        :fund_item => fund_edition.fund_item )
       duplicate_fund_edition.perspective.should eql fund_edition.perspective
       duplicate_fund_edition.save.should be_false
     end
 
     it "should not save without an invalid amount" do
-      fund_edition = Factory(:fund_edition)
+      fund_edition = create(:fund_edition)
       fund_edition.amount = nil
       fund_edition.save.should be_false
       fund_edition.amount = -1.02
@@ -49,7 +49,7 @@ describe FundEdition do
     end
 
     it "should not save with an amount higher than requestable.max_fund_request" do
-      detail = Factory(:administrative_expense)
+      detail = create(:administrative_expense)
       detail.id.should_not be_nil
       fund_edition = detail.fund_edition
       fund_edition.requestable(true).should_not be_nil
@@ -60,7 +60,7 @@ describe FundEdition do
     end
 
     it "should not save with an amount higher than original fund_edition amount" do
-      original = Factory(:fund_edition)
+      original = create(:fund_edition)
       original.reload
       review = original.fund_item.fund_editions.
         build_next_for_fund_request( original.fund_request )
@@ -74,7 +74,7 @@ describe FundEdition do
     end
 
     it "should not save a non-initial fund_edition if a previous fund_edition does not exist" do
-      fund_edition = Factory.build( :fund_edition, :perspective => FundEdition::PERSPECTIVES.last )
+      fund_edition = build( :fund_edition, :perspective => FundEdition::PERSPECTIVES.last )
       fund_edition.save.should be_false
     end
 
@@ -91,7 +91,7 @@ describe FundEdition do
     end
 
     it 'next should return nil if next edition is new' do
-      next_edition = Factory.build( :fund_edition,
+      next_edition = build( :fund_edition,
         :perspective => FundEdition::PERSPECTIVES.last,
         :fund_request => @fund_edition.fund_request,
         :fund_item => @fund_edition.fund_item )
@@ -100,7 +100,7 @@ describe FundEdition do
     end
 
     it 'next and previous should return appropriate results' do
-      next_edition = Factory( :fund_edition,
+      next_edition = create( :fund_edition,
         :perspective => FundEdition::PERSPECTIVES.last,
         :fund_request => @fund_edition.fund_request,
         :fund_item => @fund_edition.fund_item )
@@ -113,7 +113,7 @@ describe FundEdition do
 
   it "should have a title method that returns the requestable title if defined, nil otherwise" do
     title = 'a title'
-    fund_edition = Factory(:administrative_expense).fund_edition
+    fund_edition = create(:administrative_expense).fund_edition
     fund_edition.requestable(true).should_not be_nil
     fund_edition.title.should be_nil
     fund_edition.administrative_expense.stub!(:title).and_return(nil)
@@ -124,7 +124,7 @@ describe FundEdition do
 
   it "should set its fund_item's title to its own title if it has one on save" do
     title = 'a title'
-    fund_edition = Factory(:fund_edition)
+    fund_edition = create(:fund_edition)
     fund_edition.stub!(:title).and_return(title)
     fund_edition.title.should_not eql fund_edition.fund_item.title
     fund_edition.save

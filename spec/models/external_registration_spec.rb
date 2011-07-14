@@ -7,11 +7,11 @@ describe RegistrationImporter::ExternalRegistration do
 
   before(:each) do
     clean_external_registrations_db
-    @registration = Factory(:external_registration)
+    @registration = create(:external_registration)
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:external_registration).new_record?.should be_false
+    create(:external_registration).new_record?.should be_false
   end
 
   it 'should return appropriate values for attributes' do
@@ -48,7 +48,7 @@ describe RegistrationImporter::ExternalRegistration do
   end
 
   it 'should manage contacts for an imported record correctly' do
-    @contact = Factory(:external_contact, :registration => @registration, :netid => 'zzz999', :contacttype => 'PRES')
+    @contact = create(:external_contact, :registration => @registration, :netid => 'zzz999', :contacttype => 'PRES')
     RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 1, 0, 0 ]
     import = Registration.where( :external_id => @contact.org_id, :external_term_id => @contact.term_id).first
     import.users.length.should eql 1
@@ -71,7 +71,7 @@ describe RegistrationImporter::ExternalRegistration do
     RegistrationImporter::ExternalRegistration.importable.length.should eql 1
     RegistrationImporter::ExternalRegistration.import
     RegistrationImporter::ExternalRegistration.importable.length.should eql 0
-    newer = Factory(:external_registration, :updated_time => @registration.updated_time + 1)
+    newer = create(:external_registration, :updated_time => @registration.updated_time + 1)
     RegistrationImporter::ExternalRegistration.importable.length.should eql 1
     RegistrationImporter::ExternalRegistration.import
     RegistrationImporter::ExternalRegistration.importable.length.should eql 0

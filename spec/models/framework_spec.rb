@@ -6,7 +6,7 @@ describe Framework do
   include SpecRequirementScenarios
 
   before(:each) do
-    @framework = Factory(:framework)
+    @framework = create(:framework)
   end
 
   it "should create a new instance given valid attributes" do
@@ -19,14 +19,14 @@ describe Framework do
   end
 
   it "should not save with a name that is not unique" do
-    second_framework = Factory.build(:framework,:name => @framework.name)
+    second_framework = build(:framework,:name => @framework.name)
     second_framework.save.should == false
   end
 
   it 'should have a fulfilled_for scope that returns only frameworks fulfilled for fulfiller, perspective' do
     Framework.delete_all
     setup_requirements_scenario
-    no_requirements_framework = Factory(:framework)
+    no_requirements_framework = create(:framework)
     @fulfillers.keys.each do |fulfiller|
       Framework.fulfilled_for( fulfiller, FundEdition::PERSPECTIVES.first, nil ).should include @framework
       Framework.fulfilled_for( fulfiller, FundEdition::PERSPECTIVES.first, nil ).should include no_requirements_framework

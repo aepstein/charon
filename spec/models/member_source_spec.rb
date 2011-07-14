@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe MemberSource do
   before(:each) do
-    @source = Factory(:member_source)
+    @source = create(:member_source)
   end
 
   it 'should create a new instance given valid attributes' do

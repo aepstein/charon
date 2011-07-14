@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe FundGrant do
 
   before :each do
-    @fund_grant = Factory.build(:fund_grant)
+    @fund_grant = build(:fund_grant)
   end
 
   context 'validations' do
@@ -23,7 +23,7 @@ describe FundGrant do
 
     it 'should not save a duplicate fund_source for given organization' do
       @fund_grant.save!
-      duplicate = Factory.build(:fund_grant,
+      duplicate = build(:fund_grant,
         :organization => @fund_grant.organization,
         :fund_source => @fund_grant.fund_source )
       duplicate.save.should be_false
@@ -40,16 +40,16 @@ describe FundGrant do
 
   context 'users proxy' do
     it 'should have a perspective_for method that identifies a user\'s perspective' do
-      requestor_role = Factory(:requestor_role)
-      reviewer_role = Factory(:reviewer_role)
-      requestor_organization = Factory(:organization)
-      reviewer_organization = Factory(:organization)
-      requestor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
-      conflictor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
-      Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization, :user => conflictor)
-      reviewer = Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization).user
-      fund_source = Factory(:fund_source, :organization => reviewer_organization)
-      fund_grant = Factory(:fund_grant, :fund_source => fund_source,
+      requestor_role = create(:requestor_role)
+      reviewer_role = create(:reviewer_role)
+      requestor_organization = create(:organization)
+      reviewer_organization = create(:organization)
+      requestor = create(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
+      conflictor = create(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
+      create(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization, :user => conflictor)
+      reviewer = create(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization).user
+      fund_source = create(:fund_source, :organization => reviewer_organization)
+      fund_grant = create(:fund_grant, :fund_source => fund_source,
         :organization => requestor_organization)
       [
         [ requestor, 'requestor' ], [ conflictor, 'requestor' ], [ reviewer, 'reviewer' ],
@@ -76,8 +76,8 @@ describe FundGrant do
 
   def generate_non_open_fund_grants
     @fund_grant.save!
-    @closed = Factory(:closed_fund_grant)
-    @upcoming = Factory(:upcoming_fund_grant)
+    @closed = create(:closed_fund_grant)
+    @upcoming = create(:upcoming_fund_grant)
   end
 
 end

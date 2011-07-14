@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe TravelEventExpense do
   before(:each) do
-    @expense = Factory(:travel_event_expense)
+    @expense = create(:travel_event_expense)
   end
 
   it "should create a new instance given valid attributes" do

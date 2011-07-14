@@ -6,7 +6,7 @@ describe FundRequest do
   include SpecApproverScenarios
 
   before(:each) do
-    @fund_request = Factory.build(:fund_request)
+    @fund_request = build(:fund_request)
   end
 
   context 'validation' do
@@ -29,7 +29,7 @@ describe FundRequest do
   end
 
   it "should reset approval checkpoint on transition to submitted" do
-    queue = Factory(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
+    queue = create(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
     @fund_request.fund_grant.fund_source.fund_queues.reset
     @fund_request.state = 'tentative'
     @fund_request.save!
@@ -49,8 +49,8 @@ describe FundRequest do
   end
 
   it "should call deliver_release_notice and set released_at on entering the released state" do
-    m = Factory(:membership, :organization => @fund_request.fund_grant.organization, :role => Factory(:requestor_role))
-    queue = Factory( :fund_queue, :fund_source => @fund_request.fund_grant.fund_source )
+    m = create(:membership, :organization => @fund_request.fund_grant.organization, :role => create(:requestor_role))
+    queue = create( :fund_queue, :fund_source => @fund_request.fund_grant.fund_source )
     @fund_request.fund_grant.fund_source.fund_queues.reset
     @fund_request.state = 'submitted'
     @fund_request.fund_queue = queue
@@ -64,7 +64,7 @@ describe FundRequest do
   end
 
   it "should set submitted_at on entering submitted state" do
-    Factory(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
+    create(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
     @fund_request.fund_grant.fund_source.fund_queues.reset
     @fund_request.state = 'tentative'
     @fund_request.save!
@@ -76,8 +76,8 @@ describe FundRequest do
 
   it "should have fund_items.allocate! which enforces caps" do
     @fund_request.save!
-    first_fund_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
-    second_fund_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
+    first_fund_item = create(:fund_item, :fund_grant => @fund_request.fund_grant)
+    second_fund_item = create(:fund_item, :fund_grant => @fund_request.fund_grant)
     2.times do |i|
       first_fund_item.fund_editions.build_next_for_fund_request( @fund_request,
         { :amount => 100.0 } ).save!
@@ -99,31 +99,31 @@ describe FundRequest do
   end
 
   it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do
-    initial = Factory(:fund_edition)
-    Factory(:fund_edition, :fund_request => initial.fund_request,
+    initial = create(:fund_edition)
+    create(:fund_edition, :fund_request => initial.fund_request,
       :fund_item => initial.fund_item, :perspective => FundEdition::PERSPECTIVES.last )
     complete = initial.fund_request
-    incomplete = Factory(:fund_edition).fund_request
+    incomplete = create(:fund_edition).fund_request
     FundRequest.incomplete.should_not include complete
     FundRequest.incomplete.should include incomplete
   end
 
   it 'should have an approvable? method that will not allow approval of started request unless all new items have an edition' do
     @fund_request.save!
-    item = Factory(:fund_edition, :fund_request => @fund_request).fund_item
+    item = create(:fund_edition, :fund_request => @fund_request).fund_item
     @fund_request.approvable?.should be_true
-    second_item = Factory(:fund_item, :fund_grant => @fund_request.fund_grant)
+    second_item = create(:fund_item, :fund_grant => @fund_request.fund_grant)
     @fund_request.reload
     @fund_request.approvable?.should be_false
   end
 
   it 'should have an approvable? method that will not allow approval of submitted requests unless all initial editions have corresponding finals' do
-    queue = Factory(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
+    queue = create(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
     @fund_request.fund_grant.fund_source.reload
     @fund_request.fund_queue = queue
     @fund_request.state = 'submitted'
     @fund_request.save!
-    item = Factory(:fund_edition, :fund_request => @fund_request).fund_item
+    item = create(:fund_edition, :fund_request => @fund_request).fund_item
     @fund_request.reload
     @fund_request.approvable?.should be_false
     item.reload
@@ -146,8 +146,8 @@ describe FundRequest do
 
   it 'should have a duplicate scope' do
     @fund_request.save!
-    duplicate = Factory(:fund_request, :fund_grant => @fund_request.fund_grant)
-    different = Factory(:fund_request)
+    duplicate = create(:fund_request, :fund_grant => @fund_request.fund_grant)
+    different = create(:fund_request)
     duplicates = FundRequest.duplicate
     duplicates.count.should eql 2
     duplicates.should include @fund_request
@@ -155,9 +155,9 @@ describe FundRequest do
   end
 
   it 'should have a notify_unnotified! class method' do
-    other_state = Factory(:fund_request, :state => 'tentative')
-    unnotified = Factory(:fund_request)
-    notified_before = Factory(:fund_request)
+    other_state = create(:fund_request, :state => 'tentative')
+    unnotified = create(:fund_request)
+    notified_before = create(:fund_request)
     notified_before.update_attribute :started_notice_at, 1.week.ago
     notified_before.reload
     week_ago = notified_before.started_notice_at

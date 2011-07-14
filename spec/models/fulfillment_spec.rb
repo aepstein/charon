@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Fulfillment do
   before(:each) do
-    @fulfillment = Factory(:fulfillment)
+    @fulfillment = create(:fulfillment)
   end
 
   it "should create a new instance given valid attributes" do
@@ -20,19 +20,19 @@ describe Fulfillment do
   end
 
   it 'should not save with a fulfiller that is not allowed for the fulfillable' do
-    @fulfillment.fulfillable = Factory(:agreement)
-    @fulfillment.fulfiller = Factory(:organization)
+    @fulfillment.fulfillable = create(:agreement)
+    @fulfillment.fulfiller = create(:organization)
     @fulfillment.save.should eql false
-    @fulfillment.fulfillable = Factory(:user_status_criterion)
+    @fulfillment.fulfillable = create(:user_status_criterion)
     @fulfillment.save.should eql false
-    @fulfillment.fulfillable = Factory(:registration_criterion)
-    @fulfillment.fulfiller = Factory(:user)
+    @fulfillment.fulfillable = create(:registration_criterion)
+    @fulfillment.fulfiller = create(:user)
     @fulfillment.save.should eql false
   end
 
   it 'should not save with a disallowed fulfillable' do
-    @fulfillment.fulfillable = Factory(:agreement)
-    @fulfillment.fulfiller = Factory(:organization)
+    @fulfillment.fulfillable = create(:agreement)
+    @fulfillment.fulfiller = create(:organization)
     @fulfillment.save.should eql false
   end
 end

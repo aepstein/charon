@@ -7,11 +7,11 @@ describe RegistrationImporter::ExternalContact do
 
   before(:each) do
     clean_external_registrations_db
-    @contact = Factory(:external_contact)
+    @contact = create(:external_contact)
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:external_contact).new_record?.should be_false
+    create(:external_contact).new_record?.should be_false
   end
 
   it 'should return appropriate values for attributes' do

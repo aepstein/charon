@@ -6,7 +6,7 @@ describe Requirement do
   include SpecRequirementScenarios
 
   before(:each) do
-    @requirement = Factory(:requirement)
+    @requirement = create(:requirement)
   end
 
   it "should create a new instance given valid attributes" do
@@ -24,14 +24,14 @@ describe Requirement do
   end
 
   it 'should not save a duplicate' do
-    duplicate = Factory.build(:requirement)
+    duplicate = build(:requirement)
     duplicate.framework = @requirement.framework
     duplicate.fulfillable = @requirement.fulfillable
     duplicate.save.should be_false
   end
 
   it 'should not save a fulfillable that is not of a valid type' do
-    @requirement.fulfillable = Factory(:user)
+    @requirement.fulfillable = create(:user)
     Fulfillment::FULFILLABLE_TYPES.values.flatten.should_not include @requirement.fulfillable_type
     @requirement.save.should be_false
   end

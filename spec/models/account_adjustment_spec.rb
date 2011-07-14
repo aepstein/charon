@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AccountAdjustment do
   before(:each) do
-    @adjustment = Factory(:account_adjustment)
+    @adjustment = create(:account_adjustment)
   end
 
   it 'should create an account with valid attributes' do

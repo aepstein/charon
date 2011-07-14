@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe UniversityAccount do
   before(:each) do
-    @university_account = Factory(:university_account)
+    @university_account = create(:university_account)
   end
 
   it "should create a new instance given valid attributes" do
@@ -10,7 +10,7 @@ describe UniversityAccount do
   end
 
   it 'should not save a duplicate department_code/subledger_code combination' do
-    duplicate = Factory.build(:university_account)
+    duplicate = build(:university_account)
     duplicate.department_code = @university_account.department_code
     duplicate.subledger_code = @university_account.subledger_code
     duplicate.save.should be_false

@@ -1,6 +1,6 @@
 Given /^the following( reviewed)? local_event_expenses:$/ do |reviewed, local_event_expenses|
   local_event_expenses.hashes.each do |attributes|
-    expense = Factory(:local_event_expense, attributes)
+    expense = create(:local_event_expense, attributes)
     if reviewed then
       expense.fund_edition.fund_item.fund_editions.reload
       expense.fund_edition.fund_item.fund_editions.next.save!

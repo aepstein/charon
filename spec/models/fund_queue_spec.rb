@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe FundQueue do
 
   before :each do
-    @fund_queue = Factory.build(:fund_queue)
+    @fund_queue = build(:fund_queue)
   end
 
   it 'should save with valid attributes' do

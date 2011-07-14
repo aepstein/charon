@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe DurableGoodExpense do
   before(:each) do
-    @expense = Factory(:durable_good_expense)
+    @expense = create(:durable_good_expense)
   end
 
   it "should create a new instance given valid attributes" do

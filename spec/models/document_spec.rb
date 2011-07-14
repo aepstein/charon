@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Document do
   before(:each) do
-    @document = Factory.build(:document)
+    @document = build(:document)
   end
 
   after(:each) do

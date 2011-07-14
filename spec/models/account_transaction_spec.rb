@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AccountTransaction do
   before(:each) do
-    @transaction = Factory(:account_transaction)
+    @transaction = create(:account_transaction)
   end
 
   it 'should not save without a status' do
@@ -27,8 +27,8 @@ describe AccountTransaction do
   end
 
   def setup_adjustments( from = -100.0, to = 100.0 )
-    @from = Factory( :activity_account)
-    @to = Factory( :activity_account )
+    @from = create( :activity_account)
+    @to = create( :activity_account )
     @transaction.adjustments.build( :activity_account => @from, :amount => from )
     @transaction.adjustments.build( :activity_account => @to, :amount => to )
   end

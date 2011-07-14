@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe ActivityReport do
   before(:each) do
-    @activity_report = Factory(:activity_report)
+    @activity_report = create(:activity_report)
   end
 
   it 'should save with valid attributes' do
@@ -42,7 +42,7 @@ describe ActivityReport do
 
   it 'should not save without valid number_of_* values' do
     %w( others undergrads grads ).each do |population|
-      @activity_report = Factory(:activity_report)
+      @activity_report = create(:activity_report)
       @activity_report.send("number_of_#{population}=", nil)
       @activity_report.save.should be_false
       @activity_report.send("number_of_#{population}=", 'blah')
@@ -74,8 +74,8 @@ describe ActivityReport do
   end
 
   def timing_scenario
-    @current = Factory(:current_activity_report)
-    @future = Factory(:future_activity_report)
+    @current = create(:current_activity_report)
+    @future = create(:future_activity_report)
   end
 
 end

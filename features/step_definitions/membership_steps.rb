@@ -9,7 +9,7 @@ Given /^the following memberships:$/ do |memberships|
     else
       complex_attrs['registration'] = Registration.find_by_name(membership['registration'])
     end
-    Factory(:membership, membership.merge(complex_attrs))
+    create(:membership, membership.merge(complex_attrs))
   end
 end
 

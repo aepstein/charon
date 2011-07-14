@@ -7,11 +7,11 @@ describe RegistrationImporter::ExternalTerm do
 
   before(:each) do
     clean_external_registrations_db
-    @term = Factory(:external_term)
+    @term = create(:external_term)
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:external_term).term_id.should_not be_nil
+    create(:external_term).term_id.should_not be_nil
   end
 
   it 'should return appropriate values for attributes' do

@@ -9,30 +9,30 @@ describe Approver do
   end
 
   it "should create a new instance given valid attributes" do
-    Factory(:approver).id.should_not be_nil
+    create(:approver).id.should_not be_nil
   end
 
   it "should not save without framework" do
-    approver = Factory(:approver)
+    approver = create(:approver)
     approver.framework = nil
     approver.save.should be_false
   end
 
   it "should not save without role" do
-    approver = Factory(:approver)
+    approver = create(:approver)
     approver.role = nil
     approver.save.should be_false
   end
 
   it "should not save with invalid perspective" do
-    approver = Factory(:approver)
+    approver = create(:approver)
     approver.perspective = 'invalid'
     FundEdition::PERSPECTIVES.should_not include(approver.perspective)
     approver.save.should be_false
   end
 
   it "should not save duplicate approvers" do
-    original = Factory(:approver)
+    original = create(:approver)
     second = original.clone
     second.save.should be_false
   end
