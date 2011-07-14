@@ -17,21 +17,46 @@ You have no open fund grants.
 <% end %>
 
 <% if @organization.fund_grants.closed.any? %>
+<p>
 You may <%=
   link_to "view #{pluralize @organization.fund_grants.closed.count, 'closed fund grant'}",
   closed_organization_fund_grants_path( @organization )
 %>.
+</p>
 <% else %>
+<p>
 You have no closed fund grants.
+</p>
+<% end %>
+
+<h3>Request funds</h3>
+
+<% if @organization.fund_requests.active.any? %>
+You have the following active requests in process:
+<% else %>
+You have no fund requests in process.
+<% end %>
+
+<% if @organization.fund_requests.inactive.any? %>
+<p>
+You may <%=
+  link_to "view #{pluralize @organization.fund_grants.inactive.count, 'inactive fund request'}",
+  inactive_organization_fund_requests_path( @organization )
+%>.
+</p>
 <% end %>
 
 <% if @organization.fund_sources.no_fund_grant.open.any? %>
+<p>
 You may <%=
   link_to( "request grants from " +
     pluralize( @organization.fund_sources.no_fund_grant.open.count, 'open fund sources'),
     new_organization_fund_grant_path( @organization ) )
 %>.
+</p>
 <% else %>
+<p>
 There are no open fund sources for you to request grants.
+</p>
 <% end %>
 
