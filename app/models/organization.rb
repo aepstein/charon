@@ -16,7 +16,11 @@ class Organization < ActiveRecord::Base
     end
   end
   has_many :fund_requests, :through => :fund_grants
-  has_many :fund_sources, :inverse_of => :organization
+  has_many :fund_sources, :inverse_of => :organization do
+    def no_fund_grant
+      FundSource.no_fund_grant_for( proxy_owner )
+    end
+  end
   has_many :inventory_items, :dependent => :destroy, :inverse_of => :organization
   has_many :memberships, :dependent => :destroy, :inverse_of => :organization
   has_many :member_sources, :inverse_of => :organization
@@ -34,7 +38,8 @@ class Organization < ActiveRecord::Base
     end
   end
   has_many :university_accounts, :dependent => :destroy, :inverse_of => :organization
-  has_many :users, :through => :memberships, :conditions => ['memberships.active = ?', true]
+  has_many :users, :through => :memberships,
+    :conditions => { :memberships => { :active => true } }
 
   before_validation :format_name
 

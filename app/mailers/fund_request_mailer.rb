@@ -5,7 +5,7 @@ class FundRequestMailer < ActionMailer::Base
   def started_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
       :subject => "#{fund_request} needs attention"
     )
@@ -23,7 +23,7 @@ class FundRequestMailer < ActionMailer::Base
   def submitted_notice( fund_request )
     @fund_request = fund_request
     mail(
-      :to => fund_request.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
       :subject => "#{fund_request} has been submitted"
     )
@@ -32,7 +32,7 @@ class FundRequestMailer < ActionMailer::Base
   def accepted_notice( fund_request )
     @fund_request = fund_request
     mail(
-      :to => fund_request.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
       :subject => "#{fund_request} has been accepted for review"
     )
@@ -41,7 +41,7 @@ class FundRequestMailer < ActionMailer::Base
   def released_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
       :subject => "You may now review #{fund_request}"
     )
@@ -50,7 +50,7 @@ class FundRequestMailer < ActionMailer::Base
   def rejected_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
       :subject => "#{fund_request} has been rejected"
     )
@@ -59,7 +59,7 @@ class FundRequestMailer < ActionMailer::Base
   def withdrawn_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
       :subject => "#{fund_request} has been withdrawn"
     )

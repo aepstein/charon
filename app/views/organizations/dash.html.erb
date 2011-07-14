@@ -1,0 +1,37 @@
+<h3>Fund grants</h3>
+
+<% if @organization.fund_grants.open.any? %>
+<p>
+You have <%=pluralize @organization.fund_grants.open.length, 'open fund grant' %>:
+</p>
+
+<ul>
+<% @organization.fund_grants.open.each do |fund_grant| %>
+<li><%= link_to fund_grant.fund_source.to_s, fund_grant %></li>
+<% end %>
+</ul>
+<% else %>
+<p>
+You have no open fund grants.
+</p>
+<% end %>
+
+<% if @organization.fund_grants.closed.any? %>
+You may <%=
+  link_to "view #{pluralize @organization.fund_grants.closed.count, 'closed fund grant'}",
+  closed_organization_fund_grants_path( @organization )
+%>.
+<% else %>
+You have no closed fund grants.
+<% end %>
+
+<% if @organization.fund_sources.no_fund_grant.open.any? %>
+You may <%=
+  link_to( "request grants from " +
+    pluralize( @organization.fund_sources.no_fund_grant.open.count, 'open fund sources'),
+    new_organization_fund_grant_path( @organization ) )
+%>.
+<% else %>
+There are no open fund sources for you to request grants.
+<% end %>
+

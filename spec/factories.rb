@@ -138,6 +138,14 @@ FactoryGirl.define do
   factory :fund_grant do
     association :fund_source
     association :organization
+
+    factory :upcoming_fund_grant do
+      association :fund_source, :factory => :future_fund_source
+    end
+
+    factory :closed_fund_grant do
+      association :fund_source, :factory => :past_fund_source
+    end
   end
 
   factory :fund_item do

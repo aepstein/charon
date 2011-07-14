@@ -69,12 +69,14 @@ class FundSource < ActiveRecord::Base
     :timeliness => { :type => :datetime, :before => :closed_at }
 
   default_scope :order => 'fund_sources.name ASC'
-  scope :closed, lambda { where( 'closed_at < ?', Time.zone.now ) }
+  scope :closed, lambda { where( :closed_at.lt => Time.zone.now ) }
   scope :open, lambda {
-    where( 'open_at < :t AND closed_at > :t', :t => Time.zone.now )
+    where( :open_at.lt => Time.zone.now, :closed_at.gt => Time.zone.now )
   }
-  scope :upcoming, lambda {
-    where( 'open_at > ?', Time.zone.now )
+  scope :upcoming, lambda { where( 'open_at > ?', Time.zone.now ) }
+  scope :no_fund_grant_for, lambda { |organization|
+    where( "fund_sources.id NOT IN (SELECT fund_source_id FROM fund_grants " +
+      "WHERE organization_id = ? )", organization.id )
   }
   scope :no_draft_fund_request_for, lambda { |organization|
     where(
@@ -83,6 +85,14 @@ class FundSource < ActiveRecord::Base
       %w( started completed ),
       organization.id )
   }
+
+  def upcoming?
+    open_at > Time.zone.now
+  end
+
+  def closed?
+    closed_at < Time.zone.now
+  end
 
   def open?
     (open_at < Time.zone.now) && (closed_at > Time.zone.now)

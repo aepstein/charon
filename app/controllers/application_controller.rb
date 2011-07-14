@@ -10,8 +10,8 @@ class ApplicationController < ActionController::Base
 
   def permission_denied
     flash[:error] = "You are not allowed to perform the requested action."
-    if @fund_request
-      flash[:error] += " " + unfulfilled_requirements_for_fund_request(@fund_request)
+    if @fund_grant && @fund_grant.fund_source
+      flash[:error] += " " + unfulfilled_requirements_for_fund_grant(@fund_grant)
     end
     redirect_to profile_url
   end
@@ -37,16 +37,16 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def unfulfilled_requirements_for_fund_request(fund_request)
-    perspective = fund_request.perspective_for current_user
+  def unfulfilled_requirements_for_fund_grant(fund_grant)
+    perspective = fund_grant.perspective_for current_user
     perspective ||= FundEdition::PERSPECTIVES.first
-    for_user = fund_request.unfulfilled_requirements_for current_user
+    for_user = fund_grant.unfulfilled_requirements_for current_user
     out = ""
     unless for_user.length == 0
       out << "You must fulfill the following requirements: #{for_user.join '; '}."
     end
-    organization = fund_request.send(perspective)
-    for_organization = fund_request.unfulfilled_requirements_for organization
+    organization = fund_grant.send(perspective)
+    for_organization = fund_grant.unfulfilled_requirements_for organization
     unless for_organization.length == 0
       out << "#{organization} must fulfill the following requirements: #{for_organization.join '; '}."
     end

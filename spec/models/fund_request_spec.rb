@@ -40,13 +40,6 @@ describe FundRequest do
     @fund_request.approval_checkpoint.should > old
   end
 
-  it "should have a retriever method for each perspective" do
-    fund_request = Factory(:fund_request)
-    FundEdition::PERSPECTIVES.each do |perspective|
-      fund_request.send(perspective).class.should eql Organization
-    end
-  end
-
   it "should call deliver_required_approval_notice on entering tentative state" do
     @fund_request.save!
     @fund_request.should_receive(:deliver_required_approval_notice)
@@ -148,27 +141,6 @@ describe FundRequest do
       scope.should_not include @quota_unfulfilled
       scope.should include @all_fulfilled if quantity == 2
       scope.should include @all_unfulfilled if quantity > 0
-    end
-  end
-
-  it 'should have a perspective_for method that identifies a user\'s perspective' do
-    requestor_role = Factory(:requestor_role)
-    reviewer_role = Factory(:reviewer_role)
-    requestor_organization = Factory(:organization)
-    reviewer_organization = Factory(:organization)
-    requestor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
-    conflictor = Factory(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
-    Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization, :user => conflictor)
-    reviewer = Factory(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization).user
-    fund_source = Factory(:fund_source, :organization => reviewer_organization)
-    fund_grant = Factory(:fund_grant, :fund_source => fund_source,
-      :organization => requestor_organization)
-    fund_request = Factory(:fund_request, :fund_grant => fund_grant)
-    [
-      [ requestor, 'requestor' ], [ conflictor, 'requestor' ], [ reviewer, 'reviewer' ],
-      [ requestor_organization, 'requestor' ], [ reviewer_organization, 'reviewer' ]
-    ].each do |scenario|
-      fund_request.perspective_for( scenario.first ).should eql scenario.last
     end
   end
 

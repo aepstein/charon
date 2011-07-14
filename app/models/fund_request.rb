@@ -75,11 +75,6 @@ class FundRequest < ActiveRecord::Base
     end
   end
   has_many :users, :through => :approvals do
-    def for_perspective( perspective )
-      ( Membership.includes(:user).where( :active => true,
-        :organization_id => proxy_owner.send(perspective).id ).
-        merge( Role.where( :name.in => Role::REQUESTOR ) ) ).map(&:user)
-    end
     # Returns users who have fulfilled unquantified approver requirements
     def fulfilled( approvers = Approver.unscoped )
       User.scoped.joins('INNER JOIN approvers').
@@ -103,8 +98,7 @@ class FundRequest < ActiveRecord::Base
   validates :approval_checkpoint, :timeliness => { :type => :datetime }
   validate :fund_source_must_be_same_for_grant_and_queue
 
-  state_machine :review_state, :initial => :unreviewed,
-    :namespace => 'review' do
+  state_machine :review_state, :initial => :unreviewed, :namespace => 'review' do
 
     state :unreviewed, :tentative, :ready
 
@@ -217,47 +211,6 @@ class FundRequest < ActiveRecord::Base
       fund_requests = fund_requests.send("no_#{state}_notice_since", since)
     end
     fund_requests.each { |fund_request| fund_request.send("send_#{state}_notice!") }
-  end
-
-  # Organization associated with this request in requestor perspective
-  def requestor
-    fund_grant ? fund_grant.requestor : nil
-  end
-
-  # Organization associated with this request in reviewer perspective
-  def reviewer
-    fund_grant ? fund_grant.reviewer : nil
-  end
-
-  def perspective_for( fulfiller )
-    case fulfiller.class.to_s.to_sym
-    when :User
-      return 'requestor' if fulfiller.roles.requestor_in? requestor
-      return 'reviewer' if fulfiller.roles.reviewer_in? reviewer
-    when :Organization
-      return 'requestor' if fulfiller == requestor
-      return 'reviewer' if fulfiller == reviewer
-    else
-      raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
-    end
-    nil
-  end
-
-  # What requirements must the user or organization fulfill in order to have
-  # privileges for this request?
-  # * fulfiller is a user or organization
-  def unfulfilled_requirements_for( fulfiller )
-    perspective = perspective_for( fulfiller )
-    return [] unless perspective && fund_grant && fund_grant.fund_source
-    case fulfiller.class.to_s.to_sym
-  when :User
-      fund_grant.fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective,
-        fulfiller.roles.ids_in_perspective( send(perspective), perspective ) )
-    when :Organization
-      fund_grant.fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective, [] )
-    else
-      raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
-    end
   end
 
   # Is the request sufficiently complete to approve?
