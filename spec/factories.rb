@@ -140,11 +140,11 @@ FactoryGirl.define do
     association :organization
 
     factory :upcoming_fund_grant do
-      association :fund_source, :factory => :future_fund_source
+      association :fund_source, :factory => :upcoming_fund_source
     end
 
     factory :closed_fund_grant do
-      association :fund_source, :factory => :past_fund_source
+      association :fund_source, :factory => :closed_fund_source
     end
   end
 
@@ -189,17 +189,18 @@ FactoryGirl.define do
     association :structure
     open_at { |b| Time.zone.today - 1.days }
     closed_at { |b| b.open_at + 2.days }
-    submissions_due_at { |b| b.closed_at - 1.days }
     contact_name "a contact"
     contact_email "contact@example.com"
     contact_web "http://example.com"
 
-    factory :past_fund_source do
+    factory :closed_fund_source do
       open_at { Time.zone.today - 1.year }
+      closed_at { |b| b.open_at + 2.days }
     end
 
-    factory :future_fund_source do
+    factory :upcoming_fund_source do
       open_at { Time.zone.today + 1.month }
+      closed_at { |b| b.open_at + 2.days }
     end
   end
 

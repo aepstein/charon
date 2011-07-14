@@ -1,7 +1,7 @@
 class FundSource < ActiveRecord::Base
   attr_accessible :name, :framework_id, :structure_id, :contact_name,
     :contact_email, :open_at, :closed_at, :release_message, :contact_web,
-    :submissions_due_at, :fund_queues_attributes
+    :fund_queues_attributes
   attr_readonly :framework_id, :structure_id
 
   belongs_to :organization, :inverse_of => :fund_sources
@@ -65,8 +65,6 @@ class FundSource < ActiveRecord::Base
   validates :contact_web, :presence => true
   validates :open_at, :timeliness => { :type => :datetime }
   validates :closed_at, :timeliness => { :type => :datetime, :after => :open_at }
-  validates :submissions_due_at,
-    :timeliness => { :type => :datetime, :before => :closed_at }
 
   default_scope :order => 'fund_sources.name ASC'
   scope :closed, lambda { where( :closed_at.lt => Time.zone.now ) }
