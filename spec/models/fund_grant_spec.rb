@@ -60,5 +60,25 @@ describe FundGrant do
     end
   end
 
+  context 'scopes' do
+    it 'should have a closed scope' do
+      generate_non_open_fund_grants
+      FundGrant.closed.length.should eql 1
+      FundGrant.closed.should include @closed
+    end
+
+    it 'should have an open scope' do
+      generate_non_open_fund_grants
+      FundGrant.open.length.should eql 1
+      FundGrant.open.should include @fund_grant
+    end
+  end
+
+  def generate_non_open_fund_grants
+    @fund_grant.save!
+    @closed = Factory(:closed_fund_grant)
+    @upcoming = Factory(:upcoming_fund_grant)
+  end
+
 end
 

@@ -29,8 +29,8 @@ class FundGrant < ActiveRecord::Base
 
   default_scope includes( :organization, :fund_source ).
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
-  scope :open, lambda { merge( FundSource.unscoped.open ) }
-  scope :closed, lambda { merge( FundSource.unscoped.closed ) }
+  scope :open, lambda { joins(:fund_source).merge( FundSource.unscoped.open ) }
+  scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }
 
   validates :organization, :presence => true
   validates :fund_source, :presence => true
