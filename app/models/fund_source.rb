@@ -72,10 +72,23 @@ class FundSource < ActiveRecord::Base
   scope :open, lambda {
     where( :open_at.lt => Time.zone.now, :closed_at.gt => Time.zone.now )
   }
+  scope :open_deadline, lambda {
+    open.joins(:fund_queues).
+    where( :fund_queues => { :submit_at.gt => Time.zone.now } )
+  }
   scope :upcoming, lambda { where( 'open_at > ?', Time.zone.now ) }
   scope :no_fund_grant_for, lambda { |organization|
     where( "fund_sources.id NOT IN (SELECT fund_source_id FROM fund_grants " +
       "WHERE organization_id = ? )", organization.id )
+  }
+
+  scope :fulfilled_for, lambda { |fulfillers, perspective, role_ids|
+    FundSource.joins(:frameworks).
+    merge( Framework.unscoped.fulfilled_for( fulfillers, perspective, role_ids ) )
+  }
+  scope :unfulfilled_for, lambda { |fulfillers, perspective, role_ids|
+    FundSource.joins(:frameworks).
+    merge( Framework.unscoped.unfulfilled_for( fulfillers, perspective, role_ids ) )
   }
   scope :no_draft_fund_request_for, lambda { |organization|
     where(

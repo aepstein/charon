@@ -2,6 +2,10 @@ module Fulfiller
 
   module ClassMethods
 
+    def fulfillable_types
+      Fulfillment::FULFILLABLE_TYPES[ to_s ]
+    end
+
     def quoted_fulfillable_types
       Fulfillment::FULFILLABLE_TYPES[ to_s ].map { |type| connection.quote type }.join ','
     end
@@ -38,7 +42,7 @@ module Fulfiller
 
     # Identify framework ids for which all requirements are fulfilled by this actor
     def framework_ids( perspective, role_ids = nil )
-      frameworks( perspective, role_ids ).map(&:id)
+      frameworks( perspective, role_ids ).map(&:id).uniq
     end
 
   end

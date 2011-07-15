@@ -6,17 +6,12 @@ class Organization < ActiveRecord::Base
   has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
   has_many :activity_accounts, :through => :university_accounts
   has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
-  has_many :fund_grants, :dependent => :destroy, :inverse_of => :organization do
-    def creatable
-      proxy_owner.fund_sources.requestable.map do |fund_source|
-        grant = build
-        grant.fund_source = fund_source
-        grant
-      end
-    end
-  end
+  has_many :fund_grants, :dependent => :destroy, :inverse_of => :organization
   has_many :fund_requests, :through => :fund_grants
   has_many :fund_sources, :inverse_of => :organization do
+    def allowed_for( perspective, *fulfillers )
+      FundSource.allowed_for( perspective, [ proxy_owner ] + fulfillers )
+    end
     def no_fund_grant
       FundSource.no_fund_grant_for( proxy_owner )
     end
