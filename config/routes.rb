@@ -8,13 +8,6 @@ Charon::Application.routes.draw do
   end
   resources :approvals, :only => [ :show, :destroy ]
   resources :approvers, :except => [ :index, :create, :new ]
-  resources :fund_sources, :except => [ :create, :new ] do
-    resources :fund_requests, :only => [ :create, :new, :index ] do
-      collection do
-        get :duplicate
-      end
-    end
-  end
   resources :categories
   resources :documents, :only => [ :show ] do
     member do
@@ -25,12 +18,34 @@ Charon::Application.routes.draw do
   resources :frameworks do
     resources :approvers, :only => [ :index, :create, :new ]
   end
-  resources :inventory_fund_items, :except => [ :new, :create ] do
+  resources :fund_grants, :except => [ :create, :new, :index ] do
+    resources :fund_requests, :only => [ :create, :new, :index ] do
+      collection do
+        get :duplicate
+      end
+    end
+  end
+  resources :fund_items, :except => [ :create, :new, :index ]
+  resources :fund_requests, :except => [ :create, :new ] do
+    member do
+      get :reject, :documents_report
+      put :do_reject
+      put :accept
+    end
+    collection do
+      get :duplicate
+    end
+    resources :approvals, :only => [ :create, :destroy, :index, :new ]
+    resources :fund_items, :only => [ :create, :new, :index ]
+  end
+  resources :fund_sources, :except => [ :create, :new ] do
+    resources :fund_grants, :only => [ :index ]
+  end
+  resources :inventory_items, :except => [ :new, :create ] do
       collection do
         get :retired, :active
       end
   end
-  resources :fund_items, :except => [ :create, :new, :index ]
   resources :local_event_expenses, :only => [ :index ]
   resources :memberships, :except => [ :create, :new ]
   resources :nodes, :except => [ :index, :create, :new ]
@@ -44,9 +59,19 @@ Charon::Application.routes.draw do
         get :past, :current, :future
       end
     end
-    resources :fund_sources, :only => [ :create, :new, :index ]
     resources :fulfillments, :only => [ :index ]
-    resources :inventory_fund_items, :only => [ :index, :new, :create ] do
+    resources :fund_grants, :only => [ :create, :new, :index ] do
+      collection do
+        get :closed, :open
+      end
+    end
+    resources :fund_requests, :only => [ :index ] do
+      collection do
+        get :active, :duplicate, :inactive
+      end
+    end
+    resources :fund_sources, :only => [ :create, :new, :index ]
+    resources :inventory_items, :only => [ :index, :new, :create ] do
       collection do
         get :retired, :active
       end
@@ -57,11 +82,6 @@ Charon::Application.routes.draw do
       end
     end
     resources :registrations, :only => [ :index ]
-    resources :fund_requests, :only => [ :create, :new, :index ] do
-      collection do
-        get :duplicate
-      end
-    end
     resources :university_accounts, :only => [ :new, :create, :index ]
   end
   resources :registration_criterions do
@@ -77,18 +97,6 @@ Charon::Application.routes.draw do
   end
   resources :registration_terms do
     resources :registrations, :only => [ :index, :show ]
-  end
-  resources :fund_requests, :except => [ :create, :new ] do
-    member do
-      get :reject, :documents_report
-      put :do_reject
-      put :accept
-    end
-    collection do
-      get :duplicate
-    end
-    resources :approvals, :only => [ :create, :destroy, :index, :new ]
-    resources :fund_items, :only => [ :create, :new, :index ]
   end
   resources :roles
   resources :structures do

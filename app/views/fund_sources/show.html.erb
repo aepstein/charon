@@ -33,41 +33,21 @@
 </p>
 
 <p>
-  <b>Submissions due at:</b> <%=h @fund_source.submissions_due_at %>
-</p>
-
-<p>
   <b>Closed at:</b> <%=h @fund_source.closed_at %>
 </p>
 
+<h3>Queues</h3>
+<%=render :partial => 'fund_queues/fund_queues',
+          :object => @fund_source.fund_queues %>
+
 <% if permitted_to? :review, @fund_source  -%>
+<h3>Reviewer information</h3>
+
 <p>
   <b>Release message:</b> (included in notices sent to requestor members when fund_request is released)
 </p>
 
-<%= markdown @fund_source.release_message %>
-
-  <h3>FundRequests overview</h3>
-  <table>
-    <thead>
-      <tr>
-        <th>Status</th>
-        <th>Quantity</th>
-        <th>FundRequestor Amount</th>
-        <th>Reviewer Amount</th>
-        <th>Allocation Amount</th>
-      </tr>
-    </thead>
-    <% FundRequest.aasm_state_names.each do |status| %>
-      <%= table_row_tag do %>
-        <td><%=h status %></td>
-        <td><%= @fund_source.fund_requests.with_status( status ).size %></td>
-        <td><%= number_to_currency( @fund_source.fund_requests.amount_for_perspective_and_status('requestor',status) ) %></td>
-        <td><%= number_to_currency( @fund_source.fund_requests.amount_for_perspective_and_status('reviewer',status) ) %></td>
-        <td><%= number_to_currency( @fund_source.fund_requests.fund_item_amount_for_status(status) ) %></td>
-      <% end %>
-    <% end %>
-  </table>
+<%=markdown @fund_source.release_message %>
 
 <% end -%>
 <p>
@@ -75,7 +55,7 @@
 <%= link_to( 'Edit', edit_fund_source_path(@fund_source) ) %> |
 <% end -%>
 <% if permitted_to? :review, @fund_source -%>
-<%= nested_index @fund_source, :fund_requests, [ :duplicate ] %> |
+<%= link_to 'Fund grants', fund_source_fund_grants_path( @fund_source ) %> |
 <% end -%>
 <%= link_to 'Back', organization_fund_sources_path( @fund_source.organization ) %>
 </p>

@@ -1,4 +1,7 @@
 class FundQueue < ActiveRecord::Base
+  attr_accessible :submit_at, :release_at
+  attr_readonly :fund_source_id
+
   belongs_to :fund_source, :inverse_of => :fund_queues
 
   has_many :fund_requests, :inverse_of => :fund_queue, :dependent => :nullify

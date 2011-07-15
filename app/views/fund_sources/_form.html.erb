@@ -10,9 +10,10 @@
   <%= form.input :contact_web %>
   <%= form.input :open_at, :as => :datetime_picker %>
   <%= form.input :closed_at, :as => :datetime_picker %>
-  <%= form.input :submissions_due_at, :as => :datetime_picker,
-    :hint => 'The next deadline for submissions (when there are multiple deadlines on a rolling fund_source)' %>
   <%= form.input :release_message %>
+  <%= form.semantic_fields_for :fund_queues do |subform| %>
+  <%= render :partial => 'fund_queues/form', :object => subform %>
+  <% end %>
   <% end %>
   <%= form.buttons %>
 

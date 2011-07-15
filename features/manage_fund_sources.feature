@@ -22,8 +22,9 @@ Feature: Manage fund_sources
     And a user: "observer_requestor" exists
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
-    And a <fund_source>fund_source: "current" exists with name: "Opportunity", organization: organization "source"
-    And a fund_request exists with fund_source: the fund_source, organization: organization "applicant"
+    And a <time>fund_source: "current" exists with name: "Opportunity", organization: organization "source"
+    And a fund_grant exists with fund_source: the fund_source, organization: organization "applicant"
+    And a fund_request exists with fund_grant: the fund_grant
     And I log in as user: "<user>"
     And I am on the page for the fund_source: "current"
     Then I should <show> authorized
@@ -44,22 +45,22 @@ Feature: Manage fund_sources
     Given I delete on the page for fund_source: "current"
     Then I should <destroy> authorized
     Examples:
-      | fund_source   | user               | create  | update  | destroy  | show    |
-      |         | admin              | see     | see     | see      | see     |
-      |         | source_manager     | see     | see     | see      | see     |
-      |         | source_reviewer    | not see | not see | not see  | see     |
-      |         | observer_requestor | not see | not see | not see  | see     |
-      |         | regular            | not see | not see | not see  | see     |
-      | past_   | admin              | see     | see     | see      | see     |
-      | past_   | source_manager     | see     | see     | see      | see     |
-      | past_   | source_reviewer    | not see | not see | not see  | see     |
-      | past_   | observer_requestor | not see | not see | not see  | not see |
-      | past_   | regular            | not see | not see | not see  | not see |
-      | future_ | admin              | see     | see     | see      | see     |
-      | future_ | source_manager     | see     | see     | see      | see     |
-      | future_ | source_reviewer    | not see | not see | not see  | see     |
-      | future_ | observer_requestor | not see | not see | not see  | not see |
-      | future_ | regular            | not see | not see | not see  | not see |
+      | time      | user               | create  | update  | destroy  | show    |
+      |           | admin              | see     | see     | see      | see     |
+      |           | source_manager     | see     | see     | see      | see     |
+      |           | source_reviewer    | not see | not see | not see  | see     |
+      |           | observer_requestor | not see | not see | not see  | see     |
+      |           | regular            | not see | not see | not see  | see     |
+      | closed_   | admin              | see     | see     | see      | see     |
+      | closed_   | source_manager     | see     | see     | see      | see     |
+      | closed_   | source_reviewer    | not see | not see | not see  | see     |
+      | closed_   | observer_requestor | not see | not see | not see  | not see |
+      | closed_   | regular            | not see | not see | not see  | not see |
+      | upcoming_ | admin              | see     | see     | see      | see     |
+      | upcoming_ | source_manager     | see     | see     | see      | see     |
+      | upcoming_ | source_reviewer    | not see | not see | not see  | see     |
+      | upcoming_ | observer_requestor | not see | not see | not see  | not see |
+      | upcoming_ | regular            | not see | not see | not see  | not see |
 
   Scenario: Register new fund_source and update
     Given a structure exists with name: "annual"
@@ -75,8 +76,9 @@ Feature: Manage fund_sources
     And I fill in "Contact email" with "office@example.com"
     And I fill in "Contact web" with "http://example.com/"
     And I fill in "Open at" with "2009-10-15 12:00 pm"
-    And I fill in "Submissions due at" with "2009-10-19 12:00 pm"
     And I fill in "Closed at" with "2009-10-20 12:00 pm"
+    And I fill in "Submit at" with "2009-10-19 12:00 pm"
+    And I fill in "Release at" with "2009-10-19 06:00 pm"
     And I press "Create"
     Then I should see "FundSource was successfully created."
     And I should see "Name: Annual SAFC"
@@ -86,16 +88,19 @@ Feature: Manage fund_sources
     And I should see "Contact email: office@example.com"
     And I should see "Contact web: http://example.com/"
     And I should see "Open at: 2009-10-15 12:00:00"
-    And I should see "Submissions due at: 2009-10-19 12:00:00"
     And I should see "Closed at: 2009-10-20 12:00:00"
+    Then show me the page
+    And I should see the following fund_queues:
+      | Submit at                       | Release at                      |
+      | Mon, 19 Oct 2009 12:00:00 -0400 | Mon, 19 Oct 2009 18:00:00 -0400 |
     When I follow "Edit"
     And I fill in "Name" with "Semester GPSAFC"
     And I fill in "Contact name" with "Another Office"
     And I fill in "Contact email" with "office@other.com"
     And I fill in "Contact web" with "http://example.org/"
     And I fill in "Open at" with "2009-10-16 12:00 pm"
-    And I fill in "Submissions due at" with "2009-10-20 12:00 pm"
     And I fill in "Closed at" with "2009-10-21 01:00 pm"
+    And I check "Remove queue"
     And I press "Update"
     Then I should see "FundSource was successfully updated."
     And I should see "Name: Semester GPSAFC"
@@ -103,7 +108,7 @@ Feature: Manage fund_sources
     And I should see "Contact email: office@other.com"
     And I should see "Contact web: http://example.org/"
     And I should see "Open at: 2009-10-16 12:00:00"
-    And I should see "Submissions due at: 2009-10-20 12:00:00"
+    And I should see "No fund queues."
     And I should see "Closed at: 2009-10-21 13:00:00"
 
   Scenario: Delete fund_source

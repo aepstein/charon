@@ -179,6 +179,15 @@ authorization do
             }
           }
     end
+    has_permission_on [ :fund_grants ], :to => [ :create ], :join_by => :and do
+      if_permitted_to :request, :organization
+      if_attribute :fund_source_id => is { nil }
+    end
+    has_permission_on [ :fund_grants ], :to => [ :create ], :join_by => :and do
+      if_permitted_to :request
+      if_attribute :fund_source => { :fund_queues => {
+        :submit_at => gt { Time.zone.now } } }
+    end
     has_permission_on [ :fund_grants ], :to => :show, :join_by => :and do
       if_permitted_to :request
       if_attribute :released_at => is_not { nil }
@@ -190,6 +199,12 @@ authorization do
       if_permitted_to :manage, :fund_source
     end
 
+    has_permission_on [ :fund_requests ], :to => :request do
+      if_permitted_to :request, :fund_grant
+    end
+    has_permission_on [ :fund_requests ], :to => :review do
+      if_permitted_to :review, :fund_grant
+    end
     has_permission_on [ :fund_requests ], :to => :show do
       if_permitted_to :request
     end
@@ -198,12 +213,6 @@ authorization do
     end
     has_permission_on [ :fund_requests ], :to => [ :show, :allocate ] do
       if_permitted_to :manage, :fund_source
-    end
-    has_permission_on [ :fund_requests ], :to => :request, :join_by => :and do
-      if_permitted_to :request, :fund_grant
-    end
-    has_permission_on [ :fund_requests ], :to => :review do
-      if_permitted_to :review, :fund_grant
     end
     has_permission_on [ :fund_requests ], :to => :manage do
       if_permitted_to :manage, :fund_grant

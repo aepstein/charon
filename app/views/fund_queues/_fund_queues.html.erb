@@ -1,0 +1,18 @@
+<% if fund_queues.any? %>
+<table>
+<thead>
+<tr>
+<th>Submit at</th>
+<th>Release at</th>
+</tr>
+</thead>
+<tbody>
+<%=render :partial => 'fund_queues/fund_queue', :collection => fund_queues %>
+</tbody>
+</table>
+<% else %>
+<p>
+No fund queues.
+</p>
+<% end %>
+
