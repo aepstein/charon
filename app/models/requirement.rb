@@ -11,6 +11,13 @@ class Requirement < ActiveRecord::Base
   validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type, :role_id ]
   validates_inclusion_of :fulfillable_type, :in => Fulfillment::FULFILLABLE_TYPES.values.flatten
 
+  scope :with_inner_fulfillments, lambda {
+    r = arel_table
+    f = Fulfillment.arel_table
+    joins('INNER JOIN fulfillments').
+    where( r[:fulfillable_id].eq( f[:fulfillable_id] ).
+      and( r[:fulfillable_type].eq( f[:fulfillable_type] ) ).to_sql )
+  }
   scope :with_fulfillments, lambda {
     r = arel_table
     f = Fulfillment.arel_table

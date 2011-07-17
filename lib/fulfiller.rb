@@ -51,6 +51,21 @@ module Fulfiller
       frameworks( perspective, role_ids ).map(&:id).uniq
     end
 
+    def fulfilled_requirements( requirements )
+      f = Fulfillment.arel_table
+      requirements.with_inner_fulfillments.
+        where( f[:fulfiller_id].eq( id ) ).
+        where( f[:fulfiller_type].eq( self.class.to_s ) )
+    end
+
+    def unfulfilled_requirements( requirements )
+      r = Requirement.arel_table
+      f = Fulfillment.arel_table
+      requirements.group( r[:id] ).with_fulfillments.unfulfilled.
+        joins( "AND " + f[:fulfiller_id].eq( id ).
+          and( f[:fulfiller_type].eq( self.class.to_s ) ).to_sql )
+    end
+
   end
 
   def self.included(receiver)
