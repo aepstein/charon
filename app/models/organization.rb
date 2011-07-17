@@ -46,6 +46,7 @@ class Organization < ActiveRecord::Base
       ).
       where( m[:role_id].eq( r[:role_id] ).to_sql )
     end
+    # What users do fulfill requirements?
     def fulfilled_for( requirements )
       m = Membership.arel_table
       r = requirements.arel_table
