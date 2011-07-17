@@ -1,17 +1,12 @@
 class RegistrationCriterion < ActiveRecord::Base
-  include Fulfillable
-
   attr_accessible :must_register, :minimal_percentage, :type_of_member
 
-  has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all
+  is_fulfillable
 
   validates_numericality_of :minimal_percentage, :integer_only => true,
     :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100
   validates_inclusion_of :type_of_member, :in => Registration::MEMBER_TYPES
   validates_uniqueness_of :must_register, :scope => [ :type_of_member, :minimal_percentage ]
-
-  after_save :fulfill
-  after_update :unfulfill
 
   def organization_ids
     registration_term_ids = RegistrationTerm.current.map(&:id)

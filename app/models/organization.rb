@@ -1,11 +1,10 @@
 class Organization < ActiveRecord::Base
-  include Fulfiller
-
   attr_accessible :first_name, :last_name, :club_sport
+
+  is_fulfiller
 
   has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
   has_many :activity_accounts, :through => :university_accounts
-  has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all
   has_many :fund_grants, :dependent => :destroy, :inverse_of => :organization
   has_many :fund_requests, :through => :fund_grants
   has_many :fund_sources, :inverse_of => :organization do

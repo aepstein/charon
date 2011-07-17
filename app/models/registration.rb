@@ -26,8 +26,6 @@ class Registration < ActiveRecord::Base
         "number_of_others ) )", percent.to_i )
   }
 
-  validates_uniqueness_of :id
-
   before_save :adopt_registration_term, :adopt_organization
   after_save :update_organization, :update_memberships, :update_peers
 
@@ -135,9 +133,9 @@ class Registration < ActiveRecord::Base
     organization.registrations.reset
     if current?
       organization.update_attributes name.to_organization_name_attributes
-      organization.fulfill
+      organization.fulfillments.fulfill
     end
-    organization.unfulfill
+    organization.fulfillments.unfulfill
     true
   end
 

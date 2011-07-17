@@ -2,38 +2,44 @@ module Fulfiller
 
   module ClassMethods
 
-    def fulfillable_types
-      Fulfillment::FULFILLABLE_TYPES[ to_s ]
-    end
+    def is_fulfiller
+      has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all do
+        # Register fulfillment for all the criteria met by this actor
+        def fulfill
+          Fulfillment::FULFILLABLE_TYPES[ proxy_owner.class.to_s ].each do |fulfillable_type|
+            current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
+            proxy_owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
+              fulfillments.create!( :fulfillable => criterion ) unless current.include?( criterion.id )
+            end
+          end
+        end
 
-    def quoted_fulfillable_types
-      Fulfillment::FULFILLABLE_TYPES[ to_s ].map { |type| connection.quote type }.join ','
+        # Remove fulfillments for all criteria no longer met by this actor
+        def unfulfill
+          Fulfillment::FULFILLABLE_TYPES[ proxy_owner.class.to_s ].each do |fulfillable_type|
+            current = proxy_owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
+            delete where( :fulfillable_type => fulfillable_type ).
+              reject { |f| current.include? f.fulfillable_id }
+          end
+        end
+      end
+
+      cattr_accessor :fulfillable_types
+      self.fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ]
+
+      cattr_accessor :quoted_fulfillable_types
+      self.quoted_fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ].
+        map { |type| connection.quote type }.join ','
+
+      after_save { |fulfiller| fulfiller.fulfillments.fulfill }
+      after_update { |fulfiller| fulfiller.fulfillments.unfulfill }
+
+      send :include, InstanceMethods
     end
 
   end
 
   module InstanceMethods
-
-    # Register fulfillment for all the criteria met by this actor
-    def fulfill
-      Fulfillment::FULFILLABLE_TYPES[ self.class.to_s ].each do |fulfillable_type|
-        current = fulfillments.where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
-        send(fulfillable_type.underscore.pluralize).each do |criterion|
-          fulfillments.create!( :fulfillable => criterion ) unless current.include?( criterion.id )
-        end
-      end
-    end
-
-    # Remove fulfillments for all criteria no longer met by this actor
-    def unfulfill
-      Fulfillment::FULFILLABLE_TYPES[ self.class.to_s ].each do |fulfillable_type|
-        current = send( fulfillable_type.underscore.pluralize ).map( &:id )
-        logger.debug "Unfulfilling #{fulfillable_type} except with id #{current.join ','}"
-        fulfillments.delete fulfillments.
-          where( :fulfillable_type => fulfillable_type ).
-          reject { |f| current.include? f.fulfillable_id }
-      end
-    end
 
     # Identify frameworks for which all requirements are fulfilled by this actor
     def frameworks( perspective, role_ids = nil )
@@ -49,7 +55,7 @@ module Fulfiller
 
   def self.included(receiver)
     receiver.extend         ClassMethods
-    receiver.send :include, InstanceMethods
+#    receiver.send :include, InstanceMethods
   end
 
 end

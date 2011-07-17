@@ -1,6 +1,4 @@
 class User < ActiveRecord::Base
-  include Fulfiller
-
   STATUSES = %w[ undergrad grad staff faculty alumni temporary ]
   ADMIN_ACCESSIBLE_ATTRIBUTES = [ :admin, :net_id, :status ]
 
@@ -29,6 +27,8 @@ class User < ActiveRecord::Base
 
   search_methods :name_contains
 
+  is_fulfiller
+
   acts_as_authentic do |c|
     c.login_field = 'net_id'
     c.validate_email_field = false
@@ -46,15 +46,6 @@ class User < ActiveRecord::Base
     end
     def fund_request_ids
       self.fund_requests.map(&:approvable_id)
-    end
-  end
-  has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all do
-    def requirements_sql
-      fragments = inject([]) do |memo, fulfillment|
-        memo << "(requirements.fulfillable_id = #{fulfillment.fulfillable_id} AND " +
-        "requirements.fulfillable_type = #{connection.quote fulfillment.fulfillable_type})"
-      end
-      fragments.join ' OR '
     end
   end
   has_many :memberships, :dependent => :destroy, :inverse_of => :user
@@ -113,8 +104,7 @@ class User < ActiveRecord::Base
   before_validation :extract_email, :initialize_password, :initialize_addresses, :on => :create
   validates_inclusion_of :status, :in => STATUSES, :allow_blank => true
   before_validation :import_simple_ldap_attributes
-  after_save :import_complex_ldap_attributes, :fulfill
-  after_update :unfulfill
+  after_save :import_complex_ldap_attributes
 
   def fund_requests; FundRequest.organization_id_equals_any( organization_ids ); end
 
