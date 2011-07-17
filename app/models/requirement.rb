@@ -11,6 +11,16 @@ class Requirement < ActiveRecord::Base
   validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type, :role_id ]
   validates_inclusion_of :fulfillable_type, :in => Fulfillment::FULFILLABLE_TYPES.values.flatten
 
+  scope :with_fulfillments, lambda {
+    r = arel_table
+    f = Fulfillment.arel_table
+    joins('LEFT JOIN fulfillments ON ' +
+      r[:fulfillable_id].eq( f[:fulfillable_id] ).
+      and( r[:fulfillable_type].eq( f[:fulfillable_type] ) ).to_sql )
+  }
+  scope :fulfilled, having( 'COUNT(requirements.id) <= COUNT(fulfillments.id)' )
+  scope :unfulfilled, having( 'COUNT(requirements.id) > COUNT(fulfillments.id)' )
+
   scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
     joins( 'LEFT JOIN fulfillments ON requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
         'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
@@ -21,8 +31,6 @@ class Requirement < ActiveRecord::Base
       ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
       "requirements.role_id IN (#{role_ids.join ','}) )" : "requirements.role_id IS NULL" ) )
   }
-  scope :fulfilled, having( 'COUNT(requirements.id) <= COUNT(fulfillments.id)' )
-  scope :unfulfilled, having( 'COUNT(requirements.id) > COUNT(fulfillments.id)' )
   scope :fulfilled_for, lambda { |fulfiller, perspective, role_ids|
     with_fulfillments_for(fulfiller, perspective, role_ids).fulfilled
   }

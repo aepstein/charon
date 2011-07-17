@@ -33,7 +33,31 @@ class Organization < ActiveRecord::Base
   end
   has_many :university_accounts, :dependent => :destroy, :inverse_of => :organization
   has_many :users, :through => :memberships,
-    :conditions => { :memberships => { :active => true } }
+    :conditions => { :memberships => { :active => true } } do
+    # What users do not fulfill the set of requirements?
+    def unfulfilled_for( requirements )
+      m = Membership.arel_table
+      r = requirements.arel_table
+      f = Fulfillment.arel_table
+      scoped.group( m[:user_id] ).joins("INNER JOIN requirements").merge(
+        requirements.with_fulfillments.unfulfilled.
+        joins( "AND " + f[:fulfiller_id].eq( m[:user_id] ).
+          and(  f[:fulfiller_type].eq( 'User' ) ).to_sql )
+      ).
+      where( m[:role_id].eq( r[:role_id] ).to_sql )
+    end
+    def fulfilled_for( requirements )
+      m = Membership.arel_table
+      r = requirements.arel_table
+      f = Fulfillment.arel_table
+      scoped.group( m[:user_id] ).joins("LEFT JOIN requirements ON " +
+        m[:role_id].eq( r[:role_id] ).to_sql ).merge(
+        requirements.with_fulfillments.fulfilled.
+        joins( "AND " + f[:fulfiller_id].eq( m[:user_id] ).
+          and(  f[:fulfiller_type].eq( 'User' ) ).to_sql )
+      )
+    end
+  end
 
   before_validation :format_name
 
