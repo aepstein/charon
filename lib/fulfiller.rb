@@ -41,6 +41,13 @@ module Fulfiller
 
   module InstanceMethods
 
+    # Frameworks for which this fulfills all requirements
+    # * does not look at role-limited requirements
+    # * does not look at requirements the subject cannot directly fulfill
+    def frameworks( perspective )
+      Framework.fulfilled_for perspective, self
+    end
+
     # Of the listed requirements, which ones does this fulfiller meet?
     # * only return requirements with fulfillments
     # * fulfillments must match fulfiller

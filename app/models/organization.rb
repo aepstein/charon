@@ -76,6 +76,11 @@ class Organization < ActiveRecord::Base
   validates :last_name, :presence => true,
     :uniqueness => { :scope => [ :first_name ] }
 
+  def frameworks( perspective, user = nil )
+    return super( perspective ) if user.blank?
+    Framework.fulfilled_for perspective, self, user
+  end
+
   def registration_criterions
     return [] unless registrations.current
     registrations.current.registration_criterions

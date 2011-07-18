@@ -130,7 +130,8 @@ class User < ActiveRecord::Base
   # What frameworks is the user eligible for?
   # * perspective: the perspective from which user is approaching
   # * organization: the organization on behalf of which the user is acting
-  def frameworks( perspective, organization )
+  def frameworks( perspective, organization = nil )
+    return super( perspective ) if organization.blank?
     Framework.fulfilled_for( perspective, organization, self )
   end
 
