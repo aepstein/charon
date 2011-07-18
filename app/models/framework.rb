@@ -46,9 +46,9 @@ class Framework < ActiveRecord::Base
   #   specific to a role held by the user in the specified perspective
   scope :with_requirements_for_subjects,
     lambda { |perspective, organization, user|
-    role_ids = organization.roles.
-      where( :name.in => Role.names_for_perspective( perspective ),
-        :memberships => { :user_id => user.id } ).map(&:id)
+    role_ids = organization.roles.where {
+      name.in( Role.names_for_perspective( perspective ) ) &
+      memberships.user_id.eq( my { user.id } ) }.map(&:id)
     with_requirements_for_perspective( perspective ).
     joins( "AND ( requirements.role_id IS NULL" +
       ( role_ids.empty? ? "" : " OR requirements.role_id IN (#{role_ids.join ','})" ) +
