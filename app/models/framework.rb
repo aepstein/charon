@@ -13,32 +13,66 @@ class Framework < ActiveRecord::Base
 
   default_scope order( 'frameworks.name ASC' )
 
-  scope :with_requirements_for, lambda { |perspective, organization, user|
+  # Retrieves associated requirement information for frameworks
+  # * chooses appropriate scope to use based on number of arguments
+  scope :with_requirements_for, lambda { |perspective, *args|
+    subjects = args.flatten
+    case subjects.length
+    when 1
+      with_requirements_for_subject perspective, subjects.first
+    when 2
+      with_requirements_for_subjects perspective, subjects.first, subjects.last
+    else
+      raise ArgumentError( "must have either organization/user or organization, user")
+    end
+  }
+  # Limits examined requirements to a perspective
+  scope :with_requirements_for_perspective, lambda { |perspective|
+    joins { requirements.outer }.
+    joins( "AND (requirements.perspectives_mask & " +
+      "#{2**FundEdition::PERSPECTIVES.index(perspective)} > 0 )" )
+  }
+  # Limits examined requirements to a single subject
+  # * subject must be a user or organization
+  # * excludes role-specific requirements or requirements subject cannot fulfill
+  #   directly
+  scope :with_requirements_for_subject, lambda { |perspective, subject|
+    with_requirements_for_perspective( perspective ).
+    joins( "AND requirements.role_id IS NULL AND " +
+      "requirements.fulfillable_type IN (#{subject.quoted_fulfillable_types})" )
+  }
+  # Limits examined requirements to given organization/user pair
+  # * chooses requirements which are not specific to a role or which are
+  #   specific to a role held by the user in the specified perspective
+  scope :with_requirements_for_subjects,
+    lambda { |perspective, organization, user|
     role_ids = organization.roles.
       where( :name.in => Role.names_for_perspective( perspective ),
         :memberships => { :user_id => user.id } ).map(&:id)
-    joins { requirements.outer }.
-    joins( "AND requirements.framework_id = frameworks.id " +
-      "AND (requirements.perspectives_mask & " +
-      "#{2**FundEdition::PERSPECTIVES.index(perspective)} > 0 ) AND " +
-      "( requirements.role_id IS NULL" +
+    with_requirements_for_perspective( perspective ).
+    joins( "AND ( requirements.role_id IS NULL" +
       ( role_ids.empty? ? "" : " OR requirements.role_id IN (#{role_ids.join ','})" ) +
       " )"
     )
   }
-  scope :with_fulfillments_for, lambda { |perspective, organization, user|
-    with_requirements_for( perspective, organization, user).
-    merge( Requirement.unscoped.with_fulfillments.with_fulfillers( organization, user ) )
+  # Examines both requirements and fulfillments
+  # * limits fulfillments to the subjects provided
+  scope :with_fulfillments_for, lambda { |perspective, *subjects|
+    with_requirements_for( perspective, subjects).
+    merge( Requirement.unscoped.with_fulfillments.with_fulfillers( subjects.flatten ) )
   }
-  scope :fulfilled_for, lambda { |perspective, organization, user|
-    with_fulfillments_for( perspective, organization, user ).
+  # Includes only frameworks for which requirements are fulfilled for
+  # given perspective and subject(s)
+  scope :fulfilled_for, lambda { |perspective, *subjects|
+    with_fulfillments_for( perspective, subjects ).
     merge( Requirement.fulfilled ).group("frameworks.id")
   }
-  scope :unfulfilled_for, lambda { |perspective, organization, user|
-    with_fulfillments_for( perspective, organization, user ).
+  # Includes only frameworks for which requirements are not fulfilled for
+  # given perspective and subject(s)
+  scope :unfulfilled_for, lambda { |perspective, *subjects|
+    with_fulfillments_for( perspective, subjects ).
     merge( Requirement.unfulfilled ).group("frameworks.id")
   }
-
 
   def to_s; name; end
 

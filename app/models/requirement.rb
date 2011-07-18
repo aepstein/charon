@@ -31,7 +31,7 @@ class Requirement < ActiveRecord::Base
   # * returns blank fulfillments as well
   scope :with_fulfillers, lambda { |*fulfillers|
     f = Fulfillment.arel_table
-    sql = fulfillers.map { |fulfiller|
+    sql = fulfillers.flatten.map { |fulfiller|
       '( ' +
       f[:fulfiller_type].eq( fulfiller.class.to_s ).
       and( f[:fulfiller_id].eq( fulfiller.id ) ).to_sql +
