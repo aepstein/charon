@@ -46,7 +46,7 @@ class Approver < ActiveRecord::Base
   scope :unfulfilled_for, lambda { |fund_request|
     unsatisfied.with_approvals_for( fund_request )
   }
-  scope :quantified, where( :quantity.ne => nil )
+  scope :quantified, where { quantity != nil }
   scope :unquantified, where( :quantity => nil )
 end
 

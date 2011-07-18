@@ -9,7 +9,7 @@ module Fulfiller
           Fulfillment::FULFILLABLE_TYPES[ proxy_owner.class.to_s ].each do |fulfillable_type|
             current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
             proxy_owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
-              fulfillments.create!( :fulfillable => criterion ) unless current.include?( criterion.id )
+              create!( :fulfillable => criterion ) unless current.include?( criterion.id )
             end
           end
         end
@@ -41,16 +41,9 @@ module Fulfiller
 
   module InstanceMethods
 
-    # Identify frameworks for which all requirements are fulfilled by this actor
-    def frameworks( perspective, role_ids = nil )
-      Framework.fulfilled_for( self, perspective, role_ids )
-    end
-
-    # Identify framework ids for which all requirements are fulfilled by this actor
-    def framework_ids( perspective, role_ids = nil )
-      frameworks( perspective, role_ids ).map(&:id).uniq
-    end
-
+    # Of the listed requirements, which ones does this fulfiller meet?
+    # * only return requirements with fulfillments
+    # * fulfillments must match fulfiller
     def fulfilled_requirements( requirements )
       f = Fulfillment.arel_table
       requirements.with_inner_fulfillments.
@@ -58,19 +51,23 @@ module Fulfiller
         where( f[:fulfiller_type].eq( self.class.to_s ) )
     end
 
+    # Of the listed requirements, which ones does this fulfiller not meet?
+    # * return requirements without matching fulfillments
+    # * fulfillments must be null or must match the fulfiller
+    # * only return requirements with fulfillable type that fulfiller can fulfill
     def unfulfilled_requirements( requirements )
       r = Requirement.arel_table
       f = Fulfillment.arel_table
       requirements.group( r[:id] ).with_fulfillments.unfulfilled.
         joins( "AND " + f[:fulfiller_id].eq( id ).
-          and( f[:fulfiller_type].eq( self.class.to_s ) ).to_sql )
+          and( f[:fulfiller_type].eq( self.class.to_s ) ).to_sql ).
+        where( r[:fulfillable_type].in( self.class.fulfillable_types ) )
     end
 
   end
 
   def self.included(receiver)
     receiver.extend         ClassMethods
-#    receiver.send :include, InstanceMethods
   end
 
 end

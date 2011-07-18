@@ -14,7 +14,7 @@ class InventoryItem < ActiveRecord::Base
     'inventory_items.description ASC' )
 
   scope :active, where( :retired_on => nil)
-  scope :retired, where( :retired_on.ne => nil )
+  scope :retired, where { retired_on != nil }
   scope :organization_name_contains, lambda { |name|
     scoped.merge( Organization.name_contains( name ) )
   }

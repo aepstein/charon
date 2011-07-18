@@ -32,7 +32,8 @@ module RegistrationImporter
       order( 'orgs.updated_time ASC' )
 
     scope :importable, lambda {
-      max_registration = Registration.unscoped.where( :when_updated.ne => nil).maximum(:when_updated)
+      max_registration = Registration.unscoped.where { when_updated != nil }.
+        maximum(:when_updated)
       if max_registration then
         where( :updated_time.gt => max_registration )
       else

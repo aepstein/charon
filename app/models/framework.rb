@@ -13,68 +13,32 @@ class Framework < ActiveRecord::Base
 
   default_scope order( 'frameworks.name ASC' )
 
-  # Includes requirements and fulfillments matching one or more fulfillers
-  # * fulfillers: either a fulfiller object or an array of them
-  # * perspective: perspective to limit to
-  # * role_ids: specify role for role-limited requirements
-  # * if role_ids is not supplied, but organization and user are supplied,
-  #   the role_ids will be inferred based upon the user's role in the
-  #   organization
-  scope :with_fulfillments_for, lambda { |fulfillers, perspective, role_ids|
-    fulfillers = fulfillers.is_a?(Array) ? fulfillers : [ fulfillers ]
-
-    organizations = fulfillers.select { |fulfiller| fulfiller.is_a? Organization }
-    users = fulfillers.select { |fulfiller| fulfiller.is_a? User }
-
-    perspective_roles = if perspective == FundEdition::PERSPECTIVES.first
-      Role::REQUESTOR
-    else
-      Role::REVIEWER
-    end
-
-    if role_ids.empty?
-      role_ids = organizations.map(&:roles).map { |roles|
-        users.map { |user|
-          roles.where( :memberships => { :user_id => user.id },
-            :name.in => perspective_roles ).map(&:id)
-        }
-      }.flatten.uniq
-    end
-
-    requirement_criteria = ( fulfillers ).
-    map(&:class).map(&:fulfillable_types).flatten.uniq.
-    map { |type| connection.quote type }.join(',')
-
-    fulfiller_criteria = ( fulfillers ).map { |fulfiller|
-      "(fulfillments.fulfiller_id = #{fulfiller.id} AND " +
-      "fulfillments.fulfiller_type = #{connection.quote fulfiller.class.to_s})"
-    }.join(' OR ')
-
-    role_criteria = if role_ids && !role_ids.empty?
-      "(requirements.role_id IS NULL OR requirements.role_id IN " +
-      "(#{role_ids.join ','}) )"
-    else
-      "requirements.role_id IS NULL"
-    end
-
-    joins( 'LEFT JOIN requirements ON requirements.framework_id = frameworks.id ' +
-      "AND requirements.fulfillable_type IN (#{requirement_criteria}) " +
-      "AND #{role_criteria} AND (requirements.perspectives_mask & "+
-      "#{2**FundEdition::PERSPECTIVES.index(perspective)}) > 0 " +
-      'LEFT JOIN fulfillments ON requirements.fulfillable_id = ' +
-      'fulfillments.fulfillable_id AND requirements.fulfillable_type = ' +
-      "fulfillments.fulfillable_type AND " +
-      "( #{fulfiller_criteria} )" ).
-    group( 'frameworks.id' )
+  scope :with_requirements_for, lambda { |perspective, organization, user|
+    role_ids = organization.roles.
+      where( :name.in => Role.names_for_perspective( perspective ),
+        :memberships => { :user_id => user.id } ).map(&:id)
+    joins { requirements.outer }.
+    joins( "AND requirements.framework_id = frameworks.id " +
+      "AND (requirements.perspectives_mask & " +
+      "#{2**FundEdition::PERSPECTIVES.index(perspective)} > 0 ) AND " +
+      "( requirements.role_id IS NULL" +
+      ( role_ids.empty? ? "" : " OR requirements.role_id IN (#{role_ids.join ','})" ) +
+      " )"
+    )
   }
-  scope :fulfilled, having( 'COUNT(requirements.id) <= COUNT(fulfillments.id)' )
-  scope :unfulfilled, having( 'COUNT(requirements.id) > COUNT(fulfillments.id)' )
-  scope :fulfilled_for, lambda { |fulfiller, perspective, role_ids|
-    with_fulfillments_for(fulfiller, perspective, role_ids).fulfilled
+  scope :with_fulfillments_for, lambda { |perspective, organization, user|
+    with_requirements_for( perspective, organization, user).
+    merge( Requirement.unscoped.with_fulfillments.with_fulfillers( organization, user ) )
   }
-  scope :unfulfilled_for, lambda { |fulfiller, perspective, role_ids|
-    with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
+  scope :fulfilled_for, lambda { |perspective, organization, user|
+    with_fulfillments_for( perspective, organization, user ).
+    merge( Requirement.fulfilled ).group("frameworks.id")
   }
+  scope :unfulfilled_for, lambda { |perspective, organization, user|
+    with_fulfillments_for( perspective, organization, user ).
+    merge( Requirement.unfulfilled ).group("frameworks.id")
+  }
+
 
   def to_s; name; end
 

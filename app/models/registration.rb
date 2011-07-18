@@ -97,7 +97,8 @@ class Registration < ActiveRecord::Base
 
   def peers
     return Registration.unscoped.where( :id => nil ) unless external_id? && persisted?
-    Registration.unscoped.where( :external_id => external_id, :id.ne => id )
+    Registration.unscoped.where { external_id == my { external_id } }.
+      where { id != my { id } }
   end
 
   private

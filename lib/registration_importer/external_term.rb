@@ -19,8 +19,9 @@ module RegistrationImporter
 
     has_many :registrations, :class_name => 'ExternalRegistration', :foreign_key => :term_id do
       def latest
-        latest = Registration.unscoped.where( :external_term_id => proxy_owner.term_id,
-          :when_updated.ne => nil ).maximum(:when_updated)
+        latest = Registration.unscoped.where {
+          external_term_id == my { proxy_owner.term_id } && when_updated != nil
+          }.maximum(:when_updated)
         if latest
           return where( :updated_time.gt => latest )
         end

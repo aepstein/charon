@@ -6,10 +6,12 @@ class Requirement < ActiveRecord::Base
   belongs_to :fulfillable, :polymorphic => true
   belongs_to :role, :inverse_of => :requirements
 
-  validates_presence_of :framework
-  validates_presence_of :fulfillable
-  validates_uniqueness_of :framework_id, :scope => [ :fulfillable_id, :fulfillable_type, :role_id ]
-  validates_inclusion_of :fulfillable_type, :in => Fulfillment::FULFILLABLE_TYPES.values.flatten
+  validates :framework, :presence => true
+  validates :fulfillable, :presence => true
+  validates :framework_id, :uniqueness =>
+   { :scope => [ :fulfillable_id, :fulfillable_type, :role_id ] }
+  validates :fulfillable_type, :inclusion =>
+   { :in => Fulfillment::FULFILLABLE_TYPES.values.flatten }
 
   scope :with_inner_fulfillments, lambda {
     r = arel_table
@@ -24,6 +26,18 @@ class Requirement < ActiveRecord::Base
     joins('LEFT JOIN fulfillments ON ' +
       r[:fulfillable_id].eq( f[:fulfillable_id] ).
       and( r[:fulfillable_type].eq( f[:fulfillable_type] ) ).to_sql )
+  }
+  # Include only fulfillments matching specified fulfillers
+  # * returns blank fulfillments as well
+  scope :with_fulfillers, lambda { |*fulfillers|
+    f = Fulfillment.arel_table
+    sql = fulfillers.map { |fulfiller|
+      '( ' +
+      f[:fulfiller_type].eq( fulfiller.class.to_s ).
+      and( f[:fulfiller_id].eq( fulfiller.id ) ).to_sql +
+      ' )'
+    }
+    joins("AND ( #{sql.join(' OR ')} )")
   }
   scope :fulfilled, having( 'COUNT(requirements.id) <= COUNT(fulfillments.id)' )
   scope :unfulfilled, having( 'COUNT(requirements.id) > COUNT(fulfillments.id)' )

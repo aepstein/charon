@@ -16,7 +16,7 @@ class ActivityAccount < ActiveRecord::Base
   }
   scope :transactable_for, lambda { |activity_account|
     organization_id_in( [ activity_account.organization.id, activity_account.fund_source.organization.id ] ).
-    where( :id.ne => activity_account.id )
+    where { id != activity_account.id }
   }
 
   validates :university_account, :presence => true

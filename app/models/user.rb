@@ -127,6 +127,13 @@ class User < ActiveRecord::Base
     } )
   end
 
+  # What frameworks is the user eligible for?
+  # * perspective: the perspective from which user is approaching
+  # * organization: the organization on behalf of which the user is acting
+  def frameworks( perspective, organization )
+    Framework.fulfilled_for( perspective, organization, self )
+  end
+
   def full_name
     "#{first_name} #{middle_name} #{last_name}".squeeze ' '
   end

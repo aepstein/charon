@@ -16,13 +16,13 @@ module Fulfillable
           connection.insert(
             "INSERT INTO fulfillments (fulfillable_type, fulfillable_id, " +
             "fulfiller_type, created_at, fulfiller_id) " +
-            "SELECT #{q_fulfillable_type}, #{id}, #{quoted_ft}, " +
+            "SELECT #{q_fulfillable_type}, #{proxy_owner.id}, #{quoted_ft}, " +
             "#{connection.quote Time.zone.now}, #{plural_ft}.id " +
             "FROM #{plural_ft} LEFT JOIN fulfillments ON " +
             "fulfillments.fulfiller_id = #{plural_ft}.id " +
             "AND fulfillments.fulfiller_type = #{quoted_ft} AND " +
             "fulfillments.fulfillable_type = #{q_fulfillable_type} " +
-            "AND fulfillments.fulfillable_id = #{id} " +
+            "AND fulfillments.fulfillable_id = #{proxy_owner.id} " +
             "WHERE fulfillments.fulfiller_id IS NULL AND #{plural_ft}.id IN " +
             "(#{fulfiller_ids.join ','})"
           )
@@ -37,7 +37,7 @@ module Fulfillable
           fulfiller_ids = proxy_owner.send(underscore_ft + '_ids')
           connection.delete(
             "DELETE FROM fulfillments WHERE fulfillable_type = " +
-            "#{q_fulfillable_type} AND fulfillable_id = #{id}" +
+            "#{q_fulfillable_type} AND fulfillable_id = #{proxy_owner.id}" +
             (fulfiller_ids.empty? ? "" : " AND fulfiller_id NOT IN " +
             "(#{fulfiller_ids.join ','})")
           )
