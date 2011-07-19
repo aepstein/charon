@@ -63,6 +63,17 @@ shared_examples "fulfiller" do
     end
   end
 
+  context 'callbacks' do
+    it 'should call fulfillments.fulfill! after save' do
+      fulfiller.fulfillments.should_receive :fulfill!
+      fulfiller.save!
+    end
+
+    it 'should call fulfillments.unfulfill! after update' do
+      fulfiller.fulfillments.should_receive :unfulfill!
+      fulfiller.save!
+    end
+  end
 end
 
 describe Organization do
