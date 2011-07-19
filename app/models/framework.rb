@@ -17,18 +17,19 @@ class Framework < ActiveRecord::Base
   # * chooses appropriate scope to use based on number of arguments
   scope :with_requirements_for, lambda { |perspective, *args|
     subjects = args.flatten
+    scope = joins { requirements.outer }.
+      with_requirements_for_perspective( perspective )
     case subjects.length
     when 1
-      with_requirements_for_subject perspective, subjects.first
+      scope.with_requirements_for_subject subjects.first
     when 2
-      with_requirements_for_subjects perspective, subjects.first, subjects.last
+      scope.with_requirements_for_subjects perspective, subjects.first, subjects.last
     else
       raise ArgumentError( "must have either organization/user or organization, user")
     end
   }
   # Limits examined requirements to a perspective
   scope :with_requirements_for_perspective, lambda { |perspective|
-    joins { requirements.outer }.
     joins( "AND (requirements.perspectives_mask & " +
       "#{2**FundEdition::PERSPECTIVES.index(perspective)} > 0 )" )
   }
@@ -36,24 +37,20 @@ class Framework < ActiveRecord::Base
   # * subject must be a user or organization
   # * excludes role-specific requirements or requirements subject cannot fulfill
   #   directly
-  scope :with_requirements_for_subject, lambda { |perspective, subject|
-    with_requirements_for_perspective( perspective ).
+  scope :with_requirements_for_subject, lambda { |subject|
     joins( "AND requirements.role_id IS NULL AND " +
       "requirements.fulfillable_type IN (#{subject.quoted_fulfillable_types})" )
   }
   # Limits examined requirements to given organization/user pair
   # * chooses requirements which are not specific to a role or which are
   #   specific to a role held by the user in the specified perspective
-  scope :with_requirements_for_subjects,
-    lambda { |perspective, organization, user|
+  scope :with_requirements_for_subjects, lambda { |perspective, organization, user|
     role_ids = organization.roles.where {
-      name.in( Role.names_for_perspective( perspective ) ) &
-      memberships.user_id.eq( my { user.id } ) }.map(&:id)
-    with_requirements_for_perspective( perspective ).
-    joins( "AND ( requirements.role_id IS NULL" +
-      ( role_ids.empty? ? "" : " OR requirements.role_id IN (#{role_ids.join ','})" ) +
-      " )"
-    )
+      name.in( Role.names_for_perspective( my { perspective } ) ) &
+      memberships.user_id.eq( my { user.id } ) }.
+      except(:select,:order).select("roles.id").to_sql
+    joins( "AND ( requirements.role_id IS NULL OR requirements.role_id IN " +
+      "(#{role_ids}) )" )
   }
   # Examines both requirements and fulfillments
   # * limits fulfillments to the subjects provided
