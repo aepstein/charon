@@ -37,6 +37,17 @@ shared_examples 'fulfillable' do
   end
 end
 
+describe RegistrationCriterion do
+  before( :each ) do
+    create( :eligible_registration, :organization => fulfilled_fulfiller )
+  end
+
+  it_behaves_like 'fulfillable' do
+    let( :fulfilled_fulfiller ) { create( :organization ) }
+    let( :unfulfilled_fulfiller ) { create( :organization ) }
+  end
+end
+
 describe Agreement do
   before( :each ) do
     create( :approval, :approvable => fulfillable, :user => fulfilled_fulfiller )
