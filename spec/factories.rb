@@ -230,6 +230,11 @@ FactoryGirl.define do
     factory :current_registration do
       association :registration_term, :factory => :current_registration_term
 
+      factory :eligible_registration do
+        registered true
+        number_of_undergrads 10
+      end
+
       factory :safc_eligible_registration do
         registered true
         number_of_undergrads 50

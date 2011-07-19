@@ -6,7 +6,7 @@ module Fulfillable
       has_many :fulfillments, :as => :fulfillable, :dependent => :delete_all do
         # Identify all the records that fulfill this condition and register
         # fulfillments where they do not exist
-        def fulfill
+        def fulfill!
           quoted_ft = connection.quote proxy_owner.class.fulfiller_type
           underscore_ft = proxy_owner.class.fulfiller_type.underscore
           fulfiller_ids = proxy_owner.send(underscore_ft + "_ids")
@@ -31,7 +31,7 @@ module Fulfillable
 
         # Identify all the records that do not fulfill this condition and
         # delete their fulfillments
-        def unfulfill
+        def unfulfill!
           q_fulfillable_type = connection.quote proxy_owner.class.to_s
           underscore_ft = proxy_owner.class.fulfiller_type.underscore
           fulfiller_ids = proxy_owner.send(underscore_ft + '_ids')
@@ -45,8 +45,8 @@ module Fulfillable
         end
       end
 
-      after_save { |fulfillable| fulfillable.fulfillments.fulfill }
-      after_update { |fulfillable| fulfillable.fulfillments.unfulfill }
+      after_save { |fulfillable| fulfillable.fulfillments.fulfill! }
+      after_update { |fulfillable| fulfillable.fulfillments.unfulfill! }
 
       class << self
         def fulfiller_type

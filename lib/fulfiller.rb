@@ -5,7 +5,7 @@ module Fulfiller
     def is_fulfiller
       has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all do
         # Register fulfillment for all the criteria met by this actor
-        def fulfill
+        def fulfill!
           Fulfillment::FULFILLABLE_TYPES[ proxy_owner.class.to_s ].each do |fulfillable_type|
             current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
             proxy_owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
@@ -15,7 +15,7 @@ module Fulfiller
         end
 
         # Remove fulfillments for all criteria no longer met by this actor
-        def unfulfill
+        def unfulfill!
           Fulfillment::FULFILLABLE_TYPES[ proxy_owner.class.to_s ].each do |fulfillable_type|
             current = proxy_owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
             delete where( :fulfillable_type => fulfillable_type ).
@@ -31,8 +31,8 @@ module Fulfiller
       self.quoted_fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ].
         map { |type| connection.quote type }.join ','
 
-      after_save { |fulfiller| fulfiller.fulfillments.fulfill }
-      after_update { |fulfiller| fulfiller.fulfillments.unfulfill }
+      after_save { |fulfiller| fulfiller.fulfillments.fulfill! }
+      after_update { |fulfiller| fulfiller.fulfillments.unfulfill! }
 
       send :include, InstanceMethods
     end

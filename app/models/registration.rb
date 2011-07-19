@@ -134,9 +134,9 @@ class Registration < ActiveRecord::Base
     organization.registrations.reset
     if current?
       organization.update_attributes name.to_organization_name_attributes
-      organization.fulfillments.fulfill
+      organization.fulfillments.fulfill!
     end
-    organization.fulfillments.unfulfill
+    organization.fulfillments.unfulfill!
     true
   end
 
