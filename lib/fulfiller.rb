@@ -65,7 +65,7 @@ module Fulfiller
     def unfulfilled_requirements( requirements )
       r = Requirement.arel_table
       f = Fulfillment.arel_table
-      requirements.group( r[:id] ).with_fulfillments.unfulfilled.
+      requirements.group( r[:id] ).with_outer_fulfillments.unfulfilled.
         joins( "AND " + f[:fulfiller_id].eq( id ).
           and( f[:fulfiller_type].eq( self.class.to_s ) ).to_sql ).
         where( r[:fulfillable_type].in( self.class.fulfillable_types ) )
