@@ -59,7 +59,8 @@ class Framework < ActiveRecord::Base
   # * limits fulfillments to the subjects provided
   scope :with_fulfillments_for, lambda { |perspective, *subjects|
     with_requirements_for( perspective, subjects).
-    merge( Requirement.unscoped.with_fulfillments.with_fulfillers( subjects.flatten ) )
+    merge( Requirement.unscoped.with_outer_fulfillments.
+      with_fulfillers( subjects.flatten ) )
   }
   # Includes only frameworks for which requirements are fulfilled for
   # given perspective and subject(s)

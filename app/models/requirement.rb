@@ -14,13 +14,12 @@ class Requirement < ActiveRecord::Base
    { :in => Fulfillment::FULFILLABLE_TYPES.values.flatten }
 
   scope :with_inner_fulfillments, lambda {
-    r = arel_table
     f = Fulfillment.arel_table
     joins('INNER JOIN fulfillments').
-    where( r[:fulfillable_id].eq( f[:fulfillable_id] ).
-      and( r[:fulfillable_type].eq( f[:fulfillable_type] ) ).to_sql )
+    where { fulfillable_id.eq( f[:fulfillable_id] ) &
+      fulfillable_type.eq( f[:fulfillable_type] ) }
   }
-  scope :with_fulfillments, lambda {
+  scope :with_outer_fulfillments, lambda {
     r = arel_table
     f = Fulfillment.arel_table
     joins('LEFT JOIN fulfillments ON ' +
@@ -76,7 +75,9 @@ class Requirement < ActiveRecord::Base
   end
 
   def perspectives
-    FundEdition::PERSPECTIVES.reject { |p| ((perspectives_mask || 0) & 2**FundEdition::PERSPECTIVES.index(p)).zero? }
+    FundEdition::PERSPECTIVES.reject { |p|
+      ((perspectives_mask || 0) & 2**FundEdition::PERSPECTIVES.index(p)).zero?
+    }
   end
 
   def perspective=(perspective); self.perspectives = [perspective]; end
