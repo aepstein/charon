@@ -42,23 +42,6 @@ class Requirement < ActiveRecord::Base
   scope :fulfilled, having( 'COUNT(requirements.id) <= COUNT(fulfillments.id)' )
   scope :unfulfilled, having( 'COUNT(requirements.id) > COUNT(fulfillments.id)' )
 
-  scope :with_fulfillments_for, lambda { |fulfiller, perspective, role_ids|
-    joins( 'LEFT JOIN fulfillments ON requirements.fulfillable_id = fulfillments.fulfillable_id AND ' +
-        'requirements.fulfillable_type = fulfillments.fulfillable_type AND ' +
-        "fulfillments.fulfiller_id = #{fulfiller.id}" ).
-    group( 'requirements.id' ).
-    where( "requirements.perspectives_mask & #{2**FundEdition::PERSPECTIVES.index(perspective)} > 0 " +
-      "AND requirements.fulfillable_type IN (#{fulfiller.class.quoted_fulfillable_types}) AND " +
-      ( (role_ids && !role_ids.empty?) ? "(requirements.role_id IS NULL OR " +
-      "requirements.role_id IN (#{role_ids.join ','}) )" : "requirements.role_id IS NULL" ) )
-  }
-  scope :fulfilled_for, lambda { |fulfiller, perspective, role_ids|
-    with_fulfillments_for(fulfiller, perspective, role_ids).fulfilled
-  }
-  scope :unfulfilled_for, lambda { |fulfiller, perspective, role_ids|
-    with_fulfillments_for(fulfiller, perspective, role_ids).unfulfilled
-  }
-
   before_validation do |r|
     r.role = nil unless Fulfillment::FULFILLABLE_TYPES['User'].include? r.fulfillable_type
   end
