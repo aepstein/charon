@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe Organization do
   before(:each) do
@@ -13,19 +13,6 @@ describe Organization do
   it 'should not save without a last_name' do
     @organization.last_name = nil
     @organization.save.should be_false
-  end
-
-  it "should have a fund_requests.creatable method that returns fund_requests that can be made" do
-    fund_source = create(:fund_source)
-    fund_grant = create(:fund_grant, :fund_source => fund_source,
-      :organization => @organization)
-    started_fund_request = create(:fund_request, :fund_grant => fund_grant)
-    closed_fund_source = create(:fund_source,
-      :open_at => Time.zone.now - 1.year, :closed_at => Time.zone.now - 1.day)
-    fund_requests = @organization.fund_requests.creatable
-    fund_requests.length.should eql 1
-    fund_requests.first.class.should eql FundRequest
-    fund_requests.first.fund_source.should eql fund_source
   end
 
   it "should reformat last_name of organizations such that An|A|The|Cornell are moved to first_name" do
