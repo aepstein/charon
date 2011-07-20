@@ -148,17 +148,23 @@ authorization do
       if_attribute :fund_item => { :fund_request => { :state => is { 'released' } } }
     end
 
-    has_permission_on [ :fund_grants ], :to => :request, :join_by => :and do
+    has_permission_on [ :fund_grants ], :to => :request_framework do
       if_permitted_to :request, :organization
+    end
+    has_permission_on [ :fund_grants ], :to => :request, :join_by => :and do
+      if_permitted_to :request_framework
       if_attribute :fund_source => {
           :framework_id => is_in { user.frameworks( Edition::PERSPECTIVES.first,
             object.organization ).map(&:id)
           }
         }
     end
-    has_permission_on [ :fund_grants ], :to => :review, :join_by => :and do
+    has_permission_on [ :fund_grants ], :to => :review_framework, :join_by => :and do
       if_permitted_to :review, :fund_source
       if_attribute :organization_id => is_not_in { user.organization_ids }
+    end
+    has_permission_on [ :fund_grants ], :to => :review, :join_by => :and do
+      if_permitted_to :review_framework
       if_attribute :fund_source => {
           :framework_id => is_in { user.frameworks( Edition::PERSPECTIVES.last,
             object.fund_source.organization ).map(&:id)

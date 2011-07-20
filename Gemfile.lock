@@ -227,7 +227,6 @@ DEPENDENCIES
   prawn-fast-png
   rails (= 3.0.9)
   rails3-jquery-autocomplete
-  rspec
   rspec-rails
   spork
   squeel
