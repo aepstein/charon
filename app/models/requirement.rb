@@ -136,10 +136,15 @@ class Requirement < ActiveRecord::Base
 
   def flat_fulfillable_id; "#{fulfillable_id}_#{fulfillable_type}"; end
 
-  def to_s
-    "#{fulfillable} required for " +
-    (Fulfillment::FULFILLABLE_TYPES['User'].include?(fulfillable_type) ? "#{role ? role : 'everyone'} in " : "") +
-    "#{perspectives.join ', '} organization"
+  def to_s(format = nil)
+    case format
+    when :condition
+      fulfillable.to_s :requirement
+    else
+      "#{fulfillable} required for " +
+      (Fulfillment::FULFILLABLE_TYPES['User'].include?(fulfillable_type) ? "#{role ? role : 'everyone'} in " : "") +
+      "#{perspectives.join ', '} organization"
+    end
   end
 
 end

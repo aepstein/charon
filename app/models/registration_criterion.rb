@@ -3,10 +3,11 @@ class RegistrationCriterion < ActiveRecord::Base
 
   is_fulfillable
 
-  validates_numericality_of :minimal_percentage, :integer_only => true,
-    :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100
-  validates_inclusion_of :type_of_member, :in => Registration::MEMBER_TYPES
-  validates_uniqueness_of :must_register, :scope => [ :type_of_member, :minimal_percentage ]
+  validates :minimal_percentage, :numericality => { :integer_only => true,
+    :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100 }
+  validates :type_of_member, :inclusion => { :in => Registration::MEMBER_TYPES }
+  validates :must_register, :uniqueness => { :scope =>
+    [ :type_of_member, :minimal_percentage ] }
 
   def organization_ids
     registration_term_ids = RegistrationTerm.current.map(&:id)
@@ -21,11 +22,20 @@ class RegistrationCriterion < ActiveRecord::Base
     )
   end
 
-  def to_s
-    out = "No less than #{minimal_percentage} percent of members provided in the " +
-      "current registration must be #{type_of_member}"
-    out += " and the registration must be approved" if must_register?
-    out
+  def to_s(format = nil)
+    case format
+    when :requirement
+      "must have a current registration with #{self}"
+    else
+      conditions = Array.new
+      if minimal_percentage && type_of_member
+        conditions << "at least #{minimal_percentage} percent #{type_of_member} members"
+      end
+      if must_register?
+        conditions << "an approved status"
+      end
+      conditions.join(' and ')
+    end
   end
 end
 

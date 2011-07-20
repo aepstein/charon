@@ -34,7 +34,14 @@ class Agreement < ActiveRecord::Base
     true
   end
 
-  def to_s; name; end
+  def to_s(format = nil)
+    case format
+    when :requirement
+      "must complete the #{self}"
+    else
+      name
+    end
+  end
 
 end
 

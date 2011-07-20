@@ -44,6 +44,34 @@ class FundGrant < ActiveRecord::Base
   # Organization associated with this grant in reviewer perspective
   def reviewer; fund_source ? fund_source.organization : nil; end
 
+
+  # Return unfulfilled requirements for the grant that pertain to users
+  # * must supply users
+  # * considers only requirements for first perspective in which user has roles
+  # * returns hash { organization => [ req1, req2 ], user => [ req3 ] }
+  def unfulfilled_requirements_for(*users)
+    users.flatten.inject({}) do |memo, user|
+      FundEdition::PERSPECTIVES.each do |perspective|
+        organization = send(perspective)
+        requirements = fund_source.framework.requirements.unfulfilled_for( perspective,
+          organization, user )
+        if requirements.length > 0
+          requirements.each do |requirement|
+            fulfiller = if User.fulfillable_types.include? requirement.fulfillable_type
+              user
+            else
+              organization
+            end
+            memo[fulfiller] ||= Array.new
+            memo[fulfiller] << requirement
+          end
+          break
+        end
+      end
+      memo
+    end.each { |k, v| v.uniq! }
+  end
+
   # What is the perspective of the user or organization with respect to this
   # grant?
   # * fulfiller must be a User or Organization
@@ -59,23 +87,6 @@ class FundGrant < ActiveRecord::Base
       raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
     end
     nil
-  end
-
-  # What requirements must the user or organization fulfill in order to have
-  # privileges for this grant?
-  # * fulfiller must be a User or Organization
-  def unfulfilled_requirements_for( fulfiller )
-    perspective = perspective_for( fulfiller )
-    return [] unless perspective && fund_grant && fund_grant.fund_source
-    case fulfiller.class.to_s.to_sym
-    when :User
-      fund_grant.fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective,
-        fulfiller.roles.ids_in_perspective( send(perspective), perspective ) )
-    when :Organization
-      fund_grant.fund_source.framework.requirements.unfulfilled_for( fulfiller, perspective, [] )
-    else
-      raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
-    end
   end
 
 end

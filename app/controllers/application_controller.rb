@@ -10,7 +10,10 @@ class ApplicationController < ActionController::Base
 
   def permission_denied
     flash[:error] = "You are not allowed to perform the requested action."
-    if @fund_grant && @fund_grant.fund_source
+    if @fund_grant && @fund_grant.fund_source && (
+        permitted_to?( :request_framework, @fund_grant ) ||
+        permitted_to?( :review_framework, @fund_grant )
+      )
       flash[:error] += " " + unfulfilled_requirements_for_fund_grant(@fund_grant)
     end
     redirect_to profile_url
@@ -37,20 +40,13 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def unfulfilled_requirements_for_fund_grant(fund_grant)
-    perspective = fund_grant.perspective_for current_user
-    perspective ||= FundEdition::PERSPECTIVES.first
-    for_user = fund_grant.unfulfilled_requirements_for current_user
-    out = ""
-    unless for_user.length == 0
-      out << "You must fulfill the following requirements: #{for_user.join '; '}."
-    end
-    organization = fund_grant.send(perspective)
-    for_organization = fund_grant.unfulfilled_requirements_for organization
-    unless for_organization.length == 0
-      out << "#{organization} must fulfill the following requirements: #{for_organization.join '; '}."
-    end
-    out
+  # Prepares a concise explanation of unfulfilled requirements pertinent to a
+  # fund grant
+  def unfulfilled_requirements_for_fund_grant(fund_grant, *users)
+    fund_grant.unfulfilled_requirements_for( users ).inject([]) do |memo, (fulfiller, requirements)|
+      memo << ( "#{fulfiller == current_user ? 'You' : fulfiller} " +
+      requirements.map { |r| r.to_s :condition }.join(',') + '.' )
+    end.join(' ')
   end
 
   def check_authorization
