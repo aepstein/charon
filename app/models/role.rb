@@ -6,6 +6,17 @@ class Role < ActiveRecord::Base
   attr_accessible :name
 
   default_scope :order => 'roles.name ASC'
+  # Returns the roles a user has associated with an organization and perspective
+  # * examines only active memberships
+  scope :for_perspective, lambda { |perspective, organization, user|
+    joins { memberships }.
+    where {
+      name.in( Role.names_for_perspective( my { perspective } ) ) &
+      memberships.user_id.eq( my { user.id } ) &
+      memberships.organization_id.eq( my { organization.id } ) &
+      memberships.active.eq( true )
+    }
+  }
 
   validates :name, :presence => true, :uniqueness => true
 

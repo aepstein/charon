@@ -155,6 +155,7 @@ FactoryGirl.define do
         :structure => fund_item.fund_grant.fund_source.structure
     }
 
+
     factory :attachable_fund_item do
       association :fund_grant
       node { |fund_item| fund_item.association(:attachable_node,

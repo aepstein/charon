@@ -40,6 +40,17 @@ describe Requirement do
   context 'scopes' do
     before(:each) do
       @requirement.save!
+      @framework = create(:framework)
+      @organization = create(:organization)
+      role = create(:requestor_role)
+      membership = create(:membership, :organization => @organization,
+        :role => role)
+      @user = membership.user
+      @user_global = create( :requestor_requirement, :framework => @framework )
+      @user_role = create( :requestor_requirement, :framework => @framework,
+        :role => membership.role )
+      @organization_global = create( :requestor_requirement, :framework => @framework,
+        :fulfillable => create( :registration_criterion ) )
     end
 
     it 'should have a with_inner_fulfillments scope' do
@@ -49,24 +60,67 @@ describe Requirement do
     end
 
     it 'should have a with_outer_fulfillments scope' do
-      Requirement.with_outer_fulfillments.length.should eql 1
+      Requirement.with_outer_fulfillments.length.should eql 4
       create( :fulfillment, :fulfillable => @requirement.fulfillable )
-      Requirement.with_outer_fulfillments.length.should eql 1
+      Requirement.with_outer_fulfillments.length.should eql 4
+    end
+
+    it 'should have for_perspective_and_subjects invoke _subject with 2 arguments' do
+      Requirement.should_receive :for_subject
+      Requirement.for_perspective_and_subjects(
+        FundEdition::PERSPECTIVES.first, @user )
+    end
+
+    it 'should have for_perspective_and_subjects invoke _subjects with 3 arguments' do
+      Requirement.should_receive :for_subjects
+      Requirement.for_perspective_and_subjects( FundEdition::PERSPECTIVES.first,
+        @user, @organization )
+    end
+
+    it 'should have for_perspective_and_subjects invoke _subjects with array second argument' do
+      Requirement.should_receive :for_subjects
+      Requirement.for_perspective_and_subjects( FundEdition::PERSPECTIVES.first,
+        [ @user, @organization ] )
+    end
+
+    it 'should have for_perspective which limits to a perspective' do
+      Requirement.for_perspective('requestor').count.should eql 3
+    end
+
+    it 'should have a for_subject which limits to global roles for a subject' do
+      scope = Requirement.for_subject( @user )
+      scope.length.should eql 2
+      scope.should include @requirement, @user_global
+      scope = Requirement.for_subject( @organization )
+      scope.length.should eql 1
+      scope.should include @organization_global
+    end
+
+    it 'should have a for_subjects which includes global and o/u role locals' do
+      other_role = create( :role, :name => Role::REQUESTOR[1] )
+      other_role.should_not eql @role
+      create( :membership, :organization => @organization, :active => true,
+        :role => other_role )
+      create( :requestor_requirement, :role => other_role )
+      scope = Requirement.where( :framework_id => @framework.id ).
+        for_subjects( 'requestor', @organization, @user )
+      scope.length.should eql 3
+      scope.should include @user_global, @organization_global, @user_role
     end
 
     it 'should have fulfilled scope and unfulfilled scope' do
       fulfilled_fulfiller = create( :fulfillment,
         :fulfillable => @requirement.fulfillable ).fulfiller
       unfulfilled_fulfiller = create( :user )
-      scope = Requirement.with_outer_fulfillments.fulfilled.
-        group('requirements.id')
+      scope = Requirement.where( :framework_id => @requirement.framework_id ).
+        with_outer_fulfillments.fulfilled.group('requirements.id')
       scope.length.should eql 1
       scope.with_fulfillers( fulfilled_fulfiller ).length.should eql 1
       scope.with_fulfillers( unfulfilled_fulfiller ).length.should eql 0
       scope.with_fulfillers( fulfilled_fulfiller, unfulfilled_fulfiller ).
         length.should eql 1
-      scope = Requirement.with_outer_fulfillments.unfulfilled.
-        group('requirements.id')
+      scope = Requirement.where( :framework_id => @requirement.framework_id ).
+        with_outer_fulfillments.unfulfilled.group('requirements.id')
       scope.length.should eql 0
       scope.with_fulfillers( fulfilled_fulfiller ).length.should eql 0
       scope.with_fulfillers( unfulfilled_fulfiller ).length.should eql 1

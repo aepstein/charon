@@ -38,23 +38,6 @@ describe Framework do
         :fulfillable => create( :registration_criterion ) )
     end
 
-    it 'should have with_requirements_for invoke _subject with 2 arguments' do
-      Framework.should_receive :with_requirements_for_subject
-      Framework.with_requirements_for( FundEdition::PERSPECTIVES.first, @user )
-    end
-
-    it 'should have with_requirements_for invoke _subjects with 3 arguments' do
-      Framework.should_receive :with_requirements_for_subjects
-      Framework.with_requirements_for( FundEdition::PERSPECTIVES.first, @user,
-        @organization )
-    end
-
-    it 'should have with_requirements_for invoke _subjects with array second argument' do
-      Framework.should_receive :with_requirements_for_subjects
-      Framework.with_requirements_for( FundEdition::PERSPECTIVES.first,
-        [ @user, @organization ] )
-    end
-
     it 'should have fulfilled_for/unfulfilled_for subject check only global requirements' do
       scope_fulfilled_for(@user).length.should eql 0
       scope_fulfilled_for(@organization).length.should eql 0

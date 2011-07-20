@@ -41,6 +41,54 @@ class Requirement < ActiveRecord::Base
   scope :fulfilled, having( 'COUNT(requirements.id) <= COUNT(fulfillments.id)' )
   scope :unfulfilled, having( 'COUNT(requirements.id) > COUNT(fulfillments.id)' )
 
+  # Limits examined requirements to a perspective
+  scope :for_perspective, lambda { |perspective|
+    where( "? & perspectives_mask > 0",
+      2**FundEdition::PERSPECTIVES.index(perspective.to_s) )
+  }
+  # Limits examined requirements to a single subject
+  # * subject must be a user or organization
+  # * excludes role-specific requirements or requirements subject cannot fulfill
+  #   directly
+  scope :for_subject, lambda { |subject|
+    where { role_id.eq( nil ) & fulfillable_type.in( subject.fulfillable_types ) }
+  }
+  # Limits examined requirements to given organization/user pair
+  # * chooses requirements which are not specific to a role or which are
+  #   specific to a role held by the user in the specified perspective
+  scope :for_subjects, lambda { |perspective, organization, user|
+    role_ids = Role.for_perspective( perspective, organization, user ).
+      except(:select,:order).select { id }
+    where { role_id.eq( nil ) | role_id.in( role_ids ) }
+  }
+  # Retrieves associated requirement information
+  # * chooses appropriate scope to use based on number of arguments
+  scope :for_perspective_and_subjects, lambda { |perspective, *args|
+    subjects = args.flatten
+    scope = with_outer_fulfillments.with_fulfillers( subjects ).
+      for_perspective( perspective )
+    case subjects.length
+    when 1
+      scope.for_subject subjects.first
+    when 2
+      scope.for_subjects perspective, subjects.first, subjects.last
+    else
+      raise ArgumentError( "must have either organization/user or organization, user")
+    end
+  }
+  # Includes only requirements that are fulfilled for
+  # given perspective and subject(s)
+  scope :fulfilled_for, lambda { |perspective, *subjects|
+    for_perspective_and_subjects( perspective, subjects ).fulfilled.
+      group { id }
+  }
+  # Includes only frameworks for which requirements are not fulfilled for
+  # given perspective and subject(s)
+  scope :unfulfilled_for, lambda { |perspective, *subjects|
+    for_perspective_and_subjects( perspective, subjects ).unfulfilled.
+      group { id }
+  }
+
   before_validation do |r|
     r.role = nil unless Fulfillment::FULFILLABLE_TYPES['User'].include? r.fulfillable_type
   end
