@@ -32,6 +32,7 @@ class RegistrationCriterion < ActiveRecord::Base
     if must_register
       scope = scope.registered
     end
+    scope
   end
 
   def to_s(format = nil)
