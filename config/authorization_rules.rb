@@ -107,7 +107,7 @@ authorization do
     has_permission_on [ :fund_items ], :to => :allocate do
       if_permitted_to :allocate, :fund_request
     end
-    has_permission_on [ :fund_items ], :to => :fund_request do
+    has_permission_on [ :fund_items ], :to => :request do
       if_permitted_to :request, :fund_request
     end
     has_permission_on [ :fund_items ], :to => :manage do
@@ -127,7 +127,7 @@ authorization do
 
     has_permission_on [ :fund_editions ], :to => :manage, :join_by => :and do
       if_permitted_to :update, :fund_item
-      if_attribute :perspective => is { Edition::PERSPECTIVES.first }
+      if_attribute :perspective => is { FundEdition::PERSPECTIVES.first }
     end
     has_permission_on [ :fund_editions ], :to => :manage, :join_by => :and do
       if_permitted_to :review, :fund_item
@@ -138,7 +138,7 @@ authorization do
     end
     has_permission_on [ :fund_editions ], :to => :show, :join_by => :and do
       if_permitted_to :show, :fund_item
-      if_attribute :perspective => is { Edition::PERSPECTIVES.first }
+      if_attribute :perspective => is { FundEdition::PERSPECTIVES.first }
     end
     has_permission_on [ :fund_editions ], :to => :show, :join_by => :and do
       if_permitted_to :review, :fund_item
@@ -154,7 +154,7 @@ authorization do
     has_permission_on [ :fund_grants ], :to => :request, :join_by => :and do
       if_permitted_to :request_framework
       if_attribute :fund_source => {
-          :framework_id => is_in { user.frameworks( Edition::PERSPECTIVES.first,
+          :framework_id => is_in { user.frameworks( FundEdition::PERSPECTIVES.first,
             object.organization ).map(&:id)
           }
         }
@@ -166,7 +166,7 @@ authorization do
     has_permission_on [ :fund_grants ], :to => :review, :join_by => :and do
       if_permitted_to :review_framework
       if_attribute :fund_source => {
-          :framework_id => is_in { user.frameworks( Edition::PERSPECTIVES.last,
+          :framework_id => is_in { user.frameworks( FundEdition::PERSPECTIVES.last,
             object.fund_source.organization ).map(&:id)
           }
         }
@@ -262,7 +262,7 @@ authorization do
       if_attribute :user => { :registrations => intersects_with { user.registrations } }
     end
 
-    has_permission_on [ :organizations ], :to => :fund_request do
+    has_permission_on [ :organizations ], :to => :request do
       if_attribute :memberships => { :user_id => is { user.id },
         :active => is { true }, :role => { :name => is_in { Role::REQUESTOR } } }
     end
@@ -283,7 +283,7 @@ authorization do
       if_attribute :memberships => { :user_id => is { user.id } }
     end
 
-    has_permission_on [ :university_accounts ], :to => :fund_request do
+    has_permission_on [ :university_accounts ], :to => :request do
       if_permitted_to :request, :organization
     end
 

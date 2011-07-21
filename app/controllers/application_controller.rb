@@ -10,11 +10,13 @@ class ApplicationController < ActionController::Base
 
   def permission_denied
     flash[:error] = "You are not allowed to perform the requested action."
-    if @fund_grant && @fund_grant.fund_source && (
+    if @fund_grant && @fund_grant.fund_source
+      if (
         permitted_to?( :request_framework, @fund_grant ) ||
         permitted_to?( :review_framework, @fund_grant )
       )
-      flash[:error] += " " + unfulfilled_requirements_for_fund_grant(@fund_grant)
+      flash[:error] += " " + unfulfilled_requirements_for_fund_grant(@fund_grant, current_user)
+      end
     end
     redirect_to profile_url
   end

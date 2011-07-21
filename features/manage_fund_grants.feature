@@ -22,21 +22,19 @@ Feature: Manage fund_requests
     And a registration_criterion exists with must_register: true, minimal_percentage: 15, type_of_member: "undergrads"
     And a requirement exists with framework: the framework, perspectives: nil, perspective: "<perspective>", role: the <perspective>_role, fulfillable: the <fulfillable>
     And a fund_source exists with organization: organization "reviewer", framework: the framework
-    And a fund_request exists with fund_source: the fund_source, organization: organization "requestor"
+    And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
     And I log in as user: "<user>"
-    When I am on the page for the fund_request
+    When I am on the page for the fund_grant
     Then I should <show> authorized
-    And I should <u_mesg> "You must fulfill the following requirements:"
-    And I should <status> "Status must be undergrad required for president in <perspective> organization."
-    And I should <agreement> "Key Agreement required for president in <perspective> organization."
-    And I should <o_mesg> "<o_name> must fulfill the following requirements:"
-    And I should <registration> "No less than 15 percent of members provided in the current registration must be undergrads and the registration must be approved required for <perspective> organization."
+    And I should <status> "You must be undergrad."
+    And I should <agreement> "You must approve the Key Agreement."
+    And I should <registration> "Applicant must have a current registration with at least 15 percent undergrads and an approved status."
     Examples:
-      | user      | perspective | fulfillable            | show    | u_mesg  | status  | agreement | o_mesg  | o_name    | registration |
-      | admin     | requestor   | user_status_criterion  | see     | not see | not see | not see   | not see | Applicant | not see      |
-      | requestor | requestor   | user_status_criterion  | not see | see     | see     | not see   | not see | Applicant | not see      |
-      | requestor | requestor   | agreement              | not see | see     | not see | see       | not see | Applicant | not see      |
-      | requestor | requestor   | registration_criterion | not see | not see | not see | not see   | see     | Applicant | see          |
+      | user      | perspective | fulfillable            | show    | status  | agreement | registration |
+      | admin     | requestor   | user_status_criterion  | see     | not see | not see   | not see      |
+      | requestor | requestor   | user_status_criterion  | not see | see     | not see   | not see      |
+      | requestor | requestor   | agreement              | not see | not see | see       | not see      |
+      | requestor | requestor   | registration_criterion | not see | not see | not see   | see          |
 
   Scenario Outline: Test permissions for fund_requests controller
     Given an organization: "source" exists with last_name: "Funding Source"

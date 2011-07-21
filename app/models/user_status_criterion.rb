@@ -22,6 +22,13 @@ class UserStatusCriterion < ActiveRecord::Base
     )
   end
 
-  def to_s; "Status must be #{statuses.join ', '}"; end
+  def to_s(format = nil)
+    case format
+    when :requirement
+      "must be #{statuses.join ' or '}"
+    else
+      "Status must be #{statuses.join ', '}"
+    end
+  end
 end
 

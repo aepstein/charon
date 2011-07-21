@@ -99,9 +99,9 @@ class FundGrantsController < ApplicationController
   def initialize_context
     @fund_grant = FundGrant.find params[:id] if params[:id]
     @fund_source = FundSource.find params[:fund_source_id] if params[:fund_source_id]
-    @fund_source ||= @fund_grant.fund_grant.fund_source if @fund_grant
+    @fund_source ||= @fund_grant.fund_source if @fund_grant
     @organization = Organization.find params[:organization_id] if params[:organization_id]
-    @organization ||= @fund_grant.fund_grant.organization if @organization
+    @organization ||= @fund_grant.organization if @organization
     @context = @fund_source || @organization
   end
 

@@ -4,17 +4,17 @@
 
 <%= table_row_tag do %>
   <% unless fund_source %>
-  <td><%= fund_grant.fund_grant.fund_source.name %></td>
+  <td><%= fund_grant.fund_source.name %></td>
   <% end %>
   <% unless organization %>
-  <td><%= fund_grant.fund_grant.organization %></td>
+  <td><%= fund_grant.organization %></td>
   <% end %>
   <% unless status %>
   <td><%= fund_grant.status %></td>
   <% end %>
   <% if fund_grant.new_record? -%>
   <td>
-    <%= form_for fund_grant, :url => organization_fund_grants_path(fund_grant.fund_grant.organization) do |f| %>
+    <%= form_for fund_grant, :url => organization_fund_grants_path(fund_grant.organization) do |f| %>
       <%= f.hidden_field :fund_source_id %>
       <%= f.submit 'Create' %>
     <% end %>

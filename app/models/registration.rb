@@ -13,13 +13,14 @@ class Registration < ActiveRecord::Base
   end
   has_many :users, :through => :memberships, :uniq => true
 
-  default_scope :order => "registrations.name ASC", :include => [ :registration_term ]
+  default_scope :order => "registrations.name ASC"
 
-  scope :active, where( 'registration_terms.current = ?', true )
-  scope :inactive, where( 'registration_terms.current = ? OR ' +
-    'registration_terms.current IS NULL', false )
+  scope :active, joins { registration_term }.where { registration_terms.current.eq( true ) }
+  scope :inactive, joins { registration_term }.where { registration_terms.current.eq( false ) |
+    registration_terms.current.eq( nil ) }
+  scope :registered, where { registered.eq( true) }
   scope :unmatched, where( :organization_id => nil )
-  scope :named, lambda { |name| where( "registrations.name LIKE '%?%'", name ) }
+  scope :named, lambda { |name| where { registrations.name.like( "%#{name}%" ) } }
   scope :min_percent_members_of_type, lambda { |percent, type|
     where( " ? <= ( number_of_#{type.to_s} * 100.0 / ( " +
         "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + " +

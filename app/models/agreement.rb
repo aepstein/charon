@@ -37,7 +37,7 @@ class Agreement < ActiveRecord::Base
   def to_s(format = nil)
     case format
     when :requirement
-      "must complete the #{self}"
+      "must approve the #{self}"
     else
       name
     end
