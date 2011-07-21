@@ -14,10 +14,6 @@
   </p>
   <% end -%>
   <p>
-    <%= f.label :status_equals, 'Status' %>
-    <%= f.select :status_equals, FundGrant.aasm_state_names, { :include_blank => true } %>
-  </p>
-  <p>
     <%= f.submit 'Search' %>
   </p>
 <% end %>
@@ -26,7 +22,8 @@
 
 <hr/>
 
-<%= render :partial => "fund_grants", :object => @fund_grants, :locals => { :fund_source => @fund_source } %>
+<%= render :partial => "fund_grants", :object => @fund_grants,
+  :locals => { :fund_source => @fund_source, :organization => @organization } %>
 
 <hr/>
 

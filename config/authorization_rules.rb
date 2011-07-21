@@ -3,11 +3,11 @@ authorization do
   role :admin do
 
     has_permission_on [ :activity_accounts, :activity_reports, :addresses,
-      :agreements, :approvers, :fund_sources, :categories, :document_types, :fund_editions,
-      :frameworks, :fulfillments, :inventory_fund_items, :fund_items, :nodes,
-      :organizations, :permissions, :registration_criterions, :registrations,
-      :registration_terms, :fund_requests, :roles, :structures, :university_accounts,
-      :users, :user_state_criterions ],
+      :agreements, :approvers, :fund_sources, :categories, :document_types,
+      :fund_editions, :fund_grants, :fund_items, :fund_requests, :fund_sources,
+      :frameworks, :fulfillments, :inventory_items, :nodes, :organizations,
+      :registration_criterions, :registrations, :registration_terms, :roles,
+      :structures, :university_accounts, :users, :user_state_criterions ],
       :to => [ :manage ]
 
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
@@ -148,8 +148,10 @@ authorization do
       if_attribute :fund_item => { :fund_request => { :state => is { 'released' } } }
     end
 
-    has_permission_on [ :fund_grants ], :to => :request_framework do
+    has_permission_on [ :fund_grants ], :to => :request_framework, :join_by => :and do
       if_permitted_to :request, :organization
+      if_attribute :fund_source => { :open_at => lt { Time.zone.now },
+        :closed_at => gt { Time.zone.now } }
     end
     has_permission_on [ :fund_grants ], :to => :request, :join_by => :and do
       if_permitted_to :request_framework
@@ -161,6 +163,8 @@ authorization do
     end
     has_permission_on [ :fund_grants ], :to => :review_framework, :join_by => :and do
       if_permitted_to :review, :fund_source
+      if_attribute :fund_source => { :open_at => lt { Time.zone.now },
+        :closed_at => gt { Time.zone.now } }
       if_attribute :organization_id => is_not_in { user.organization_ids }
     end
     has_permission_on [ :fund_grants ], :to => :review, :join_by => :and do
@@ -181,11 +185,10 @@ authorization do
         :submit_at => gt { Time.zone.now } } }
     end
     has_permission_on [ :fund_grants ], :to => :show, :join_by => :and do
-      if_permitted_to :request
-      if_attribute :released_at => is_not { nil }
+      if_permitted_to :request, :organization
     end
     has_permission_on [ :fund_grants ], :to => :show do
-      if_permitted_to :review
+      if_permitted_to :review, :fund_source
     end
     has_permission_on [ :fund_grants ], :to => [ :manage, :show, :allocate ] do
       if_permitted_to :manage, :fund_source

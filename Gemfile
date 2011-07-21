@@ -37,7 +37,7 @@ group :test do
   gem 'spork'
   gem 'factory_girl', '~> 2.0.0.rc4', :require => false
   gem 'factory_girl_rails', '~> 1.1.rc1'
-  gem 'pickle'
+  gem 'pickle', '~> 0.4.8'
   gem 'email_spec'
   gem 'launchy'
 end

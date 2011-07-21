@@ -2,8 +2,9 @@
 <%= form.inputs do %>
   <% if form.object.new_record? -%>
   <%= form.input :fund_source,
-    :collection => form.object.organization.fund_sources.allowed_for(
-      FundEdition::PERSPECTIVES.first, current_user ).open_deadline  %>
+    :collection => form.object.organization.fund_sources.
+      allowed_for( current_user )
+  %>
   <% end -%>
 <% end %>
 <%= form.buttons %>

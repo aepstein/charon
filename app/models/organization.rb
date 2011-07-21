@@ -8,9 +8,16 @@ class Organization < ActiveRecord::Base
   has_many :fund_grants, :dependent => :destroy, :inverse_of => :organization
   has_many :fund_requests, :through => :fund_grants
   has_many :fund_sources, :inverse_of => :organization do
-    def allowed_for( perspective, *fulfillers )
-      FundSource.allowed_for( perspective, [ proxy_owner ] + fulfillers )
+    #  What fund sources is this organization eligible to start a grant for?
+    # * must be open
+    # * must fulfill criteria for user
+    # * must not have a prior grant created
+    def allowed_for( user )
+      no_fund_grant.open.
+        fulfilled_for( FundEdition::PERSPECTIVES.first, proxy_owner, user )
     end
+
+    # For what sources has no grant been created for this organization?
     def no_fund_grant
       FundSource.no_fund_grant_for( proxy_owner )
     end

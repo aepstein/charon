@@ -49,8 +49,9 @@ class FundGrantsController < ApplicationController
   # POST /organizations/:organization_id/fund_grants.xml
   def create
     respond_to do |format|
+      @fund_grant.valid?
       if @fund_grant.save
-        flash[:notice] = 'FundGrant was successfully created.'
+        flash[:notice] = 'Fund grant was successfully created.'
         format.html { redirect_to @fund_grant }
         format.xml  { render :xml => @fund_grant, :status => :created, :location => @fund_grant }
       else
@@ -72,7 +73,7 @@ class FundGrantsController < ApplicationController
   def update
     respond_to do |format|
       if @fund_grant.update_attributes(params[:fund_grant])
-        flash[:notice] = 'FundGrant was successfully updated.'
+        flash[:notice] = 'Fund grant was successfully updated.'
         format.html { redirect_to @fund_grant }
         format.xml  { head :ok }
       else
@@ -109,7 +110,7 @@ class FundGrantsController < ApplicationController
     @fund_grants = FundGrant.scoped
     @fund_grants = @fund_grants.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
     @fund_grants = @fund_grants.scoped( :conditions => { :fund_source_id => @fund_source.id }) if @fund_source
-#    @fund_grants = @fund_grants.with_permissions_to(:show)
+    @fund_grants = @fund_grants.with_permissions_to(:show)
   end
 
   def new_fund_grant_from_params

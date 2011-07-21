@@ -78,24 +78,19 @@ class FundSource < ActiveRecord::Base
   }
   scope :upcoming, lambda { where( 'open_at > ?', Time.zone.now ) }
   scope :no_fund_grant_for, lambda { |organization|
-    where( "fund_sources.id NOT IN (SELECT fund_source_id FROM fund_grants " +
-      "WHERE organization_id = ? )", organization.id )
+    where { id.not_in( FundGrant.unscoped.
+      where { organization_id.eq( my { organization.id } ) }.
+      select { fund_source_id }
+    ) }
   }
 
-  scope :fulfilled_for, lambda { |fulfillers, perspective, role_ids|
-    FundSource.joins(:frameworks).
-    merge( Framework.unscoped.fulfilled_for( fulfillers, perspective, role_ids ) )
+  scope :fulfilled_for, lambda { |perspective, *subjects|
+    FundSource.joins { framework }.
+    merge( Framework.unscoped.fulfilled_for( perspective, subjects ) )
   }
-  scope :unfulfilled_for, lambda { |fulfillers, perspective, role_ids|
-    FundSource.joins(:frameworks).
-    merge( Framework.unscoped.unfulfilled_for( fulfillers, perspective, role_ids ) )
-  }
-  scope :no_draft_fund_request_for, lambda { |organization|
-    where(
-      'fund_sources.id NOT IN (SELECT fund_source_id FROM fund_requests ' +
-      'WHERE fund_requests.status IN (?) AND fund_requests.organization_id = ? )',
-      %w( started completed ),
-      organization.id )
+  scope :unfulfilled_for, lambda { |fulfillers, *subjects|
+    FundSource.joins { framework }.
+    merge( Framework.unscoped.unfulfilled_for( perspective, subjects ) )
   }
 
   def upcoming?

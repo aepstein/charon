@@ -44,7 +44,6 @@ class FundGrant < ActiveRecord::Base
   # Organization associated with this grant in reviewer perspective
   def reviewer; fund_source ? fund_source.organization : nil; end
 
-
   # Return unfulfilled requirements for the grant that pertain to users
   # * must supply users
   # * considers only requirements for first perspective in which user has roles
