@@ -31,6 +31,14 @@ class FundGrant < ActiveRecord::Base
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
   scope :open, lambda { joins(:fund_source).merge( FundSource.unscoped.open ) }
   scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }
+  scope :organization_name_contains, lambda { |name|
+    scoped.merge Organization.name_contains( name )
+  }
+  scope :fund_source_name_contains, lambda { |name|
+    scoped.merge FundSource.where( :name.like => name )
+  }
+
+  search_methods :organization_name_contains, :fund_source_name_contains
 
   validates :organization, :presence => true
   validates :fund_source, :presence => true

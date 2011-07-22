@@ -12,3 +12,9 @@
   <b>Released at:</b> <%= @fund_grant.released_at :rfc822 %>
 </p>
 
+<p>
+<% if permitted_to? :edit, @fund_grant %>
+<%= link_to 'Edit', edit_fund_grant_path( @fund_grant ) %>
+<% end %>
+</p>
+

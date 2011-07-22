@@ -182,19 +182,19 @@ class FundRequest < ActiveRecord::Base
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   scope :organization_name_contains, lambda { |name|
-    scoped.merge Organization.name_contains( name )
+    merge FundGrant.organization_name_contains name
   }
   scope :fund_source_name_contains, lambda { |name|
-    scoped.merge FundSource.where( :name.like => name )
+    merge FundGrant.fund_source_name_contains name
   }
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
     "fund_request_id = fund_requests.id AND perspective = ?) > " +
     "(SELECT COUNT(*) FROM fund_editions WHERE " +
     "fund_request_id = fund_requests.id AND perspective = ?)",
     FundEdition::PERSPECTIVES.first, FundEdition::PERSPECTIVES.last) }
-  scope :duplicate, where("fund_requests.fund_grant_id IN (SELECT fund_grant_id FROM fund_requests " +
-    "AS duplicates WHERE duplicates.fund_grant_id = fund_requests.fund_grant_id " +
-    "AND fund_requests.id <> duplicates.id)")
+  scope :duplicate, where("fund_requests.fund_grant_id IN (SELECT fund_grant_id " +
+    "FROM fund_requests AS duplicates WHERE duplicates.fund_grant_id = " +
+    "fund_requests.fund_grant_id AND fund_requests.id <> duplicates.id)")
 
   search_methods :organization_name_contains, :fund_source_name_contains
 

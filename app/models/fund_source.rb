@@ -73,8 +73,8 @@ class FundSource < ActiveRecord::Base
     where( :open_at.lt => Time.zone.now, :closed_at.gt => Time.zone.now )
   }
   scope :open_deadline, lambda {
-    open.joins(:fund_queues).
-    where( :fund_queues => { :submit_at.gt => Time.zone.now } )
+    open.joins { fund_queues }.
+    where { fund_queues.submit_at.gt( Time.zone.now ) }
   }
   scope :upcoming, lambda { where( 'open_at > ?', Time.zone.now ) }
   scope :no_fund_grant_for, lambda { |organization|

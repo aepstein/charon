@@ -9,11 +9,11 @@ class Organization < ActiveRecord::Base
   has_many :fund_requests, :through => :fund_grants
   has_many :fund_sources, :inverse_of => :organization do
     #  What fund sources is this organization eligible to start a grant for?
-    # * must be open
+    # * must have an open deadline (submit_at is in the future)
     # * must fulfill criteria for user
     # * must not have a prior grant created
     def allowed_for( user )
-      no_fund_grant.open.
+      no_fund_grant.open_deadline.
         fulfilled_for( FundEdition::PERSPECTIVES.first, proxy_owner, user )
     end
 

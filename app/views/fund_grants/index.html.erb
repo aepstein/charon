@@ -3,7 +3,7 @@
 <%= form_for :search, :url => polymorphic_path( [ @context, :fund_grants ] ), :html => { :method => :get } do |f| %>
   <% unless @fund_source -%>
   <p>
-    <%= f.label :fund_source_name_contains, 'FundSource' %>
+    <%= f.label :fund_source_name_contains, 'Fund source' %>
     <%= f.text_field :fund_source_name_contains %>
   </p>
   <% end -%>

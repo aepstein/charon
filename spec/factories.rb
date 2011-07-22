@@ -175,7 +175,7 @@ FactoryGirl.define do
 
   factory :fund_queue do
     association :fund_source
-    submit_at { |q| q.fund_source.open_at + 2.days }
+    submit_at { |q| q.fund_source.closed_at + 1.minute }
     release_at { |q| q.submit_at + 1.week }
   end
 

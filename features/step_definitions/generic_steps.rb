@@ -4,6 +4,21 @@ Given(/^#{capture_model} (?:has|have) #{capture_fields}$/) do |name, fields|
   subject.save!
 end
 
+Given /^#{capture_model} is (closed|open|upcoming)$/ do |name, state|
+  subject = model(name)
+  case state
+  when 'closed'
+    subject.update_attributes! :open_at => Time.zone.now - 1.year,
+      :closed_at => Time.zone.now - 1.day
+  when 'open'
+#    subject.update_attributes! :open_at => Time.zone.now - 1.year,
+#      :closed_at => Time.zone.now + 1.month
+  when 'upcoming'
+    subject.update_attributes! :open_at => Time.zone.now + 1.month,
+      :closed_at => Time.zone.now + 1.year
+  end
+end
+
 Given /^(?:|I )(put|post|delete) on (.+)$/ do |method, page_name|
 #  visit path_to(page_name), method.to_sym
   # TODO this only works with the rack driver
