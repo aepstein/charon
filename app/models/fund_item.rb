@@ -2,7 +2,7 @@ class FundItem < ActiveRecord::Base
   #TODO conditionally make amount available based on user role
   attr_accessible :node_id, :parent_id, :new_position, :amount,
     :fund_editions_attributes
-  attr_readonly :fund_request_id, :node_id, :parent_id
+  attr_readonly :fund_request_id, :node_id, :ancestry
 
   belongs_to :node, :inverse_of => :fund_items
   belongs_to :fund_grant, :touch => true, :inverse_of => :fund_items
@@ -62,12 +62,10 @@ class FundItem < ActiveRecord::Base
   has_many :documents, :through => :fund_editions
   has_many :document_types, :through => :node
 
-  scope :root, where( :parent_id => nil )
-
   has_paper_trail :class_name => 'SecureVersion'
+  has_ancestry
 
-  acts_as_list :scope => :parent_id
-  acts_as_tree
+  acts_as_list :scope => [ :ancestry ]
 
   accepts_nested_attributes_for :fund_editions
 
@@ -82,8 +80,13 @@ class FundItem < ActiveRecord::Base
 
   attr_accessor :new_position
 
+  # What types of nodes can this item be created as?
   def allowed_nodes
-    Node.allowed_for_children_of( fund_grant, parent ).where( :structure_id => fund_grant.fund_source.structure_id )
+    if is_root?
+      Node.with_root_fund_items_for( fund_grant ).under_limit
+    else
+      Node.with_child_fund_items_for( parent ).under_limit
+    end
   end
 
   def node_must_be_allowed

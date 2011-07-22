@@ -51,8 +51,9 @@ class FundGrantsController < ApplicationController
     respond_to do |format|
       @fund_grant.valid?
       if @fund_grant.save
+        @fund_grant.fund_requests.create!
         flash[:notice] = 'Fund grant was successfully created.'
-        format.html { redirect_to @fund_grant }
+        format.html { redirect_to @fund_grant.fund_requests.first }
         format.xml  { render :xml => @fund_grant, :status => :created, :location => @fund_grant }
       else
         format.html { render :action => "new" }

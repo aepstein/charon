@@ -3,17 +3,7 @@ class Structure < ActiveRecord::Base
 
   default_scope order( 'structures.name ASC' )
 
-  has_many :nodes, :include => [ :parent ], :inverse_of => :structure do
-    def children_of(node)
-      self.select { |n| n.parent == node }
-    end
-    def root
-      self.select { |n| n.parent.nil? }
-    end
-    def allowed_under( node )
-      self.select { |n| n.parent == node }
-    end
-  end
+  has_many :nodes, :inverse_of => :structure
   has_many :fund_sources, :inverse_of => :structure
   has_many :categories, :through => :nodes, :uniq => true
 

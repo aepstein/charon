@@ -29,7 +29,7 @@ class FundRequest < ActiveRecord::Base
           ).sum( :amount )
         cap -= exclusion if exclusion
       end
-      includes( :fund_editions ).where(:parent_id => nil).each do |fund_item|
+      includes( :fund_editions ).roots.each do |fund_item|
           cap = allocate_fund_item! fund_item, cap
       end
       reset

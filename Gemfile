@@ -24,6 +24,7 @@ gem 'composite_primary_keys', '~> 3.1.9', :require => false # Require on demand
 gem 'jquery-rails'
 gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
+gem 'ancestry'
 gem 'acts_as_list', '~> 0.1.3'
 group :development, :test do
   gem 'rspec-rails'

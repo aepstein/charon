@@ -17,7 +17,8 @@ class Node < ActiveRecord::Base
   belongs_to :category, :inverse_of => :nodes
   has_and_belongs_to_many :document_types
   has_many :fund_items, :inverse_of => :node
-  acts_as_tree
+
+  has_ancestry
 
   validates :name, :presence => true,
     :uniqueness => { :scope => [ :structure_id ] }
@@ -30,15 +31,26 @@ class Node < ActiveRecord::Base
 
   default_scope :order => 'nodes.name ASC'
 
-  scope :allowed_for_children_of, lambda { |fund_grant, parent_fund_item|
-    parent_node_sql = parent_fund_item.nil? ? "IS NULL" : "= #{parent_fund_item.node_id}"
-    parent_fund_item_sql = parent_fund_item.nil? ? "IS NULL" : "= #{parent_fund_item.id}"
-    parent_fund_item_count_sql =
-      "(SELECT COUNT(*) FROM fund_items WHERE fund_items.fund_grant_id = #{fund_grant.id} AND " +
-      "fund_items.node_id = nodes.id AND fund_items.parent_id #{parent_fund_item_sql})"
-    where( "nodes.parent_id #{parent_node_sql} AND " +
-           "nodes.item_quantity_limit > #{parent_fund_item_count_sql}" )
+  # Outer joins to fund_items that are children of the fund_item
+  # * limits to nodes that can be child fund_items of the fund_item
+  scope :with_child_fund_items_for, lambda { |fund_item|
+    fund_item.node.children.joins { fund_items.outer }.
+    joins( "AND fund_items.ancestry = " +
+      "#{connection.quote fund_item.child_ancestry}" )
   }
+  # Outer joins to fund_items that are root items of the fund_grant
+  # * limits to nodes that can be root fund_items of the fund_grant
+  scope :with_root_fund_items_for, lambda { |fund_grant|
+    fund_grant.fund_source.structure.nodes.roots.joins { fund_items.outer }.
+    joins( "AND fund_items.ancestry IS NULL AND fund_items.fund_grant_id = " +
+      "#{fund_grant.id}" )
+  }
+  # Returns only nodes with number of fund_items reaching limit for the node
+  scope :at_limit, having { item_quantity_limit.eq( count( fund_items.id ) ) }.
+    group { id }
+  # Returns only nodes with number of fund_items less than the limit for the node
+  scope :under_limit, having { item_quantity_limit.gt( count( fund_items.id ) ) }.
+    group { id }
 
   def to_s; name; end
 
