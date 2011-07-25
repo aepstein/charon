@@ -1,4 +1,12 @@
-<h2>New fund_request for <%= @fund_request.fund_grant.organization %></h2>
+<h2>New fund request</h2>
+
+<p>
+  <b>Fund source:</b> <%= @fund_request.fund_grant.fund_source %>
+</p>
+
+<p>
+  <b>Organization:<b> <%= @fund_request.fund_grant.organization %>
+</p>
 
 <%= semantic_form_for( @fund_request, :url => organization_fund_requests_path(@fund_request.fund_grant.organization) ) do |f| %>
   <%= render :partial => 'form', :object => f %>

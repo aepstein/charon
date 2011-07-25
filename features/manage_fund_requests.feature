@@ -6,38 +6,7 @@ Feature: Manage fund_requests
 
   Background:
     Given a user: "admin" exists with admin: true
-
-  Scenario Outline: Test how permissions failures are reported to the user
-    Given an organization: "reviewer" exists with last_name: "Funding Source"
-    And an organization: "requestor" exists with last_name: "Applicant"
-    And a requestor_role exists
-    And a reviewer_role exists
-    And a user: "requestor" exists with status: "grad"
-    And a user: "reviewer" exists with status: "grad"
-    And a membership exists with role: the requestor_role, active: true, organization: organization "requestor", user: user "requestor"
-    And a membership exists with role: the reviewer_role, active: true, organization: organization "reviewer", user: user "reviewer"
-    And a framework exists with name: "Annual"
-    And an agreement exists with name: "Key Agreement"
-    And a user_status_criterion exists
-    And a registration_criterion exists with must_register: true, minimal_percentage: 15, type_of_member: "undergrads"
-    And a requirement exists with framework: the framework, perspectives: nil, perspective: "<perspective>", role: the <perspective>_role, fulfillable: the <fulfillable>
-    And a fund_source exists with organization: organization "reviewer", framework: the framework
-    And a fund_request exists with fund_source: the fund_source, organization: organization "requestor"
-    And I log in as user: "<user>"
-    When I am on the page for the fund_request
-    Then I should <show> authorized
-    And I should <u_mesg> "You must fulfill the following requirements:"
-    And I should <status> "Status must be undergrad required for president in <perspective> organization."
-    And I should <agreement> "Key Agreement required for president in <perspective> organization."
-    And I should <o_mesg> "<o_name> must fulfill the following requirements:"
-    And I should <registration> "No less than 15 percent of members provided in the current registration must be undergrads and the registration must be approved required for <perspective> organization."
-    Examples:
-      | user      | perspective | fulfillable            | show    | u_mesg  | status  | agreement | o_mesg  | o_name    | registration |
-      | admin     | requestor   | user_status_criterion  | see     | not see | not see | not see   | not see | Applicant | not see      |
-      | requestor | requestor   | user_status_criterion  | not see | see     | see     | not see   | not see | Applicant | not see      |
-      | requestor | requestor   | agreement              | not see | see     | not see | see       | not see | Applicant | not see      |
-      | requestor | requestor   | registration_criterion | not see | not see | not see | not see   | see     | Applicant | see          |
-
+@wip
   Scenario Outline: Test permissions for fund_requests controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -55,9 +24,10 @@ Feature: Manage fund_requests
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
     And a <tense>fund_source exists with name: "Annual", organization: organization "source"
-    And a fund_request: "annual" exists with fund_source: the fund_source, organization: organization "applicant", status: "<status>"
+    And a fund_grant exists with fund_source: the <tense>fund_source, organization: organization "applicant"
+    And a fund_request: "annual" exists with fund_grant: the fund_grant, state: "<state>"
     And I log in as user: "<user>"
-    And I am on the fund_source new fund_request page for organization: "applicant"
+    And I am on the fund_grant new fund_request page for organization: "applicant"
     Then I should <create> authorized
     Given I post on the fund_source fund_requests page for organization: "applicant"
     Then I should <create> authorized
@@ -67,9 +37,12 @@ Feature: Manage fund_requests
     Then I should <update> authorized
     Given I am on the page for the fund_request
     Then I should <show> authorized
-    Given I put on the accept page for the fund_request
-    Then I should <accept> authorized
-    Given the fund_request has status: "<status>"
+    Given I put on the submit page for the fund_request
+    Then I should <submit> authorized
+    Given the fund_request has state: "<state>"
+    And I put on the withdraw page for the fund_request
+    Then I should <withdraw> authorized
+    Given the fund_request has state: "<state>"
     And I am on the reject page for the fund_request
     Then I should <reject> authorized
     Given I put on the do_reject page for the fund_request
@@ -79,33 +52,40 @@ Feature: Manage fund_requests
     Given I delete on the page for the fund_request
     Then I should <destroy> authorized
     Examples:
-      | tense | status    | user                | create  | update  | show    | accept  | reject  | destroy |
-      |       | started   | admin               | see     | see     | see     | not see | not see | see     |
-      |       | started   | source_manager      | see     | see     | see     | not see | not see | see     |
-      |       | started   | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | started   | applicant_requestor | see     | see     | see     | not see | not see | see     |
-      | past_ | started   | applicant_requestor | not see | not see | see     | not see | not see | not see |
-      |       | started   | observer_requestor  | not see | not see | not see | not see | not see | not see |
-      |       | started   | regular             | not see | not see | not see | not see | not see | not see |
-      |       | completed | admin               | see     | see     | see     | not see | see     | see     |
-      |       | completed | source_manager      | see     | see     | see     | not see | see     | see     |
-      |       | completed | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | completed | applicant_requestor | see     | not see | see     | not see | not see | not see |
-      | past_ | completed | applicant_requestor | not see | not see | see     | not see | not see | not see |
-      |       | completed | observer_requestor  | not see | not see | not see | not see | not see | not see |
-      |       | completed | regular             | not see | not see | not see | not see | not see | not see |
-      |       | submitted | admin               | see     | see     | see     | see     | see     | see     |
-      |       | submitted | source_manager      | see     | see     | see     | see     | see     | see     |
-      |       | submitted | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | submitted | applicant_requestor | see     | not see | see     | not see | not see | not see |
-      |       | submitted | observer_requestor  | not see | not see | not see | not see | not see | not see |
-      |       | submitted | regular             | not see | not see | not see | not see | not see | not see |
-      |       | accepted  | admin               | see     | see     | see     | not see | not see | see     |
-      |       | accepted  | source_manager      | see     | see     | see     | not see | not see | see     |
-      |       | accepted  | source_reviewer     | not see | not see | see     | not see | not see | not see |
-      |       | accepted  | applicant_requestor | see     | not see | see     | not see | not see | not see |
-      |       | accepted  | observer_requestor  | not see | not see | not see | not see | not see | not see |
-      |       | accepted  | regular             | not see | not see | not see | not see | not see | not see |
+      | tense | state      | user                | create  | update  | show    | submit  | withdraw | reject  | destroy |
+      |       | started    | admin               | see     | see     | see     | not see | see      | not see | see     |
+      |       | started    | source_manager      | see     | see     | see     | not see | see      | not see | see     |
+      |       | started    | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
+      |       | started    | applicant_requestor | see     | see     | see     | not see | see      | not see | not see |
+      | past_ | started    | applicant_requestor | not see | not see | see     | not see | not see  | not see | not see |
+      |       | started    | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
+      |       | started    | regular             | not see | not see | not see | not see | not see  | not see | not see |
+      |       | tentative  | admin               | see     | see     | see     | not see | see      | see     | see     |
+      |       | tentative  | source_manager      | see     | see     | see     | not see | see      | see     | see     |
+      |       | tentative  | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
+      |       | tentative  | applicant_requestor | see     | not see | see     | not see | see      | not see | not see |
+      | past_ | tentative  | applicant_requestor | not see | not see | see     | not see | not see  | not see | not see |
+      |       | tentative  | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
+      |       | tentative  | regular             | not see | not see | not see | not see | not see  | not see | not see |
+      |       | finalized  | admin               | see     | see     | see     | see     | see      | see     | not see |
+      |       | finalized  | source_manager      | see     | see     | see     | see     | see      | see     | not see |
+      |       | finalized  | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
+      |       | finalized  | applicant_requestor | see     | not see | see     | not see | see      | not see | not see |
+      | past_ | finalized  | applicant_requestor | not see | not see | see     | not see | not see  | not see | not see |
+      |       | finalized  | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
+      |       | finalized  | regular             | not see | not see | not see | not see | not see  | not see | not see |
+      |       | submitted  | admin               | see     | see     | see     | not see | see      | see     | not see |
+      |       | submitted  | source_manager      | see     | see     | see     | not see | see      | see     | not see |
+      |       | submitted  | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
+      |       | submitted  | applicant_requestor | see     | not see | see     | not see | see      | not see | not see |
+      |       | submitted  | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
+      |       | submitted  | regular             | not see | not see | not see | not see | not see  | not see | not see |
+      |       | released   | admin               | see     | see     | see     | not see | not see  | not see | not see |
+      |       | released   | source_manager      | see     | see     | see     | not see | not see  | not see | not see |
+      |       | released   | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
+      |       | released   | applicant_requestor | see     | not see | see     | not see | not see  | not see | not see |
+      |       | released   | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
+      |       | released   | regular             | not see | not see | not see | not see | not see  | not see | not see |
 
   Scenario: Create and update fund_requests
     Given a fund_source exists with name: "Annual Budget"
@@ -122,7 +102,7 @@ Feature: Manage fund_requests
     Then I should see "FundRequest was successfully updated."
 
   Scenario: Reject fund_requests
-    Given a fund_request exists with status: "completed"
+    Given a fund_request exists with status: "tentative"
     And I log in as user: "admin"
     And I am on the reject page for the fund_request
     When I press "Reject"
@@ -137,9 +117,9 @@ Feature: Manage fund_requests
     And an organization: "first" exists with last_name: "First Club"
     And an organization: "last" exists with last_name: "Last Club"
     And a fund_request exists with fund_source: fund_source "semester", organization: organization: "last", status: "started"
-    And a fund_request exists with fund_source: fund_source "semester", organization: organization: "first", status: "completed"
+    And a fund_request exists with fund_source: fund_source "semester", organization: organization: "first", status: "tentative"
     And a fund_request exists with fund_source: fund_source "annual", organization: organization: "last", status: "submitted"
-    And a fund_request exists with fund_source: fund_source "annual", organization: organization: "first", status: "accepted"
+    And a fund_request exists with fund_source: fund_source "annual", organization: organization: "first", status: "submitted"
     And I log in as user: "admin"
     And I am on the fund_requests page
     When I fill in "FundSource" with "annual"
@@ -156,18 +136,18 @@ Feature: Manage fund_requests
     Given I am on the fund_requests page for fund_source: "annual"
     Then I should see the following fund_requests:
       | Organization | Status    |
-      | First Club   | accepted  |
+      | First Club   | submitted  |
       | Last Club    | submitted |
     Given I am on the fund_requests page for organization: "first"
     Then I should see the following fund_requests:
       | FundSource    | Status    |
-      | Annual   | accepted  |
-      | Semester | completed |
+      | Annual   | submitted  |
+      | Semester | tentative |
     When I follow "Destroy" for the 3rd fund_request
     And I am on the fund_requests page
     Then I should see the following fund_requests:
       | FundSource    | Organization | Status    |
-      | Annual   | First Club   | accepted  |
+      | Annual   | First Club   | submitted  |
       | Annual   | Last Club    | submitted |
       | Semester | Last Club    | started   |
     Given I am on the duplicate fund_requests page

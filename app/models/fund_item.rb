@@ -90,7 +90,7 @@ class FundItem < ActiveRecord::Base
   end
 
   def node_must_be_allowed
-    return if node.nil?
+    return if node.blank? || fund_grant.blank?
     errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
   end
 
