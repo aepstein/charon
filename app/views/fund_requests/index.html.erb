@@ -14,8 +14,12 @@
   </p>
   <% end -%>
   <p>
-    <%= f.label :status_equals, 'Status' %>
-    <%= f.select :status_equals, FundRequest.aasm_state_names, { :include_blank => true } %>
+    <%= f.label :status_equals, 'State' %>
+    <%
+      # TODO should factor out the list into a class constant
+    %>
+    <%= f.select :status_equals, %w( started tentative submitted released
+      finalized withdrawn rejected ), { :include_blank => true } %>
   </p>
   <p>
     <%= f.submit 'Search' %>

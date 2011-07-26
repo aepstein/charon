@@ -17,8 +17,11 @@ authorization do
     has_permission_on [ :fund_sources ], :to => [ :review ]
 
     has_permission_on [ :fund_requests, :agreements ], :to => [ :unapprove ]
-    has_permission_on [ :fund_requests ], :to => [ :accept ] do
-      if_attribute :state => is { 'submitted' }
+    has_permission_on [ :fund_requests ], :to => [ :submit ] do
+      if_attribute :state => is_in { %w( tentative finalized ) }
+    end
+    has_permission_on [ :fund_requests ], :to => [ :withdraw, :reject] do
+      if_attribute :state => is_in { %w( tentative finalized submitted ) }
     end
 
     has_permission_on [ :memberships ], :to => :manage do
@@ -148,27 +151,29 @@ authorization do
       if_attribute :fund_item => { :fund_request => { :state => is { 'released' } } }
     end
 
-    has_permission_on [ :fund_grants ], :to => :request_framework, :join_by => :and do
+    has_permission_on [ :fund_grants ], :to => [ :show, :request_framework],
+      :join_by => :and do
       if_permitted_to :request, :organization
-      if_attribute :fund_source => { :open_at => lt { Time.zone.now },
-        :closed_at => gt { Time.zone.now } }
     end
     has_permission_on [ :fund_grants ], :to => :request, :join_by => :and do
       if_permitted_to :request_framework
+      if_attribute :fund_source => { :open_at => lt { Time.zone.now },
+        :closed_at => gt { Time.zone.now } }
       if_attribute :fund_source => {
           :framework_id => is_in { user.frameworks( FundEdition::PERSPECTIVES.first,
             object.organization ).map(&:id)
           }
         }
     end
-    has_permission_on [ :fund_grants ], :to => :review_framework, :join_by => :and do
+    has_permission_on [ :fund_grants ], :to => [ :show, :review_framework ],
+      :join_by => :and do
       if_permitted_to :review, :fund_source
-      if_attribute :fund_source => { :open_at => lt { Time.zone.now },
-        :closed_at => gt { Time.zone.now } }
       if_attribute :organization_id => is_not_in { user.organization_ids }
     end
     has_permission_on [ :fund_grants ], :to => :review, :join_by => :and do
       if_permitted_to :review_framework
+      if_attribute :fund_source => { :open_at => lt { Time.zone.now },
+        :closed_at => gt { Time.zone.now } }
       if_attribute :fund_source => {
           :framework_id => is_in { user.frameworks( FundEdition::PERSPECTIVES.last,
             object.fund_source.organization ).map(&:id)
@@ -184,12 +189,6 @@ authorization do
       if_attribute :fund_source => { :fund_queues => {
         :submit_at => gt { Time.zone.now } } }
     end
-    has_permission_on [ :fund_grants ], :to => :show, :join_by => :and do
-      if_permitted_to :request, :organization
-    end
-    has_permission_on [ :fund_grants ], :to => :show do
-      if_permitted_to :review, :fund_source
-    end
     has_permission_on [ :fund_grants ], :to => [ :manage, :show, :allocate ] do
       if_permitted_to :manage, :fund_source
     end
@@ -201,51 +200,48 @@ authorization do
       if_permitted_to :review, :fund_grant
     end
     has_permission_on [ :fund_requests ], :to => :show do
-      if_permitted_to :request
+      if_permitted_to :show, :fund_grant
     end
-    has_permission_on [ :fund_requests ], :to => :show do
-      if_permitted_to :review
-    end
-    has_permission_on [ :fund_requests ], :to => [ :show, :allocate ] do
-      if_permitted_to :manage, :fund_source
-    end
-    has_permission_on [ :fund_requests ], :to => :manage do
+    has_permission_on [ :fund_requests ], :to => [ :manage, :show, :allocate ] do
       if_permitted_to :manage, :fund_grant
     end
-    has_permission_on [ :fund_requests ], :to => :manage, :join_by => :and do
+    has_permission_on [ :fund_requests ], :to => [ :create, :update ], :join_by => :and do
       if_permitted_to :request
       if_attribute :state => is_in { %w( started ) }
-      if_attribute :fund_source => { :open_at => lte { Time.zone.now },
-        :closed_at => gte { Time.zone.now } }
     end
     has_permission_on [ :fund_requests ], :to => :approve, :join_by => :and do
       if_permitted_to :request
-      if_attribute :state => is_in { %w( started completed ) }
+      if_attribute :state => is_in { %w( started tentative ) }
     end
     has_permission_on [ :fund_requests ], :to => :unapprove do
       if_attribute :approvals => { :user_id => is { user.id } },
-        :state => is_in { %w( started completed ) }
+        :state => is_in { %w( tentative ) }
     end
     has_permission_on [ :fund_requests ], :to => :approve, :join_by => :and do
       if_permitted_to :review
-      if_attribute :state => is_in { %w( accepted reviewed ) }
+      if_attribute :state => is_in { %w( submitted ) }
+      if_attribute :review_state => is_in { %w( unreviewed tentative ) }
     end
     has_permission_on [ :fund_requests ], :to => :unapprove, :join_by => :and do
       if_permitted_to :review
-      if_attribute :approvals => { :user_id => is { user.id } },
-        :state => is_in { %w( completed reviewed ) }
+      if_attribute :approvals => { :user_id => is { user.id } }
+      if_attribute :review_state => is_in { %w( tentative ) }
     end
     has_permission_on [ :fund_requests ], :to => :reject, :join_by => :and do
       if_permitted_to :manage
-      if_attribute :state => is_in { %w( completed submitted ) }
+      if_attribute :state => is_in { %w( tentative finalized submitted ) }
     end
-    has_permission_on [ :fund_requests ], :to => :accept, :join_by => :and do
+    has_permission_on [ :fund_requests ], :to => :submit, :join_by => :and do
       if_permitted_to :manage
-      if_attribute :state => is { 'submitted' }
+      if_attribute :state => is_in { %w( tentative finalized ) }
     end
     has_permission_on [ :fund_requests ], :to => :withdraw, :join_by => :and do
       if_permitted_to :request
-      if_attribute :state => is_in { %w( completed submitted ) }
+      if_attribute :state => is_in { %w( tentative submitted finalized ) }
+    end
+    has_permission_on [ :fund_requests ], :to => :withdraw, :join_by => :and do
+      if_permitted_to :manage
+      if_attribute :state => is_in { %w( tentative submitted finalized ) }
     end
 
     has_permission_on [ :fund_sources ], :to => [ :review, :show ] do
@@ -255,8 +251,7 @@ authorization do
       if_permitted_to :manage, :organization
     end
     has_permission_on [ :fund_sources ], :to => :show do
-      if_attribute :open_at => lte { Time.zone.today },
-        :closed_at => gte { Time.zone.today }
+      if_attribute :open_at => lte { Time.zone.today }
     end
 
     has_permission_on [ :memberships ], :to => :show do

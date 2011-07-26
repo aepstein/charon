@@ -1,4 +1,4 @@
-<% status ||= false %>
+<% state ||= false %>
 <% fund_source ||= false %>
 <% organization ||= false %>
 
@@ -11,14 +11,14 @@
   <% unless organization -%>
     <th>Organization</th>
   <% end -%>
-  <% unless status -%>
-    <th>Status</th>
+  <% unless state -%>
+    <th>State</th>
   <% end -%>
   </tr>
 </thead>
 <tbody>
   <%= render :partial => 'fund_requests/fund_request', :collection => fund_requests, :locals => {
-    :organization => organization, :status => status, :fund_source => fund_source
+    :organization => organization, :state => state, :fund_source => fund_source
   } %>
 </tbody>
 </table>

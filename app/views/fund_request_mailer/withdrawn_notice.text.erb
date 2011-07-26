@@ -1,6 +1,6 @@
 Dear Officers of <%= @fund_request.fund_grant.organization %>,
 
-This email is a confirmation that your fund_request for <%= @fund_request.fund_grant.fund_source %> was withdrawn by <%= @fund_request.withdrawn_by_user %> at <%= @fund_request.withdrawn_at.to_s :us_ordinal %>.
+This email is a confirmation that your fund_request for <%= @fund_request.fund_grant.fund_source %> was withdrawn by <%= @fund_request.withdrawn_by_user %> at <%= @fund_request.withdrawn_at %>.
 
 To see it, please go to: <<%= link_to fund_request_url(@fund_request), fund_request_url(@fund_request) %>>.
 

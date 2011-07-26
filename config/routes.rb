@@ -29,8 +29,7 @@ Charon::Application.routes.draw do
   resources :fund_requests, :except => [ :create, :new ] do
     member do
       get :reject, :documents_report
-      put :do_reject
-      put :accept
+      put :do_reject, :submit, :withdraw
     end
     collection do
       get :duplicate
@@ -40,6 +39,7 @@ Charon::Application.routes.draw do
   end
   resources :fund_sources, :except => [ :create, :new ] do
     resources :fund_grants, :only => [ :index ]
+    resources :fund_requests, :only => [ :index ]
   end
   resources :inventory_items, :except => [ :new, :create ] do
       collection do

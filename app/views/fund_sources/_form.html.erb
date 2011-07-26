@@ -1,19 +1,23 @@
   <%= render "shared/error_messages", :target => form.object %>
   <%= form.inputs do %>
-  <%= form.input :name %>
-  <% if form.object.new_record? %>
-  <%= form.input :structure %>
-  <%= form.input :framework %>
+    <%= form.input :name %>
+    <% if form.object.new_record? %>
+    <%= form.input :structure %>
+    <%= form.input :framework %>
+    <% end %>
+    <%= form.input :contact_name %>
+    <%= form.input :contact_email %>
+    <%= form.input :contact_web %>
+    <%= form.input :open_at, :as => :datetime_picker %>
+    <%= form.input :closed_at, :as => :datetime_picker %>
+    <%= form.input :release_message %>
   <% end %>
-  <%= form.input :contact_name %>
-  <%= form.input :contact_email %>
-  <%= form.input :contact_web %>
-  <%= form.input :open_at, :as => :datetime_picker %>
-  <%= form.input :closed_at, :as => :datetime_picker %>
-  <%= form.input :release_message %>
-  <%= form.semantic_fields_for :fund_queues do |subform| %>
-  <%= render :partial => 'fund_queues/form', :object => subform %>
+
+  <%= form.inputs :name => 'Fund queues' do %>
+    <%= form.semantic_fields_for :fund_queues do |subform| %>
+      <%= render :partial => 'fund_queues/form', :object => subform %>
+    <% end %>
   <% end %>
-  <% end %>
+
   <%= form.buttons %>
 

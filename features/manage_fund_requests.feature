@@ -6,7 +6,7 @@ Feature: Manage fund_requests
 
   Background:
     Given a user: "admin" exists with admin: true
-@wip
+
   Scenario Outline: Test permissions for fund_requests controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -24,12 +24,13 @@ Feature: Manage fund_requests
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
     And a <tense>fund_source exists with name: "Annual", organization: organization "source"
+    And a fund_queue exists with fund_source: the <tense>fund_source
     And a fund_grant exists with fund_source: the <tense>fund_source, organization: organization "applicant"
-    And a fund_request: "annual" exists with fund_grant: the fund_grant, state: "<state>"
+    And a fund_request: "annual" exists with fund_grant: the fund_grant, state: "<state>", fund_queue: the fund_queue
     And I log in as user: "<user>"
-    And I am on the fund_grant new fund_request page for organization: "applicant"
+    And I am on the new fund_request page for the fund_grant
     Then I should <create> authorized
-    Given I post on the fund_source fund_requests page for organization: "applicant"
+    Given I post on the fund_requests page for the fund_grant
     Then I should <create> authorized
     And I am on the edit page for the fund_request
     Then I should <update> authorized
@@ -52,40 +53,40 @@ Feature: Manage fund_requests
     Given I delete on the page for the fund_request
     Then I should <destroy> authorized
     Examples:
-      | tense | state      | user                | create  | update  | show    | submit  | withdraw | reject  | destroy |
-      |       | started    | admin               | see     | see     | see     | not see | see      | not see | see     |
-      |       | started    | source_manager      | see     | see     | see     | not see | see      | not see | see     |
-      |       | started    | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
-      |       | started    | applicant_requestor | see     | see     | see     | not see | see      | not see | not see |
-      | past_ | started    | applicant_requestor | not see | not see | see     | not see | not see  | not see | not see |
-      |       | started    | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
-      |       | started    | regular             | not see | not see | not see | not see | not see  | not see | not see |
-      |       | tentative  | admin               | see     | see     | see     | not see | see      | see     | see     |
-      |       | tentative  | source_manager      | see     | see     | see     | not see | see      | see     | see     |
-      |       | tentative  | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
-      |       | tentative  | applicant_requestor | see     | not see | see     | not see | see      | not see | not see |
-      | past_ | tentative  | applicant_requestor | not see | not see | see     | not see | not see  | not see | not see |
-      |       | tentative  | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
-      |       | tentative  | regular             | not see | not see | not see | not see | not see  | not see | not see |
-      |       | finalized  | admin               | see     | see     | see     | see     | see      | see     | not see |
-      |       | finalized  | source_manager      | see     | see     | see     | see     | see      | see     | not see |
-      |       | finalized  | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
-      |       | finalized  | applicant_requestor | see     | not see | see     | not see | see      | not see | not see |
-      | past_ | finalized  | applicant_requestor | not see | not see | see     | not see | not see  | not see | not see |
-      |       | finalized  | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
-      |       | finalized  | regular             | not see | not see | not see | not see | not see  | not see | not see |
-      |       | submitted  | admin               | see     | see     | see     | not see | see      | see     | not see |
-      |       | submitted  | source_manager      | see     | see     | see     | not see | see      | see     | not see |
-      |       | submitted  | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
-      |       | submitted  | applicant_requestor | see     | not see | see     | not see | see      | not see | not see |
-      |       | submitted  | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
-      |       | submitted  | regular             | not see | not see | not see | not see | not see  | not see | not see |
-      |       | released   | admin               | see     | see     | see     | not see | not see  | not see | not see |
-      |       | released   | source_manager      | see     | see     | see     | not see | not see  | not see | not see |
-      |       | released   | source_reviewer     | not see | not see | see     | not see | not see  | not see | not see |
-      |       | released   | applicant_requestor | see     | not see | see     | not see | not see  | not see | not see |
-      |       | released   | observer_requestor  | not see | not see | not see | not see | not see  | not see | not see |
-      |       | released   | regular             | not see | not see | not see | not see | not see  | not see | not see |
+      |tense  |state    |user               |create |update |show   |submit |withdraw|reject |destroy|
+      |       |started  |admin              |see    |see    |see    |not see|not see |not see|see    |
+      |       |started  |source_manager     |see    |see    |see    |not see|not see |not see|see    |
+      |       |started  |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |started  |applicant_requestor|see    |see    |see    |not see|not see |not see|not see|
+      |closed_|started  |applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
+      |       |started  |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |started  |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |tentative|admin              |see    |see    |see    |see    |see     |see    |see    |
+      |       |tentative|source_manager     |see    |see    |see    |see    |see     |see    |see    |
+      |       |tentative|source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |tentative|applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
+      |closed_|tentative|applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
+      |       |tentative|observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |tentative|regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |finalized|admin              |see    |see    |see    |see    |see     |see    |see    |
+      |       |finalized|source_manager     |see    |see    |see    |see    |see     |see    |see    |
+      |       |finalized|source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |finalized|applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
+      |closed_|finalized|applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
+      |       |finalized|observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |finalized|regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|admin              |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|source_manager     |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |submitted|applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
+      |       |submitted|observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |released |admin              |see    |see    |see    |not see|not see |not see|see    |
+      |       |released |source_manager     |see    |see    |see    |not see|not see |not see|see    |
+      |       |released |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |released |applicant_requestor|see    |not see|see    |not see|not see |not see|not see|
+      |       |released |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |released |regular            |not see|not see|not see|not see|not see |not see|not see|
 
   Scenario: Create and update fund_requests
     Given a fund_source exists with name: "Annual Budget"
@@ -93,13 +94,13 @@ Feature: Manage fund_requests
     And an organization exists with last_name: "Spending Club"
     And I log in as user: "admin"
     And I am on the new fund_request page for the organization
-    When I select "Annual Budget" from "FundSource"
+    When I select "Annual Budget" from "Fund source"
     And I press "Create"
     Then I should see "FundRequest was successfully created."
     And I should see "FundSource: Annual Budget"
     When I follow "Edit"
     And I press "Update"
-    Then I should see "FundRequest was successfully updated."
+    Then I should see "Fund request was successfully updated."
 
   Scenario: Reject fund_requests
     Given a fund_request exists with status: "tentative"
@@ -109,7 +110,7 @@ Feature: Manage fund_requests
     Then I should not see "FundRequest was successfully rejected."
     When I fill in "Reject message" with "Not acceptable."
     And I press "Reject"
-    Then I should see "FundRequest was successfully rejected."
+    Then I should see "Fund request was successfully rejected."
 
   Scenario: List and delete fund_requests
     Given a fund_source: "annual" exists with name: "Annual"

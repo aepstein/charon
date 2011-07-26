@@ -5,7 +5,7 @@ class FundRequestsController < ApplicationController
   before_filter :new_fund_request_from_params, :only => [ :new, :create ]
   before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy,
-    :show, :accept, :attribute_check => true
+    :show, :submit, :withdraw, :attribute_check => true
   filter_access_to :documents_report do
     permitted_to! :show, @fund_request
   end
@@ -30,16 +30,16 @@ class FundRequestsController < ApplicationController
   def withdraw
     @fund_request.withdrawn_by_user = current_user
     @fund_request.withdraw!
-    flash[:notice] = 'FundRequest was successfully withdrawn.'
+    flash[:notice] = 'Fund request was successfully withdrawn.'
     respond_to do |format|
       format.html { redirect_to :back }
       format.xml { head :ok }
     end
   end
 
-  def accept
-    @fund_request.accept!
-    flash[:notice] = 'FundRequest was successfully accepted.'
+  def submit
+    @fund_request.submit!
+    flash[:notice] = 'Fund request was successfully submitted.'
     respond_to do |format|
       format.html { redirect_to :back }
       format.xml { head :ok }
@@ -49,16 +49,16 @@ class FundRequestsController < ApplicationController
   def reject; end
 
   def do_reject
-    unless params[:fund_request].blank? || params[:fund_request][:reject_message].blank?
-      @fund_request.update_attribute :reject_message, params[:fund_request][:reject_message]
-      @fund_request.reject!
-      flash[:notice] = 'FundRequest was successfully rejected.'
+    @fund_request.accessible ||= []
+    @fund_request.accessible << :reject_message
+    @fund_request.attributes = params[:fund_request]
+    if @fund_request.reject
+      flash[:notice] = 'Fund request was successfully rejected.'
       respond_to do |format|
         format.html { redirect_to @fund_request }
-        format.xml  { head :ok }
+        format.xml  { xmlhead :ok }
       end
     else
-      @fund_request.errors.add :reject_message, "cannot be empty."
       respond_to do |format|
         format.html { render :action => "reject" }
         format.xml  { render :xml => @fund_request.errors, :status => :unprocessable_entity }
@@ -110,7 +110,7 @@ class FundRequestsController < ApplicationController
   def create
     respond_to do |format|
       if @fund_request.save
-        flash[:notice] = 'FundRequest was successfully created.'
+        flash[:notice] = 'Fund request was successfully created.'
         format.html { redirect_to @fund_request }
         format.xml  { render :xml => @fund_request, :status => :created, :location => @fund_request }
       else
@@ -132,7 +132,7 @@ class FundRequestsController < ApplicationController
   def update
     respond_to do |format|
       if @fund_request.update_attributes(params[:fund_request])
-        flash[:notice] = 'FundRequest was successfully updated.'
+        flash[:notice] = 'Fund request was successfully updated.'
         format.html { redirect_to @fund_request }
         format.xml  { head :ok }
       else
@@ -148,7 +148,7 @@ class FundRequestsController < ApplicationController
     @fund_request.destroy
 
     respond_to do |format|
-      flash[:notice] = 'FundRequest was successfully destroyed.'
+      flash[:notice] = 'Fund request was successfully destroyed.'
       format.html { redirect_to( profile_url ) }
       format.xml  { head :ok }
     end
@@ -174,17 +174,17 @@ class FundRequestsController < ApplicationController
   end
 
   def new_fund_request_from_params
-    @fund_request = @organization.fund_requests.build( params[:fund_request] )
+    @fund_request = @fund_grant.fund_requests.build( params[:fund_request] )
   end
 
   def setup_breadcrumbs
     if @fund_source && permitted_to?( :review, @fund_request )
       add_breadcrumb @fund_source.name, url_for( @fund_source )
-      add_breadcrumb 'FundRequests', fund_source_fund_requests_path( @fund_source )
+      add_breadcrumb 'Fund Requests', fund_source_fund_requests_path( @fund_source )
     end
     if @organization
       add_breadcrumb @organization.name, url_for( @organization )
-      add_breadcrumb 'FundRequests', organization_fund_requests_path( @organization )
+      add_breadcrumb 'Fund Requests', organization_fund_requests_path( @organization )
     end
   end
 

@@ -1,4 +1,4 @@
-<% status ||= false %>
+<% state ||= false %>
 <% fund_source ||= false %>
 <% organization ||= false %>
 
@@ -9,8 +9,8 @@
   <% unless organization %>
   <td><%= fund_request.fund_grant.organization %></td>
   <% end %>
-  <% unless status %>
-  <td><%= fund_request.status %></td>
+  <% unless state %>
+  <td><%= fund_request.state %></td>
   <% end %>
   <% if fund_request.new_record? -%>
   <td>

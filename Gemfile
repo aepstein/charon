@@ -26,6 +26,7 @@ gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
 gem 'ancestry'
 gem 'acts_as_list', '~> 0.1.3'
+gem 'decent_exposure'
 group :development, :test do
   gem 'rspec-rails'
 end

@@ -90,8 +90,6 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  accepts_nested_attributes_for :fund_grant
-
   before_validation :set_approval_checkpoint, :on => :create
 
   validates :fund_grant, :presence => true
@@ -147,10 +145,11 @@ class FundRequest < ActiveRecord::Base
 
     event :submit do
       transition :tentative => :submitted
+      transition :finalized => :submitted
     end
 
     event :withdraw do
-      transition [ :tentative, :finalized ] => :withdrawn
+      transition [ :tentative, :finalized, :submitted ] => :withdrawn
     end
 
     event :release do

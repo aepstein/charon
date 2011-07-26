@@ -1,8 +1,10 @@
 <%= render "shared/error_messages", :target => form.object %>
 <%= form.inputs do %>
-  <% if form.object.new_record? -%>
-  <%= form.input :fund_source, :collection => form.object.organization.fund_sources.requestable %>
-  <% end -%>
+  <%
+   # TODO: Are we submitting an amendment or addendum?
+   # "I want to amend previously submitted items (next deadline: 2/15/11 (release: 2/28/11) )"
+   # "I want to add new items (next deadline: 1/1/11 (release: 1/10/11) )"
+  %>
 <% end %>
 <%= form.buttons %>
 
