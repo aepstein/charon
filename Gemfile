@@ -18,7 +18,7 @@ gem 'cornell_netid'
 gem 'cornell_ldap', '>= 1.3.1'
 gem 'validation_reflection'
 gem 'formtastic'
-gem 'cocoon'
+gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
 gem 'composite_primary_keys', '~> 3.1.9', :require => false # Require on demand
 gem 'jquery-rails'
