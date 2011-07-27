@@ -8,7 +8,8 @@
   <b>Organization:<b> <%= @fund_request.fund_grant.organization %>
 </p>
 
-<%= semantic_form_for( @fund_request, :url => organization_fund_requests_path(@fund_request.fund_grant.organization) ) do |f| %>
+<%= semantic_form_for( @fund_request,
+  :url => fund_grant_fund_requests_path(@fund_request.fund_grant) ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 

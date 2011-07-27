@@ -1,6 +1,7 @@
 <h2>Reject <%=h @fund_request %></h2>
 
 <%= semantic_form_for( @fund_request, :url => do_reject_fund_request_path(@fund_request), :method => :put ) do |f| %>
+  <%= render "shared/error_messages", :target => f.object %>
   <%= f.inputs do %>
     <%= f.input :reject_message %>
   <% end %>

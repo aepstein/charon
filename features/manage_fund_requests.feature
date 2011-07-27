@@ -87,27 +87,27 @@ Feature: Manage fund_requests
       |       |released |applicant_requestor|see    |not see|see    |not see|not see |not see|not see|
       |       |released |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
       |       |released |regular            |not see|not see|not see|not see|not see |not see|not see|
-
+@wip
   Scenario: Create and update fund_requests
     Given a fund_source exists with name: "Annual Budget"
-    And a fund_source exists with name: "Semester Budget"
-    And an organization exists with last_name: "Spending Club"
+    And an organization exists with last_name: "Applicant"
+    And a fund_grant exists with fund_source: the fund_source, organization: the organization
     And I log in as user: "admin"
-    And I am on the new fund_request page for the organization
-    When I select "Annual Budget" from "Fund source"
+    And I am on the new fund_request page for the fund_grant
     And I press "Create"
-    Then I should see "FundRequest was successfully created."
-    And I should see "FundSource: Annual Budget"
+    Then I should see "Fund request was successfully created."
+    And I should see "Fund source: Annual Budget"
+    And I should see "Organization: Applicant"
     When I follow "Edit"
     And I press "Update"
     Then I should see "Fund request was successfully updated."
-
+@wip
   Scenario: Reject fund_requests
-    Given a fund_request exists with status: "tentative"
+    Given a fund_request exists with state: "tentative"
     And I log in as user: "admin"
     And I am on the reject page for the fund_request
     When I press "Reject"
-    Then I should not see "FundRequest was successfully rejected."
+    Then I should not see "Fund request was successfully rejected."
     When I fill in "Reject message" with "Not acceptable."
     And I press "Reject"
     Then I should see "Fund request was successfully rejected."
