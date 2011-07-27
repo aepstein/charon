@@ -3,22 +3,22 @@
 <%= form_for :search, :url => polymorphic_path( [ @context, :fund_requests ] ), :html => { :method => :get } do |f| %>
   <% unless @fund_source -%>
   <p>
-    <%= f.label :fund_source_name_contains, 'FundSource' %>
+    <%= f.label :fund_source_name_contains, 'Fund source' %>
     <%= f.text_field :fund_source_name_contains %>
   </p>
   <% end -%>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_contains, 'Organization' %>
+    <%= f.label :organization_name_contains, 'Requestor' %>
     <%= f.text_field :organization_name_contains %>
   </p>
   <% end -%>
   <p>
-    <%= f.label :status_equals, 'State' %>
+    <%= f.label :with_state, 'State' %>
     <%
       # TODO should factor out the list into a class constant
     %>
-    <%= f.select :status_equals, %w( started tentative submitted released
+    <%= f.select :with_state, %w( started tentative submitted released
       finalized withdrawn rejected ), { :include_blank => true } %>
   </p>
   <p>
@@ -30,7 +30,8 @@
 
 <hr/>
 
-<%= render :partial => "fund_requests", :object => @fund_requests, :locals => { :fund_source => @fund_source } %>
+<%= render :partial => "fund_requests", :object => @fund_requests,
+  :locals => { :fund_source => @fund_source } %>
 
 <hr/>
 

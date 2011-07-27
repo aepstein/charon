@@ -61,8 +61,8 @@ Feature: Manage fund_requests
       |closed_|started  |applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
       |       |started  |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
       |       |started  |regular            |not see|not see|not see|not see|not see |not see|not see|
-      |       |tentative|admin              |see    |see    |see    |see    |see     |see    |see    |
-      |       |tentative|source_manager     |see    |see    |see    |see    |see     |see    |see    |
+      |       |tentative|admin              |see    |see    |see    |see    |see     |not see|see    |
+      |       |tentative|source_manager     |see    |see    |see    |see    |see     |not see|see    |
       |       |tentative|source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
       |       |tentative|applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
       |closed_|tentative|applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
@@ -87,7 +87,7 @@ Feature: Manage fund_requests
       |       |released |applicant_requestor|see    |not see|see    |not see|not see |not see|not see|
       |       |released |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
       |       |released |regular            |not see|not see|not see|not see|not see |not see|not see|
-@wip
+
   Scenario: Create and update fund_requests
     Given a fund_source exists with name: "Annual Budget"
     And an organization exists with last_name: "Applicant"
@@ -97,13 +97,13 @@ Feature: Manage fund_requests
     And I press "Create"
     Then I should see "Fund request was successfully created."
     And I should see "Fund source: Annual Budget"
-    And I should see "Organization: Applicant"
+    And I should see "Requestor: Applicant"
     When I follow "Edit"
     And I press "Update"
     Then I should see "Fund request was successfully updated."
-@wip
+
   Scenario: Reject fund_requests
-    Given a fund_request exists with state: "tentative"
+    Given a fund_request exists with state: "finalized"
     And I log in as user: "admin"
     And I am on the reject page for the fund_request
     When I press "Reject"
@@ -111,46 +111,52 @@ Feature: Manage fund_requests
     When I fill in "Reject message" with "Not acceptable."
     And I press "Reject"
     Then I should see "Fund request was successfully rejected."
-
+@wip
   Scenario: List and delete fund_requests
     Given a fund_source: "annual" exists with name: "Annual"
+    And a fund_queue: "annual" exists with fund_source: fund_source "annual"
     And a fund_source: "semester" exists with name: "Semester"
+    And a fund_queue: "semester" exists with fund_source: fund_source "semester"
     And an organization: "first" exists with last_name: "First Club"
     And an organization: "last" exists with last_name: "Last Club"
-    And a fund_request exists with fund_source: fund_source "semester", organization: organization: "last", status: "started"
-    And a fund_request exists with fund_source: fund_source "semester", organization: organization: "first", status: "tentative"
-    And a fund_request exists with fund_source: fund_source "annual", organization: organization: "last", status: "submitted"
-    And a fund_request exists with fund_source: fund_source "annual", organization: organization: "first", status: "submitted"
+    And a fund_grant: "semester_last" exists with fund_source: fund_source "semester", organization: organization: "last"
+    And a fund_grant: "semester_first" exists with fund_source: fund_source "semester", organization: organization: "first"
+    And a fund_grant: "annual_last" exists with fund_source: fund_source "annual", organization: organization: "last"
+    And a fund_grant: "annual_first" exists with fund_source: fund_source "annual", organization: organization: "first"
+    And a fund_request exists with fund_grant: fund_grant "semester_last", state: "started"
+    And a fund_request exists with fund_grant: fund_grant "semester_first", state: "tentative"
+    And a fund_request exists with fund_grant: fund_grant "annual_last", state: "submitted", fund_queue: fund_queue "annual"
+    And a fund_request exists with fund_grant: fund_grant "annual_first", state: "submitted", fund_queue: fund_queue "annual"
     And I log in as user: "admin"
     And I am on the fund_requests page
-    When I fill in "FundSource" with "annual"
+    When I fill in "Fund source" with "annual"
     And I press "Search"
     Then I should see the following fund_requests:
-      | FundSource    | Organization |
-      | Annual   | First Club   |
-      | Annual   | Last Club    |
-    And I fill in "Organization" with "first"
+      | Fund source    | Requestor    |
+      | Annual         | First Club   |
+      | Annual         | Last Club    |
+    And I fill in "Requestor" with "first"
     And I press "Search"
     Then I should see the following fund_requests:
-      | FundSource    | Organization |
-      | Annual   | First Club   |
+      | Fund source    | Requestor  |
+      | Annual         | First Club |
     Given I am on the fund_requests page for fund_source: "annual"
     Then I should see the following fund_requests:
-      | Organization | Status    |
-      | First Club   | submitted  |
-      | Last Club    | submitted |
+      | Requestor  | State      |
+      | First Club | submitted  |
+      | Last Club  | submitted  |
     Given I am on the fund_requests page for organization: "first"
     Then I should see the following fund_requests:
-      | FundSource    | Status    |
-      | Annual   | submitted  |
-      | Semester | tentative |
+      | Fund source | State     |
+      | Annual      | submitted |
+      | Semester    | tentative |
     When I follow "Destroy" for the 3rd fund_request
     And I am on the fund_requests page
     Then I should see the following fund_requests:
-      | FundSource    | Organization | Status    |
-      | Annual   | First Club   | submitted  |
-      | Annual   | Last Club    | submitted |
-      | Semester | Last Club    | started   |
+      | Fund source | Requestor  | State     |
+      | Annual      | First Club | submitted |
+      | Annual      | Last Club  | submitted |
+      | Semester    | Last Club  | started   |
     Given I am on the duplicate fund_requests page
     And I am on the duplicate fund_requests page for fund_source: "annual"
     And I am on the duplicate fund_requests page for organization: "first"

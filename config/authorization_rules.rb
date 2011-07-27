@@ -20,7 +20,10 @@ authorization do
     has_permission_on [ :fund_requests ], :to => [ :submit ] do
       if_attribute :state => is_in { %w( tentative finalized ) }
     end
-    has_permission_on [ :fund_requests ], :to => [ :withdraw, :reject] do
+    has_permission_on [ :fund_requests ], :to => [ :reject ] do
+      if_attribute :state => is_in { %w( finalized submitted ) }
+    end
+    has_permission_on [ :fund_requests ], :to => [ :withdraw ] do
       if_attribute :state => is_in { %w( tentative finalized submitted ) }
     end
 
@@ -229,7 +232,7 @@ authorization do
     end
     has_permission_on [ :fund_requests ], :to => :reject, :join_by => :and do
       if_permitted_to :manage
-      if_attribute :state => is_in { %w( tentative finalized submitted ) }
+      if_attribute :state => is_in { %w( finalized submitted ) }
     end
     has_permission_on [ :fund_requests ], :to => :submit, :join_by => :and do
       if_permitted_to :manage

@@ -75,7 +75,7 @@ class FundRequestsController < ApplicationController
   # GET /organizations/:organization_id/fund_requests.xml
   def index
     @search = @fund_requests.search( params[:search] )
-    @fund_requests = @search.paginate( :page => params[:page], :per_page => 10, :include => {
+    @fund_requests = @search.relation.paginate( :page => params[:page], :per_page => 10, :include => {
       :approvals => [], :fund_source =>  { :organization => [:memberships], :framework => [] }
     } )
 

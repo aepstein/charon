@@ -181,10 +181,10 @@ class FundRequest < ActiveRecord::Base
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   scope :organization_name_contains, lambda { |name|
-    merge FundGrant.organization_name_contains name
+    scoped.merge FundGrant.organization_name_contains name
   }
   scope :fund_source_name_contains, lambda { |name|
-    merge FundGrant.fund_source_name_contains name
+    scoped.merge FundGrant.fund_source_name_contains name
   }
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
     "fund_request_id = fund_requests.id AND perspective = ?) > " +
@@ -195,7 +195,8 @@ class FundRequest < ActiveRecord::Base
     "FROM fund_requests AS duplicates WHERE duplicates.fund_grant_id = " +
     "fund_requests.fund_grant_id AND fund_requests.id <> duplicates.id)")
 
-  search_methods :organization_name_contains, :fund_source_name_contains
+  search_methods :organization_name_contains, :fund_source_name_contains,
+    :with_state
 
   # Send notices to all fund_requests with a state
   # * Without second argument, limit to fund_requests that have not yet received such

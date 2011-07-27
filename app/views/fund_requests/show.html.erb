@@ -12,6 +12,10 @@
 <b>State:</b> <%= @fund_request.state %>
 </p>
 
+<p>
+<%= link_to 'Edit', edit_fund_request_path( @fund_request ) if permitted_to?( :edit, @fund_request ) %>
+</p>
+
 <%
 # TODO: Add detailed display of information for request:
 # * Allocation summary
