@@ -26,7 +26,7 @@ class FundEdition < ActiveRecord::Base
 
     def populate
       return if proxy_owner.fund_item.blank? || proxy_owner.fund_item.node.blank?
-      proxy_owner.node.document_types.each do |type|
+      proxy_owner.fund_item.node.document_types.each do |type|
         build_for_type( type ) unless self.map(&:document_type).include? type
       end
     end

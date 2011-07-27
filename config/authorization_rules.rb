@@ -111,24 +111,22 @@ authorization do
     end
 
     has_permission_on [ :fund_items ], :to => :allocate do
-      if_permitted_to :allocate, :fund_request
+      if_permitted_to :allocate, :fund_grant
     end
     has_permission_on [ :fund_items ], :to => :request do
-      if_permitted_to :request, :fund_request
+      if_permitted_to :request, :fund_grant
     end
     has_permission_on [ :fund_items ], :to => :manage do
-      if_permitted_to :manage, :fund_request
+      if_permitted_to :manage, :fund_grant
     end
     has_permission_on [ :fund_items ], :to => :review do
-      if_permitted_to :review, :fund_request
+      if_permitted_to :review, :fund_grant
     end
     has_permission_on [ :fund_items ], :to => :update, :join_by => :and do
-      if_permitted_to :review, :fund_request
-      if_attribute :fund_request => { :state => is_in { %w( accepted ) } }
+      if_permitted_to :review, :fund_grant
     end
     has_permission_on [ :fund_items ], :to => :show do
-      if_permitted_to :show, :fund_request
-      if_permitted_to :review, :fund_request
+      if_permitted_to :show, :fund_grant
     end
 
     has_permission_on [ :fund_editions ], :to => :manage, :join_by => :and do

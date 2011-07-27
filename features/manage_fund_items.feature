@@ -5,7 +5,7 @@ Feature: Manage fund_items
 
   Background:
     Given a user: "admin" exists with admin: true
-
+@wip
   Scenario Outline: Test permissions for fund_items controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -28,9 +28,11 @@ Feature: Manage fund_items
     And a structure exists
     And a node: "root" exists with structure: the structure, name: "Root"
     And a fund_source exists with name: "Annual", organization: organization "source", structure: the structure
-    And a fund_request exists with fund_source: the fund_source, organization: organization "applicant", status: "<status>"
-    And an fund_item: "root" exists with fund_request: the fund_request, node: node "root"
-    And an fund_edition exists with fund_item: fund_item "root", perspective: "requestor"
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_grant exists with fund_source: the fund_source, organization: organization "applicant"
+    And a fund_request exists with state: "<state>", review_state: "<review_state>", fund_grant: the fund_grant, fund_queue: the fund_queue
+    And a fund_item: "root" exists with fund_grant: the fund_grant, node: node "root"
+    And a fund_edition exists with fund_item: fund_item "root", perspective: "requestor", fund_request: the fund_request
     And I log in as user: "<user>"
     And I am on the new fund_item page for the fund_request
     Then I should <create> authorized
@@ -47,56 +49,56 @@ Feature: Manage fund_items
     Given I delete on the page for the fund_item
     Then I should <destroy> authorized
     Examples:
-      | status    | user                | create  | update  | show    | destroy |
-      | started   | admin               | see     | see     | see     | see     |
-      | started   | source_manager      | see     | see     | see     | see     |
-      | started   | source_reviewer     | not see | not see | see     | not see |
-      | started   | applicant_requestor | see     | see     | see     | see     |
-      | started   | conflictor          | see     | see     | see     | see     |
-      | started   | observer_requestor  | not see | not see | not see | not see |
-      | started   | regular             | not see | not see | not see | not see |
-      | completed | admin               | see     | see     | see     | see     |
-      | completed | source_manager      | see     | see     | see     | see     |
-      | completed | source_reviewer     | not see | not see | see     | not see |
-      | completed | applicant_requestor | not see | not see | see     | not see |
-      | completed | conflictor          | not see | not see | see     | not see |
-      | completed | observer_requestor  | not see | not see | not see | not see |
-      | completed | regular             | not see | not see | not see | not see |
-      | submitted | admin               | see     | see     | see     | see     |
-      | submitted | source_manager      | see     | see     | see     | see     |
-      | submitted | source_reviewer     | not see | not see | see     | not see |
-      | submitted | applicant_requestor | not see | not see | see     | not see |
-      | submitted | conflictor          | not see | not see | see     | not see |
-      | submitted | observer_requestor  | not see | not see | not see | not see |
-      | submitted | regular             | not see | not see | not see | not see |
-      | accepted  | admin               | see     | see     | see     | see     |
-      | accepted  | source_manager      | see     | see     | see     | see     |
-      | accepted  | source_reviewer     | not see | see     | see     | not see |
-      | accepted  | applicant_requestor | not see | not see | see     | not see |
-      | accepted  | conflictor          | not see | not see | see     | not see |
-      | accepted  | observer_requestor  | not see | not see | not see | not see |
-      | accepted  | regular             | not see | not see | not see | not see |
-      | reviewed  | admin               | see     | see     | see     | see     |
-      | reviewed  | source_manager      | see     | see     | see     | see     |
-      | reviewed  | source_reviewer     | not see | not see | see     | not see |
-      | reviewed  | applicant_requestor | not see | not see | see     | not see |
-      | reviewed  | conflictor          | not see | not see | see     | not see |
-      | reviewed  | observer_requestor  | not see | not see | not see | not see |
-      | reviewed  | regular             | not see | not see | not see | not see |
-      | certified | admin               | see     | see     | see     | see     |
-      | certified | source_manager      | see     | see     | see     | see     |
-      | certified | source_reviewer     | not see | not see | see     | not see |
-      | certified | applicant_requestor | not see | not see | see     | not see |
-      | certified | conflictor          | not see | not see | see     | not see |
-      | certified | observer_requestor  | not see | not see | not see | not see |
-      | certified | regular             | not see | not see | not see | not see |
-      | released  | admin               | see     | see     | see     | see     |
-      | released  | source_manager      | see     | see     | see     | see     |
-      | released  | source_reviewer     | not see | not see | see     | not see |
-      | released  | applicant_requestor | not see | not see | see     | not see |
-      | released  | conflictor          | not see | not see | see     | not see |
-      | released  | observer_requestor  | not see | not see | not see | not see |
-      | released  | regular             | not see | not see | not see | not see |
+      |state    |review_state|user               |create |update |show   |destroy|
+      |started  |unreviewed  |admin              |see    |see    |see    |see    |
+      |started  |unreviewed  |source_manager     |see    |see    |see    |see    |
+      |started  |unreviewed  |source_reviewer    |not see|not see|see    |not see|
+      |started  |unreviewed  |applicant_requestor|see    |see    |see    |see    |
+      |started  |unreviewed  |conflictor         |see    |see    |see    |see    |
+      |started  |unreviewed  |observer_requestor |not see|not see|not see|not see|
+      |started  |unreviewed  |regular            |not see|not see|not see|not see|
+      |tentative|unreviewed  |admin              |see    |see    |see    |see    |
+      |tentative|unreviewed  |source_manager     |see    |see    |see    |see    |
+      |tentative|unreviewed  |source_reviewer    |not see|not see|see    |not see|
+      |tentative|unreviewed  |applicant_requestor|not see|not see|see    |not see|
+      |tentative|unreviewed  |conflictor         |not see|not see|see    |not see|
+      |tentative|unreviewed  |observer_requestor |not see|not see|not see|not see|
+      |tentative|unreviewed  |regular            |not see|not see|not see|not see|
+      |finalized|unreviewed  |admin              |see    |see    |see    |see    |
+      |finalized|unreviewed  |source_manager     |see    |see    |see    |see    |
+      |finalized|unreviewed  |source_reviewer    |not see|not see|see    |not see|
+      |finalized|unreviewed  |applicant_requestor|not see|not see|see    |not see|
+      |finalized|unreviewed  |conflictor         |not see|not see|see    |not see|
+      |finalized|unreviewed  |observer_requestor |not see|not see|not see|not see|
+      |finalized|unreviewed  |regular            |not see|not see|not see|not see|
+      |submitted|unreviewed  |admin              |see    |see    |see    |see    |
+      |submitted|unreviewed  |source_manager     |see    |see    |see    |see    |
+      |submitted|unreviewed  |source_reviewer    |not see|see    |see    |not see|
+      |submitted|unreviewed  |applicant_requestor|not see|not see|see    |not see|
+      |submitted|unreviewed  |conflictor         |not see|not see|see    |not see|
+      |submitted|unreviewed  |observer_requestor |not see|not see|not see|not see|
+      |submitted|unreviewed  |regular            |not see|not see|not see|not see|
+      |submitted|tentative   |admin              |see    |see    |see    |see    |
+      |submitted|tentative   |source_manager     |see    |see    |see    |see    |
+      |submitted|tentative   |source_reviewer    |not see|not see|see    |not see|
+      |submitted|tentative   |applicant_requestor|not see|not see|see    |not see|
+      |submitted|tentative   |conflictor         |not see|not see|see    |not see|
+      |submitted|tentative   |observer_requestor |not see|not see|not see|not see|
+      |submitted|tentative   |regular            |not see|not see|not see|not see|
+      |submitted|ready       |admin              |see    |see    |see    |see    |
+      |submitted|ready       |source_manager     |see    |see    |see    |see    |
+      |submitted|ready       |source_reviewer    |not see|not see|see    |not see|
+      |submitted|ready       |applicant_requestor|not see|not see|see    |not see|
+      |submitted|ready       |conflictor         |not see|not see|see    |not see|
+      |submitted|ready       |observer_requestor |not see|not see|not see|not see|
+      |submitted|ready       |regular            |not see|not see|not see|not see|
+      |released |ready       |admin              |see    |see    |see    |see    |
+      |released |ready       |source_manager     |see    |see    |see    |see    |
+      |released |ready       |source_reviewer    |not see|not see|see    |not see|
+      |released |ready       |applicant_requestor|not see|not see|see    |not see|
+      |released |ready       |conflictor         |not see|not see|see    |not see|
+      |released |ready       |observer_requestor |not see|not see|not see|not see|
+      |released |ready       |regular            |not see|not see|not see|not see|
 
   Scenario Outline: Create or update an fund_item with embedded fund_edition
     Given an organization exists with last_name: "Applicant"

@@ -1,11 +1,13 @@
-<h2>Editing <%=h @fund_item %></h2>
+<h2>Editing <%=h @fund_item %> in <%=h @fund_request %></h2>
 
-<%= semantic_form_for(@fund_item, :html => { :multipart => true } ) do |f| %>
+<%= semantic_form_for( @fund_item,
+  :url => fund_request_fund_item_path( @fund_request, @fund_item ),
+  :html => { :multipart => true } ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 
 <p>
 <%= link_to 'Show', @fund_item %> |
-<%= link_to 'Back', fund_request_fund_items_path(@fund_item.fund_request_id) %>
+<%= link_to 'Back', fund_request_fund_items_path( @fund_request ) %>
 </p>
 

@@ -1,11 +1,11 @@
-<h2>New <%= @fund_item.node %> fund_item for <%=h @fund_item.parent ? @fund_item.parent : @fund_item.fund_request %></h2>
+<h2>New <%= @fund_item.node %> fund_item for <%=h @fund_item.parent ? @fund_item.parent : @fund_request %></h2>
 
-<%= semantic_form_for( @fund_item, :url => fund_request_fund_items_path( @fund_item.fund_request_id ),
+<%= semantic_form_for( @fund_item, :url => fund_request_fund_items_path( @fund_request ),
   :html => { :multipart => true } ) do |f| %>
   <%= render :partial => 'form', :object => f %>
 <% end %>
 
 <p>
-<%= link_to 'Back', fund_request_fund_items_path( @fund_item.fund_request ) %>
+<%= link_to 'Back', fund_request_fund_items_path( @fund_request ) %>
 </p>
 
