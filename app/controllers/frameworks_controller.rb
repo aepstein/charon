@@ -8,7 +8,7 @@ class FrameworksController < ApplicationController
   # GET /frameworks
   # GET /frameworks.xml
   def index
-    @frameworks = @frameworks.paginate( :page => params[:page] )
+    @frameworks = @frameworks.page(params[:page])
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @frameworks }

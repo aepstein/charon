@@ -10,9 +10,9 @@
   </p>
 <% end %>
 
-<%= will_paginate @registrations %>
+<%= paginate @registrations %>
 
 <%= render :partial => "registrations/registrations", :object => @registrations %>
 
-<%= will_paginate @registrations %>
+<%= paginate @registrations %>
 

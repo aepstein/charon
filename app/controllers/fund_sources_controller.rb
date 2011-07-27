@@ -13,7 +13,7 @@ class FundSourcesController < ApplicationController
   # GET /organizations/:organization_id/fund_sources.xml
   def index
     @search = @fund_sources.search( params[:search] )
-    @fund_sources = @search.paginate( :page => params[:page] )
+    @fund_sources = @search.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

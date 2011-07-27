@@ -1,6 +1,6 @@
 <h2>Listing local events</h2>
 
-<%= will_paginate @events %>
+<%= paginate @events %>
 
 <table>
   <tr>
@@ -16,5 +16,5 @@
   <%= render :partial => 'local_event', :collection => @events %>
 </table>
 
-<%= will_paginate @events %>
+<%= paginate @events %>
 

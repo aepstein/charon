@@ -16,9 +16,8 @@ class FundGrantsController < ApplicationController
   # GET /organizations/:organization_id/fund_grants.xml
   def index
     @search = @fund_grants.search( params[:search] )
-    @fund_grants = @search.paginate( :page => params[:page], :per_page => 10, :include => {
-      :approvals => [], :fund_source =>  { :organization => [:memberships], :framework => [] }
-    } )
+    @fund_grants = @search.page(params[:page]).includes(
+      :fund_source => { :organization => [:memberships], :framework => [] } )
 
     respond_to do |format|
       format.html { render :action => 'index' }

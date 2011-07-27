@@ -9,7 +9,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations.xml
   def index
     @search = @organizations.search( params[:search] )
-    @organizations = @search.paginate( :page => params[:page] )
+    @organizations = @search.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

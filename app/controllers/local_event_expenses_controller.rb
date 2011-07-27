@@ -10,7 +10,7 @@ class LocalEventExpensesController < ApplicationController
       :order => 'local_event_expenses.date ASC' )
     page = params[:page] ? params[:page] : 1
     respond_to do |format|
-      format.html { @events = @events.paginate( :page => page ) }
+      format.html { @events = @events.page(page) }
       format.csv do
         csv_string = CSV.generate do |csv|
           csv << %w( date title location uup purpose organizer contacts )

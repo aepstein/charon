@@ -8,12 +8,12 @@ for <%=h @fulfillable %>
 <% end %>
 </h2>
 
-<%= will_paginate @fulfillments %>
+<%= paginate @fulfillments %>
 
 <%= render :partial => "fulfillments", :object => @fulfillments,
   :locals => { :fulfiller => @fulfiller, :fulfillable => @fulfillable } %>
 
-<%= will_paginate @fulfillments %>
+<%= paginate @fulfillments %>
 
 <p>
 <% if @fulfiller %>

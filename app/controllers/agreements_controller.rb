@@ -8,7 +8,7 @@ class AgreementsController < ApplicationController
   # GET /agreements
   # GET /agreements.xml
   def index
-    @agreements = @agreements.paginate(:page => params[:page])
+    @agreements = @agreements.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

@@ -111,7 +111,7 @@ Feature: Manage fund_requests
     When I fill in "Reject message" with "Not acceptable."
     And I press "Reject"
     Then I should see "Fund request was successfully rejected."
-@wip
+
   Scenario: List and delete fund_requests
     Given a fund_source: "annual" exists with name: "Annual"
     And a fund_queue: "annual" exists with fund_source: fund_source "annual"
@@ -157,7 +157,7 @@ Feature: Manage fund_requests
       | Annual      | First Club | submitted |
       | Annual      | Last Club  | submitted |
       | Semester    | Last Club  | started   |
-    Given I am on the duplicate fund_requests page
-    And I am on the duplicate fund_requests page for fund_source: "annual"
-    And I am on the duplicate fund_requests page for organization: "first"
+    Given I am on the duplicate fund_requests page for fund_queue: "annual"
+    Then I should see the following fund_requests:
+      | Fund source | Requestor  | State     |
 

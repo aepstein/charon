@@ -1,12 +1,12 @@
 <h2>Listing memberships for <%= @context %></h2>
 
-<%= will_paginate @memberships %>
+<%= paginate @memberships %>
 
 <%= render :partial => "memberships", :object => @memberships, :locals => {
   :organization => @context.class == Organization, :user => @context.class == User
 } %>
 
-<%= will_paginate @memberships %>
+<%= paginate @memberships %>
 
 <br />
 

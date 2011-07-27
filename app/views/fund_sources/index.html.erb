@@ -1,10 +1,10 @@
 <h2>Listing fund_sources for <%=h @organization %></h2>
 
-<%= will_paginate @fund_sources %>
+<%= paginate @fund_sources %>
 
 <%= render :partial => "fund_sources", :object => @fund_sources %>
 
-<%= will_paginate @fund_sources %>
+<%= paginate @fund_sources %>
 
 <br />
 

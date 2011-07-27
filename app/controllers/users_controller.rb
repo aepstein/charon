@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   def index
     @search = @users.search( params[:search] )
-    @users = @search.paginate( :page => params[:page] )
+    @users = @search.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

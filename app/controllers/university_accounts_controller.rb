@@ -12,7 +12,7 @@ class UniversityAccountsController < ApplicationController
   # GET /university_accounts.xml
   def index
     @search = @university_accounts.with_permissions_to(:show).search( params[:search] )
-    @university_accounts = @search.paginate( :page => params[:page] )
+    @university_accounts = @search.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

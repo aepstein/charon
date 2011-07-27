@@ -8,7 +8,7 @@ class NodesController < ApplicationController
   # GET /structures/:structure_id/nodes
   # GET /structures/:structure_id/nodes.xml
   def index
-    @nodes = @nodes.paginate( :page => params[:page] )
+    @nodes = @nodes.page(params[:page])
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @nodes }

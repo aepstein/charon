@@ -8,13 +8,13 @@
   </p>
 <% end %>
 
-<%= will_paginate @organizations %>
+<%= paginate @organizations %>
 
 <%= render :partial => "organizations", :object => @organizations %>
 
 <br />
 
-<%= will_paginate @organizations %>
+<%= paginate @organizations %>
 
 <p>
 <% if permitted_to? :create, Organization.new -%>

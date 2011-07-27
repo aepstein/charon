@@ -8,7 +8,7 @@ class CategoriesController < ApplicationController
   # GET /categories
   # GET /categories.xml
   def index
-    @categories = @categories.paginate( :page => params[:page] )
+    @categories = @categories.page(params[:page])
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @categories }

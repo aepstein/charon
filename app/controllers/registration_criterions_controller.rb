@@ -8,7 +8,7 @@ class RegistrationCriterionsController < ApplicationController
   # GET /registration_criterions
   # GET /registration_criterions.xml
   def index
-    @registration_criterions = @registration_criterions.paginate( :page => params[:page] )
+    @registration_criterions = @registration_criterions.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

@@ -13,7 +13,7 @@ class FulfillmentsController < ApplicationController
     @fulfillments = @context.fulfillments if @context
     @fulfillments ||= Fulfillment.scoped
 
-    @fulfillments = @fulfillments.with_permissions_to(:show).paginate(:page => params[:page])
+    @fulfillments = @fulfillments.with_permissions_to(:show).page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

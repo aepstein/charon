@@ -8,7 +8,7 @@ class StructuresController < ApplicationController
   # GET /structures
   # GET /structures.xml
   def index
-    @structures = @structures.paginate( :page => params[:page] )
+    @structures = @structures.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

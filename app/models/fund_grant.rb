@@ -32,12 +32,13 @@ class FundGrant < ActiveRecord::Base
   scope :open, lambda { joins(:fund_source).merge( FundSource.unscoped.open ) }
   scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }
   scope :organization_name_contains, lambda { |name|
-    scoped.merge Organization.name_contains( name )
+    joins { organization }.merge Organization.name_contains( name )
   }
   scope :fund_source_name_contains, lambda { |name|
-    scoped.merge FundSource.where( :name.like => name )
+    joins { fund_source }.merge FundSource.where( :name.like => name )
   }
 
+  paginates_per 10
   search_methods :organization_name_contains, :fund_source_name_contains
 
   validates :organization, :presence => true

@@ -25,7 +25,7 @@ class MembershipsController < ApplicationController
   # GET /organizations/:organization_id/memberships.xml
   def index
     @search = @memberships.search( params[:search] )
-    @memberships = @search.paginate( :page => params[:page] )
+    @memberships = @search.page(params[:page])
 
     respond_to do |format|
       format.html { render :action => 'index' } # index.html.erb

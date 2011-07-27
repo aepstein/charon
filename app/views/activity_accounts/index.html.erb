@@ -1,10 +1,10 @@
 <h2>Listing activity accounts for <%= @context %></h2>
 
-<%= will_paginate @activity_accounts %>
+<%= paginate @activity_accounts %>
 
 <%= render :partial => "activity_accounts", :object => @activity_accounts %>
 
-<%= will_paginate @activity_accounts %>
+<%= paginate @activity_accounts %>
 
 <br />
 

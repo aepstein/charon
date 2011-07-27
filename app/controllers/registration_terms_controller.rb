@@ -8,7 +8,7 @@ class RegistrationTermsController < ApplicationController
   # GET /registration_terms
   # GET /registration_terms.xml
   def index
-    @registration_terms = @registration_terms.paginate(:page => params[:page])
+    @registration_terms = @registration_terms.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

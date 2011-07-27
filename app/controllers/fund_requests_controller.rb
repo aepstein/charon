@@ -75,9 +75,7 @@ class FundRequestsController < ApplicationController
   # GET /organizations/:organization_id/fund_requests.xml
   def index
     @search = @fund_requests.search( params[:search] )
-    @fund_requests = @search.relation.paginate( :page => params[:page], :per_page => 10, :include => {
-      :approvals => [], :fund_source =>  { :organization => [:memberships], :framework => [] }
-    } )
+    @fund_requests = @search.page(params[:page])
 
     respond_to do |format|
       format.html { render :action => 'index' }
@@ -168,8 +166,8 @@ class FundRequestsController < ApplicationController
 
   def initialize_index
     @fund_requests = FundRequest.scoped
-    @fund_requests = @fund_requests.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
-    @fund_requests = @fund_requests.scoped( :conditions => { :fund_source_id => @fund_source.id }) if @fund_source
+    @fund_requests = @organization.fund_requests if @organization
+    @fund_requests = @fund_source.fund_requests if @fund_source
 #    @fund_requests = @fund_requests.with_permissions_to(:show)
   end
 

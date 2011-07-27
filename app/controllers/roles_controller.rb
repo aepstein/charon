@@ -8,7 +8,7 @@ class RolesController < ApplicationController
   # GET /roles
   # GET /roles.xml
   def index
-    @roles = @roles.paginate( :page => params[:page] )
+    @roles = @roles.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
