@@ -49,7 +49,7 @@ Feature: Manage fund_items with fund_requestable
     And I should see "Current liabilities: $2.00"
     And I should see "Current assets: $20.00"
     And I should see "Net equity: $18.18"
-
+@wip
   Scenario: Administrative expense
     Given a node: "focus" exists with structure: structure "focus", name: "Focus", requestable_type: "AdministrativeExpense"
     And I log in as user: "admin"
@@ -84,6 +84,7 @@ Feature: Manage fund_items with fund_requestable
     And I fill in "Requestor amount" with "120"
     And I fill in "Requestor comment" with "changed comment"
     And I press "Update"
+    Then show me the page
     Then I should see "Fund item was successfully updated."
     And I should see "Maximum request: $160.03"
     And I should see "Requestor amount: $120.00"
