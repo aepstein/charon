@@ -78,6 +78,8 @@ class FundItem < ActiveRecord::Base
 
   accepts_nested_attributes_for :fund_editions
 
+  default_scope order { position }
+
   validates :title, :presence => true
   validates :node, :presence => true
   validates :fund_grant, :presence => true
@@ -86,6 +88,13 @@ class FundItem < ActiveRecord::Base
   validate :node_must_be_allowed, :on => :create
 
   before_validation :set_title
+  after_save { |fund_item|
+    if fund_item.new_position && ( fund_item.new_position.to_i > 0 )
+      np = fund_item.new_position.to_i
+      fund_item.new_position = nil
+      fund_item.insert_at np
+    end
+  }
 
   attr_accessor :new_position
 

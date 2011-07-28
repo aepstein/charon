@@ -162,7 +162,7 @@ Feature: Manage fund_items
       | admin | update  |
       | true  | see     |
       | false | not see |
-@wip
+
   Scenario Outline: Move fund_items among priorities
     Given a structure exists
     And a node: "1" exists with structure: the structure, name: "node 1"
@@ -170,15 +170,16 @@ Feature: Manage fund_items
     And a node: "3" exists with structure: the structure, parent: node "1", name: "node 3"
     And a node: "4" exists with structure: the structure, name: "node 4"
     And a fund_source exists with structure: the structure
-    And a fund_request exists with fund_source: the fund_source
-    And an fund_item: "1" exists with fund_request: the fund_request, node: node "1"
-    And fund_edition exists with fund_item: the fund_item
-    And an fund_item: "2" exists with fund_request: the fund_request, node: node "2", parent: fund_item "1"
-    And fund_edition exists with fund_item: the fund_item
-    And an fund_item: "3" exists with fund_request: the fund_request, node: node "3", parent: fund_item "1"
-    And fund_edition exists with fund_item: the fund_item
-    And an fund_item: "4" exists with fund_request: the fund_request, node: node "4"
-    And fund_edition exists with fund_item: the fund_item
+    And a fund_grant exists with fund_source: the fund_source
+    And a fund_request exists with fund_grant: the fund_grant
+    And an fund_item: "1" exists with fund_grant: the fund_grant, node: node "1"
+    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And an fund_item: "2" exists with fund_grant: the fund_grant, node: node "2", parent: fund_item "1"
+    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And an fund_item: "3" exists with fund_grant: the fund_grant, node: node "3", parent: fund_item "1"
+    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And an fund_item: "4" exists with fund_grant: the fund_grant, node: node "4"
+    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And I log in as user: "admin"
     When I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
@@ -189,8 +190,8 @@ Feature: Manage fund_items
       | node 4 |
     When I follow "Edit" for the <old> fund_item for the fund_request
     And I select "<new>" from "Move to priority of"
-    And I press "Update FundItem"
-    Then I should see "FundItem was successfully updated."
+    And I press "Update Fund item"
+    Then I should see "Fund item was successfully updated."
     When I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
       | Title  |
