@@ -34,7 +34,7 @@ class FundItem < ActiveRecord::Base
     #   is present
     def populate_for_fund_request( request )
       last = for_request( request ).last
-      if last.persisted? && last.perspective != FundEdition::PERSPECTIVES.last
+      if last.blank? || ( last.persisted? && last.perspective != FundEdition::PERSPECTIVES.last )
         build_next_for_fund_request request
       end
     end
