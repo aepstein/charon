@@ -26,7 +26,7 @@ Feature: Manage fund_requests
     And a <tense>fund_source exists with name: "Annual", organization: organization "source"
     And a fund_queue exists with fund_source: the <tense>fund_source
     And a fund_grant exists with fund_source: the <tense>fund_source, organization: organization "applicant"
-    And a fund_request: "annual" exists with fund_grant: the fund_grant, state: "<state>", fund_queue: the fund_queue
+    And a fund_request: "annual" exists with fund_grant: the fund_grant, state: "<state>", review_state: "<review_state>", fund_queue: the fund_queue
     And I log in as user: "<user>"
     And I am on the new fund_request page for the fund_grant
     Then I should <create> authorized
@@ -53,40 +53,53 @@ Feature: Manage fund_requests
     Given I delete on the page for the fund_request
     Then I should <destroy> authorized
     Examples:
-      |tense  |state    |user               |create |update |show   |submit |withdraw|reject |destroy|
-      |       |started  |admin              |see    |see    |see    |not see|not see |not see|see    |
-      |       |started  |source_manager     |see    |see    |see    |not see|not see |not see|see    |
-      |       |started  |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
-      |       |started  |applicant_requestor|see    |see    |see    |not see|not see |not see|not see|
-      |closed_|started  |applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
-      |       |started  |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
-      |       |started  |regular            |not see|not see|not see|not see|not see |not see|not see|
-      |       |tentative|admin              |see    |see    |see    |see    |see     |not see|see    |
-      |       |tentative|source_manager     |see    |see    |see    |see    |see     |not see|see    |
-      |       |tentative|source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
-      |       |tentative|applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
-      |closed_|tentative|applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
-      |       |tentative|observer_requestor |not see|not see|not see|not see|not see |not see|not see|
-      |       |tentative|regular            |not see|not see|not see|not see|not see |not see|not see|
-      |       |finalized|admin              |see    |see    |see    |see    |see     |see    |see    |
-      |       |finalized|source_manager     |see    |see    |see    |see    |see     |see    |see    |
-      |       |finalized|source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
-      |       |finalized|applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
-      |closed_|finalized|applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
-      |       |finalized|observer_requestor |not see|not see|not see|not see|not see |not see|not see|
-      |       |finalized|regular            |not see|not see|not see|not see|not see |not see|not see|
-      |       |submitted|admin              |see    |see    |see    |not see|see     |see    |see    |
-      |       |submitted|source_manager     |see    |see    |see    |not see|see     |see    |see    |
-      |       |submitted|source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
-      |       |submitted|applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
-      |       |submitted|observer_requestor |not see|not see|not see|not see|not see |not see|not see|
-      |       |submitted|regular            |not see|not see|not see|not see|not see |not see|not see|
-      |       |released |admin              |see    |see    |see    |not see|not see |not see|see    |
-      |       |released |source_manager     |see    |see    |see    |not see|not see |not see|see    |
-      |       |released |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
-      |       |released |applicant_requestor|see    |not see|see    |not see|not see |not see|not see|
-      |       |released |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
-      |       |released |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |tense  |state    |review_state|user               |create |update |show   |submit |withdraw|reject |destroy|
+      |       |started  |unreviewed  |admin              |see    |see    |see    |not see|not see |not see|see    |
+      |       |started  |unreviewed  |source_manager     |see    |see    |see    |not see|not see |not see|see    |
+      |       |started  |unreviewed  |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |started  |unreviewed  |applicant_requestor|see    |see    |see    |not see|not see |not see|not see|
+      |closed_|started  |unreviewed  |applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
+      |       |started  |unreviewed  |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |started  |unreviewed  |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |tentative|unreviewed  |admin              |see    |see    |see    |see    |see     |not see|see    |
+      |       |tentative|unreviewed  |source_manager     |see    |see    |see    |see    |see     |not see|see    |
+      |       |tentative|unreviewed  |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |tentative|unreviewed  |applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
+      |closed_|tentative|unreviewed  |applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
+      |       |tentative|unreviewed  |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |tentative|unreviewed  |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |finalized|unreviewed  |admin              |see    |see    |see    |see    |see     |see    |see    |
+      |       |finalized|unreviewed  |source_manager     |see    |see    |see    |see    |see     |see    |see    |
+      |       |finalized|unreviewed  |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |finalized|unreviewed  |applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
+      |closed_|finalized|unreviewed  |applicant_requestor|not see|not see|see    |not see|not see |not see|not see|
+      |       |finalized|unreviewed  |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |finalized|unreviewed  |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|unreviewed  |admin              |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|unreviewed  |source_manager     |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|unreviewed  |source_reviewer    |not see|see    |see    |not see|not see |not see|not see|
+      |closed_|submitted|unreviewed  |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |submitted|unreviewed  |applicant_requestor|see    |not see|see    |not see|see     |not see|not see|
+      |       |submitted|unreviewed  |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|unreviewed  |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|tentative   |admin              |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|tentative   |source_manager     |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|tentative   |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |submitted|tentative   |applicant_requestor|see    |not see|see    |not see|not see |not see|not see|
+      |       |submitted|tentative   |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|tentative   |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|ready       |admin              |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|ready       |source_manager     |see    |see    |see    |not see|see     |see    |see    |
+      |       |submitted|ready       |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |submitted|ready       |applicant_requestor|see    |not see|see    |not see|not see |not see|not see|
+      |       |submitted|ready       |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |submitted|ready       |regular            |not see|not see|not see|not see|not see |not see|not see|
+      |       |released |ready       |admin              |see    |see    |see    |not see|not see |not see|see    |
+      |       |released |ready       |source_manager     |see    |see    |see    |not see|not see |not see|see    |
+      |       |released |ready       |source_reviewer    |not see|not see|see    |not see|not see |not see|not see|
+      |       |released |ready       |applicant_requestor|see    |not see|see    |not see|not see |not see|not see|
+      |       |released |ready       |observer_requestor |not see|not see|not see|not see|not see |not see|not see|
+      |       |released |ready       |regular            |not see|not see|not see|not see|not see |not see|not see|
 
   Scenario: Create and update fund_requests
     Given a fund_source exists with name: "Annual Budget"

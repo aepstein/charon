@@ -1,16 +1,16 @@
-<h2><%=h @fund_item %> of <%=h @fund_item.fund_request %></h2>
+<h2><%=h @fund_item %> of <%=h @fund_request %></h2>
 
 <% if @fund_item.parent -%>
   <p>
     <b>Parent:</b> <%=h @fund_item.parent %>
   </p>
-
 <% end -%>
 
-<%= render :partial => "fund_items/detail", :object => @fund_item %>
+<%= render :partial => "fund_items/detail",
+  :object => @fund_item, :locals => { :fund_request => @fund_request } %>
 
 <p>
-<%= link_to 'Edit', edit_fund_item_path(@fund_item) %> |
-<%= link_to h("Back to #{@fund_item.fund_request}"), fund_request_fund_items_path(@fund_item.fund_request) %>
+<%= link_to 'Edit', edit_fund_request_fund_item_path(@fund_request, @fund_item) %> |
+<%= link_to h("Back to #{@fund_request}"), fund_request_path(@fund_request) %>
 </p>
 

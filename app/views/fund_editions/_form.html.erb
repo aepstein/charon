@@ -28,16 +28,16 @@
     </li>
     <% end %>
     <li>
-    <p>Maximum fund_request: <%=h number_to_currency(form.object.max_fund_request) %></p>
+    <p>Maximum request: <%=h number_to_currency(form.object.max_fund_request) %></p>
     </li>
   <% end %>
 
   <%= form.inputs :name => 'Funding Amount and Comments' do %>
-  <% if form.object.fund_item.node.nil? || ( form.object.fund_item.node.fund_item_amount_limit == 0 ) %>
+  <% if form.object.fund_item.node.nil? || ( form.object.fund_item.node.item_amount_limit == 0 ) %>
   <% form.object.amount = 0.0 %>
   <%= form.input :amount, :as => :hidden %>
   <li>
-  <p>No fund_request amount may be specified for this fund_item.</p>
+  <p>No request amount may be specified for this item.</p>
   </li>
   <% else %>
   <%= form.input :amount, :label => "#{form.object.perspective.capitalize} amount" %>

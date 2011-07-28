@@ -11,6 +11,7 @@
 <% end -%>
 
 <%= render :partial => 'fund_editions/detailed',
-  :collection => detail.fund_editions.select { |fund_edition| permitted_to? :show, fund_edition },
+  :collection => detail.fund_editions.for_request( fund_request ).
+    select { |fund_edition| permitted_to? :show, fund_edition },
   :locals => { :level => level + 1 } %>
 

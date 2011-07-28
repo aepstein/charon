@@ -5,7 +5,7 @@ Feature: Manage fund_items
 
   Background:
     Given a user: "admin" exists with admin: true
-@wip
+
   Scenario Outline: Test permissions for fund_items controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -38,11 +38,11 @@ Feature: Manage fund_items
     Then I should <create> authorized
     Given I post on the fund_items page for the fund_request
     Then I should <create> authorized
-    And I am on the edit page for the fund_item
+    And I am on the edit page for the fund_request and the fund_item
     Then I should <update> authorized
-    Given I put on the page for the fund_item
+    Given I put on the page for the fund_request and the fund_item
     Then I should <update> authorized
-    Given I am on the page for the fund_item
+    Given I am on the page for the fund_request and the fund_item
     Then I should <show> authorized
     Given I am on the fund_items page for the fund_request
     Then I should <show> "Root"
@@ -53,8 +53,8 @@ Feature: Manage fund_items
       |started  |unreviewed  |admin              |see    |see    |see    |see    |
       |started  |unreviewed  |source_manager     |see    |see    |see    |see    |
       |started  |unreviewed  |source_reviewer    |not see|not see|see    |not see|
-      |started  |unreviewed  |applicant_requestor|see    |see    |see    |see    |
-      |started  |unreviewed  |conflictor         |see    |see    |see    |see    |
+      |started  |unreviewed  |applicant_requestor|see    |see    |see    |not see|
+      |started  |unreviewed  |conflictor         |see    |see    |see    |not see|
       |started  |unreviewed  |observer_requestor |not see|not see|not see|not see|
       |started  |unreviewed  |regular            |not see|not see|not see|not see|
       |tentative|unreviewed  |admin              |see    |see    |see    |see    |

@@ -5,10 +5,11 @@ table td { padding: 4px; }
 <h2>Listing fund_items for <%=h @fund_request %></h2>
 
 <%= render :partial => "fund_items", :object => @fund_request.fund_items.root, :locals => {
-  :show_detail => false, :read_only => false
+  :show_detail => false, :read_only => false, :fund_request => @fund_request
 } %>
 
-<%= render :partial => 'new_fund_item', :object => @fund_request.fund_items.build %>
+<%= render :partial => 'new_fund_item', :object => @fund_request.fund_grant.fund_items.build,
+  :locals => { :fund_request => @fund_request } %>
 
 </table>
 

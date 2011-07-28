@@ -113,43 +113,46 @@ authorization do
     has_permission_on [ :fund_items ], :to => :allocate do
       if_permitted_to :allocate, :fund_grant
     end
-    has_permission_on [ :fund_items ], :to => :request do
-      if_permitted_to :request, :fund_grant
-    end
     has_permission_on [ :fund_items ], :to => :manage do
       if_permitted_to :manage, :fund_grant
-    end
-    has_permission_on [ :fund_items ], :to => :review do
-      if_permitted_to :review, :fund_grant
-    end
-    has_permission_on [ :fund_items ], :to => :update, :join_by => :and do
-      if_permitted_to :review, :fund_grant
     end
     has_permission_on [ :fund_items ], :to => :show do
       if_permitted_to :show, :fund_grant
     end
+    has_permission_on [ :fund_items ], :to => [ :create, :update ] do
+      if_permitted_to :request, :fund_grant
+    end
+    has_permission_on [ :fund_items ], :to => [ :update ] do
+      if_permitted_to :review, :fund_grant
+    end
 
     has_permission_on [ :fund_editions ], :to => :manage, :join_by => :and do
-      if_permitted_to :update, :fund_item
+      if_permitted_to :request, :fund_request
+      if_attribute :fund_request => { :state => is { 'started' } }
       if_attribute :perspective => is { FundEdition::PERSPECTIVES.first }
     end
     has_permission_on [ :fund_editions ], :to => :manage, :join_by => :and do
-      if_permitted_to :review, :fund_item
-      if_attribute :fund_item => { :fund_request => { :state => is_in { %w( accepted ) } } }
+      if_permitted_to :review, :fund_request
+      if_attribute :fund_request => { :state => is { 'submitted'},
+        :review_state => is { 'unreviewed' } }
+      if_attribute :perspective => is { FundEdition::PERSPECTIVES.last }
+    end
+    has_permission_on [ :fund_editions ], :to => :manage do
+      if_permitted_to :manage, :fund_item
     end
     has_permission_on [ :fund_editions ], :to => :manage, :join_by => :and do
       if_permitted_to :allocate, :fund_item
     end
     has_permission_on [ :fund_editions ], :to => :show, :join_by => :and do
-      if_permitted_to :show, :fund_item
+      if_permitted_to :show, :fund_request
       if_attribute :perspective => is { FundEdition::PERSPECTIVES.first }
     end
     has_permission_on [ :fund_editions ], :to => :show, :join_by => :and do
-      if_permitted_to :review, :fund_item
+      if_permitted_to :review, :fund_request
     end
     has_permission_on [ :fund_editions ], :to => :show, :join_by => :and do
-      if_permitted_to :show, :fund_item
-      if_attribute :fund_item => { :fund_request => { :state => is { 'released' } } }
+      if_permitted_to :show, :fund_request
+      if_attribute :fund_request => { :state => is { 'released' } }
     end
 
     has_permission_on [ :fund_grants ], :to => [ :show, :request_framework],
@@ -210,6 +213,11 @@ authorization do
       if_permitted_to :request
       if_attribute :state => is_in { %w( started ) }
     end
+    has_permission_on [ :fund_requests ], :to => [ :update ], :join_by => :and do
+      if_permitted_to :review
+      if_attribute :state => is_in { %w( submitted ) },
+        :review_state => is_in { %w( unreviewed ) }
+    end
     has_permission_on [ :fund_requests ], :to => :approve, :join_by => :and do
       if_permitted_to :request
       if_attribute :state => is_in { %w( started tentative ) }
@@ -238,7 +246,8 @@ authorization do
     end
     has_permission_on [ :fund_requests ], :to => :withdraw, :join_by => :and do
       if_permitted_to :request
-      if_attribute :state => is_in { %w( tentative submitted finalized ) }
+      if_attribute :state => is_in { %w( tentative submitted finalized ) },
+        :review_state => is { 'unreviewed' }
     end
     has_permission_on [ :fund_requests ], :to => :withdraw, :join_by => :and do
       if_permitted_to :manage
@@ -274,7 +283,7 @@ authorization do
         :active => is { true }, :role => { :name => is_in { Role::MANAGER } } }
     end
 
-    has_permission_on :inventory_fund_items, :to => [ :show, :update ] do
+    has_permission_on :inventory_items, :to => [ :show, :update ] do
       if_permitted_to :request, :organization
     end
 

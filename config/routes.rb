@@ -21,21 +21,21 @@ Charon::Application.routes.draw do
   resources :fund_grants, :except => [ :create, :new, :index ] do
     resources :fund_requests, :only => [ :create, :new, :index ]
   end
-  resources :fund_items, :except => [ :create, :new, :index ]
-  resources :fund_requests, :except => [ :create, :new ] do
-    member do
-      get :reject, :documents_report
-      put :do_reject, :submit, :withdraw
-    end
-    resources :approvals, :only => [ :create, :destroy, :index, :new ]
-    resources :fund_items, :only => [ :create, :new, :index ]
-  end
+  resources :fund_items, :only => [ :destroy ]
   resources :fund_queues, :only => [] do
     resources :fund_requests, :only => [ :index ] do
       collection do
         get :duplicate
       end
     end
+  end
+  resources :fund_requests, :except => [ :create, :new ] do
+    member do
+      get :reject, :documents_report
+      put :do_reject, :submit, :withdraw
+    end
+    resources :approvals, :only => [ :create, :destroy, :index, :new ]
+    resources :fund_items, :except => [ :destroy ]
   end
   resources :fund_sources, :except => [ :create, :new ] do
     resources :fund_grants, :only => [ :index ]

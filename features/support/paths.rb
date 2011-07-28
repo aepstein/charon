@@ -17,14 +17,8 @@ module NavigationHelpers
     when /the logout page/
       logout_path
 
-    when /^the edit page for #{capture_model}$/
-      edit_polymorphic_path( [model($1)] )
-
-    when /^#{capture_model} new #{capture_factory} page for #{capture_model}$/
-      new_polymorphic_path( [ model($3), $2 ] ) + "?fund_request[fund_source_id]=#{model($1).id}"
-
-    when /^#{capture_model} #{capture_plural_factory} page for #{capture_model}$/
-      polymorphic_path( [ model($3), $2 ] ) + "?fund_request[fund_source_id]=#{model($1).id}"
+#    when /^the edit page for #{capture_model}(?: and #{capture_model})?$/
+#      edit_polymorphic_path [ model($1), ( $2 ? model($2) : nil ) ]
 
     when /^the new #{capture_factory} page$/
       new_polymorphic_path( [$1] )
@@ -38,11 +32,8 @@ module NavigationHelpers
     when /^the(?: (\w+))? #{capture_plural_factory} page for #{capture_model}$/
       $1 ? polymorphic_path( [$1, model($3), $2] ) : polymorphic_path( [model($3), $2] )
 
-    when /^the(?: (\w+))? page for #{capture_model}$/
-      polymorphic_path( [$1, model($2)] )
-
-    when /the fund_items page/
-      fund_request_fund_items_path(FundRequest.find(:first))
+    when /^the(?: (\w+))? page for #{capture_model}(?: and #{capture_model})?$/
+      polymorphic_path [ $1, model($2), ( $3 ? model($3) : nil ) ]
 
     when /the profile page/
       profile_path

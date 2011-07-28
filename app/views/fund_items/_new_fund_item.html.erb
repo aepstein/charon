@@ -1,11 +1,11 @@
-<% if new_fund_item.allowed_nodes.size > 0 && permitted_to?( :create, new_fund_item ) -%>
-  <%= form_for( new_fund_item, :url => new_fund_request_fund_item_path( new_fund_item.fund_request ), :html => { :method => :get } ) do |f| %>
+<% if new_fund_item.allowed_nodes.length > 0 && permitted_to?( :update, fund_request ) -%>
+  <%= form_for( new_fund_item, :url => new_fund_request_fund_item_path( fund_request ), :html => { :method => :get } ) do |f| %>
     <% unless new_fund_item.parent.nil? -%>
       <%= f.hidden_field :parent_id %>
     <% end -%>
-    <%= f.label :node_id, ( new_fund_item.parent ? "Add New Subfund_item for #{new_fund_item.parent}" : 'Add New Root FundItem') %>
+    <%= f.label :node_id, ( new_fund_item.parent ? "Add New Subitem for #{new_fund_item.parent}" : 'Add New Root Item') %>
     <%= f.collection_select :node_id, new_fund_item.allowed_nodes, :id, :name %>
-    <%= f.submit( new_fund_item.parent ? 'Add Subfund_item' : 'Add Root FundItem' ) %>
+    <%= f.submit( new_fund_item.parent ? 'Add Subitem' : 'Add Root Item' ) %>
   <% end %>
 <% end -%>
 
