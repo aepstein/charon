@@ -107,59 +107,62 @@ Feature: Manage fund_items
     And a node: "existing" exists with name: "Existing", structure: the structure
     And a node: "subordinate" exists with name: "Subordinate", structure: the structure, parent: node "existing"
     And a fund_source exists with structure: the structure
-    And a fund_request: "other" exists with fund_source: the fund_source
-    And a fund_request: "focus" exists with fund_source: the fund_source, organization: the organization
-    And an fund_item exists with node: node "existing", fund_request: fund_request "<fund_request>"
+    And a fund_grant: "other" exists with fund_source: the fund_source
+    And a fund_request: "other" exists with fund_grant: fund_grant "other"
+    And a fund_grant: "focus" exists with fund_source: the fund_source, organization: the organization
+    And a fund_request: "focus" exists with fund_grant: fund grant "focus"
+    And an fund_item exists with node: node "existing", fund_grant: fund_grant "<request>"
     And I log in as user: "admin"
     When I am on the fund_items page for fund_request: "focus"
     Then I should not see "Reviewer"
     When I select "<node>" from "Add New <box>"
     And I press "Add <button>"
-    And I fill in "FundRequestor amount" with "100"
-    And I fill in "FundRequestor comment" with "This is *important*."
-    And I press "Create FundItem"
-    Then I should see "FundItem was successfully created."
+    And I fill in "Requestor amount" with "100"
+    And I fill in "Requestor comment" with "This is *important*."
+    And I press "Create Fund item"
+    Then I should see "Fund item was successfully created."
     And I should <parent> "Parent: Existing"
     And I should see "Node: <node>"
-    And I should see "FundRequestor amount: $100.00"
+    And I should see "Requestor amount: $100.00"
     And I should see "This is important."
     When I follow "Edit"
-    And I fill in "FundRequestor amount" with "200"
-    And I fill in "FundRequestor comment" with "Different comment."
+    And I fill in "Requestor amount" with "200"
+    And I fill in "Requestor comment" with "Different comment."
     And I fill in "Reviewer amount" with "100"
     And I fill in "Reviewer comment" with "Final comment."
-    And I press "Update FundItem"
-    Then I should see "FundItem was successfully updated."
-    And I should see "FundRequestor amount: $200.00"
+    And I press "Update Fund item"
+    Then I should see "Fund item was successfully updated."
+    And I should see "Requestor amount: $200.00"
     And I should see "Different comment."
     And I should see "Reviewer amount: $100.00"
     And I should see "Final comment."
     Examples:
-      | fund_request | node        | box                  | button    | parent  |
-      | other   | New         | Root FundItem            | Root FundItem | not see |
-      | focus   | Subordinate | Subfund_item for Existing | Subfund_item   | see     |
+      | request | node        | box                  | button    | parent  |
+      | other   | New         | Root Item            | Root Item | not see |
+      | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
 
   Scenario Outline: Prevent unauthorized user from updating an unauthorized fund_edition
     Given an organization exists with last_name: "Applicant"
-    And a fund_request exists with organization: the organization
-    And an fund_item exists with fund_request: the fund_request
-    And an fund_edition exists with fund_item: the fund_item, perspective: "requestor"
-    And an fund_edition exists with fund_item: the fund_item, perspective: "reviewer"
+    And a fund_grant exists with organization: the organization
+    And a fund_request exists with fund_grant: the fund_grant
+    And an fund_item exists with fund_grant: the fund_grant
+    And an fund_edition exists with fund_item: the fund_item, fund_request: the fund_request, perspective: "requestor"
+    And an fund_edition exists with fund_item: the fund_item, fund_request: the fund_request, perspective: "reviewer"
     And a user exists with admin: true
     And a requestor_role exists
     And a membership exists with user: the user, role: the requestor_role, organization: the organization
     And I log in as the user
-    When I am on the edit page for the fund_item
-    And I fill in "FundRequestor amount" with "100"
+    When I am on the edit page for fund_request and the fund_item
+    And I fill in "Requestor amount" with "100"
     And I fill in "Reviewer amount" with "200"
     Given the user has admin: <admin>
-    When I press "Update FundItem"
+    When I press "Update Fund item"
     Then I should <update> authorized
     Examples:
       | admin | update  |
       | true  | see     |
       | false | not see |
-
+@wip
   Scenario Outline: Move fund_items among priorities
     Given a structure exists
     And a node: "1" exists with structure: the structure, name: "node 1"

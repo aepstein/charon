@@ -4,6 +4,7 @@ class FundItemsController < ApplicationController
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_fund_item_from_fund_request, :only => [ :new, :create ]
   before_filter :populate_fund_editions, :only => [ :new, :edit ]
+  before_filter :attach_fund_request_to_new_fund_editions, :only => [ :create, :update ]
   filter_access_to :show, :destroy, :attribute_check => true
   # The following checks are necessary to assure the user has permission to
   # create or update any fund_editions he or she has asked to create or update
@@ -143,8 +144,14 @@ class FundItemsController < ApplicationController
   end
 
   def populate_fund_editions
-    @fund_item.fund_editions.build_next_for_fund_request @fund_request
+    @fund_item.fund_editions.populate_for_fund_request @fund_request
     @fund_item.fund_editions.each { |fund_edition| fund_edition.documents.populate }
+  end
+
+  def attach_fund_request_to_new_fund_editions
+    @fund_item.fund_editions.each do |fund_edition|
+      fund_edition.fund_request = @fund_request if fund_edition.new_record?
+    end
   end
 end
 

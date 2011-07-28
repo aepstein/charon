@@ -29,7 +29,16 @@ class FundItem < ActiveRecord::Base
       select { |e| e.perspective == edition.next_perspective }.first
     end
 
-    # This was formerly next( attributes = {} )
+    # Builds the next edition of the item for the request
+    # * skips build if an existing new record exists or if the last perspective
+    #   is present
+    def populate_for_fund_request( request )
+      last = for_request( request ).last
+      if last.persisted? && last.perspective != FundEdition::PERSPECTIVES.last
+        build_next_for_fund_request request
+      end
+    end
+
     # Build the next edition of the item for specified request
     # * optionally applies attributes by mass assignment
     # * raises exceptions if last edition is new record or final perspective
