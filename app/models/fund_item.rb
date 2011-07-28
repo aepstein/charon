@@ -35,7 +35,8 @@ class FundItem < ActiveRecord::Base
     def populate_for_fund_request( request )
       last = for_request( request ).last
       if last.blank? || ( last.persisted? && last.perspective != FundEdition::PERSPECTIVES.last )
-        build_next_for_fund_request request
+        next_edition = build_next_for_fund_request request
+        next_edition.build_requestable unless proxy_owner.node.requestable_type.blank?
       end
     end
 
@@ -59,8 +60,9 @@ class FundItem < ActiveRecord::Base
           'Last position has final perspective.'
       end
       next_edition = build
+      next_edition.build_requestable unless proxy_owner.node.requestable_type.blank?
       unless last_edition.requestable.blank?
-        next_edition.requestable_attributes = last_edition.requestable_attributes
+        next_edition.requestable.attributes = last_edition.requestable.attributes
       end
       next_edition.attributes = last_edition.attributes.merge( attributes )
       next_edition.perspective = last_edition.next_perspective
