@@ -213,19 +213,22 @@ Feature: Manage fund_items
     And a node: "3" exists with structure: the structure, parent: node "1", name: "node 3"
     And a node: "4" exists with structure: the structure, name: "node 4"
     And a fund_source exists with structure: the structure
-    And a fund_request exists with fund_source: the fund_source
-    And an fund_item: "1" exists with fund_request: the fund_request, node: node "1"
-    And an fund_item: "2" exists with fund_request: the fund_request, node: node "2", parent: fund_item "1"
-    And an fund_item: "3" exists with fund_request: the fund_request, node: node "3", parent: fund_item "1"
-    And an fund_item: "4" exists with fund_request: the fund_request, node: node "4"
+    And a fund_grant exists with fund_source: the fund_source
+    And a fund_request exists with fund_grant: the fund_grant
+    And an fund_item: "1" exists with fund_grant: the fund_grant, node: node "1"
+    And an fund_item: "2" exists with fund_grant: the fund_grant, node: node "2", parent: fund_item "1"
+    And an fund_item: "3" exists with fund_grant: the fund_grant, node: node "3", parent: fund_item "1"
+    And an fund_item: "4" exists with fund_grant: the fund_grant, node: node "4"
     And I log in as user: "admin"
     When I follow "Destroy" for the 3rd fund_item for the fund_request
+    Given I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
       | Title  |
       | node 1 |
       | node 2 |
       | node 4 |
     When I follow "Destroy" for the 1st fund_item for the fund_request
+    Given I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
       | Title  |
       | node 4 |
