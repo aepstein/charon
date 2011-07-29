@@ -35,8 +35,7 @@ class FundItem < ActiveRecord::Base
     def populate_for_fund_request( request )
       last = for_request( request ).last
       if last.blank? || ( last.persisted? && last.perspective != FundEdition::PERSPECTIVES.last )
-        next_edition = build_next_for_fund_request request
-        next_edition.build_requestable unless proxy_owner.node.requestable_type.blank?
+        next_edition = build_next_for_fund_request( request )
       end
     end
 
@@ -45,29 +44,27 @@ class FundItem < ActiveRecord::Base
     # * raises exceptions if last edition is new record or final perspective
     def build_next_for_fund_request(request, attributes = {})
       last_edition = for_request( request ).last
-      if last_edition
-        if last_edition.new_record?
-          raise ActiveRecord::ActiveRecordError,
-            'Last position is a new record.'
-        end
-        if last_edition.next_perspective.nil?
-          raise ActiveRecord::ActiveRecordError,
-            'Last position has final perspective.'
-        end
-        next_edition = build( attributes.merge(
-          :perspective => last_edition.next_perspective ) )
+      if last_edition.blank?
+        next_perspective = FundEdition::PERSPECTIVES.first
+      elsif last_edition.new_record?
+        raise ActiveRecord::ActiveRecordError, 'Last edition is new.'
+      elsif last_edition.next_perspective.blank?
+        raise ActiveRecord::ActiveRecordError, 'Last edition has final perspective.'
       else
-        next_edition = build( attributes.merge(
-          :perspective => FundEdition::PERSPECTIVES.first ) )
+        next_perspective = last_edition.next_perspective
       end
-      next_edition.attributes = last_edition.attributes.merge( attributes ) if last_edition
-      if proxy_owner.node.requestable_type
-        next_edition.build_requestable
-        if last_edition
+
+      next_edition = build( attributes )
+      next_edition.build_requestable if proxy_owner.node.requestable_type?
+      if last_edition
+        next_edition.attributes = last_edition.attributes
+        if last_edition.requestable
           next_edition.requestable.attributes = last_edition.requestable.attributes
         end
       end
+      next_edition.perspective = next_perspective
       next_edition.fund_request = request
+
       next_edition
     end
   end
@@ -77,11 +74,11 @@ class FundItem < ActiveRecord::Base
   has_paper_trail :class_name => 'SecureVersion'
   has_ancestry
 
-  acts_as_list :scope => [ :ancestry ]
+  acts_as_list :scope => [ :fund_grant_id, :ancestry ]
 
   accepts_nested_attributes_for :fund_editions
 
-  default_scope order { position }
+  scope :ordered, order { position }
 
   validates :title, :presence => true
   validates :node, :presence => true
@@ -91,7 +88,7 @@ class FundItem < ActiveRecord::Base
   validate :node_must_be_allowed, :on => :create
 
   before_validation :set_title
-  after_save { |fund_item|
+  after_update { |fund_item|
     if fund_item.new_position && ( fund_item.new_position.to_i > 0 )
       np = fund_item.new_position.to_i
       fund_item.new_position = nil

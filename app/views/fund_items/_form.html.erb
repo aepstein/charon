@@ -5,26 +5,25 @@
     <%= form.input :node_id, :as => :hidden %>
     <%= form.input :parent_id, :as => :hidden %>
   <% else -%>
-    <% if permitted_to?( :manage, form.object ) -%>
+    <% if permitted_to?( :request, form.object ) -%>
       <%= form.input :new_position, :label => 'Move to priority of',
-        :hint => 'Use this to change the priority of this fund_item relative to others',
+        :hint => 'Use this to change the priority of this item relative to others',
         :as => :select, :collection => options_for_position(form.object) %>
     <% end -%>
     <% if permitted_to?( :allocate, form.object ) -%>
-      <%= form.input :amount, :hint => 'What allocation amount should be provided for this fund_item?' %>
+      <%= form.input :amount, :hint => 'What allocation amount should be provided for this item?' %>
     <% end -%>
   <% end -%>
 <% end %>
 
 <%= form.semantic_fields_for :fund_editions do |fund_edition_form| %>
-  <% if form.object.new_record? ||
-        (fund_edition_form.object.new_record? && permitted_to?( :create, fund_edition_form.object ) ) ||
-        (fund_edition_form.object.id && permitted_to?( :update, fund_edition_form.object ) ) -%>
+  <% if (fund_edition_form.object.new_record? && permitted_to?( :create, fund_edition_form.object ) ) ||
+        (fund_edition_form.object.persisted? && permitted_to?( :update, fund_edition_form.object ) ) -%>
     <%= render :partial => 'fund_editions/form', :object => fund_edition_form  %>
   <% elsif permitted_to?( :show, fund_edition_form.object ) -%>
     <%= render :partial => 'fund_editions/fund_edition', :object => fund_edition_form.object  %>
   <% else -%>
-    <p>You may not see the <%= fund_edition_form.object.perspective %> fund_edition.</p>
+    <p>You may not see the <%= fund_edition_form.object.perspective %> edition.</p>
   <% end -%>
 <% end %>
 

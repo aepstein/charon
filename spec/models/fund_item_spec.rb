@@ -35,28 +35,19 @@ describe FundItem do
   end
 
   it "should save to the end of the list by default and act as list" do
-    first = @fund_item
-    first.save!
-    fund_grant = @fund_item.fund_grant
-    node = @fund_item.node
-    node.item_quantity_limit = 3
-    node.save
-    second = @fund_item.fund_grant.fund_items.build
-    second.node = node
-    second.save!
-    @fund_item.reload
-    third = @fund_item.fund_grant.fund_items.build
-    third.node = node
-    third.save!
-    first.position.should eql 1
-    second.position.should eql 2
-    third.position.should eql 3
-    third.insert_at(second.position)
-    first.reload
-    second.reload
-    first.position.should eql 1
-    second.position.should eql 3
-    third.position.should eql 2
+    items = Array.new
+    grant = create( :fund_grant )
+    node = create( :node, :structure => grant.fund_source.structure,
+      :item_quantity_limit => 3 )
+    3.times do
+      items << create( :fund_item, :fund_grant => grant, :node => node )
+      grant.fund_items.reset
+    end
+    3.times { |i| items[i].position.should eql( i + 1 ) }
+    items[2].insert_at 2
+    items.each { |item| item.reload }
+    items[1].position.should eql 3
+    items[2].position.should eql 2
   end
 
   context 'fund_editions association' do

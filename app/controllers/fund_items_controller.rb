@@ -136,6 +136,7 @@ class FundItemsController < ApplicationController
   def initialize_index
     @fund_items = @fund_request.fund_items.roots if @fund_request
     @fund_items ||= FundItem.scoped
+    @fund_items = @fund_items.ordered
     # No with_permissions scope: Can see items if can see request
   end
 

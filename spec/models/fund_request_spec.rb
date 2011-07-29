@@ -77,10 +77,12 @@ describe FundRequest do
     first_fund_item = create(:fund_item, :fund_grant => @fund_request.fund_grant)
     second_fund_item = create(:fund_item, :fund_grant => @fund_request.fund_grant)
     2.times do |i|
-      first_fund_item.fund_editions.build_next_for_fund_request( @fund_request,
-        { :amount => 100.0 } ).save!
-      second_fund_item.fund_editions.build_next_for_fund_request( @fund_request,
-        { :amount => 100.0 } ).save!
+      e = first_fund_item.fund_editions.build_next_for_fund_request( @fund_request,
+        { :amount => 100.0 } )
+      e.save!
+      e = second_fund_item.fund_editions.build_next_for_fund_request( @fund_request,
+        { :amount => 100.0 } )
+      e.save!
     end
     @fund_request.reload
     @fund_request.fund_items.length.should eql 2
