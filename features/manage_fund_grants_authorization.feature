@@ -55,11 +55,13 @@ Feature: Manage fund_grants authorization
 
   Scenario Outline: Test permissions for fund_grants controller with fund_source
     Given a fund_source exists with name: "Annual", organization: organization "source"
+    And a fund_queue exists with fund_source: the fund_source
     And I log in as user: "<user>"
     And I am on the new fund_grant page for organization: "applicant"
+    When I select "Annual" from "Fund source"
+    And there are no fund_queues
     And the fund_source is <state>
     And a fund_queue exists with fund_source: the fund_source
-    When I select "Annual" from "Fund source"
     And I press "Create"
     Then I should <create> authorized
     Examples:

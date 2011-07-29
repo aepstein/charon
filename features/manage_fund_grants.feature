@@ -23,13 +23,13 @@ Feature: Manage fund_grants
     And a fund_source exists with organization: organization "reviewer", framework: the framework
     And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
     And I log in as user: "<user>"
-    When I am on the page for the fund_grant
-    Then I should <show> authorized
+    When I am on the edit page for the fund_grant
+    Then I should <edit> authorized
     And I should <status> "You must be undergrad."
     And I should <agreement> "You must approve the Key Agreement."
     And I should <registration> "Applicant must have a current registration with at least 15 percent undergrads and an approved status."
     Examples:
-      | user      | perspective | fulfillable            | show    | status  | agreement | registration |
+      | user      | perspective | fulfillable            | edit    | status  | agreement | registration |
       | admin     | requestor   | user_status_criterion  | see     | not see | not see   | not see      |
       | requestor | requestor   | user_status_criterion  | not see | see     | not see   | not see      |
       | requestor | requestor   | agreement              | not see | not see | see       | not see      |
