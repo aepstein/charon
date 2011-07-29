@@ -10,6 +10,6 @@
   <% end %>
 
   <%= render :partial => 'fund_items/fund_item',
-             :collection => fund_item.children,
+             :collection => fund_item.children.ordered,
              :locals => { :fund_request => fund_request }  %>
 

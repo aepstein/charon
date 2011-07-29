@@ -27,6 +27,8 @@ authorization do
       if_attribute :state => is_in { %w( tentative finalized submitted ) }
     end
 
+    has_permission_on [ :fund_items ], :to => [ :request, :review ]
+
     has_permission_on [ :memberships ], :to => :manage do
       if_attribute :registration_id => is { nil }
     end
