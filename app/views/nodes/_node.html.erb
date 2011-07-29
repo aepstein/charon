@@ -1,10 +1,10 @@
   <%= table_row_tag do %>
-    <td><%=h node.name %></td>
-    <td><%=h node.requestable_type %></td>
-    <td><%=h node.fund_item_amount_limit %></td>
-    <td><%=h node.fund_item_quantity_limit %></td>
-    <td><%=h node.structure_id %></td>
-    <td><%=h node.parent_id %></td>
+    <td><%= node.name %></td>
+    <td><%= node.requestable_type %></td>
+    <td><%= node.item_amount_limit %></td>
+    <td><%= node.item_quantity_limit %></td>
+    <td><%= node.structure_id %></td>
+    <td><%= node.parent_id %></td>
     <td><%= link_to 'Show', node %></td>
     <td><%= link_to( 'Edit', edit_node_path(node) ) if permitted_to? :edit, node %></td>
     <td><%= link_to( 'Destroy', node, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, node %></td>

@@ -5,7 +5,7 @@
 </p>
 
 <p>
-  <b>FundRequestable type:</b> <%=h Node::ALLOWED_TYPES.key( @node.requestable_type ) %>
+  <b>Requestable type:</b> <%=h Node::ALLOWED_TYPES.key( @node.requestable_type ) %>
 </p>
 
 <p>
@@ -13,15 +13,15 @@
 </p>
 
 <p>
-  <b>FundItem amount limit:</b> <%= number_to_currency( @node.fund_item_amount_limit ) %>
+  <b>Item amount limit:</b> <%= number_to_currency( @node.item_amount_limit ) %>
 </p>
 
 <p>
-  <b>FundItem quantity limit:</b> <%=h @node.fund_item_quantity_limit %>
+  <b>Item quantity limit:</b> <%=h @node.item_quantity_limit %>
 </p>
 
 <p>
-  <b>FundRequest structure:</b> <%=h @node.structure %>
+  <b>Request structure:</b> <%=h @node.structure %>
 </p>
 
 <p>
