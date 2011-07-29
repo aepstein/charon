@@ -5,9 +5,12 @@ class LocalEventExpensesController < ApplicationController
   end
 
   def index
-    @events = LocalEventExpense.find( :all, :include => { :fund_edition => { :fund_item => { :fund_request => { :organization => :users } } } },
-      :conditions => ['fund_editions.perspective = ? AND local_event_expenses.date >= ?', 'reviewer', Date.today - 1.weeks],
-      :order => 'local_event_expenses.date ASC' )
+    @events = LocalEventExpense.scoped.includes(
+      :fund_edition => { :fund_request => [],
+        :fund_item => { :fund_grant => { :organization => :users } } } ).
+      where('fund_editions.perspective = ? AND local_event_expenses.date >= ?',
+        'reviewer', Date.today - 1.weeks ).
+      order { date }
     page = params[:page] ? params[:page] : 1
     respond_to do |format|
       format.html { @events = @events.page(page) }

@@ -1,9 +1,10 @@
 Given /^the following( reviewed)? local_event_expenses:$/ do |reviewed, local_event_expenses|
   local_event_expenses.hashes.each do |attributes|
-    expense = create(:local_event_expense, attributes)
+    expense = ::FactoryGirl.create(:local_event_expense, attributes)
     if reviewed then
-      expense.fund_edition.fund_item.fund_editions.reload
-      expense.fund_edition.fund_item.fund_editions.next.save!
+      expense.fund_edition.fund_item.fund_editions.reset
+      expense.fund_edition.fund_item.fund_editions.
+        build_next_for_fund_request( expense.fund_edition.fund_request ).save!
     end
   end
 end
