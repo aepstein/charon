@@ -33,6 +33,7 @@ class FundItem < ActiveRecord::Base
     # * skips build if an existing new record exists or if the last perspective
     #   is present
     def populate_for_fund_request( request )
+      return if proxy_owner.node.blank?
       last = for_request( request ).last
       if last.blank? || ( last.persisted? && last.perspective != FundEdition::PERSPECTIVES.last )
         next_edition = build_next_for_fund_request( request )

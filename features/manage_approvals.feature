@@ -28,7 +28,7 @@ Feature: Manage approvals
       | admin   | see     | see     | see     |
       | owner   | not see | not see | see     |
       | regular | see     | not see | not see |
-
+@wip
   Scenario Outline: Test permissions for approvals of fund_requests
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
@@ -46,9 +46,11 @@ Feature: Manage approvals
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a membership exists with user: user "owner", organization: organization "applicant", role: role "<owner>"
     And a fund_source exists with name: "Annual", organization: organization "source"
-    And a fund_request exists with fund_source: the fund_source, organization: organization "applicant"
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_grant exists with fund_source: the fund_source, organization: organization "applicant"
+    And a fund_request exists with fund_grant: the fund_grant
     And an approval exists with user: user "owner", approvable: the fund_request
-    And the fund_request has status: "<status>"
+    And the fund_request has state: "<state>", review_state: "<review_state>", fund_queue: the fund_queue
     And I log in as user: "<user>"
     And I am on the page for the approval
     Then I should <show> authorized
@@ -63,56 +65,56 @@ Feature: Manage approvals
     Given I delete on the page for the approval
     Then I should <destroy> authorized
     Examples:
-      | owner     | status    | user                | create  | destroy | show    |
-      | requestor | started   | admin               | not see | see     | see     |
-      | requestor | started   | source_manager      | not see | see     | see     |
-      | requestor | started   | source_reviewer     | not see | not see | see     |
-      | requestor | started   | applicant_requestor | see     | see     | see     |
-      | requestor | started   | owner               | not see | see     | see     |
-      | requestor | started   | observer_requestor  | not see | not see | not see |
-      | requestor | started   | regular             | not see | not see | not see |
-      | requestor | completed | admin               | not see | see     | see     |
-      | requestor | completed | source_manager      | not see | see     | see     |
-      | requestor | completed | source_reviewer     | not see | not see | see     |
-      | requestor | completed | applicant_requestor | see     | not see | see     |
-      | requestor | completed | owner               | not see | see     | see     |
-      | requestor | completed | observer_requestor  | not see | not see | not see |
-      | requestor | completed | regular             | not see | not see | not see |
-      | requestor | submitted | admin               | not see | see     | see     |
-      | requestor | submitted | source_manager      | not see | see     | see     |
-      | requestor | submitted | source_reviewer     | not see | not see | see     |
-      | requestor | submitted | applicant_requestor | not see | not see | see     |
-      | requestor | submitted | owner               | not see | not see | see     |
-      | requestor | submitted | observer_requestor  | not see | not see | not see |
-      | requestor | submitted | regular             | not see | not see | not see |
-      | requestor | accepted  | admin               | see     | see     | see     |
-      | requestor | accepted  | source_manager      | not see | see     | see     |
-      | requestor | accepted  | source_reviewer     | see     | not see | see     |
-      | requestor | accepted  | applicant_requestor | not see | not see | see     |
-      | requestor | accepted  | owner               | not see | not see | see     |
-      | requestor | accepted  | observer_requestor  | not see | not see | not see |
-      | requestor | accepted  | regular             | not see | not see | not see |
-      | requestor | reviewed  | admin               | see     | see     | see     |
-      | requestor | reviewed  | source_manager      | not see | see     | see     |
-      | requestor | reviewed  | source_reviewer     | see     | not see | see     |
-      | requestor | reviewed  | applicant_requestor | not see | not see | see     |
-      | requestor | reviewed  | owner               | not see | not see | see     |
-      | requestor | reviewed  | observer_requestor  | not see | not see | not see |
-      | requestor | reviewed  | regular             | not see | not see | not see |
-      | requestor | certified | admin               | not see | see     | see     |
-      | requestor | certified | source_manager      | not see | see     | see     |
-      | requestor | certified | source_reviewer     | not see | not see | see     |
-      | requestor | certified | applicant_requestor | not see | not see | see     |
-      | requestor | certified | observer_requestor  | not see | not see | not see |
-      | requestor | certified | owner               | not see | not see | see     |
-      | requestor | certified | regular             | not see | not see | not see |
-      | requestor | released  | admin               | not see | see     | see     |
-      | requestor | released  | source_manager      | not see | see     | see     |
-      | requestor | released  | source_reviewer     | not see | not see | see     |
-      | requestor | released  | applicant_requestor | not see | not see | see     |
-      | requestor | released  | owner               | not see | not see | see     |
-      | requestor | released  | observer_requestor  | not see | not see | not see |
-      | requestor | released  | regular             | not see | not see | not see |
+      |owner    |state    |review_state|user               |create |destroy|show   |
+      |requestor|started  |unreviewed  |admin              |not see|see    |see    |
+      |requestor|started  |unreviewed  |source_manager     |not see|see    |see    |
+      |requestor|started  |unreviewed  |source_reviewer    |not see|not see|see    |
+      |requestor|started  |unreviewed  |applicant_requestor|see    |not see|see    |
+      |requestor|started  |unreviewed  |owner              |not see|not see|see    |
+      |requestor|started  |unreviewed  |observer_requestor |not see|not see|not see|
+      |requestor|started  |unreviewed  |regular            |not see|not see|not see|
+      |requestor|tentative|unreviewed  |admin              |not see|see    |see    |
+      |requestor|tentative|unreviewed  |source_manager     |not see|see    |see    |
+      |requestor|tentative|unreviewed  |source_reviewer    |not see|not see|see    |
+      |requestor|tentative|unreviewed  |applicant_requestor|see    |not see|see    |
+      |requestor|tentative|unreviewed  |owner              |not see|see    |see    |
+      |requestor|tentative|unreviewed  |observer_requestor |not see|not see|not see|
+      |requestor|tentative|unreviewed  |regular            |not see|not see|not see|
+      |requestor|finalized|unreviewed  |admin              |not see|see    |see    |
+      |requestor|finalized|unreviewed  |source_manager     |not see|see    |see    |
+      |requestor|finalized|unreviewed  |source_reviewer    |not see|not see|see    |
+      |requestor|finalized|unreviewed  |applicant_requestor|not see|not see|see    |
+      |requestor|finalized|unreviewed  |owner              |not see|not see|see    |
+      |requestor|finalized|unreviewed  |observer_requestor |not see|not see|not see|
+      |requestor|finalized|unreviewed  |regular            |not see|not see|not see|
+      |requestor|submitted|unreviewed  |admin              |see    |see    |see    |
+      |requestor|submitted|unreviewed  |source_manager     |not see|see    |see    |
+      |requestor|submitted|unreviewed  |source_reviewer    |see    |not see|see    |
+      |requestor|submitted|unreviewed  |applicant_requestor|not see|not see|see    |
+      |requestor|submitted|unreviewed  |owner              |not see|not see|see    |
+      |requestor|submitted|unreviewed  |observer_requestor |not see|not see|not see|
+      |requestor|submitted|unreviewed  |regular            |not see|not see|not see|
+      |requestor|submitted|tentative   |admin              |see    |see    |see    |
+      |requestor|submitted|tentative   |source_manager     |not see|see    |see    |
+      |requestor|submitted|tentative   |source_reviewer    |see    |not see|see    |
+      |requestor|submitted|tentative   |applicant_requestor|not see|not see|see    |
+      |requestor|submitted|tentative   |owner              |not see|not see|see    |
+      |requestor|submitted|tentative   |observer_requestor |not see|not see|not see|
+      |requestor|submitted|tentative   |regular            |not see|not see|not see|
+      |requestor|submitted|ready       |admin              |not see|see    |see    |
+      |requestor|submitted|ready       |source_manager     |not see|see    |see    |
+      |requestor|submitted|ready       |source_reviewer    |not see|not see|see    |
+      |requestor|submitted|ready       |applicant_requestor|not see|not see|see    |
+      |requestor|submitted|ready       |observer_requestor |not see|not see|not see|
+      |requestor|submitted|ready       |owner              |not see|not see|see    |
+      |requestor|submitted|ready       |regular            |not see|not see|not see|
+      |requestor|released |ready       |admin              |not see|see    |see    |
+      |requestor|released |ready       |source_manager     |not see|see    |see    |
+      |requestor|released |ready       |source_reviewer    |not see|not see|see    |
+      |requestor|released |ready       |applicant_requestor|not see|not see|see    |
+      |requestor|released |ready       |owner              |not see|not see|see    |
+      |requestor|released |ready       |observer_requestor |not see|not see|not see|
+      |requestor|released |ready       |regular            |not see|not see|not see|
 
   Scenario: Register new approval of an agreement
     Given an agreement exists with name: "safc"
@@ -131,7 +133,8 @@ Feature: Manage approvals
     And a requestor_role exists
     And an organization: "applicant" exists
     And a membership exists with user: the user, role: the requestor_role, organization: the organization
-    And a fund_request exists with organization: the organization
+    And a fund_grant exists with organization: the organization
+    And a fund_request exists with fund_grant: the fund_grant
     And I log in as the user
     And I am on the new approval page for the fund_request
     And I press "Confirm Approval"

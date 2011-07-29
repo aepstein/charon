@@ -81,7 +81,7 @@ authorization do
     has_permission_on [ :approvals ], :to => [ :new, :create ], :join_by => :and do
       if_permitted_to :approve, :approvable
       if_attribute :user_id => is { user.id }
-      if_attribute :approvable_type => is { 'Request' }, :approvable_id => is_not_in { user.approvals.fund_request_ids }
+      if_attribute :approvable_type => is { 'FundRequest' }, :approvable_id => is_not_in { user.approvals.fund_request_ids }
     end
     has_permission_on [ :approvals ], :to => [ :destroy ], :join_by => :and do
       if_permitted_to :unapprove, :approvable
@@ -95,7 +95,7 @@ authorization do
     end
     has_permission_on [ :approvals ], :to => [ :show ], :join_by => :and do
       if_permitted_to :show, :approvable
-      if_attribute :approvable_type => is { 'Request' }
+      if_attribute :approvable_type => is { 'FundRequest' }
     end
 
     has_permission_on [ :documents ], :to => :manage do
