@@ -53,6 +53,6 @@ Feature: Manage fulfillments
     And I log in as user: "admin"
     And I am on the fulfillments page for organization: "organization"
     Then I should see the following fulfillments:
-      |Fulfillable                                                                               |
-      |No less than 1 percent of members provided in the current registration must be undergrads |
+      |Fulfillable                   |
+      |at least 1 percent undergrads |
 

@@ -4,7 +4,7 @@ class FulfillmentsController < ApplicationController
   filter_access_to :index do
     permitted_to!( :show, @fulfiller ) if @fulfiller
     permitted_to!( :show, @fulfillable ) if @fulfillable
-    permitted_to!( :index )
+    true
   end
 
   # GET /fulfillments

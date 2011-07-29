@@ -7,8 +7,8 @@ authorization do
       :fund_editions, :fund_grants, :fund_items, :fund_requests, :fund_sources,
       :frameworks, :fulfillments, :inventory_items, :nodes, :organizations,
       :registration_criterions, :registrations, :registration_terms, :roles,
-      :structures, :university_accounts, :users, :user_state_criterions ],
-      :to => [ :manage ]
+      :structures, :university_accounts, :users, :user_status_criterions ],
+      :to => [ :show, :manage ]
 
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
 
