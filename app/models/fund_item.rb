@@ -45,27 +45,28 @@ class FundItem < ActiveRecord::Base
     # * raises exceptions if last edition is new record or final perspective
     def build_next_for_fund_request(request, attributes = {})
       last_edition = for_request( request ).last
-      if last_edition.blank?
-        next_edition = build( attributes )
-        next_edition.fund_request = request
-        next_edition.perspective = FundEdition::PERSPECTIVES.first
-        return next_edition
+      if last_edition
+        if last_edition.new_record?
+          raise ActiveRecord::ActiveRecordError,
+            'Last position is a new record.'
+        end
+        if last_edition.next_perspective.nil?
+          raise ActiveRecord::ActiveRecordError,
+            'Last position has final perspective.'
+        end
+        next_edition = build( attributes.merge(
+          :perspective => last_edition.next_perspective ) )
+      else
+        next_edition = build( attributes.merge(
+          :perspective => FundEdition::PERSPECTIVES.first ) )
       end
-      if last_edition.new_record?
-        raise ActiveRecord::ActiveRecordError,
-          'Last position is a new record.'
+      next_edition.attributes = last_edition.attributes.merge( attributes ) if last_edition
+      if proxy_owner.node.requestable_type
+        next_edition.build_requestable
+        if last_edition
+          next_edition.requestable.attributes = last_edition.requestable.attributes
+        end
       end
-      if last_edition.next_perspective.nil?
-        raise ActiveRecord::ActiveRecordError,
-          'Last position has final perspective.'
-      end
-      next_edition = build
-      next_edition.build_requestable unless proxy_owner.node.requestable_type.blank?
-      unless last_edition.requestable.blank?
-        next_edition.requestable.attributes = last_edition.requestable.attributes
-      end
-      next_edition.attributes = last_edition.attributes.merge( attributes )
-      next_edition.perspective = last_edition.next_perspective
       next_edition.fund_request = request
       next_edition
     end
