@@ -54,8 +54,8 @@ Feature: Manage fund_sources
       | closed_   | admin              | see     | see     | see      | see     |
       | closed_   | source_manager     | see     | see     | see      | see     |
       | closed_   | source_reviewer    | not see | not see | not see  | see     |
-      | closed_   | observer_requestor | not see | not see | not see  | not see |
-      | closed_   | regular            | not see | not see | not see  | not see |
+      | closed_   | observer_requestor | not see | not see | not see  | see     |
+      | closed_   | regular            | not see | not see | not see  | see     |
       | upcoming_ | admin              | see     | see     | see      | see     |
       | upcoming_ | source_manager     | see     | see     | see      | see     |
       | upcoming_ | source_reviewer    | not see | not see | not see  | see     |
