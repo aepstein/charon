@@ -95,6 +95,7 @@ class ApproversController < ApplicationController
 
   def initialize_index
     @approvers = @framework.approvers
+    @approvers = @approvers.ordered
   end
 
   def new_approver_from_params
