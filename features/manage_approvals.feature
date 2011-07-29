@@ -28,7 +28,7 @@ Feature: Manage approvals
       | admin   | see     | see     | see     |
       | owner   | not see | not see | see     |
       | regular | see     | not see | not see |
-@wip
+
   Scenario Outline: Test permissions for approvals of fund_requests
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
