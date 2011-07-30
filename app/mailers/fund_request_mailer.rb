@@ -11,7 +11,7 @@ class FundRequestMailer < ActionMailer::Base
     )
   end
 
-  def completed_notice(fund_request)
+  def tentative_notice(fund_request)
     @fund_request = fund_request
     mail(
       :to => fund_request.users.unfulfilled( Approver.where( :quantity => nil ) ).map(&:to_email),
@@ -20,16 +20,16 @@ class FundRequestMailer < ActionMailer::Base
     )
   end
 
-  def submitted_notice( fund_request )
+  def finalized_notice( fund_request )
     @fund_request = fund_request
     mail(
       :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
-      :subject => "#{fund_request} has been submitted"
+      :subject => "#{fund_request} is finalized, but not submitted"
     )
   end
 
-  def accepted_notice( fund_request )
+  def submitted_notice( fund_request )
     @fund_request = fund_request
     mail(
       :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),

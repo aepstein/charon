@@ -172,7 +172,7 @@ class FundRequest < ActiveRecord::Base
 
   end
 
-  notifiable_events :started, :completed, :submitted, :rejected, :accepted,
+  notifiable_events :started, :tentative, :finalized, :rejected, :submitted,
     :released, :withdrawn
 
   has_paper_trail :class_name => 'SecureVersion'

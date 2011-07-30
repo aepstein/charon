@@ -42,14 +42,14 @@ Feature: Manage fund_request mailers
     And the email parts should contain "John Doe"
     And the email parts should not contain "Alpha Beta"
 
-  Scenario: Send notice regarding a tentative fund_request
+  Scenario: Send notice regarding a tentatively completed fund_request
     Given all emails have been delivered
-    And a completed notice email is sent for fund_request: "tentative"
+    And a tentative notice email is sent for fund_request: "tentative"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And the email subject should contain "Request of Money Taking Club from Money Taking Fund needs your approval"
     And the email parts should contain "Dear Officers of Money Taking Club,"
-    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been completed, but requires further action before it will be considered submitted."
+    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been tentatively completed, but requires further action before it will be considered submitted."
     And the email parts should contain "Jane Doe"
     And the email parts should not contain "John Doe"
     And the email parts should not contain "Alpha Beta"
@@ -57,20 +57,20 @@ Feature: Manage fund_request mailers
   Scenario: Send notice regarding a finalized fund_request
     Given all emails have been delivered
     And fund_request: "tentative" has state: "finalized"
-    And a submitted notice email is sent for fund_request: "tentative"
+    And a finalized notice email is sent for fund_request: "tentative"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And 1 email should be delivered to "officer@example.com"
-    And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been submitted"
+    And the email subject should contain "Request of Money Taking Club from Money Taking Fund is finalized, but not submitted"
     And the email parts should contain "Dear Officers of Money Taking Club,"
-    And the email parts should contain "This email is a confirmation that you have successfully submitted your fund_request for Money Taking Fund."
-    And the email parts should contain "You should receive an additional notice when it is accepted for review."
+    And the email parts should contain "This email is a confirmation that you have completed all submission requirements for your fund request for Money Taking Fund, but the request cannot be automatically submitted because it was submitted after the last posted deadline."
+    And the email parts should contain "You should receive an additional notice if it is accepted for review."
 
   Scenario: Send notice regarding an submitted fund_request
     Given all emails have been delivered
     And fund_request: "tentative" has state: "submitted"
-    And an accepted notice email is sent for fund_request: "tentative"
+    And an submitted notice email is sent for fund_request: "tentative"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
