@@ -8,6 +8,7 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Charon
   class Application < Rails::Application
+    config.assets.enabled = true
     config.autoload_paths += %W(#{::Rails.root}/lib)
     config.encoding = "utf-8"
     config.filter_parameters += [ :password, :password_confirmation ]
