@@ -9,4 +9,6 @@ db/*.sqlite*-journal
 db/*.sql
 db/schema.rb
 db/uploads
-
+public/images
+public/javascripts
+public/stylesheets
