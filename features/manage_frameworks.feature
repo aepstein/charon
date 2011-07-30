@@ -33,7 +33,7 @@ Feature: Manage frameworks
       | user    | create  | update  | destroy | show    |
       | admin   | see     | see     | see     | see     |
       | regular | not see | not see | not see | see     |
-
+@wip
   Scenario: Register new framework and edit
     Given a registration_criterion exists with must_register: false, minimal_percentage: 1, type_of_member: "others"
     And an agreement exists with name: "Key Agreement"

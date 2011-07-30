@@ -33,7 +33,7 @@ gem 'ancestry'
 gem 'acts_as_list', '~> 0.1.3'
 gem 'decent_exposure'
 group :development, :test do
-  gem 'rspec-rails'
+  gem 'rspec-rails', '~> 2.6.1'
 end
 group :test do
   gem 'thin'

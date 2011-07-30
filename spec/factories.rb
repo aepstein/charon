@@ -1,5 +1,3 @@
-require 'factory_data'
-
 FactoryGirl.define do
 
   factory :account_adjustment do
