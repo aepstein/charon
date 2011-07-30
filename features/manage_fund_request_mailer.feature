@@ -14,9 +14,10 @@ Feature: Manage fund_request mailers
     And an organization: "requestor" exists with last_name: "Money Taking Club"
     And an organization: "reviewer" exists with last_name: "Money Giving Club"
     And a fund_source exists with framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized release message."
+    And a fund_queue exists with fund_source: the fund_source
     And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
     And a fund_request: "started" exists with state: "started", fund_grant: the fund_grant
-    And a fund_request: "tentative" exists with state: "tentative", fund_grant: the fund_grant
+    And a fund_request: "tentative" exists with state: "tentative", fund_grant: the fund_grant, fund_queue: the fund_queue
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
     And a user: "treasurer" exists with email: "treasurer@example.com", first_name: "Jane", last_name: "Doe"
     And a user: "officer" exists with email: "officer@example.com", first_name: "Alpha", last_name: "Beta"
@@ -41,7 +42,7 @@ Feature: Manage fund_request mailers
     And the email parts should contain "John Doe"
     And the email parts should not contain "Alpha Beta"
 
-  Scenario: Send notice regarding a completed fund_request
+  Scenario: Send notice regarding a tentative fund_request
     Given all emails have been delivered
     And a completed notice email is sent for fund_request: "tentative"
     Then 0 emails should be delivered to "old_president@example.com"
@@ -53,9 +54,9 @@ Feature: Manage fund_request mailers
     And the email parts should not contain "John Doe"
     And the email parts should not contain "Alpha Beta"
 
-  Scenario: Send notice regarding a submitted fund_request
+  Scenario: Send notice regarding a finalized fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has status: "submitted"
+    And fund_request: "tentative" has state: "finalized"
     And a submitted notice email is sent for fund_request: "tentative"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
@@ -66,9 +67,9 @@ Feature: Manage fund_request mailers
     And the email parts should contain "This email is a confirmation that you have successfully submitted your fund_request for Money Taking Fund."
     And the email parts should contain "You should receive an additional notice when it is accepted for review."
 
-  Scenario: Send notice regarding an accepted fund_request
+  Scenario: Send notice regarding an submitted fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has status: "accepted"
+    And fund_request: "tentative" has state: "submitted"
     And an accepted notice email is sent for fund_request: "tentative"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
@@ -94,7 +95,7 @@ Feature: Manage fund_request mailers
 
   Scenario: Send notice regarding a released fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has status: "released"
+    And fund_request: "tentative" has state: "released"
     And a released notice email is sent for fund_request: "tentative"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
@@ -115,5 +116,5 @@ Feature: Manage fund_request mailers
     And 1 email should be delivered to "officer@example.com"
     And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been withdrawn"
     And the email parts should contain "Dear Officers of Money Taking Club,"
-    And the email parts should contain "This email is a confirmation that your fund_request for Money Taking Fund was withdrawn by Alpha Beta at June 1st, 2011 09:00am"
+    And the email parts should contain "This email is a confirmation that your request for Money Taking Fund was withdrawn by Alpha Beta at June 1st, 2011 09:00am"
 

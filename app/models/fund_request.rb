@@ -163,12 +163,12 @@ class FundRequest < ActiveRecord::Base
     before_transition all - [ :submitted ] => :submitted,
       :do => [ :adopt_queue, :set_approval_checkpoint ]
 
+    after_transition :except_to => same, :do => :timestamp_state!
     after_transition :started => :tentative, :do => :deliver_required_approval_notice
     after_transition all - [ :submitted ] => :submitted,
       :do => [ :send_submitted_notice! ]
     after_transition all - [ :released ] => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
-    after_transition :except_to => same, :do => :timestamp_state!
 
   end
 

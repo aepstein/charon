@@ -10,9 +10,9 @@ The following people must approve the fund_request before it is considered submi
 
 They may approve the fund_request here <<%= new_polymorphic_url( [ @fund_request, 'approval' ] ) %>>.
 
-<% if @fund_request.fund_grant.fund_source.submissions_due_at && @fund_request.fund_grant.fund_source.submissions_due_at > DateTime.now -%>
-The next deadline for submissions is <%= @fund_request.fund_grant.fund_source.submissions_due_at.to_s :us_ordinal %>.
-<% end -%>
+<% if @fund_request.fund_grant.fund_source.fund_queues.future.length > 0 %>
+The next deadline for submissions is <%= @fund_request.fund_grant.fund_source.fund_queues.future.first.submit_at.to_s :us_ordinal %>.
+<% end %>
 
 <% if @fund_request.fund_grant.fund_source.contact_web -%>
 More information is available here <<%= @fund_request.fund_grant.fund_source.contact_web %>>.
