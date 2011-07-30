@@ -89,7 +89,7 @@ class FundGrantsController < ApplicationController
     @fund_grant.destroy
 
     respond_to do |format|
-      flash[:notice] = 'FundGrant was successfully destroyed.'
+      flash[:notice] = 'Fund grant was successfully destroyed.'
       format.html { redirect_to( profile_url ) }
       format.xml  { head :ok }
     end

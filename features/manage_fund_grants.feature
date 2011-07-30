@@ -47,9 +47,7 @@ Feature: Manage fund_grants
     And I press "Create"
     Then I should see "Fund grant was successfully created."
     And I should see "Fund source: Annual Budget"
-    When I follow "Edit"
-    And I press "Update"
-    Then I should see "Fund grant was successfully updated."
+    # TODO should we be able to edit a fund_grant?
 
   Scenario: List and delete fund_grants
     Given a fund_source: "annual" exists with name: "Annual"
