@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy, :inverse_of => :user
   has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
     def in(organizations)
-      Membership.where( :user_id => proxy_owner.id,
+      Membership.where( :user_id => @association.owner.id,
         :organization_id.in => organizations.map(&:id) ).active.map(&:role)
     end
     def requestor_in?(organization)

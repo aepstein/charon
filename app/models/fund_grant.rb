@@ -19,7 +19,7 @@ class FundGrant < ActiveRecord::Base
       else
         Role::REVIEWER
       end
-      User.joins( :memberships ).merge( proxy_owner.send(perspective).
+      User.joins( :memberships ).merge( @association.owner.send(perspective).
       memberships.active.joins( :role ).
       merge( Role.where( :name.in => role_names ) ) )
     end

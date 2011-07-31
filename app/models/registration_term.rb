@@ -12,12 +12,12 @@ class RegistrationTerm < ActiveRecord::Base
     def adopt!
       Registration.update_all(
         "registration_term_id = NULL",
-        "registration_term_id = #{proxy_owner.id} AND external_term_id IS NOT NULL AND " +
-        "external_term_id <> #{proxy_owner.external_id}"
+        "registration_term_id = #{@association.owner.id} AND external_term_id IS NOT NULL AND " +
+        "external_term_id <> #{@association.owner.external_id}"
       )
       Registration.update_all(
-        "registration_term_id = #{proxy_owner.id}",
-        "external_term_id = #{proxy_owner.external_id}"
+        "registration_term_id = #{@association.owner.id}",
+        "external_term_id = #{@association.owner.external_id}"
       )
       reset
     end
@@ -25,9 +25,9 @@ class RegistrationTerm < ActiveRecord::Base
   has_many :memberships, :through => :registrations do
     # Sets memberships' activation status to match registration setting
     def activate!
-      ids = proxy_owner.registration_ids
+      ids = @association.owner.registration_ids
       return if ids.empty?
-      scoped.update_all "active = #{connection.quote proxy_owner.current?}",
+      scoped.update_all "active = #{connection.quote @association.owner.current?}",
         "registration_id IN (#{ids.join ','})"
       reset
     end

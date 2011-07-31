@@ -24,8 +24,8 @@ class FundRequest < ActiveRecord::Base
     # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
-        exclusion = proxy_owner.fund_grant.fund_items.where(
-            :id.not_in => proxy_owner.fund_editions.final.map( &:fund_item_id )
+        exclusion = @association.owner.fund_grant.fund_items.where(
+            :id.not_in => @association.owner.fund_editions.final.map( &:fund_item_id )
           ).sum( :amount )
         cap -= exclusion if exclusion
       end
@@ -40,7 +40,7 @@ class FundRequest < ActiveRecord::Base
     # * apply cap if one is specified and deduct allocation from cap
     # * recursively call to each child, passing on remaining cap
     def allocate_fund_item!(fund_item, cap = nil)
-      fund_edition = fund_item.fund_editions.for_request( proxy_owner ).last
+      fund_edition = fund_item.fund_editions.for_request( @association.owner ).last
       if fund_edition.perspective == FundEdition::PERSPECTIVES.last
         max = ( (fund_edition) ? fund_edition.amount : 0.0 )
         if cap
@@ -78,14 +78,14 @@ class FundRequest < ActiveRecord::Base
     # Returns users who have fulfilled unquantified approver requirements
     def fulfilled( approvers = Approver.unscoped )
       User.scoped.joins('INNER JOIN approvers').
-      merge( approvers.unquantified.fulfilled_for( proxy_owner ).merge(
-        Approval.unscoped.where( :created_at.gt => proxy_owner.approval_checkpoint)
+      merge( approvers.unquantified.fulfilled_for( @association.owner ).merge(
+        Approval.unscoped.where( :created_at.gt => @association.owner.approval_checkpoint)
       ) ).where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
     end
     # Returns users who have not fulfilled unquantified approver requirements
     def unfulfilled( approvers = Approver.unscoped )
-      User.scoped.not_approved( proxy_owner ).joins('INNER JOIN approvers').
-      merge( approvers.unquantified.unfulfilled_for( proxy_owner ) ).
+      User.scoped.not_approved( @association.owner ).joins('INNER JOIN approvers').
+      merge( approvers.unquantified.unfulfilled_for( @association.owner ) ).
       where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
     end
   end
