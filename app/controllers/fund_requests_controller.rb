@@ -49,9 +49,7 @@ class FundRequestsController < ApplicationController
   def reject; end
 
   def do_reject
-    @fund_request.accessible ||= []
-    @fund_request.accessible << :reject_message
-    @fund_request.attributes = params[:fund_request]
+    @fund_request.assign_attributes( params[:fund_request], :as => :rejector )
     if @fund_request.reject
       flash[:notice] = 'Fund request was successfully rejected.'
       respond_to do |format|

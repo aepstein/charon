@@ -1,9 +1,9 @@
 class User < ActiveRecord::Base
   STATUSES = %w[ undergrad grad staff faculty alumni temporary ]
-  ADMIN_ACCESSIBLE_ATTRIBUTES = [ :admin, :net_id, :status ]
 
   attr_accessible :password, :password_confirmation, :email, :first_name,
     :middle_name, :last_name, :date_of_birth, :addresses_attributes
+  attr_accessible :admin, :net_id, :status, :as => :admin
   attr_readonly :net_id
 
   default_scope order( 'users.last_name ASC, users.first_name ASC, ' +

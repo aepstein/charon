@@ -1,7 +1,7 @@
 class FundRequest < ActiveRecord::Base
   include Notifiable
 
-  attr_accessible :fund_grant_attributes
+  attr_accessible :reject_message, :as => :rejector
   attr_readonly :fund_grant_id
 
   belongs_to :fund_grant, :inverse_of => :fund_requests
