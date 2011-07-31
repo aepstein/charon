@@ -16,7 +16,7 @@ class Document < ActiveRecord::Base
   validates :document_type_id, :uniqueness => { :scope => [ :fund_edition_id ] }
   validate :document_type_must_be_allowed_by_fund_edition
 
-  default_scope includes( :document_type).order( 'document_types.name ASC' )
+  default_scope includes( :document_type ).order( 'document_types.name ASC' )
 
   def max_size; return document_type.max_size if document_type; end
 

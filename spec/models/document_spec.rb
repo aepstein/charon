@@ -15,18 +15,19 @@ describe Document do
 
   it "should not save without an fund_edition" do
     @document.fund_edition = nil
-    @document.save.should eql false
+    @document.save.should be_false
   end
 
   it "should not save without an document type" do
     @document.document_type = nil
-    @document.save.should eql false
+    @document.save.should be_false
   end
 
   it "should not create if it conflicts with an existing document type for an fund_edition" do
     @document.save!
-    duplicate = @document.clone
-    duplicate.save.should eql false
+    duplicate = build( :document, :document_type => @document.document_type,
+      :fund_edition => @document.fund_edition )
+    duplicate.save.should be_false
   end
 
   it 'should not create if document is larger than size allowed by document type' do
