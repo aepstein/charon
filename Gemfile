@@ -42,8 +42,8 @@ group :test do
   gem 'database_cleaner'
   gem 'capybara'
   gem 'spork'
-  gem 'factory_girl', '~> 2.0.0.rc4', :require => false
-  gem 'factory_girl_rails', '~> 1.1.rc1'
+  gem 'factory_girl', '~> 2.0.0', :require => false
+  gem 'factory_girl_rails', '~> 1.1.0'
   gem 'pickle', '~> 0.4.8'
   gem 'email_spec'
   gem 'launchy'
