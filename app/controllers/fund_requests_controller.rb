@@ -166,6 +166,7 @@ class FundRequestsController < ApplicationController
     @fund_requests = FundRequest.scoped
     @fund_requests = @organization.fund_requests if @organization
     @fund_requests = @fund_source.fund_requests if @fund_source
+    @fund_requests = @fund_requests.ordered
 #    @fund_requests = @fund_requests.with_permissions_to(:show)
   end
 

@@ -177,14 +177,14 @@ class FundRequest < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  default_scope includes( :fund_grant => [ :organization, :fund_source ] ).
+  scope :ordered, joins { fund_grant.fund_source }.joins { fund_grant.organization }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   scope :organization_name_contains, lambda { |name|
-    scoped.joins { ~fund_grant.organization }.merge( Organization.name_contains name )
+    scoped.joins { fund_grant.organization }.merge( Organization.name_contains name )
   }
   scope :fund_source_name_contains, lambda { |name|
-    scoped.joins { ~fund_grant.fund_source }.merge( FundSource.
+    scoped.joins { fund_grant.fund_source }.merge( FundSource.
       where { |fund_sources| fund_sources.name =~ "%#{name}%" } )
   }
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +

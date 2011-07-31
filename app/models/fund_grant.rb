@@ -27,7 +27,7 @@ class FundGrant < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  default_scope includes( :organization, :fund_source ).
+  scope :ordered, includes( :organization, :fund_source ).
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
   scope :open, lambda { joins(:fund_source).merge( FundSource.unscoped.open ) }
   scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }

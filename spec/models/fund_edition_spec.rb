@@ -91,11 +91,8 @@ describe FundEdition do
     end
 
     it 'next should return nil if next edition is new' do
-      next_edition = build( :fund_edition,
-        :perspective => FundEdition::PERSPECTIVES.last,
-        :fund_request => @fund_edition.fund_request,
-        :fund_item => @fund_edition.fund_item )
       @fund_edition.next.should be_nil
+      next_edition = @fund_edition.fund_item.fund_editions.build_next_for_fund_request( @fund_edition.fund_request )
       next_edition.previous.should eql @fund_edition
     end
 

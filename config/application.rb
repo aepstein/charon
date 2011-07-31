@@ -15,6 +15,7 @@ module Charon
     config.time_zone = 'Eastern Time (US & Canada)'
     config.action_mailer.default_url_options = { :host => "assembly.cornell.edu/charon", :protocol => 'https' }
     config.action_view.javascript_expansions[:defaults] = %w(jquery jquery-ui jquery-ui-timepicker-addon autocomplete-rails rails)
+    config.active_record.identity_map = true
 
     def self.relative_url_root
       '/charon'
