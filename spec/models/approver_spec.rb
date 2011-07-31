@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 require 'approver_scenarios'
 
 describe Approver do
@@ -6,35 +6,36 @@ describe Approver do
   include SpecApproverScenarios
 
   before(:each) do
+    @approver = build( :approver )
   end
 
   it "should create a new instance given valid attributes" do
-    create(:approver).id.should_not be_nil
+    @approver.save!
   end
 
   it "should not save without framework" do
-    approver = create(:approver)
-    approver.framework = nil
-    approver.save.should be_false
+    @approver.framework = nil
+    @approver.save.should be_false
   end
 
   it "should not save without role" do
-    approver = create(:approver)
-    approver.role = nil
-    approver.save.should be_false
+    @approver.role = nil
+    @approver.save.should be_false
   end
 
   it "should not save with invalid perspective" do
-    approver = create(:approver)
-    approver.perspective = 'invalid'
-    FundEdition::PERSPECTIVES.should_not include(approver.perspective)
-    approver.save.should be_false
+    @approver.perspective = 'invalid'
+    FundEdition::PERSPECTIVES.should_not include( @approver.perspective )
+    @approver.save.should be_false
   end
 
   it "should not save duplicate approvers" do
     original = create(:approver)
-    second = original.clone
-    second.save.should be_false
+    @approver.save!
+    duplicate = build( :approver, :role => @approver.role,
+      :framework => @approver.framework,
+      :perspective => @approver.perspective )
+    duplicate.save.should be_false
   end
 
   it 'should have an unfulfilled_for scope that returns unfulfilled approver conditions' do
