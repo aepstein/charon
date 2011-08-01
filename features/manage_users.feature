@@ -36,7 +36,7 @@ Feature: Manage users
       | admin   | see     | see     | see     | see     |
       | owner   | not see | see     | not see | see     |
       | regular | not see | not see | not see | not see |
-
+@wip
   Scenario: Create a new user and edit
     Given I log in as user: "admin"
     And I am on the new user page
