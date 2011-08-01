@@ -1,4 +1,5 @@
 class SecureVersion < Version
-  def accessible; :all; end
+  attr_accessible :item_type, :item_id, :event, :whodunnit, :object,
+    :created_at
 end
 
