@@ -19,7 +19,7 @@ class InventoryItem < ActiveRecord::Base
     scoped.merge( Organization.name_contains( name ) )
   }
 
-  search_methods :organization_name_contains
+  #search_methods :organization_name_contains
 
   validates :organization, :presence => true
   validates :identifier, :uniqueness => { :scope => [ :organization_id ] }

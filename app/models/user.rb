@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
     where( sql.join(' OR '), :name => "%#{name}%" )
   }
 
-  search_methods :name_contains
+  #search_methods :name_contains
 
   is_fulfiller
 

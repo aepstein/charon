@@ -5,7 +5,7 @@ Feature: Manage fund_requests
 
   Background:
     Given a user: "admin" exists with admin: true
-
+@wip
   Scenario Outline: Test permissions for university_accounts controller
     Given an organization exists
     And a user: "member" exists
@@ -61,7 +61,7 @@ Feature: Manage fund_requests
     And I should see "Organization: The Other Spending Club"
     And I should see "Department code: A00"
     And I should see "Subledger code: 0001"
-
+@wip
   Scenario: List and delete university accounts
     Given an organization: "first" exists with last_name: "First Club"
     And an organization: "last" exists with last_name: "Last Club"

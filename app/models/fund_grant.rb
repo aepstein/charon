@@ -39,7 +39,7 @@ class FundGrant < ActiveRecord::Base
   }
 
   paginates_per 10
-  search_methods :organization_name_contains, :fund_source_name_contains
+  #search_methods :organization_name_contains, :fund_source_name_contains
 
   validates :organization, :presence => true
   validates :fund_source, :presence => true

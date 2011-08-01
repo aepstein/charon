@@ -198,7 +198,7 @@ class FundRequest < ActiveRecord::Base
     "fund_requests.fund_grant_id AND fund_requests.id <> duplicates.id)")
 
   paginates_per 10
-  search_methods :organization_name_contains, :fund_source_name_contains,
+  #search_methods :organization_name_contains, :fund_source_name_contains,
     :with_state
 
   # Send notices to all fund_requests with a state
