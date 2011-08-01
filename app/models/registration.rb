@@ -132,7 +132,7 @@ class Registration < ActiveRecord::Base
   # * fail silently if the organization name update fails
   def update_organization
     return true unless organization
-    organization.registrations.reset
+    organization.association(:registrations).reset
     if current?
       organization.update_attributes name.to_organization_name_attributes
       organization.fulfillments.fulfill!

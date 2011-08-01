@@ -32,7 +32,8 @@ class FundRequest < ActiveRecord::Base
       includes( :fund_editions ).roots.each do |fund_item|
           cap = allocate_fund_item! fund_item, cap
       end
-      reset
+      @association.reset
+      true
     end
 
     # Allocate an item and any children for which a final edition is present

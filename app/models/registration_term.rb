@@ -19,7 +19,7 @@ class RegistrationTerm < ActiveRecord::Base
         "registration_term_id = #{@association.owner.id}",
         "external_term_id = #{@association.owner.external_id}"
       )
-      reset
+      @association.reset
     end
   end
   has_many :memberships, :through => :registrations do
@@ -29,7 +29,7 @@ class RegistrationTerm < ActiveRecord::Base
       return if ids.empty?
       scoped.update_all "active = #{connection.quote @association.owner.current?}",
         "registration_id IN (#{ids.join ','})"
-      reset
+      @association.reset
     end
   end
 

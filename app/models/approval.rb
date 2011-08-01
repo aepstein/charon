@@ -70,12 +70,12 @@ class Approval < ActiveRecord::Base
   end
 
   def fulfill_user
-    user.approvals.reset
+    user.association(:approvals).reset
     user.fulfillments.fulfill! if approvable_type == "Agreement"
   end
 
   def unfulfill_user
-    user.approvals.reset
+    user.association(:approvals).reset
     user.fulfillments.unfulfill! if approvable_type == "Agreement"
   end
 end
