@@ -25,8 +25,6 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user.admin = params[:user][:admin] if current_user.admin? && params[:user] && params[:user][:admin]
-
     respond_to do |format|
       if @user.save
         flash[:notice] = "User was successfully created."
@@ -83,7 +81,7 @@ class UsersController < ApplicationController
 
   def initialize_context
     @user = User.find params[:id] if params[:id]
-    @attr_role = { :as => :admin } if current_user.admin?
+    @attr_role = { :as => ( current_user.admin? ? :admin : :default ) }
   end
 
   def initialize_index

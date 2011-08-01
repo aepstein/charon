@@ -36,7 +36,7 @@ Feature: Manage users
       | admin   | see     | see     | see     | see     |
       | owner   | not see | see     | not see | see     |
       | regular | not see | not see | not see | not see |
-@wip
+
   Scenario: Create a new user and edit
     Given I log in as user: "admin"
     And I am on the new user page
@@ -69,7 +69,7 @@ Feature: Manage users
     And I should see "Home zip: 14850"
     And I should see "Home is on campus? No"
     When I follow "Edit"
-    And I fill in "Password" with "password"
+    And I fill in "Change password" with "password"
     And I fill in "Password confirmation" with "password"
     And I fill in "First name" with "new"
     And I fill in "Middle name" with "second"

@@ -8,5 +8,6 @@ Charon::Application.configure do
   config.active_support.deprecation = :notify
   config.assets.js_compressor  = :uglifier
   config.assets.css_compressor = :scss
+  config.filter_parameters += [ :password, :password_confirmation ]
 end
 

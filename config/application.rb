@@ -8,14 +8,13 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Charon
   class Application < Rails::Application
-    config.assets.enabled = true
     config.autoload_paths += %W(#{::Rails.root}/lib)
     config.encoding = "utf-8"
-    config.filter_parameters += [ :password, :password_confirmation ]
     config.time_zone = 'Eastern Time (US & Canada)'
     config.action_mailer.default_url_options = { :host => "assembly.cornell.edu/charon", :protocol => 'https' }
-    config.action_view.javascript_expansions[:defaults] = %w(jquery jquery-ui jquery-ui-timepicker-addon autocomplete-rails rails)
     config.active_record.identity_map = true
+    config.assets.enabled = true
+    config.assets.precompile = ['application.js', 'application.css', 'admin.js', 'admin.css']
 
     def self.relative_url_root
       '/charon'

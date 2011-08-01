@@ -1,10 +1,10 @@
 class User < ActiveRecord::Base
   STATUSES = %w[ undergrad grad staff faculty alumni temporary ]
-  DEFAULT_ATTRIBUTES = :password, :password_confirmation, :email, :first_name,
-    :middle_name, :last_name, :date_of_birth, :addresses_attributes
 
-  attr_accessible DEFAULT_ATTRIBUTES
-  attr_accessible ( DEFAULT_ATTRIBUTES + [ :admin, :net_id, :status ]), :as => :admin
+  attr_accessible :password, :password_confirmation, :email, :first_name,
+    :middle_name, :last_name, :date_of_birth, :addresses_attributes,
+    :as => [ :admin, :default ]
+  attr_accessible :admin, :net_id, :status, :as => :admin
   attr_readonly :net_id
 
   default_scope order( 'users.last_name ASC, users.first_name ASC, ' +
@@ -93,7 +93,7 @@ class User < ActiveRecord::Base
   end
 
   accepts_nested_attributes_for :addresses, :allow_destroy => true,
-     :reject_if => proc { |address| address[:street].blank? }
+     :reject_if => proc { |address| address['street'].blank? }
 
   validates :net_id, :presence => true, :uniqueness => true
   validates :email, :presence => true
