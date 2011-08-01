@@ -55,19 +55,21 @@ class ApplicationController < ActionController::Base
     Authorization.current_user = current_user
   end
 
-  def current_user_session
-    return @current_user_session if defined?(@current_user_session)
-    @current_user_session = UserSession.find
-  end
-
+  # Obtains user record for currently logged in user
+  # * if sso credential is detected verifies it matches session and
+  #   updates/logs in automatically as needed
   def current_user
-    return @current_user if defined? @current_user
-    @current_user = current_user_session && current_user_session.record
-    # Delete stale session if sso_net_id has changed
-    if sso_net_id && (@current_user.nil? || @current_user.net_id != sso_net_id)
-      current_user_session.destroy
-      @current_user_session = nil
-      @current_user = nil
+    return @current_user unless @current_user.blank?
+    @current_user = User.find(session[:user_id]) if session[:user_id]
+    if sso_net_id
+      if @current_user && @current_user.net_id != sso_net_id
+        @current_user = nil
+        session[:user_id] = nil
+      end
+      return @current_user unless @current_user.blank?
+      if @current_user = User.find_by_net_id( sso_net_id )
+        session[:user_id] = @current_user.id
+      end
     end
     @current_user
   end
