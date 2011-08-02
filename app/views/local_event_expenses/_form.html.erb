@@ -23,5 +23,39 @@
   </ul>
   </p>
   </li>
-  <%= form.input :uup_required, :label => 'UUP?', :hint => 'Will a Use of University Property Form be filed for this event?', :as => :radio %>
+  <%= form.input :uup_required, :label => 'UUP?',
+    :hint => 'Will a Use of University Property Form be filed for this event?',
+    :as => :radio %>
+  <li>
+  <p>
+  Accessible local events provide students, faculty, and staff with disabilities
+  the necessary resources to participate in your organization’s programming.
+  You should consider the following planning in planning your event:
+  <ul>
+    <li>
+      contact the <a href="mailto:accessibility@cornell.edu">Cornell Office
+      of Student Disability Services</a> with a brief description of the event and
+      its location in order to ensure accessibility
+    </li>
+    <li>
+      note whether the event is accessible to students with disabilities on
+      publicity materials
+    </li>
+    <li>
+      utilize multiple forms of advertising to reach a wide range of people,
+      including the hearing and visually impaired
+    </li>
+    <li>
+      ensure that at least one of the primary entrances to the building and a
+      path to that entrance are accessible (i.e., paved sidewalk, ramp or left)
+    </li>
+    <li>
+      ensure that there are accessible restrooms in close proximity to the event
+    </li>
+  </ul>
+  </p>
+  </li>
+  <%= form.input :accessibility_considered, :label => 'Accessbility considered?',
+    :hint => 'Will you undertake any of the above steps to assure your event is accessible?',
+    :as => :radio %>
 
