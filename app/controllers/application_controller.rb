@@ -90,7 +90,7 @@ class ApplicationController < ActionController::Base
 
   def store_location
     return if self.class == UserSessionsController
-    session[:return_to] = request.request_uri
+    session[:return_to] = request.fullpath
   end
 
   def redirect_back_or_default(default)
