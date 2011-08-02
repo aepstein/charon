@@ -27,9 +27,13 @@ class ActivityReportsController < ApplicationController
   # GET /organizations/:organization_id/activity_reports
   # GET /organizations/:organization_id/activity_reports.xml
   def index
-    @search = @activity_reports.search( params[:search] )
-    @activity_reports = @search.page( params[:page] ).
-      includes( :organization => { :memberships => :role } )
+    @search = params[:search] || Hash.new
+    @search.each do |k,v|
+      if !v.blank? && ActivityReport::SEARCHABLE.include?( k.to_sym )
+        @activity_reports = @activity_reports.send k, v
+      end
+    end
+    @activity_reports = @activity_reports.page(params[:page])
 
     respond_to do |format|
       format.html { render :action => 'index' }
@@ -119,7 +123,8 @@ class ActivityReportsController < ApplicationController
   def initialize_index
     @activity_reports = ActivityReport.scoped
     @activity_reports = @activity_reports.where(:organization_id => @organization.id) if @organization
-    @activity_reports = @activity_reports.with_permissions_to(:show)
+    @activity_reports = @activity_reports.with_permissions_to(:show).ordered.
+      includes { organization.memberships.role }
   end
 
   def new_activity_report_from_params

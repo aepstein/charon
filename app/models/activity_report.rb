@@ -1,14 +1,15 @@
 class ActivityReport < ActiveRecord::Base
+  SEARCHABLE = [ :organization_name_contains, :description_contains ]
+
   attr_accessible :number_of_others, :number_of_undergrads, :number_of_grads,
     :description, :starts_on, :ends_on
   attr_readonly :organization_id
 
   belongs_to :organization, :inverse_of => :activity_reports
 
-  default_scope :include => [ :organization ],
-    :order => 'organizations.last_name ASC, organizations.first_name ASC, ' +
-    'activity_reports.starts_on ASC, activity_reports.description ASC'
-
+  scope :ordered, includes { organization }.
+    order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
+      'activity_reports.starts_on ASC, activity_reports.description ASC' )
   scope :past, lambda { where 'activity_reports.ends_on < ?', Time.zone.today }
   scope :current, lambda { where(
     'activity_reports.starts_on <= :date AND activity_reports.ends_on >= :date',
@@ -17,6 +18,9 @@ class ActivityReport < ActiveRecord::Base
   scope :organization_name_contains, lambda { |name|
     where( 'organizations.last_name LIKE :n OR organizations.first_name LIKE :n',
       :n => "%#{name}%" )
+  }
+  scope :description_contains, lambda { |content|
+    where { |activity_reports| activity_reports.description =~ "%#{content}%" }
   }
 
   has_paper_trail :class_name => 'SecureVersion'
