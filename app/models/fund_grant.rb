@@ -1,4 +1,5 @@
 class FundGrant < ActiveRecord::Base
+  SEARCHABLE = [ :fund_source_name_contains, :organization_name_contains ]
 
   attr_accessible :fund_source_id
   attr_readonly :organization_id, :fund_source_id
@@ -27,7 +28,7 @@ class FundGrant < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  scope :ordered, includes( :organization, :fund_source ).
+  scope :ordered, includes { [ organization, fund_source ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
   scope :open, lambda { joins(:fund_source).merge( FundSource.unscoped.open ) }
   scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }

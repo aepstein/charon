@@ -1,20 +1,20 @@
-<h2>Listing fund_grants</h2>
+<h2>Listing fund grants</h2>
 
-<%= form_for :search, :url => polymorphic_path( [ @context, :fund_grants ] ), :html => { :method => :get } do |f| %>
+<%= form_tag polymorphic_path( [ @context, :fund_grants ] ), :method => :get do |f| %>
   <% unless @fund_source -%>
   <p>
-    <%= f.label :fund_source_name_contains, 'Fund source' %>
-    <%= f.text_field :fund_source_name_contains %>
+    <%= label_tag 'search[fund_source_name_contains]', 'Fund source' %>
+    <%= search_field_tag 'search[fund_source_name_contains]', @search['fund_source_name_contains'] %>
   </p>
   <% end -%>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_contains, 'Organization' %>
-    <%= f.text_field :organization_name_contains %>
+    <%= label_tag 'search[organization_name_contains]', 'Organization' %>
+    <%= search_field_tag 'search[organization_name_contains]', @search['fund_source_name_contains'] %>
   </p>
   <% end -%>
   <p>
-    <%= f.submit 'Search' %>
+    <%= submit_tag 'Search' %>
   </p>
 <% end %>
 

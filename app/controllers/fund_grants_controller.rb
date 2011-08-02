@@ -15,9 +15,13 @@ class FundGrantsController < ApplicationController
   # GET /organizations/:organization_id/fund_grants
   # GET /organizations/:organization_id/fund_grants.xml
   def index
-    @search = @fund_grants.search( params[:search] )
-    @fund_grants = @search.page(params[:page]).includes(
-      :fund_source => { :organization => [:memberships], :framework => [] } )
+    @search = params[:search] || Hash.new
+    @search.each do |k,v|
+      if !v.blank? && FundGrant::SEARCHABLE.include?( k.to_sym )
+        @fund_grants = @fund_grants.send k, v
+      end
+    end
+    @fund_grants = @fund_grants.page(params[:page])
 
     respond_to do |format|
       format.html { render :action => 'index' }
@@ -110,7 +114,8 @@ class FundGrantsController < ApplicationController
     @fund_grants = FundGrant.scoped
     @fund_grants = @fund_grants.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
     @fund_grants = @fund_grants.scoped( :conditions => { :fund_source_id => @fund_source.id }) if @fund_source
-    @fund_grants = @fund_grants.with_permissions_to(:show)
+    @fund_grants = @fund_grants.with_permissions_to(:show).ordered.
+      includes { [ fund_source.organization.memberships, fund_source.framework ] }
   end
 
   def new_fund_grant_from_params
