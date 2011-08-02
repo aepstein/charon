@@ -63,7 +63,7 @@ Feature: Manage fund_requests
     And I fill in "Acquired on" with "2010-01-01"
     And I fill in "Scheduled retirement on" with "2015-01-01"
     And I press "Create"
-    Then I should see "Inventory fund_item was successfully created."
+    Then I should see "Inventory item was successfully created."
     And I should see "Description: Boots"
     And I should see "Identifier: Boots-0001"
     And I should see "These come in pairs."
@@ -86,7 +86,7 @@ Feature: Manage fund_requests
     And I fill in "Scheduled retirement on" with "2015-01-02"
     And I fill in "Retired on" with "2012-01-01"
     And I press "Update"
-    Then I should see "Inventory fund_item was successfully updated."
+    Then I should see "Inventory item was successfully updated."
     And I should see "Description: Ski boots"
     And I should see "Identifier: Boots-0002"
     And I should see "These are for skiing."
@@ -98,7 +98,7 @@ Feature: Manage fund_requests
     And I should see "Scheduled retirement on: January 2, 2015"
     And I should see "Retired on: January 1, 2012"
 
-  Scenario: List and delete inventory fund_items
+  Scenario: List and delete inventory items
     Given an organization: "first" exists with last_name: "First Club"
     And an organization: "last" exists with last_name: "Last Club"
     And an inventory_item exists with description: "Sandals", identifier: "foot31", organization: organization "last"

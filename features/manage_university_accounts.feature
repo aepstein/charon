@@ -5,7 +5,7 @@ Feature: Manage fund_requests
 
   Background:
     Given a user: "admin" exists with admin: true
-@wip
+
   Scenario Outline: Test permissions for university_accounts controller
     Given an organization exists
     And a user: "member" exists
