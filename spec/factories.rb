@@ -1,4 +1,8 @@
-require 'factory_data'
+module FactoryData
+  ALLOWED_NODE_TYPES = %w( ExternalEquityReport AdministrativeExpense
+    DurableGoodExpense LocalEventExpense PublicationExpense TravelEventExpense
+    SpeakerExpense )
+end
 
 FactoryGirl.define do
 
@@ -114,8 +118,8 @@ FactoryGirl.define do
       edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
     }
     after_create { |edition|
-      edition.fund_request.fund_editions.reset
-      edition.fund_item.fund_editions.reset
+      edition.fund_request.association(:fund_editions).reset
+      edition.fund_item.association(:fund_editions).reset
     }
 
     factory :attachable_fund_edition do
@@ -219,7 +223,7 @@ FactoryGirl.define do
 
     factory :registered_organization do
       registrations { |o| [ o.association(:current_registration, :registered => true) ] }
-      after_create { |o| o.registrations.reset }
+      after_create { |o| o.association(:registrations).reset }
     end
   end
 

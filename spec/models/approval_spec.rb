@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe Approval do
   before(:each) do
@@ -6,28 +6,29 @@ describe Approval do
   end
 
   it "should create a new instance given valid attributes" do
-    @approval.save.should == true
+    @approval.save!
   end
 
   it "should not save without a user" do
     @approval.user = nil
-    @approval.save.should == false
+    @approval.save.should be_false
   end
 
   it "should not save without an approvable" do
     @approval.approvable = nil
-    @approval.save.should == false
+    @approval.save.should be_false
   end
 
   it "should not save with a duplicate approvable" do
-    original = create(:approval)
-    duplicate = original.clone
-    duplicate.save.should == false
+    @approval.save!
+    duplicate = build( :approval, :approvable => @approval.approvable,
+      :user => @approval.user )
+    duplicate.save.should be_false
   end
 
   it "should not save if the approvable has changed after as_of" do
     @approval.as_of = @approval.approvable.updated_at - 2.minutes
-    @approval.save.should == false
+    @approval.save.should be_false
   end
 
   it "should have agreeements named scope that returns only agreements" do
@@ -36,19 +37,17 @@ describe Approval do
     approvals = Approval.agreements
     approvals.should include( agreement_approval )
     approvals.should_not include( fund_request_approval )
-    approvals.size.should == 1
+    approvals.size.should eql 1
   end
 
   it "should call deliver_approval_notice on create" do
-    approval = build(:approval)
-    approval.should_receive(:deliver_approval_notice)
-    approval.save.should be_true
+    @approval.should_receive(:deliver_approval_notice)
+    @approval.save!
   end
 
   it "should call deliver_unapproval_notice on destroy" do
-    approval = create(:approval)
-    approval.should_receive(:deliver_unapproval_notice)
-    approval.destroy
+    @approval.should_receive(:deliver_unapproval_notice)
+    @approval.destroy
   end
 
   it 'should fulfill agreement for the user on create' do

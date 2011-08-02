@@ -5,9 +5,13 @@ class RegistrationsController < ApplicationController
   filter_access_to :show, :attribute_check => true
 
   def index
-    @registrations = @registrations.with_permissions_to(:show)
-    @search = @registrations.search( params[:search] )
-    @registrations = @search.page(params[:page])
+    @search = params[:search] || Hash.new
+    @search.each do |k,v|
+      if !v.blank? && Registration::SEARCHABLE.include?( k.to_sym )
+        @registrations = @registrations.send k, v
+      end
+    end
+    @registrations = @registrations.page( params[:page] )
 
     respond_to do |format|
       format.html # index.html.erb
@@ -41,9 +45,14 @@ class RegistrationsController < ApplicationController
   end
 
   def initialize_index
-    @registrations = Registration.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
-    @registrations = Registration.scoped( :conditions => { :registration_term_id => @registration_term.id } ) if @registration_term
-    @registrations ||= Registration.scoped
+    @registrations = Registration.scoped
+    if @organization
+      @registrations = @registrations.where( :organization_id => @organization.id )
+    end
+    if @registration_term
+      @registrations = @registrations.where( :registration_term_id => @registration_term.id )
+    end
+    @registrations = @registrations.with_permissions_to( :show )
   end
 end
 

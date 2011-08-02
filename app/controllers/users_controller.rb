@@ -8,8 +8,13 @@ class UsersController < ApplicationController
   before_filter :setup_breadcrumbs, :except => [ :profile ]
 
   def index
-    @search = @users.search( params[:search] )
-    @users = @search.page(params[:page])
+    @search = params[:search] || Hash.new
+    @search.each do |k,v|
+      if !v.blank? && User::SEARCHABLE.include?( k.to_sym )
+        @users = @users.send k, v
+      end
+    end
+    @users = @users.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
@@ -25,8 +30,6 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user.admin = params[:user][:admin] if current_user.admin? && params[:user] && params[:user][:admin]
-
     respond_to do |format|
       if @user.save
         flash[:notice] = "User was successfully created."
@@ -55,10 +58,8 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user.admin = params[:user][:admin] if current_user.admin? && params[:user] && params[:user][:admin]
-
     respond_to do |format|
-      if @user.update_attributes(params[:user])
+      if @user.update_attributes(params[:user], @attr_role)
         flash[:notice] = 'User was successfully updated.'
         format.html { redirect_to @user }
         format.xml  { head :ok }
@@ -85,7 +86,7 @@ class UsersController < ApplicationController
 
   def initialize_context
     @user = User.find params[:id] if params[:id]
-    make_user_accessible
+    @attr_role = { :as => ( current_user.admin? ? :admin : :default ) }
   end
 
   def initialize_index
@@ -93,14 +94,7 @@ class UsersController < ApplicationController
   end
 
   def new_user_from_params
-    @user = User.new
-    make_user_accessible
-    @user.attributes = params[:user] if params[:user]
-  end
-
-  def make_user_accessible
-    return unless @user
-    @user.accessible = User::ADMIN_ACCESSIBLE_ATTRIBUTES if permitted_to? :admin, @user
+    @user = User.new(params[:user], @attr_role)
   end
 
   def setup_breadcrumbs

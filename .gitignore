@@ -9,4 +9,4 @@ db/*.sqlite*-journal
 db/*.sql
 db/schema.rb
 db/uploads
-
+public/assets

@@ -1,9 +1,11 @@
 class User < ActiveRecord::Base
+  SEARCHABLE = [ :name_contains ]
   STATUSES = %w[ undergrad grad staff faculty alumni temporary ]
-  ADMIN_ACCESSIBLE_ATTRIBUTES = [ :admin, :net_id, :status ]
 
   attr_accessible :password, :password_confirmation, :email, :first_name,
-    :middle_name, :last_name, :date_of_birth, :addresses_attributes
+    :middle_name, :last_name, :date_of_birth, :addresses_attributes,
+    :as => [ :admin, :default ]
+  attr_accessible :admin, :net_id, :status, :as => :admin
   attr_readonly :net_id
 
   default_scope order( 'users.last_name ASC, users.first_name ASC, ' +
@@ -25,14 +27,11 @@ class User < ActiveRecord::Base
     where( sql.join(' OR '), :name => "%#{name}%" )
   }
 
-  search_methods :name_contains
+  #search_methods :name_contains
 
   is_fulfiller
 
-  acts_as_authentic do |c|
-    c.login_field = 'net_id'
-    c.validate_email_field = false
-  end
+  has_secure_password
 
   has_many :approvals, :inverse_of => :user do
     def agreements
@@ -51,7 +50,7 @@ class User < ActiveRecord::Base
   has_many :memberships, :dependent => :destroy, :inverse_of => :user
   has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
     def in(organizations)
-      Membership.where( :user_id => proxy_owner.id,
+      Membership.where( :user_id => @association.owner.id,
         :organization_id.in => organizations.map(&:id) ).active.map(&:role)
     end
     def requestor_in?(organization)
@@ -95,11 +94,10 @@ class User < ActiveRecord::Base
   end
 
   accepts_nested_attributes_for :addresses, :allow_destroy => true,
-     :reject_if => proc { |address| address[:street].blank? }
+     :reject_if => proc { |address| address['street'].blank? }
 
-  validates_presence_of :net_id
-  validates_uniqueness_of :net_id
-  validates_format_of :email, :with => Authlogic::Regex.email
+  validates :net_id, :presence => true, :uniqueness => true
+  validates :email, :presence => true
 
   before_validation :extract_email, :initialize_password, :initialize_addresses, :on => :create
   validates_inclusion_of :status, :in => STATUSES, :allow_blank => true
@@ -111,7 +109,13 @@ class User < ActiveRecord::Base
   def fund_request_ids; fund_requests.map(&:id); end
 
   def initialize_password
-    reset_password if password.blank?
+    if password.blank?
+      chars = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
+      newpass = ""
+      1.upto(8) { |i| newpass << chars[rand(chars.size-1)] }
+      self.password, self.password_confirmation = newpass, newpass
+    end
+    true
   end
 
   # Returns the user status criterions that the user presently fulfills

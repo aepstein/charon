@@ -1,12 +1,10 @@
 <h2>Listing registrations <%= @organization ? "for #{h @organization}" : "" %><%= @registration_term ? "for #{h @registration_term}" : "" %></h2>
 
-<%= form_for :search,
-  :url => polymorphic_path( [ (@organization ? @organization : @registration_term), :registrations ] ),
-  :html => { :method => :get } do |f| %>
+<%= form_tag polymorphic_path( [ @context, :registrations ] ), :method => :get do %>
   <p>
-    <%= f.label :name_like, 'Name' %>
-    <%= f.text_field :name_like %>
-    <%= f.submit 'Search' %>
+    <%= label_tag 'search[named]', 'Name' %>
+    <%= text_field_tag 'search[named]', @search['named'] %>
+    <%= submit_tag 'Search' %>
   </p>
 <% end %>
 

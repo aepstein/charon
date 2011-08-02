@@ -1,19 +1,19 @@
-<h2>Listing inventory fund_items<%= @organization ? " for #{@organization}" : '' %></h2>
+<h2>Listing inventory items<%= @organization ? " for #{@organization}" : '' %></h2>
 
-<%= form_for :search, :url => polymorphic_path( [ @context, :inventory_items ] ), :html => { :method => :get } do |f| %>
+<%= search_form_for @q do |f| %>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_contains, 'Organization' %>
-    <%= f.text_field :organization_name_contains %>
+    <%= f.label :organization_last_name_cont, 'Organization' %>
+    <%= f.text_field :organization_last_name_cont %>
   </p>
   <% end -%>
   <p>
-    <%= f.label :description_like, 'Description' %>
-    <%= f.text_field :description_like %>
+    <%= f.label :description_cont, 'Description' %>
+    <%= f.text_field :description_cont %>
   </p>
   <p>
-    <%= f.label :identifier_like, 'Identifier' %>
-    <%= f.text_field :identifier_like %>
+    <%= f.label :identifier_cont, 'Identifier' %>
+    <%= f.text_field :identifier_cont %>
   </p>
   <p>
     <%= f.submit 'Search' %>

@@ -1,4 +1,5 @@
 class FundGrant < ActiveRecord::Base
+  SEARCHABLE = [ :fund_source_name_contains, :organization_name_contains ]
 
   attr_accessible :fund_source_id
   attr_readonly :organization_id, :fund_source_id
@@ -19,7 +20,7 @@ class FundGrant < ActiveRecord::Base
       else
         Role::REVIEWER
       end
-      User.joins( :memberships ).merge( proxy_owner.send(perspective).
+      User.joins( :memberships ).merge( @association.owner.send(perspective).
       memberships.active.joins( :role ).
       merge( Role.where( :name.in => role_names ) ) )
     end
@@ -27,7 +28,7 @@ class FundGrant < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  default_scope includes( :organization, :fund_source ).
+  scope :ordered, includes { [ organization, fund_source ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
   scope :open, lambda { joins(:fund_source).merge( FundSource.unscoped.open ) }
   scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }
@@ -39,7 +40,7 @@ class FundGrant < ActiveRecord::Base
   }
 
   paginates_per 10
-  search_methods :organization_name_contains, :fund_source_name_contains
+  #search_methods :organization_name_contains, :fund_source_name_contains
 
   validates :organization, :presence => true
   validates :fund_source, :presence => true

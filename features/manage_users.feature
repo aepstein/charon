@@ -69,7 +69,7 @@ Feature: Manage users
     And I should see "Home zip: 14850"
     And I should see "Home is on campus? No"
     When I follow "Edit"
-    And I fill in "Password" with "password"
+    And I fill in "Change password" with "password"
     And I fill in "Password confirmation" with "password"
     And I fill in "First name" with "new"
     And I fill in "Middle name" with "second"

@@ -1,18 +1,18 @@
 <h2>Listing activity reports</h2>
 
-<%= form_for :search, :url => polymorphic_path( [ @context, :activity_reports ] ), :html => { :method => :get } do |f| %>
+<%= form_tag polymorphic_path( [ @context, :activity_reports ] ), :method => :get do |f| %>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_contains, 'Organization' %>
-    <%= f.text_field :organization_name_contains %>
+    <%= label_tag 'search[organization_name_contains]', 'Organization' %>
+    <%= search_field_tag 'search[organization_name_contains]', @search['fund_source_name_contains'] %>
   </p>
   <% end -%>
   <p>
-    <%= f.label :description_contains, 'Description' %>
-    <%= f.text_field :description_contains %>
+    <%= label_tag 'search[description_contains]', 'Description' %>
+    <%= search_field_tag 'search[description_contains]', @search['description_contains'] %>
   </p>
   <p>
-    <%= f.submit 'Search' %>
+    <%= submit_tag 'Search' %>
   </p>
 <% end %>
 

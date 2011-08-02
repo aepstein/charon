@@ -99,7 +99,7 @@ describe Registration do
     other.registrations << registration
     other.memberships.length.should eql 1
     other.memberships.should include membership
-    organization.memberships.reset
+    organization.association(:memberships).reset
     organization.memberships.length.should eql 0
   end
 

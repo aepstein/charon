@@ -6,5 +6,8 @@ Charon::Application.configure do
   config.serve_static_assets = false
   config.i18n.fallbacks = true
   config.active_support.deprecation = :notify
+  config.assets.js_compressor  = :uglifier
+  config.assets.css_compressor = :scss
+  config.filter_parameters += [ :password, :password_confirmation ]
 end
 

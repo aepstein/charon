@@ -6,9 +6,9 @@ module Fulfiller
       has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all do
         # Register fulfillment for all the criteria met by this actor
         def fulfill!
-          Fulfillment::FULFILLABLE_TYPES[ proxy_owner.class.to_s ].each do |fulfillable_type|
+          Fulfillment::FULFILLABLE_TYPES[ @association.owner.class.to_s ].each do |fulfillable_type|
             current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
-            proxy_owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
+            @association.owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
               create!( :fulfillable => criterion ) unless current.include?( criterion.id )
             end
           end
@@ -16,8 +16,8 @@ module Fulfiller
 
         # Remove fulfillments for all criteria no longer met by this actor
         def unfulfill!
-          Fulfillment::FULFILLABLE_TYPES[ proxy_owner.class.to_s ].each do |fulfillable_type|
-            current = proxy_owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
+          Fulfillment::FULFILLABLE_TYPES[ @association.owner.class.to_s ].each do |fulfillable_type|
+            current = @association.owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
             delete where( :fulfillable_type => fulfillable_type ).
               reject { |f| current.include? f.fulfillable_id }
           end

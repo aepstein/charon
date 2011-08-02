@@ -1,19 +1,19 @@
 <h2>Listing university accounts</h2>
 
-<%= form_for :search, :url => polymorphic_path( [ @context, :university_accounts ] ), :html => { :method => :get } do |f| %>
+<%= search_form_for @q do |f| %>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_contains, 'Organization' %>
-    <%= f.text_field :organization_name_contains %>
+    <%= f.label :organization_last_name_cont, 'Organization' %>
+    <%= f.text_field :organization_last_name_cont %>
   </p>
   <% end -%>
   <p>
-    <%= f.label :department_code_contains, 'Department code' %>
-    <%= f.text_field :department_code_contains %>
+    <%= f.label :department_code_cont, 'Department code' %>
+    <%= f.text_field :department_code_cont %>
   </p>
   <p>
-    <%= f.label :subledger_code_contains, 'Subledger code' %>
-    <%= f.text_field :subledger_code_contains %>
+    <%= f.label :subledger_code_cont, 'Subledger code' %>
+    <%= f.text_field :subledger_code_cont %>
   </p>
   <p>
     <%= f.submit 'Search' %>

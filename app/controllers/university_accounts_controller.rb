@@ -11,8 +11,9 @@ class UniversityAccountsController < ApplicationController
   # GET /university_accounts
   # GET /university_accounts.xml
   def index
-    @search = @university_accounts.with_permissions_to(:show).search( params[:search] )
-    @university_accounts = @search.page(params[:page])
+#    @search = @university_accounts.with_permissions_to(:show).search( params[:search] )
+    @q = @university_accounts.search( params[:q] )
+    @university_accounts = @q.result.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
@@ -101,6 +102,7 @@ class UniversityAccountsController < ApplicationController
   def initialize_index
     @university_accounts = UniversityAccount.where( :organization_id => @organization.id ) if @organization
     @university_accounts ||= UniversityAccount.scoped
+    @university_accounts = @university_accounts.with_permissions_to( :show )
   end
 
   def new_university_account_from_params

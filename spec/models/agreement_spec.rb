@@ -1,47 +1,45 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe Agreement do
   before(:each) do
+    @agreement = build(:agreement)
   end
 
   it "should create a new instance given valid attributes" do
-    create(:agreement).id.should_not be_nil
+    @agreement.save!
   end
 
   it "should not save without a name" do
-    agreement = create(:agreement)
-    agreement.name = nil
-    agreement.save.should == false
+    @agreement.name = nil
+    @agreement.save.should be_false
   end
 
   it "should not save with a duplicate name" do
-    agreement = create(:agreement)
-    duplicate = agreement.clone
-    duplicate.save.should == false
+    @agreement.save!
+    duplicate = build(:agreement, :name => @agreement.name)
+    duplicate.save.should be_false
   end
 
   it "should not save without content" do
-    agreement = create(:agreement)
-    agreement.content = nil
-    agreement.save.should == false
+    @agreement.content = nil
+    @agreement.save.should be_false
   end
 
   it "should have authorization methods for approvable" do
-    agreement = create(:agreement)
-    agreement.approve.should eql true
-    agreement.unapprove.should eql true
+    @agreement.approve.should eql true
+    @agreement.unapprove.should eql true
   end
 
   it "should record fulfillment on approval" do
-    agreement = create(:agreement)
-    approval = create(:approval, :approvable => agreement)
-    agreement.fulfillments.size.should eql 1
-    agreement.fulfillments.first.fulfiller.should eql approval.user
+    @agreement.save!
+    approval = create(:approval, :approvable => @agreement)
+    @agreement.fulfillments.size.should eql 1
+    @agreement.fulfillments.first.fulfiller.should eql approval.user
   end
 
   it "should have unapprove method the removes fulfillment" do
-    agreement = create(:agreement)
-    approval = create(:approval, :approvable => agreement)
+    @agreement.save!
+    approval = create(:approval, :approvable => @agreement)
     approval.destroy
     approval.user.fulfillments.size.should eql 0
   end

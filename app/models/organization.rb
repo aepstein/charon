@@ -1,4 +1,5 @@
 class Organization < ActiveRecord::Base
+  SEARCHABLE = [ :name_contains ]
   attr_accessible :first_name, :last_name, :club_sport
 
   is_fulfiller
@@ -14,12 +15,12 @@ class Organization < ActiveRecord::Base
     # * must not have a prior grant created
     def allowed_for( user )
       no_fund_grant.open_deadline.
-        fulfilled_for( FundEdition::PERSPECTIVES.first, proxy_owner, user )
+        fulfilled_for( FundEdition::PERSPECTIVES.first, @association.owner, user )
     end
 
     # For what sources has no grant been created for this organization?
     def no_fund_grant
-      FundSource.no_fund_grant_for( proxy_owner )
+      FundSource.no_fund_grant_for( @association.owner )
     end
   end
   has_many :inventory_items, :dependent => :destroy, :inverse_of => :organization
@@ -78,7 +79,7 @@ class Organization < ActiveRecord::Base
     where( sql.join(' OR '), :name => "%#{name}%" )
   }
 
-  search_methods :name_contains
+  #search_methods :name_contains
 
   validates :last_name, :presence => true,
     :uniqueness => { :scope => [ :first_name ] }

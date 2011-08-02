@@ -1,7 +1,10 @@
 class FundRequest < ActiveRecord::Base
   include Notifiable
 
-  attr_accessible :fund_grant_attributes
+  SEARCHABLE = [ :organization_name_contains, :fund_source_name_contains,
+    :with_state ]
+
+  attr_accessible :reject_message, :as => :rejector
   attr_readonly :fund_grant_id
 
   belongs_to :fund_grant, :inverse_of => :fund_requests
@@ -24,15 +27,16 @@ class FundRequest < ActiveRecord::Base
     # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
-        exclusion = proxy_owner.fund_grant.fund_items.where(
-            :id.not_in => proxy_owner.fund_editions.final.map( &:fund_item_id )
+        exclusion = @association.owner.fund_grant.fund_items.where(
+            :id.not_in => @association.owner.fund_editions.final.map( &:fund_item_id )
           ).sum( :amount )
         cap -= exclusion if exclusion
       end
       includes( :fund_editions ).roots.each do |fund_item|
           cap = allocate_fund_item! fund_item, cap
       end
-      reset
+      @association.reset
+      true
     end
 
     # Allocate an item and any children for which a final edition is present
@@ -40,7 +44,7 @@ class FundRequest < ActiveRecord::Base
     # * apply cap if one is specified and deduct allocation from cap
     # * recursively call to each child, passing on remaining cap
     def allocate_fund_item!(fund_item, cap = nil)
-      fund_edition = fund_item.fund_editions.for_request( proxy_owner ).last
+      fund_edition = fund_item.fund_editions.for_request( @association.owner ).last
       if fund_edition.perspective == FundEdition::PERSPECTIVES.last
         max = ( (fund_edition) ? fund_edition.amount : 0.0 )
         if cap
@@ -78,14 +82,14 @@ class FundRequest < ActiveRecord::Base
     # Returns users who have fulfilled unquantified approver requirements
     def fulfilled( approvers = Approver.unscoped )
       User.scoped.joins('INNER JOIN approvers').
-      merge( approvers.unquantified.fulfilled_for( proxy_owner ).merge(
-        Approval.unscoped.where( :created_at.gt => proxy_owner.approval_checkpoint)
+      merge( approvers.unquantified.fulfilled_for( @association.owner ).merge(
+        Approval.unscoped.where( :created_at.gt => @association.owner.approval_checkpoint)
       ) ).where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
     end
     # Returns users who have not fulfilled unquantified approver requirements
     def unfulfilled( approvers = Approver.unscoped )
-      User.scoped.not_approved( proxy_owner ).joins('INNER JOIN approvers').
-      merge( approvers.unquantified.unfulfilled_for( proxy_owner ) ).
+      User.scoped.not_approved( @association.owner ).joins('INNER JOIN approvers').
+      merge( approvers.unquantified.unfulfilled_for( @association.owner ) ).
       where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
     end
   end
@@ -177,14 +181,15 @@ class FundRequest < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  default_scope includes( :fund_grant => [ :organization, :fund_source ] ).
+  scope :ordered, joins { [ fund_grant.fund_source, fund_grant.organization ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   scope :organization_name_contains, lambda { |name|
-    scoped.joins { ~fund_grant.organization }.merge( Organization.name_contains name )
+    joins { fund_grant.organization }.merge( Organization.unscoped.
+      name_contains( name ) )
   }
   scope :fund_source_name_contains, lambda { |name|
-    scoped.joins { ~fund_grant.fund_source }.merge( FundSource.
+    joins { fund_grant.fund_source }.merge( FundSource.unscoped.
       where { |fund_sources| fund_sources.name =~ "%#{name}%" } )
   }
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
@@ -197,7 +202,7 @@ class FundRequest < ActiveRecord::Base
     "fund_requests.fund_grant_id AND fund_requests.id <> duplicates.id)")
 
   paginates_per 10
-  search_methods :organization_name_contains, :fund_source_name_contains,
+  #search_methods :organization_name_contains, :fund_source_name_contains,
     :with_state
 
   # Send notices to all fund_requests with a state

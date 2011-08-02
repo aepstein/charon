@@ -7,10 +7,10 @@ class UniversityAccount < ActiveRecord::Base
   belongs_to :organization, :inverse_of => :university_accounts
 
   default_scope order( 'university_accounts.department_code ASC, ' +
-    'university_accounts.subledger_code ASC').includes( :organization )
+    'university_accounts.subledger_code ASC')
 
   scope :organization_name_contains, lambda { |name|
-    includes( :organization ).merge( Organization.name_contains( name ) )
+    joins { organization }.merge( Organization.unscoped.name_contains( name ) )
   }
 
   validates_format_of :department_code, :with => /\A[A-Z]\d{2,2}\Z/
@@ -22,7 +22,7 @@ class UniversityAccount < ActiveRecord::Base
     r.department_code = r.department_code.capitalize unless r.department_code.blank?
   end
 
-  search_methods :organization_name_contains
+#  ransacker :organization_name_contains
 
   def to_s; "#{department_code}-#{subledger_code}"; end
 end

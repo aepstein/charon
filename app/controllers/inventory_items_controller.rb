@@ -30,8 +30,8 @@ class InventoryItemsController < ApplicationController
   # GET /organizations/:organization_id/inventory_items
   # GET /organizations/:organization_id/inventory_items.xml
   def index
-    @search = @inventory_items.with_permissions_to(:show).search( params[:search] )
-    @inventory_items = @search.page(params[:page])
+    @q = @inventory_items.search( params[:q] )
+    @inventory_items = @q.result.page(params[:page])
 
     respond_to do |format|
       format.html { render :action => 'index' }
@@ -66,7 +66,7 @@ class InventoryItemsController < ApplicationController
   def create
     respond_to do |format|
       if @inventory_item.save
-        flash[:notice] = 'Inventory fund_item was successfully created.'
+        flash[:notice] = 'Inventory item was successfully created.'
         format.html { redirect_to(@inventory_item) }
         format.xml  { render :xml => @inventory_item, :status => :created, :location => @inventory_item }
       else
@@ -81,7 +81,7 @@ class InventoryItemsController < ApplicationController
   def update
     respond_to do |format|
       if @inventory_item.update_attributes(params[:inventory_item])
-        flash[:notice] = 'Inventory fund_item was successfully updated.'
+        flash[:notice] = 'Inventory item was successfully updated.'
         format.html { redirect_to(@inventory_item) }
         format.xml  { head :ok }
       else
@@ -116,6 +116,7 @@ class InventoryItemsController < ApplicationController
   def initialize_index
     @inventory_items = InventoryItem.scoped
     @inventory_items = @inventory_items.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
+    @inventory_items = @inventory_items.with_permissions_to(:show)
   end
 
   def new_inventory_item_from_params

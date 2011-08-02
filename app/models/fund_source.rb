@@ -42,14 +42,14 @@ class FundSource < ActiveRecord::Base
       sub = "SELECT fund_items.id FROM fund_items INNER JOIN fund_requests WHERE fund_request_id = fund_requests.id " +
             "AND fund_source_id = ? AND fund_requests.status = ?"
       FundEdition.where(:perspective => perspective).
-        where( "fund_item_id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
+        where( "fund_item_id IN (#{sub})", @association.owner.id, status ).sum( 'amount' )
     end
 
     # TODO: should be calculated through items
     def fund_item_amount_for_status(status)
       sub = "SELECT fund_items.id FROM fund_items INNER JOIN fund_requests WHERE fund_request_id = fund_requests.id " +
             "AND fund_source_id = ? AND fund_requests.status = ?"
-      FundItem.where( "id IN (#{sub})", proxy_owner.id, status ).sum( 'amount' )
+      FundItem.where( "id IN (#{sub})", @association.owner.id, status ).sum( 'amount' )
     end
   end
 

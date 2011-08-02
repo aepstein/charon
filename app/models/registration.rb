@@ -1,6 +1,7 @@
 class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
+  SEARCHABLE = [ :named ]
 
   has_paper_trail :class_name => 'SecureVersion'
 
@@ -31,9 +32,6 @@ class Registration < ActiveRecord::Base
   after_save :update_organization, :update_memberships, :update_peers
 
   attr_accessor :skip_update_peers
-
-  # All attributes can be accessible because this model is not exposed for updates
-  def accessible; :all; end
 
   # Assures the external term id is populated when the registration term is set
   def registration_term_id=( id )
@@ -132,7 +130,7 @@ class Registration < ActiveRecord::Base
   # * fail silently if the organization name update fails
   def update_organization
     return true unless organization
-    organization.registrations.reset
+    organization.association(:registrations).reset
     if current?
       organization.update_attributes name.to_organization_name_attributes
       organization.fulfillments.fulfill!

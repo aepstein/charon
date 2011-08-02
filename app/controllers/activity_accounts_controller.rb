@@ -13,7 +13,7 @@ class ActivityAccountsController < ApplicationController
   # GET /activity_accounts.xml
   def index
     @search = @activity_accounts.search( params[:search] )
-    @activity_accounts = @search.page(params[:page])
+    @activity_accounts = @search.result.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
