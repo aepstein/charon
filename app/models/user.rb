@@ -27,8 +27,6 @@ class User < ActiveRecord::Base
     where( sql.join(' OR '), :name => "%#{name}%" )
   }
 
-  #search_methods :name_contains
-
   is_fulfiller
 
   has_secure_password

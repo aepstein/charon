@@ -25,8 +25,6 @@ class ActivityReport < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  #search_methods :organization_name_contains
-
   validates :organization, :presence => true
   validates :description, :presence => true
   validates :number_of_others, :numericality => { :integer_only => true,
