@@ -72,8 +72,13 @@ class FundRequestsController < ApplicationController
   # GET /organizations/:organization_id/fund_requests
   # GET /organizations/:organization_id/fund_requests.xml
   def index
-    @search = @fund_requests.search( params[:search] )
-    @fund_requests = @search.page(params[:page])
+    @search = params[:search] || Hash.new
+    @search.each do |k,v|
+      if !v.blank? && FundRequest::SEARCHABLE.include?( k.to_sym )
+        @fund_requests = @fund_requests.send k, v
+      end
+    end
+    @fund_requests = @fund_requests.page(params[:page])
 
     respond_to do |format|
       format.html { render :action => 'index' }
@@ -163,10 +168,15 @@ class FundRequestsController < ApplicationController
   end
 
   def initialize_index
-    @fund_requests = FundRequest.scoped
-    @fund_requests = @organization.fund_requests if @organization
-    @fund_requests = @fund_source.fund_requests if @fund_source
-    @fund_requests = @fund_requests.ordered
+    @fund_requests = FundRequest.scoped.ordered
+    if @organization
+      @fund_requests = @fund_requests.
+        where { |r| r.fund_grants.organization_id == @organization.id }
+    end
+    if @fund_source
+      @fund_requests = @fund_requests.
+        where { |r| r.fund_grants.fund_source_id == @fund_source.id }
+    end
 #    @fund_requests = @fund_requests.with_permissions_to(:show)
   end
 

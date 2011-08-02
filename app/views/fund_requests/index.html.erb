@@ -1,28 +1,28 @@
 <h2>Listing fund_requests</h2>
 
-<%= form_for :search, :url => polymorphic_path( [ @context, :fund_requests ] ), :html => { :method => :get } do |f| %>
+<%= form_tag polymorphic_path( [ @context, :fund_requests ] ), :method => :get do |f| %>
   <% unless @fund_source -%>
   <p>
-    <%= f.label :fund_source_name_contains, 'Fund source' %>
-    <%= f.text_field :fund_source_name_contains %>
+    <%= label_tag 'search[fund_source_name_contains]', 'Fund source' %>
+    <%= search_field_tag 'search[fund_source_name_contains]', @search['fund_source_name_contains'] %>
   </p>
   <% end -%>
   <% unless @organization -%>
   <p>
-    <%= f.label :organization_name_contains, 'Requestor' %>
-    <%= f.text_field :organization_name_contains %>
+    <%= label_tag 'search[organization_name_contains]', 'Requestor' %>
+    <%= search_field_tag 'search[organization_name_contains]', @search['fund_source_name_contains'] %>
   </p>
   <% end -%>
   <p>
-    <%= f.label :with_state, 'State' %>
-    <%
+    <%= label_tag 'search[with_state]', 'State' %>
+    <%= select_tag 'search[with_state]', options_from_collection_for_select(
       # TODO should factor out the list into a class constant
-    %>
-    <%= f.select :with_state, %w( started tentative submitted released
-      finalized withdrawn rejected ), { :include_blank => true } %>
+      %w( started tentative submitted released finalized withdrawn rejected ),
+      :to_s, :to_s, @search['with_state'] ),
+    { :include_blank => true } %>
   </p>
   <p>
-    <%= f.submit 'Search' %>
+    <%= submit_tag 'Search' %>
   </p>
 <% end %>
 

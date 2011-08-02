@@ -1,6 +1,9 @@
 class FundRequest < ActiveRecord::Base
   include Notifiable
 
+  SEARCHABLE = [ :organization_name_contains, :fund_source_name_contains,
+    :with_state ]
+
   attr_accessible :reject_message, :as => :rejector
   attr_readonly :fund_grant_id
 
@@ -178,14 +181,15 @@ class FundRequest < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  scope :ordered, joins { fund_grant.fund_source }.joins { fund_grant.organization }.
+  scope :ordered, joins { [ fund_grant.fund_source, fund_grant.organization ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
 
   scope :organization_name_contains, lambda { |name|
-    scoped.joins { fund_grant.organization }.merge( Organization.name_contains name )
+    joins { fund_grant.organization }.merge( Organization.unscoped.
+      name_contains( name ) )
   }
   scope :fund_source_name_contains, lambda { |name|
-    scoped.joins { fund_grant.fund_source }.merge( FundSource.
+    joins { fund_grant.fund_source }.merge( FundSource.unscoped.
       where { |fund_sources| fund_sources.name =~ "%#{name}%" } )
   }
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
