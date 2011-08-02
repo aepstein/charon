@@ -1,6 +1,7 @@
 class Registration < ActiveRecord::Base
   MEMBER_TYPES = %w( undergrads grads staff faculty others )
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
+  SEARCHABLE = [ :named ]
 
   has_paper_trail :class_name => 'SecureVersion'
 
