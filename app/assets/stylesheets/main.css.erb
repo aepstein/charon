@@ -58,7 +58,7 @@ body {
 	Comment out the following line to remove the Ezra Cornell background image from the header.
 	Change 1.jpg to any number up to 8.jpg to use other header background images.
 	*/
-	background: #b31b1b url(../images/layout/header_bg/1.jpg) no-repeat top center;
+	background: #b31b1b url(<%=image_path 'layout/header_bg/1.jpg' %>) no-repeat top center;
 	}
 
 #cu-logo {
@@ -68,7 +68,7 @@ body {
 	margin-left: -370px;
 	width: 740px;
 	height: 75px;
-	background: url(../images/layout/unit_signature.gif) no-repeat -8px -1px;
+	background: url(<%=image_path 'layout/unit_signature.gif' %>) no-repeat -8px -1px;
 	}
 
 #cu-logo a {
@@ -259,7 +259,7 @@ body {
 
 .twocolumn #wrap {
 	/* see IE6/Win hack at bottom */
-	background: #f0eee4 url(../images/layout/twocolumn_bg.gif) repeat-y top center;
+	background: #f0eee4 url(<%=image_path 'layout/twocolumn_bg.gif' %>) repeat-y top center;
 	}
 
 .twocolumn #main {
@@ -427,7 +427,7 @@ ul li {
 	margin: 5px 0;
 	padding: 0 0 0 30px;
 	list-style: none;
-	background: url(../images/layout/bullet.gif) no-repeat 18px 0.65em;
+	background: url(<%=image_path 'layout/bullet.gif' %>) no-repeat 18px 0.65em;
 	}
 
 ol li {
@@ -632,7 +632,7 @@ img {
 
 	/* padding makes room for the dropshadow, but offsets the image */
 	padding: 6px 9px 9px 6px;
-	background: url(../images/layout/shadow_tn.gif) no-repeat top left;
+	background: url(<%=image_path 'layout/shadow_tn.gif' %>) no-repeat top left;
 
 	/* position and margin fix the offset */
 	top: -6px;
@@ -1061,7 +1061,7 @@ form h3 {
 
 #webring .prev  {
 	padding-left: 11px;
-	background: url(../images/layout/arrows/left_red.gif) no-repeat 0 0.4em;
+	background: url(<%=image_path 'layout/arrows/left_red.gif' %>) no-repeat 0 0.4em;
 	}
 
 #webring .sep {
@@ -1071,7 +1071,7 @@ form h3 {
 
 #webring .next  {
 	padding-right: 11px;
-	background: url(../images/layout/arrows/right_red.gif) no-repeat 100% 0.4em;
+	background: url(<%=image_path 'layout/arrows/right_red.gif' %>) no-repeat 100% 0.4em;
 	}
 
 /****************************************
@@ -1169,7 +1169,7 @@ hr {
 */
 
 .twocolumn #content {
-	background: #f0eee4 url(../images/layout/twocolumn_bg.gif) repeat-y top center;
+	background: #f0eee4 url(<%=image_path 'layout/twocolumn_bg.gif' %>) repeat-y top center;
 	}
 
 .twocolumn #wrap {
@@ -1178,7 +1178,7 @@ hr {
 
 /* unhack for other browsers */
 .twocolumn>#wrap {
-	background: #f0eee4 url(../images/layout/twocolumn_bg.gif) repeat-y top center;
+	background: #f0eee4 url(<%=image_path 'layout/twocolumn_bg.gif' %>) repeat-y top center;
 	}
 
 /**
