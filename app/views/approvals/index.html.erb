@@ -1,8 +1,12 @@
 <h2>Listing approvals for <%= @approvable ? @approvable : @user %></h2>
 
+<%= paginate @approvals %>
+
 <%= render :partial => "approvals", :object => @approvals,
   :locals => { :user => true, :approvable => true } %>
 <br />
+
+<%= paginate @approvals %>
 
 <p>
 <% new_approval = @approvable.approvals.build; new_approval.user = current_user %>

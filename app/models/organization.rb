@@ -1,4 +1,5 @@
 class Organization < ActiveRecord::Base
+  SEARCHABLE = [ :name_contains ]
   attr_accessible :first_name, :last_name, :club_sport
 
   is_fulfiller

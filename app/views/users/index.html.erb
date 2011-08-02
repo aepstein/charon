@@ -1,10 +1,10 @@
 <h2>Listing users</h2>
 
-<%= form_for :search, :url => users_path, :html => { :method => :get } do |f| %>
+<%= form_tag users_path, :method => :get do |f| %>
   <p>
-    <%= f.label :name_contains, 'Name' %>
-    <%= f.text_field :name_contains %>
-    <%= f.submit 'Search' %>
+    <%= label_tag 'search[name_contains]', 'Name' %>
+    <%= text_field_tag 'search[name_contains]', @search['name_contains'] %>
+    <%= submit_tag 'Search' %>
   </p>
 <% end %>
 

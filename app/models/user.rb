@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  SEARCHABLE = [ :name_contains ]
   STATUSES = %w[ undergrad grad staff faculty alumni temporary ]
 
   attr_accessible :password, :password_confirmation, :email, :first_name,

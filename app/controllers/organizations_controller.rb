@@ -8,8 +8,14 @@ class OrganizationsController < ApplicationController
   # GET /organizations
   # GET /organizations.xml
   def index
-    @search = @organizations.search( params[:search] )
-    @organizations = @search.page(params[:page])
+    @search = params[:search] || Hash.new
+    @search.each do |k,v|
+      if !v.blank? && Organization::SEARCHABLE.include?( k.to_sym )
+        @organizations = @organizations.send k, v
+      end
+    end
+    @organizations = @organizations.page(params[:page])
+
 
     respond_to do |format|
       format.html # index.html.erb

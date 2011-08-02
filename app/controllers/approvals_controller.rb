@@ -13,7 +13,7 @@ class ApprovalsController < ApplicationController
   # GET /:approvable_class/:approvable_id/approvals.xml
   def index
     @search = @approvals.search( params[:search] )
-    @approvals = @search.page(params[:page])
+    @approvals = @search.result.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

@@ -8,8 +8,13 @@ class UsersController < ApplicationController
   before_filter :setup_breadcrumbs, :except => [ :profile ]
 
   def index
-    @search = @users.search( params[:search] )
-    @users = @search.page(params[:page])
+    @search = params[:search] || Hash.new
+    @search.each do |k,v|
+      if !v.blank? && User::SEARCHABLE.include?( k.to_sym )
+        @users = @users.send k, v
+      end
+    end
+    @users = @users.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
