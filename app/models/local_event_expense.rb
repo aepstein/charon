@@ -1,6 +1,7 @@
 class LocalEventExpense < ActiveRecord::Base
   attr_accessible :date, :title, :location, :purpose, :number_of_attendees,
-    :price_per_attendee, :copies_quantity, :services_cost, :uup_required
+    :price_per_attendee, :copies_quantity, :services_cost, :uup_required,
+    :accessibility_considered
   attr_readonly :fund_edition_id
 
   belongs_to :fund_edition, :inverse_of => :local_event_expense
