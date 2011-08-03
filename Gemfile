@@ -26,7 +26,6 @@ gem 'formtastic'
 gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
 gem 'composite_primary_keys', '~> 4.0.0.beta7', :require => false # Require on demand
-gem 'jquery-rails'
 gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
 gem 'ancestry'
