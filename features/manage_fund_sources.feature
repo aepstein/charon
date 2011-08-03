@@ -61,7 +61,7 @@ Feature: Manage fund_sources
       | upcoming_ | source_reviewer    | not see | not see | not see  | see     |
       | upcoming_ | observer_requestor | not see | not see | not see  | not see |
       | upcoming_ | regular            | not see | not see | not see  | not see |
-@wip
+
   Scenario: Register new fund_source and update
     Given a structure exists with name: "annual"
     And a structure exists with name: "semester"
