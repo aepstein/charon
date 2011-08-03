@@ -1,0 +1,42 @@
+<p>
+  <b>Name:</b> <%=h @fund_request_type.name %>
+</p>
+
+<p>
+  <b>Allowed for first?</b> <%= @fund_request_type.allowed_for_first? ? 'Yes' : 'No' %>
+</p>
+
+<p>
+  <b>Amendable quantity limit:</b>
+  <% if @fund_request_type.amendable_quantity_limit.blank? %>
+  No limit
+  <% else %>
+  <%= pluralize @fund_request_type.amendable_quantity_limit, 'item' %>
+  <% end %>
+</p>
+
+<p>
+  <b>Appendable quantity limit:</b>
+  <% if @fund_request_type.appendable_quantity_limit.blank? %>
+  No limit
+  <% else %>
+  <%= pluralize @fund_request_type.appendable_quantity_limit, 'item' %>
+  <% end %>
+</p>
+
+<p>
+  <b>Appendable amount limit:</b>
+  <% if @fund_request_type.appendable_amount_limit.blank? %>
+  No limit
+  <% else %>
+  <%=number_to_currency @fund_request_type.appendable_amount_limit %>
+  <% end %>
+</p>
+
+<p>
+<% if permitted_to? :update, @fund_request_type -%>
+<%= link_to 'Edit', edit_fund_request_type_path(@fund_request_type) %> |
+<% end -%>
+<%= link_to 'Back', fund_request_types_path %>
+</p>
+

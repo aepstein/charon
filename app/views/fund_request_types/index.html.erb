@@ -1,0 +1,12 @@
+<h2>Listing fund request types</h2>
+
+<%= render :partial => "fund_request_types", :object => @fund_request_types %>
+
+<br />
+
+<p>
+<% if permitted_to? :create, FundRequestType.new -%>
+<%= link_to 'New fund request type', new_fund_request_type_path %>
+<% end -%>
+</p>
+

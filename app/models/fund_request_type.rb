@@ -1,8 +1,10 @@
 class FundRequestType < ActiveRecord::Base
-  attr_accessible :name, :amendable_quantity_limit, :appendable_quantity_limit,
-    :appendable_amount_limit
+  attr_accessible :name, :allowed_for_first, :amendable_quantity_limit,
+    :appendable_quantity_limit, :appendable_amount_limit
 
   has_and_belongs_to_many :fund_queues
+
+  default_scope order { name }
 
   validates :name, :presence => true, :uniqueness => true
   validates :amendable_quantity_limit,

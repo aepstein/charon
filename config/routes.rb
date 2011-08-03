@@ -29,6 +29,7 @@ Charon::Application.routes.draw do
       end
     end
   end
+  resources :fund_request_types
   resources :fund_requests, :except => [ :create, :new ] do
     member do
       get :reject, :documents_report

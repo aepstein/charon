@@ -1,0 +1,7 @@
+  <%= table_row_tag do %>
+    <td><%=h fund_request_type.name %></td>
+    <td><%= link_to 'Show', fund_request_type %></td>
+    <td><%= link_to( 'Edit', edit_fund_request_type_path(fund_request_type) ) if permitted_to?( :edit, fund_request_type ) %></td>
+    <td><%= link_to( 'Destroy', fund_request_type, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, fund_request_type ) %></td>
+  <% end %>
+

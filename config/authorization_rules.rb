@@ -4,10 +4,11 @@ authorization do
 
     has_permission_on [ :activity_accounts, :activity_reports, :addresses,
       :agreements, :approvers, :fund_sources, :categories, :document_types,
-      :fund_editions, :fund_grants, :fund_items, :fund_requests, :fund_sources,
-      :frameworks, :fulfillments, :inventory_items, :nodes, :organizations,
-      :registration_criterions, :registrations, :registration_terms, :roles,
-      :structures, :university_accounts, :users, :user_status_criterions ],
+      :fund_editions, :fund_grants, :fund_items, :fund_request_types,
+      :fund_requests, :fund_sources, :frameworks, :fulfillments,
+      :inventory_items, :nodes, :organizations, :registration_criterions,
+      :registrations, :registration_terms, :roles, :structures,
+      :university_accounts, :users, :user_status_criterions ],
       :to => [ :show, :manage ]
 
     has_permission_on [ :approvals ], :to => [ :show, :destroy ]
@@ -43,8 +44,9 @@ authorization do
 
   role :user do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
-      :frameworks, :nodes, :organizations, :registration_criterions,
-      :registration_terms, :roles, :structures, :user_state_criterions ],
+      :frameworks, :fund_request_types, :nodes, :organizations,
+      :registration_criterions, :registration_terms, :roles, :structures,
+      :user_state_criterions ],
       :to => [ :show ]
 
     has_permission_on [ :account_adjustments ], :to => :manage do
