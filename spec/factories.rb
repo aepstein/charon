@@ -187,6 +187,10 @@ FactoryGirl.define do
     association :fund_grant
   end
 
+  factory :fund_request_type do
+    sequence( :name ) { |n| "Fund Request Type #{n}" }
+  end
+
   factory :fund_source do
     sequence(:name) { |n| "FundSource #{n}" }
     association :organization
