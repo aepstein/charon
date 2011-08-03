@@ -5,4 +5,6 @@
   :hint => 'When must a request be submitted to qualify for this deadline?' %>
 <%= form.input :release_at, :as => :datetime_picker,
   :hint => 'When should decisions be released regarding requests associated with this deadline?' %>
+<%= form.input :fund_request_types, :as => :check_boxes,
+  :hint => 'What fund request types may be associated with this queue?' %>
 

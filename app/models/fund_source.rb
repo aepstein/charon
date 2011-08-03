@@ -53,8 +53,12 @@ class FundSource < ActiveRecord::Base
     end
   end
 
-  accepts_nested_attributes_for :fund_queues, :reject_if => :all_blank,
-    :allow_destroy => true
+  accepts_nested_attributes_for :fund_queues, :allow_destroy => true,
+    :reject_if => proc { |a|
+      %w( submit_at release_at ).all? do |k|
+        a[k].blank?
+      end
+    }
 
   validates :name, :presence => true, :uniqueness => true
   validates :organization, :presence => true

@@ -51,7 +51,7 @@ class FundSourcesController < ApplicationController
   def create
     respond_to do |format|
       if @fund_source.save
-        flash[:notice] = 'FundSource was successfully created.'
+        flash[:notice] = 'Fund source was successfully created.'
         format.html { redirect_to(@fund_source) }
         format.xml  { render :xml => @fund_source, :status => :created, :location => @fund_source }
       else
@@ -66,7 +66,7 @@ class FundSourcesController < ApplicationController
   def update
     respond_to do |format|
       if @fund_source.update_attributes(params[:fund_source])
-        flash[:notice] = 'FundSource was successfully updated.'
+        flash[:notice] = 'Fund source was successfully updated.'
         format.html { redirect_to(@fund_source) }
         format.xml  { head :ok }
       else

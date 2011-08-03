@@ -61,12 +61,14 @@ Feature: Manage fund_sources
       | upcoming_ | source_reviewer    | not see | not see | not see  | see     |
       | upcoming_ | observer_requestor | not see | not see | not see  | not see |
       | upcoming_ | regular            | not see | not see | not see  | not see |
-
+@wip
   Scenario: Register new fund_source and update
     Given a structure exists with name: "annual"
     And a structure exists with name: "semester"
     And a framework exists with name: "safc"
     And a framework exists with name: "gpsafc"
+    And a fund_request_type exists with name: "Unrestricted"
+    And a fund_request_type exists with name: "Special Project"
     And I log in as user: "admin"
     And I am on the new fund_source page for organization: "source"
     When I fill in "Name" with "Annual SAFC"
@@ -79,8 +81,9 @@ Feature: Manage fund_sources
     And I fill in "Closed at" with "2009-10-20 12:00 pm"
     And I fill in "Submit at" with "2009-10-19 12:00 pm"
     And I fill in "Release at" with "2009-10-19 06:00 pm"
+    And I check "Special Project"
     And I press "Create"
-    Then I should see "FundSource was successfully created."
+    Then I should see "Fund source was successfully created."
     And I should see "Name: Annual SAFC"
     And I should see "Structure: annual"
     And I should see "Framework: safc"
@@ -90,8 +93,8 @@ Feature: Manage fund_sources
     And I should see "Open at: 2009-10-15 12:00:00"
     And I should see "Closed at: 2009-10-20 12:00:00"
     And I should see the following fund_queues:
-      | Submit at                       | Release at                      |
-      | Mon, 19 Oct 2009 12:00:00 -0400 | Mon, 19 Oct 2009 18:00:00 -0400 |
+      | Submit at                       | Release at                      | Fund request types |
+      | Mon, 19 Oct 2009 12:00:00 -0400 | Mon, 19 Oct 2009 18:00:00 -0400 | Special Project    |
     When I follow "Edit"
     And I fill in "Name" with "Semester GPSAFC"
     And I fill in "Contact name" with "Another Office"
@@ -101,7 +104,7 @@ Feature: Manage fund_sources
     And I fill in "Closed at" with "2009-10-21 01:00 pm"
     And I check "Remove queue"
     And I press "Update"
-    Then I should see "FundSource was successfully updated."
+    Then I should see "Fund source was successfully updated."
     And I should see "Name: Semester GPSAFC"
     And I should see "Contact name: Another Office"
     And I should see "Contact email: office@other.com"
@@ -118,7 +121,7 @@ Feature: Manage fund_sources
     And I log in as user: "admin"
     When I follow "Destroy" for the 3rd fund_source for organization: "source"
     Then I should see the following fund_sources:
-      | Name    |
+      | Name          |
       | fund_source 1 |
       | fund_source 2 |
       | fund_source 4 |
