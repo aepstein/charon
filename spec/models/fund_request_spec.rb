@@ -46,9 +46,18 @@ describe FundRequest do
       @fund_request.save.should be_false
     end
 
-    it 'should not save first request with a requestable type that is no allowed for first' do
+    it 'should not save first request with a requestable type that is not allowed for first' do
       @fund_request.fund_request_type.update_attribute :allowed_for_first, false
       @fund_request.save.should be_false
+    end
+
+    it 'should save a second request with a requestable type that is not allowed for first' do
+      @fund_request.fund_queue = @fund_request.fund_grant.fund_source.fund_queues.first
+      @fund_request.state = 'submitted'
+      @fund_request.save!
+      @fund_request.fund_request_type.update_attribute :allowed_for_first, false
+      create( :fund_request, :fund_grant => @fund_request.fund_grant,
+        :fund_request_type => @fund_request.fund_request_type )
     end
   end
 
