@@ -277,6 +277,13 @@ class FundRequest < ActiveRecord::Base
     FundEdition::PERSPECTIVES.first
   end
 
+  # What fund request types are allowed for this request?
+  def allowed_fund_request_types
+    out = fund_grant.fund_source.fund_request_types.upcoming
+    out = out.where { allowed_for_first == true } if first_actionable?
+    out
+  end
+
   def to_s
     return super if fund_grant.blank?
     "Request of #{fund_grant.organization} from #{fund_grant.fund_source}"
@@ -293,11 +300,7 @@ class FundRequest < ActiveRecord::Base
 
   def fund_request_type_must_be_associated_with_fund_source
     return unless fund_request_type && fund_grant
-    if first_actionable? && !fund_grant.fund_source.fund_request_types.
-      upcoming.where { allowed_for_first == true }.include?( fund_request_type )
-      errors.add :fund_request_type, " is not allowed for the initial request"
-    elsif !fund_grant.fund_source.fund_request_types.
-      upcoming.include?( fund_request_type )
+    if !allowed_fund_request_types.include? fund_request_type
       errors.add :fund_request_type, " is not allowed"
     end
   end
