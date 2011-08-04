@@ -38,6 +38,8 @@ class FundGrant < ActiveRecord::Base
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
   scope :open, lambda { joins(:fund_source).merge( FundSource.unscoped.open ) }
   scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }
+  scope :no_draft_fund_request, where { id.not_in(
+    FundRequest.unscoped.draft.select { fund_grant_id } ) }
   scope :organization_name_contains, lambda { |name|
     joins { organization }.merge Organization.name_contains( name )
   }

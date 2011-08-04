@@ -97,7 +97,8 @@ class FundRequest < ActiveRecord::Base
   validates :approval_checkpoint, :timeliness => { :type => :datetime }
   validates :fund_request_type, :presence => true, :on => :create
   validate :fund_source_must_be_same_for_grant_and_queue
-  validate :fund_request_type_must_be_associated_with_fund_source, :on => :create
+  validate :fund_request_type_must_be_associated_with_fund_source,
+    :no_draft_fund_request_exists, :on => :create
 
   state_machine :review_state, :initial => :unreviewed, :namespace => 'review' do
 
@@ -192,6 +193,7 @@ class FundRequest < ActiveRecord::Base
       where { |fund_sources| fund_sources.name =~ "%#{name}%" } )
   }
   scope :actionable, without_state( :withdrawn, :rejected )
+  scope :draft, with_state( :started, :tentative, :finalized )
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
     "fund_request_id = fund_requests.id AND perspective = ?) > " +
     "(SELECT COUNT(*) FROM fund_editions WHERE " +
@@ -278,8 +280,9 @@ class FundRequest < ActiveRecord::Base
   end
 
   # What fund request types are allowed for this request?
-  def allowed_fund_request_types
-    out = fund_grant.fund_source.fund_request_types.upcoming
+  def allowed_fund_request_types(upcoming_only=false)
+    out = fund_grant.fund_source.fund_request_types
+    out = out.upcoming if upcoming_only
     out = out.allowed_for_first if first_actionable?
     out
   end
@@ -302,6 +305,13 @@ class FundRequest < ActiveRecord::Base
     return unless fund_request_type && fund_grant
     if !allowed_fund_request_types.include? fund_request_type
       errors.add :fund_request_type, " is not allowed"
+    end
+  end
+
+  def no_draft_fund_request_exists
+    return unless fund_grant
+    unless fund_grant.new_record? || fund_grant.fund_requests.draft.empty?
+      errors.add :fund_grant, " already has another request in a draft state"
     end
   end
 

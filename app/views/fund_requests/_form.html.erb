@@ -1,5 +1,8 @@
 <%= render "shared/error_messages", :target => form.object %>
 <%= form.inputs do %>
+  <%= form.input :fund_request_type,
+    :collection => form.object.allowed_fund_request_types(true),
+    :hint => 'What type of request do you wish to start?' %>
   <%
    # TODO: Are we submitting an amendment or addendum?
    # "I want to amend previously submitted items (next deadline: 2/15/11 (release: 2/28/11) )"

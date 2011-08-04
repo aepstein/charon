@@ -35,17 +35,6 @@ describe FundRequest do
       @fund_request.save.should be_false
     end
 
-    it 'should not save with fund_request_type that is not associated with an upcoming queue' do
-      queue = create( :fund_queue, :submit_at => ( Time.zone.now - 1.minute ),
-        :fund_source => @fund_request.fund_grant.fund_source )
-      queue.fund_source.association(:fund_queues).reset
-      queue.fund_request_types << create( :fund_request_type )
-      queue.fund_source.fund_request_types.upcoming.should_not(
-        include queue.fund_request_types.first )
-      @fund_request.fund_request_type = queue.fund_request_types.first
-      @fund_request.save.should be_false
-    end
-
     it 'should not save first request with a requestable type that is not allowed for first' do
       @fund_request.fund_request_type.update_attribute :allowed_for_first, false
       @fund_request.save.should be_false
@@ -58,6 +47,18 @@ describe FundRequest do
       @fund_request.fund_request_type.update_attribute :allowed_for_first, false
       create( :fund_request, :fund_grant => @fund_request.fund_grant,
         :fund_request_type => @fund_request.fund_request_type )
+    end
+
+    it 'should not create if another draft request exists' do
+      @fund_request.save!
+      duplicate = build( :fund_request, :fund_grant => @fund_request.fund_grant,
+        :fund_request_type => @fund_request.fund_request_type )
+      %w( started tentative finalized ).each do |state|
+        @fund_request.update_attribute :state, state
+        duplicate.save.should be_false
+      end
+      @fund_request.update_attribute :state, 'submitted'
+      duplicate.save!
     end
   end
 
@@ -176,6 +177,7 @@ describe FundRequest do
 
   it 'should have a duplicate scope' do
     @fund_request.save!
+    @fund_request.update_attribute :state, 'submitted'
     duplicate = create(:fund_request, :fund_grant => @fund_request.fund_grant)
     different = create(:fund_request)
     duplicates = FundRequest.duplicate
