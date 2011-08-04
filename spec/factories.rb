@@ -201,6 +201,7 @@ FactoryGirl.define do
 
   factory :fund_request_type do
     sequence( :name ) { |n| "Fund Request Type #{n}" }
+    allowed_for_first true
   end
 
   factory :fund_source do

@@ -234,8 +234,15 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  # Is the request actionable
+  # Is the request actionable?
   def actionable?; %w( withdrawn rejected ).all? { |s| s != state }; end
+
+  # Is the request the first actionable request?
+  def first_actionable?
+    fund_grant.new_record? ||
+    ( actionable? &&
+      !fund_grant.fund_requests.actionable.where { id != my { id } }.any? )
+  end
 
   # Are there any approval criteria that have not been fulfilled for current
   # tentative status?
@@ -286,7 +293,11 @@ class FundRequest < ActiveRecord::Base
 
   def fund_request_type_must_be_associated_with_fund_source
     return unless fund_request_type && fund_grant
-    unless fund_grant.fund_source.fund_request_types.include?( fund_request_type )
+    if first_actionable? && !fund_grant.fund_source.fund_request_types.
+      upcoming.where { allowed_for_first == true }.include?( fund_request_type )
+      errors.add :fund_request_type, " is not allowed for the initial request"
+    elsif !fund_grant.fund_source.fund_request_types.
+      upcoming.include?( fund_request_type )
       errors.add :fund_request_type, " is not allowed"
     end
   end

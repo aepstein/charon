@@ -195,7 +195,8 @@ authorization do
     has_permission_on [ :fund_grants ], :to => [ :create ], :join_by => :and do
       if_permitted_to :request
       if_attribute :fund_source => { :fund_queues => {
-        :submit_at => gt { Time.zone.now } } }
+        :submit_at => gt { Time.zone.now },
+        :fund_request_types => { :allowed_for_initial => is { true } } } }
     end
     has_permission_on [ :fund_grants ], :to => [ :manage, :show, :allocate ] do
       if_permitted_to :manage, :fund_source
