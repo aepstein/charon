@@ -52,9 +52,8 @@ class FundGrantsController < ApplicationController
   # POST /organizations/:organization_id/fund_grants.xml
   def create
     respond_to do |format|
-      @fund_grant.valid?
+      @fund_grant.fund_requests.build_first
       if @fund_grant.save
-        @fund_grant.fund_requests.create!
         flash[:notice] = 'Fund grant was successfully created.'
         format.html { redirect_to @fund_grant.fund_requests.first }
         format.xml  { render :xml => @fund_grant, :status => :created, :location => @fund_grant }

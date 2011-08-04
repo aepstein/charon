@@ -7,6 +7,7 @@ class FundRequestType < ActiveRecord::Base
     :dependent => :destroy
 
   default_scope order { name }
+  scope :allowed_for_first, where { allowed_for_first == true }
 
   validates :name, :presence => true, :uniqueness => true
   validates :amendable_quantity_limit,
@@ -17,5 +18,7 @@ class FundRequestType < ActiveRecord::Base
       :greater_than_or_equal_to => 0 }
   validates :appendable_amount_limit,
     :numericality => { :allow_nil => true, :greater_than_or_equal_to => 0.0 }
+
+  def to_s; name; end
 end
 

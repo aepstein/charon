@@ -1,15 +1,19 @@
 <h2><%= @fund_request %></h2>
 
 <p>
-<b>Fund source:</b> <%= @fund_request.fund_grant.fund_source %>
+  <b>Fund source:</b> <%= @fund_request.fund_grant.fund_source %>
 </p>
 
 <p>
-<b>Requestor:</b> <%= @fund_request.fund_grant.organization %>
+  <b>Requestor:</b> <%= @fund_request.fund_grant.organization %>
 </p>
 
 <p>
-<b>State:</b> <%= @fund_request.state %>
+  <b>Request type:</b> <%= @fund_request.fund_request_type %>
+</p>
+
+<p>
+  <b>State:</b> <%= @fund_request.state %>
 </p>
 
 <p>

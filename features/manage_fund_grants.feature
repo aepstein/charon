@@ -5,6 +5,7 @@ Feature: Manage fund_grants
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
 
   Scenario Outline: Test how permissions failures are reported to the user
     Given an organization: "reviewer" exists with last_name: "Funding Source"
@@ -38,6 +39,7 @@ Feature: Manage fund_grants
   Scenario: Create and update fund_grants
     Given a fund_source exists with name: "Annual Budget"
     And a fund_queue exists with fund_source: the fund_source
+    And fund_request_type: "unrestricted" is amongst the fund_request_types of the fund_queue
     And a fund_source exists with name: "Semester Budget"
     And a fund_queue exists with fund_source: the fund_source
     And an organization exists with last_name: "Spending Club"
@@ -47,6 +49,8 @@ Feature: Manage fund_grants
     And I press "Create"
     Then I should see "Fund grant was successfully created."
     And I should see "Fund source: Annual Budget"
+    And I should see "Request type: Unrestricted"
+    And I should see "State: started"
     # TODO should we be able to edit a fund_grant?
 
   Scenario: List and delete fund_grants

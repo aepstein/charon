@@ -7,7 +7,13 @@ class FundGrant < ActiveRecord::Base
   belongs_to :organization, :inverse_of => :fund_grants
   belongs_to :fund_source, :inverse_of => :fund_grants
 
-  has_many :fund_requests, :inverse_of => :fund_grant, :dependent => :destroy
+  has_many :fund_requests, :inverse_of => :fund_grant, :dependent => :destroy do
+    def build_first
+      request = build
+      request.fund_request_type = @association.owner.fund_source.
+        fund_request_types.upcoming.allowed_for_first.first
+    end
+  end
   has_many :fund_items, :inverse_of => :fund_grant, :dependent => :destroy
 
   # TODO - need :through => :organization, but need Rails 3.1 to implement
