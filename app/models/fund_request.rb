@@ -4,11 +4,13 @@ class FundRequest < ActiveRecord::Base
   SEARCHABLE = [ :organization_name_contains, :fund_source_name_contains,
     :with_state ]
 
+  attr_accessible :fund_request_type_id
   attr_accessible :reject_message, :as => :rejector
-  attr_readonly :fund_grant_id
+  attr_readonly :fund_grant_id, :fund_request_type_id
 
   belongs_to :fund_grant, :inverse_of => :fund_requests
   belongs_to :fund_queue, :inverse_of => :fund_requests
+  belongs_to :fund_request_type, :inverse_of => :fund_requests
   belongs_to :withdrawn_by_user, :class_name => 'User'
 
   has_many :approvals, :dependent => :delete_all, :as => :approvable do
@@ -60,12 +62,10 @@ class FundRequest < ActiveRecord::Base
       cap
     end
 
-    def children_of(parent_fund_item)
-      self.select { |fund_item| fund_item.parent_id == parent_fund_item.id }
+    def appended
+      scoped.appended_to( self )
     end
-    def root
-      self.select { |fund_item| fund_item.parent_id.nil? }
-    end
+
     def for_category(category)
       self.select { |fund_item| fund_item.node.category_id == category.id }
     end
@@ -73,9 +73,6 @@ class FundRequest < ActiveRecord::Base
       total = 0.0
       for_category(category).each { |i| total += i.amount }
       total
-    end
-    def initialize_next_fund_edition
-      root.each { |fund_item| fund_item.initialize_next_fund_edition }
     end
   end
   has_many :users, :through => :approvals do
@@ -98,7 +95,9 @@ class FundRequest < ActiveRecord::Base
 
   validates :fund_grant, :presence => true
   validates :approval_checkpoint, :timeliness => { :type => :datetime }
+  validates :fund_request_type, :presence => true, :on => :create
   validate :fund_source_must_be_same_for_grant_and_queue
+  validate :fund_request_type_must_be_associated_with_fund_source, :on => :create
 
   state_machine :review_state, :initial => :unreviewed, :namespace => 'review' do
 
@@ -192,6 +191,7 @@ class FundRequest < ActiveRecord::Base
     joins { fund_grant.fund_source }.merge( FundSource.unscoped.
       where { |fund_sources| fund_sources.name =~ "%#{name}%" } )
   }
+  scope :actionable, without_state( :withdrawn, :rejected )
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
     "fund_request_id = fund_requests.id AND perspective = ?) > " +
     "(SELECT COUNT(*) FROM fund_editions WHERE " +
@@ -233,6 +233,9 @@ class FundRequest < ActiveRecord::Base
       fund_editions.where(:perspective => FundEdition::PERSPECTIVES.last).count
     end
   end
+
+  # Is the request actionable
+  def actionable?; %w( withdrawn rejected ).all? { |s| s != state }; end
 
   # Are there any approval criteria that have not been fulfilled for current
   # tentative status?
@@ -278,6 +281,13 @@ class FundRequest < ActiveRecord::Base
     return if fund_grant.blank? || fund_queue.blank?
     if fund_grant.fund_source != fund_queue.fund_source
       errors.add :fund_queue, " does not have the same fund source as the associated fund grant."
+    end
+  end
+
+  def fund_request_type_must_be_associated_with_fund_source
+    return unless fund_request_type && fund_grant
+    unless fund_grant.fund_source.fund_request_types.include?( fund_request_type )
+      errors.add :fund_request_type, " is not allowed"
     end
   end
 

@@ -3,6 +3,8 @@ class FundRequestType < ActiveRecord::Base
     :appendable_quantity_limit, :appendable_amount_limit
 
   has_and_belongs_to_many :fund_queues
+  has_many :fund_requests, :inverse_of => :fund_request_type,
+    :dependent => :destroy
 
   default_scope order { name }
 

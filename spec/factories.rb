@@ -185,6 +185,18 @@ FactoryGirl.define do
 
   factory :fund_request do
     association :fund_grant
+    fund_request_type do |r|
+      if r.fund_grant.fund_source.fund_request_types.first
+        r.fund_grant.fund_source.fund_request_types.first
+      elsif r.fund_grant.fund_source.fund_queues.any?
+        ( r.fund_grant.fund_source.fund_queues.first.fund_request_types <<
+          r.association( :fund_request_type ) ).first
+      else
+        ( r.association( :fund_queue, :fund_source => r.fund_grant.fund_source ).
+          fund_request_types << r.association( :fund_request_type ) ).first
+      end
+    end
+    after_build { |fund_request| fund_request.fund_grant.fund_source.association(:fund_queues).reset }
   end
 
   factory :fund_request_type do

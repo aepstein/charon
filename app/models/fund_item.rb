@@ -69,6 +69,7 @@ class FundItem < ActiveRecord::Base
       next_edition
     end
   end
+  has_many :fund_requests, :through => :fund_editions
   has_many :documents, :through => :fund_editions
   has_many :document_types, :through => :node
 
@@ -80,13 +81,18 @@ class FundItem < ActiveRecord::Base
   accepts_nested_attributes_for :fund_editions
 
   scope :ordered, order { position }
+  scope :appended_to, lambda { |fund_request|
+    where { id.not_in( FundEdition.unscoped.joins { fund_request }.
+      select { fund_item_id }.merge( FundRequest.unscoped.actionable ) ) }
+  }
 
   validates :title, :presence => true
   validates :node, :presence => true
   validates :fund_grant, :presence => true
   validates :amount,
     :numericality => { :greater_than_or_equal_to => 0.0 }
-  validate :node_must_be_allowed, :on => :create
+  validate :node_must_be_allowed, :must_not_exceed_appendable_quantity_limit,
+    :on => :create
 
   before_validation :set_title
   after_update { |fund_item|
@@ -108,12 +114,24 @@ class FundItem < ActiveRecord::Base
     end
   end
 
-  def node_must_be_allowed
-    return if node.blank? || fund_grant.blank?
-    errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
+  def to_s; title; end
+
+  # Has the item been appended to the fund_request?
+  # * it is appended if the item is new or if the item is not associated with
+  #   any other actionable request (e.g. is not in process or released)
+  def appended_to_fund_request?( fund_request )
+    return true if new_record? || fund_requests.actionable.empty?
+    false
   end
 
-  def to_s; title; end
+  # Will inclusion of the item in a fund request exceed the appendable_quantity_limit
+  # for that request?
+  def exceeds_appendable_quantity_limit_for_fund_request?( fund_request )
+    return false unless fund_request.fund_request_type.appendable_quantity_limit
+    return true if ( fund_request.fund_items.appended.where { id != my { id } }.length ==
+       fund_request.fund_request_type.appendable_quantity_limit )
+    false
+  end
 
   protected
 
@@ -126,6 +144,20 @@ class FundItem < ActiveRecord::Base
       self.title ||= fund_editions.first.title
     elsif node
       self.title ||= node.name
+    end
+  end
+
+  def node_must_be_allowed
+    return if node.blank? || fund_grant.blank?
+    errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
+  end
+
+  def must_not_exceed_appendable_quantity_limit
+    fund_request = fund_editions.map(&:fund_request).select(&:actionable?).first
+    return unless fund_request
+    if exceeds_appendable_quantity_limit_for_fund_request( fund_request )
+      errors.add :base,
+        "exceeds number of allowed items for #{fund_request.fund_request_type}"
     end
   end
 

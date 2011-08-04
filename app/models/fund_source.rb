@@ -52,6 +52,7 @@ class FundSource < ActiveRecord::Base
       FundItem.where( "id IN (#{sub})", @association.owner.id, status ).sum( 'amount' )
     end
   end
+  has_many :fund_request_types, :through => :fund_queues
 
   accepts_nested_attributes_for :fund_queues, :allow_destroy => true,
     :reject_if => proc { |a|

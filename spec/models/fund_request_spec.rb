@@ -24,11 +24,20 @@ describe FundRequest do
       @fund_request.approval_checkpoint = nil
       @fund_request.save.should be_false
     end
+
+    it 'should not save without a fund_request_type' do
+      @fund_request.fund_request_type = nil
+      @fund_request.save.should be_false
+    end
+
+    it 'should not save with fund_request_type that is not associated with the source through its queues' do
+      @fund_request.fund_request_type = create( :fund_request_type )
+      @fund_request.save.should be_false
+    end
   end
 
   it "should reset approval checkpoint on transition to submitted" do
-    queue = create(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
-    @fund_request.fund_grant.fund_source.fund_queues.reset
+    queue = @fund_request.fund_grant.fund_source.fund_queues.first
     @fund_request.state = 'tentative'
     @fund_request.save!
     @fund_request.update_attribute :approval_checkpoint, 2.seconds.ago
@@ -48,8 +57,7 @@ describe FundRequest do
 
   it "should call deliver_release_notice and set released_at on entering the released state" do
     m = create(:membership, :organization => @fund_request.fund_grant.organization, :role => create(:requestor_role))
-    queue = create( :fund_queue, :fund_source => @fund_request.fund_grant.fund_source )
-    @fund_request.fund_grant.fund_source.fund_queues.reset
+    queue = @fund_request.fund_grant.fund_source.fund_queues.first
     @fund_request.state = 'submitted'
     @fund_request.fund_queue = queue
     @fund_request.review_state = 'ready'
@@ -62,8 +70,6 @@ describe FundRequest do
   end
 
   it "should set submitted_at on entering submitted state" do
-    create(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
-    @fund_request.fund_grant.fund_source.fund_queues.reset
     @fund_request.state = 'tentative'
     @fund_request.save!
     @fund_request.should_receive( :send_submitted_notice! )
@@ -118,8 +124,7 @@ describe FundRequest do
   end
 
   it 'should have an approvable? method that will not allow approval of submitted requests unless all initial editions have corresponding finals' do
-    queue = create(:fund_queue, :fund_source => @fund_request.fund_grant.fund_source)
-    @fund_request.fund_grant.fund_source.reload
+    queue = @fund_request.fund_grant.fund_source.fund_queues.first
     @fund_request.fund_queue = queue
     @fund_request.state = 'submitted'
     @fund_request.save!
