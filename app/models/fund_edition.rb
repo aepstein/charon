@@ -1,12 +1,14 @@
 class FundEdition < ActiveRecord::Base
   PERSPECTIVES = %w( requestor reviewer )
 
-  attr_accessible :amount, :comment, :perspective,
+  attr_accessible :amount, :comment, :perspective, :displace_item_id,
     :administrative_expense_attributes, :local_event_expense_attributes,
     :speaker_expense_attributes, :travel_event_expense_attributes,
     :durable_good_expense_attributes, :publication_expense_attributes,
     :external_equity_report_attributes, :documents_attributes
   attr_readonly :fund_item_id, :perspective
+
+  attr_accessor :displace_item
 
   belongs_to :fund_item, :inverse_of => :fund_editions
   belongs_to :fund_request, :inverse_of => :fund_editions
@@ -61,11 +63,12 @@ class FundEdition < ActiveRecord::Base
   validates :perspective, :inclusion => { :in => PERSPECTIVES },
     :uniqueness => { :scope => :fund_item_id }
   validate :amount_must_be_within_requestable_max,
-    :amount_must_be_within_original_edition, :amount_must_be_within_node_limit
+    :amount_must_be_within_original_edition, :amount_must_be_within_node_limit,
+    :displace_item_must_be_displaceable
   validate :previous_edition_must_exist, :item_and_request_must_have_same_grant,
     :on => :create
 
-  after_save :set_fund_item_title
+  after_save :set_fund_item_title, :reposition_item
 
   def nested_changed?
     return true if changed?
@@ -109,6 +112,24 @@ class FundEdition < ActiveRecord::Base
   def requestable=(requestable)
     return nil if fund_item.nil? || fund_item.node.nil? || fund_item.node.requestable_type.blank?
     self.send("#{fund_item.node.requestable_type.underscore}=",requestable)
+  end
+
+  # What items can the item associated with this edition be repositioned to?
+  # * must be siblings of associated item
+  # * must be associated with the request of the edition
+  def displaceable_items
+    return [] unless fund_item && fund_request
+    fund_item.siblings.
+    select { |i| fund_request.fund_editions.map(&:fund_item).include? i }
+  end
+
+  def displace_item_id=(i)
+    self.displace_item = FundItem.find(i.to_i)
+  end
+
+  def displace_item_id
+    return nil unless displace_item
+    displace_item.id
   end
 
   # Returns the index in the PERSPECTIVES sequence for this edition
@@ -186,6 +207,23 @@ class FundEdition < ActiveRecord::Base
     if previous.blank?
       errors.add( :perspective, " is not allowed until there is a " +
         "#{previous_perspective} fund_edition for the fund_item" )
+    end
+  end
+
+  # Assures displace item is one this item is eligible to displace
+  def displace_item_must_be_displaceable
+    return unless displace_item && fund_item
+    unless displaceable_items.include?( displace_item )
+      errors.add :displace_item, " cannot be displaced by this item"
+    end
+  end
+
+  # Repositions item to position of displace_item if displace_item is set
+  def reposition_item
+    if displace_item && perspective && perspective == FundEdition::PERSPECTIVES.first
+      np = displace_item.position
+      self.displace_item = nil
+      fund_item.insert_at np
     end
   end
 

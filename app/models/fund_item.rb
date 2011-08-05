@@ -1,7 +1,6 @@
 class FundItem < ActiveRecord::Base
   #TODO conditionally make amount available based on user role
-  attr_accessible :node_id, :parent_id, :new_position, :amount,
-    :fund_editions_attributes
+  attr_accessible :node_id, :parent_id, :amount, :fund_editions_attributes
   attr_readonly :fund_request_id, :node_id, :ancestry
 
   belongs_to :node, :inverse_of => :fund_items
@@ -76,7 +75,7 @@ class FundItem < ActiveRecord::Base
   has_paper_trail :class_name => 'SecureVersion'
   has_ancestry
 
-  acts_as_list :scope => [ :fund_grant_id, :ancestry ]
+  acts_as_list :scope => [ :fund_grant_id ]
 
   accepts_nested_attributes_for :fund_editions
 
@@ -94,16 +93,7 @@ class FundItem < ActiveRecord::Base
   validate :node_must_be_allowed, :must_not_exceed_appendable_quantity_limit,
     :on => :create
 
-  before_validation :set_title
-  after_update { |fund_item|
-    if fund_item.new_position && ( fund_item.new_position.to_i > 0 )
-      np = fund_item.new_position.to_i
-      fund_item.new_position = nil
-      fund_item.insert_at np
-    end
-  }
-
-  attr_accessor :new_position
+  before_validation :set_title, :initialize_position
 
   # What types of nodes can this item be created as?
   def allowed_nodes
@@ -134,6 +124,11 @@ class FundItem < ActiveRecord::Base
   end
 
   protected
+
+  # Set the initial position to which the item should be assigned
+  def initialize_position
+    self.position ||= siblings.ordered.last.position + 1
+  end
 
   # Set the title automatically
   # * TODO: flexible_budgets: should use requestor title in latest requestor edition

@@ -5,11 +5,6 @@
     <%= form.input :node_id, :as => :hidden %>
     <%= form.input :parent_id, :as => :hidden %>
   <% else -%>
-    <% if permitted_to?( :request, form.object ) -%>
-      <%= form.input :new_position, :label => 'Move to priority of',
-        :hint => 'Use this to change the priority of this item relative to others',
-        :as => :select, :collection => options_for_position(form.object) %>
-    <% end -%>
     <% if permitted_to?( :allocate, form.object ) -%>
       <%= form.input :amount, :hint => 'What allocation amount should be provided for this item?' %>
     <% end -%>

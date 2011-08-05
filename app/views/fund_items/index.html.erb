@@ -4,7 +4,7 @@ table td { padding: 4px; }
 
 <h2>Listing fund_items for <%=h @fund_request %></h2>
 
-<%= render :partial => "fund_items", :object => @fund_request.fund_items.root, :locals => {
+<%= render :partial => "fund_items", :object => @fund_request.fund_items.roots, :locals => {
   :show_detail => false, :read_only => false, :fund_request => @fund_request
 } %>
 

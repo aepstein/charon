@@ -4,6 +4,11 @@
     <% if form.object.new_record? -%>
       <%= form.input :perspective, :as => :hidden %>
     <% end -%>
+    <% if form.object.perspective == FundEdition::PERSPECTIVES.first -%>
+      <%= form.input :displace_item_id, :label => 'Move to priority of',
+        :hint => 'Use this to change the priority of this item relative to others',
+        :as => :select, :collection => options_for_displace_item(form.object) %>
+    <% end -%>
     <% if form.object.requestable %>
     <%= form.semantic_fields_for form.object.requestable.class.to_s.underscore.to_sym do |requestable_form| %>
       <%= render :partial => "#{form.object.requestable.class.to_s.tableize}/form", :object => requestable_form %>

@@ -8,8 +8,13 @@ class FundGrant < ActiveRecord::Base
   belongs_to :fund_source, :inverse_of => :fund_grants
 
   has_many :fund_requests, :inverse_of => :fund_grant, :dependent => :destroy do
+    # Builds a first request, inferring request type from those that are
+    # allowed for the first in upcoming queues
+    # * will leave fund_request_type blank if owner has no fund source
+    #   from which to make the inference
     def build_first
       request = build
+      return request if @association.owner.fund_source.blank?
       request.fund_request_type = @association.owner.fund_source.
         fund_request_types.upcoming.allowed_for_first.first
     end

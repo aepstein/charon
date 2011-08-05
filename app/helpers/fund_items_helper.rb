@@ -1,6 +1,6 @@
 module FundItemsHelper
-  def options_for_position(fund_item)
-    ( fund_item.parent ? fund_item.parent.children : fund_item.fund_grant.fund_items.roots ).map { |i| [ i.title, i.position ] }
+  def options_for_displace_item(fund_edition)
+    fund_edition.displaceable_items.map { |item| [ item.title, item.id ] }
   end
 end
 
