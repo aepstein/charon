@@ -93,7 +93,8 @@ class FundItem < ActiveRecord::Base
   validate :node_must_be_allowed, :must_not_exceed_appendable_quantity_limit,
     :on => :create
 
-  before_validation :set_title, :initialize_position
+  before_validation :set_title
+  before_validation :initialize_nested_position, :on => :create
 
   # What types of nodes can this item be created as?
   def allowed_nodes
@@ -126,8 +127,10 @@ class FundItem < ActiveRecord::Base
   protected
 
   # Set the initial position to which the item should be assigned
-  def initialize_position
-    self.position ||= siblings.ordered.last.position + 1
+  def initialize_nested_position
+    return true if position || is_root?
+    last = siblings.ordered.last || parent
+    self.position = last.position + 1
   end
 
   # Set the title automatically
