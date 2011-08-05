@@ -124,7 +124,11 @@ class FundEdition < ActiveRecord::Base
   end
 
   def displace_item_id=(i)
-    self.displace_item = FundItem.find(i.to_i)
+    if i.blank?
+      self.displace_item = nil
+    else
+      self.displace_item = FundItem.find(i.to_i)
+    end
   end
 
   def displace_item_id

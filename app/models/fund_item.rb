@@ -90,8 +90,7 @@ class FundItem < ActiveRecord::Base
   validates :fund_grant, :presence => true
   validates :amount,
     :numericality => { :greater_than_or_equal_to => 0.0 }
-  validate :node_must_be_allowed, :must_not_exceed_appendable_quantity_limit,
-    :on => :create
+  validate :node_must_be_allowed, :on => :create
 
   before_validation :set_title
   before_validation :initialize_nested_position, :on => :create
