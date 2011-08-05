@@ -15,9 +15,10 @@ Feature: Manage fund_request mailers
     And an organization: "reviewer" exists with last_name: "Money Giving Club"
     And a fund_source exists with framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized release message."
     And a fund_queue exists with fund_source: the fund_source
+    And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
+    And the fund_request_type is amongst the fund_request_types of the fund_queue
     And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
-    And a fund_request: "started" exists with state: "started", fund_grant: the fund_grant
-    And a fund_request: "tentative" exists with state: "tentative", fund_grant: the fund_grant, fund_queue: the fund_queue
+    And a fund_request: "started" exists with state: "started", fund_grant: the fund_grant, fund_queue: the fund_queue
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
     And a user: "treasurer" exists with email: "treasurer@example.com", first_name: "Jane", last_name: "Doe"
     And a user: "officer" exists with email: "officer@example.com", first_name: "Alpha", last_name: "Beta"
@@ -26,7 +27,6 @@ Feature: Manage fund_request mailers
     And a membership exists with organization: organization "requestor", role: role "treasurer", user: user "treasurer", active: true
     And a membership exists with organization: organization "requestor", role: role "officer", user: user "officer", active: true
     And a membership exists with organization: organization "requestor", role: role "president", user: user "old_president", active: false
-    And an approval exists with approvable: fund_request "tentative", user: user "president"
 
   Scenario: Send notice regarding a started fund_request
     Given all emails have been delivered
@@ -43,8 +43,10 @@ Feature: Manage fund_request mailers
     And the email parts should not contain "Alpha Beta"
 
   Scenario: Send notice regarding a tentatively completed fund_request
-    Given all emails have been delivered
-    And a tentative notice email is sent for fund_request: "tentative"
+    Given an approval exists with approvable: fund_request "started", user: user "president"
+    And all emails have been delivered
+    And fund_request: "started" has state: "tentative"
+    And a tentative notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And the email subject should contain "Request of Money Taking Club from Money Taking Fund needs your approval"
@@ -56,8 +58,8 @@ Feature: Manage fund_request mailers
 
   Scenario: Send notice regarding a finalized fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has state: "finalized"
-    And a finalized notice email is sent for fund_request: "tentative"
+    And fund_request: "started" has state: "finalized"
+    And a finalized notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
@@ -69,8 +71,8 @@ Feature: Manage fund_request mailers
 
   Scenario: Send notice regarding an submitted fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has state: "submitted"
-    And an submitted notice email is sent for fund_request: "tentative"
+    And fund_request: "started" has state: "submitted"
+    And an submitted notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
@@ -82,8 +84,9 @@ Feature: Manage fund_request mailers
 
   Scenario: Send notice regarding a rejected fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has reject_message: "Organization is banned from applying this time."
-    And an rejected notice email is sent for fund_request: "tentative"
+    And fund_request: "started" has reject_message: "Organization is banned from applying this time."
+    And fund_request: "started" has state: "rejected"
+    And an rejected notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
@@ -95,8 +98,8 @@ Feature: Manage fund_request mailers
 
   Scenario: Send notice regarding a released fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has state: "released"
-    And a released notice email is sent for fund_request: "tentative"
+    And fund_request: "started" has state: "released"
+    And a released notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
@@ -108,8 +111,8 @@ Feature: Manage fund_request mailers
 
   Scenario: Send notice regarding a withdrawn fund_request
     Given all emails have been delivered
-    And fund_request: "tentative" has withdrawn_by_user: user "officer", withdrawn_at: "2011-06-01 09:00:00"
-    And a withdrawn notice email is sent for fund_request: "tentative"
+    And fund_request: "started" has withdrawn_by_user: user "officer", withdrawn_at: "2011-06-01 09:00:00"
+    And a withdrawn notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"

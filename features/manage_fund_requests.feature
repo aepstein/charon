@@ -103,14 +103,19 @@ Feature: Manage fund_requests
 
   Scenario: Create and update fund_requests
     Given a fund_source exists with name: "Annual Budget"
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_request_type exists with name: "Unrestricted"
+    And the fund_request_type is amongst the fund_request_types of the fund_queue
     And an organization exists with last_name: "Applicant"
     And a fund_grant exists with fund_source: the fund_source, organization: the organization
     And I log in as user: "admin"
     And I am on the new fund_request page for the fund_grant
+    And I select "Unrestricted" from "Fund request type"
     And I press "Create"
     Then I should see "Fund request was successfully created."
     And I should see "Fund source: Annual Budget"
     And I should see "Requestor: Applicant"
+    And I should see "Request type: Unrestricted"
     When I follow "Edit"
     And I press "Update"
     Then I should see "Fund request was successfully updated."
