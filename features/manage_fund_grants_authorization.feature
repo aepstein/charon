@@ -55,18 +55,25 @@ Feature: Manage fund_grants authorization
 
   Scenario Outline: Test permissions for fund_grants controller with fund_source
     Given a fund_source exists with name: "Annual", organization: organization "source"
-    And a fund_queue exists with fund_source: the fund_source
     And I log in as user: "<user>"
+    And a fund_queue: "focus" exists with fund_source: the fund_source
+    And a fund_queue: "other" exists
+    And a fund_request_type exists
+    And the fund_request_type is amongst the fund_request_types of fund_queue: "focus"
     And I am on the new fund_grant page for organization: "applicant"
     When I select "Annual" from "Fund source"
     And there are no fund_queues
     And the fund_source is <state>
-    And a fund_queue exists with fund_source: the fund_source
+    And a fund_queue: "focus" exists with fund_source: the fund_source
+    And a fund_queue: "other" exists
+    And a fund_request_type exists
+    And the fund_request_type is amongst the fund_request_types of fund_queue: "<queue>"
     And I press "Create"
     Then I should <create> authorized
     Examples:
-      | state    | user                | create  |
-      | open     | applicant_requestor | see     |
-      | upcoming | applicant_requestor | not see |
-      | closed   | applicant_requestor | not see |
+      | state    | queue | user                | create  |
+      | open     | focus | applicant_requestor | see     |
+      | open     | other | applicant_requestor | not see |
+      | upcoming | focus | applicant_requestor | not see |
+      | closed   | focus | applicant_requestor | not see |
 

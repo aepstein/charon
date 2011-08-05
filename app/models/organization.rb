@@ -14,7 +14,7 @@ class Organization < ActiveRecord::Base
     # * must fulfill criteria for user
     # * must not have a prior grant created
     def allowed_for( user )
-      no_fund_grant.open_deadline.
+      no_fund_grant.open_deadline_for_first.
         fulfilled_for( FundEdition::PERSPECTIVES.first, @association.owner, user )
     end
 

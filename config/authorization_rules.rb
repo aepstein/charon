@@ -196,7 +196,7 @@ authorization do
       if_permitted_to :request
       if_attribute :fund_source => { :fund_queues => {
         :submit_at => gt { Time.zone.now },
-        :fund_request_types => { :allowed_for_initial => is { true } } } }
+        :fund_request_types => { :allowed_for_first => is { true } } } }
     end
     has_permission_on [ :fund_grants ], :to => [ :manage, :show, :allocate ] do
       if_permitted_to :manage, :fund_source

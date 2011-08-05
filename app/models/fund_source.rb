@@ -85,6 +85,10 @@ class FundSource < ActiveRecord::Base
     open.joins { fund_queues }.
     where { fund_queues.submit_at.gt( Time.zone.now ) }
   }
+  scope :open_deadline_for_first, lambda {
+    open_deadline.joins { fund_queues.fund_request_types }.
+    where { fund_queues.fund_request_types.allowed_for_first == true }
+  }
   scope :upcoming, lambda { where( 'open_at > ?', Time.zone.now ) }
   scope :no_fund_grant_for, lambda { |organization|
     where { id.not_in( FundGrant.unscoped.
