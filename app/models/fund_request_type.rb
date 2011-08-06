@@ -1,6 +1,6 @@
 class FundRequestType < ActiveRecord::Base
   attr_accessible :name, :allowed_for_first, :amendable_quantity_limit,
-    :appendable_quantity_limit, :appendable_amount_limit
+    :appendable_quantity_limit, :appendable_amount_limit, :quantity_limit
 
   has_and_belongs_to_many :fund_queues
   has_many :fund_requests, :inverse_of => :fund_request_type,
@@ -18,6 +18,8 @@ class FundRequestType < ActiveRecord::Base
       :greater_than_or_equal_to => 0 }
   validates :appendable_amount_limit,
     :numericality => { :allow_nil => true, :greater_than_or_equal_to => 0.0 }
+  validates :quantity_limit, :numericality => { :allow_nil => true,
+    :only_integer => true, :greater_than_or_equal_to => 0 }
 
   def to_s; name; end
 end
