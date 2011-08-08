@@ -10,6 +10,8 @@
       :hint => 'How many items may be added? (Leave blank if no restriction)' %>
     <%= form.input :appendable_amount_limit,
       :hint => 'How much may be requested in items added? (Leave blank if no restriction)' %>
+    <%= form.input :quantity_limit,
+      :hint => 'How many total items can be submitted? (Leave blank if no restriction)' %>
   <% end %>
   <%= form.buttons %>
 

@@ -34,6 +34,15 @@
 </p>
 
 <p>
+  <b>Quantity limit:</b>
+  <% if @fund_request_type.quantity_limit.blank? %>
+  No limit
+  <% else %>
+  <%= pluralize @fund_request_type.quantity_limit, 'item' %>
+  <% end %>
+</p>
+
+<p>
 <% if permitted_to? :update, @fund_request_type -%>
 <%= link_to 'Edit', edit_fund_request_type_path(@fund_request_type) %> |
 <% end -%>

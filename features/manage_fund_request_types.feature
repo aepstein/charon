@@ -42,6 +42,7 @@ Feature: Manage fund_request_types
     And I fill in "Amendable quantity limit" with "0"
     And I fill in "Appendable quantity limit" with "1"
     And I fill in "Appendable amount limit" with "1000.05"
+    And I fill in "Quantity limit" with "2"
     And I press "Create"
     Then I should see "Fund request type was successfully created."
     And I should see "Name: Special Project"
@@ -49,12 +50,14 @@ Feature: Manage fund_request_types
     And I should see "Amendable quantity limit: 0 items"
     And I should see "Appendable quantity limit: 1 item"
     And I should see "Appendable amount limit: $1,000.05"
+    And I should see "Quantity limit: 2 items"
     When I follow "Edit"
     And I fill in "Name" with "Unrestricted"
     And I choose "Yes"
     And I fill in "Amendable quantity limit" with ""
     And I fill in "Appendable quantity limit" with ""
     And I fill in "Appendable amount limit" with ""
+    And I fill in "Quantity limit" with ""
     And I press "Update"
     Then I should see "Fund request type was successfully updated."
     And I should see "Name: Unrestricted"
@@ -62,6 +65,8 @@ Feature: Manage fund_request_types
     And I should see "Amendable quantity limit: No limit"
     And I should see "Appendable quantity limit: No limit"
     And I should see "Appendable amount limit: No limit"
+    And I should see "Quantity limit: No limit"
+
 
   Scenario: Delete fund_request_type
     Given a fund_request_type exists with name: "fund_request_type 4"
