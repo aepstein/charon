@@ -29,7 +29,8 @@ module RegistrationImporter
     default_scope select( MAP.keys.join(', ') )
 
     belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
-    belongs_to :registration, :class_name => 'ExternalRegistration', :foreign_key => [ :org_id, :term_id ]
+    belongs_to :registration, :class_name => 'ExternalRegistration',
+      :foreign_key => [ :org_id, :term_id ]
 
     def users
       net_ids.inject([]) do |memo, net_id|

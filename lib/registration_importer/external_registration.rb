@@ -32,7 +32,8 @@ module RegistrationImporter
       order( 'orgs.updated_time ASC' )
 
     scope :importable, lambda {
-      max_registration = Registration.unscoped.where { when_updated != nil }.
+      max_registration = Registration.unscoped.
+        where( Registration.arel_table[:when_updated].not_eq( nil ) ).
         maximum(:when_updated)
       if max_registration then
         where( :updated_time.gt => max_registration )
@@ -49,7 +50,7 @@ module RegistrationImporter
         end
       end
     end
-    belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => [ :term_id ]
+    belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
 
     def reg_approved
       read_attribute(:reg_approved) == 'YES'
