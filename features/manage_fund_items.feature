@@ -162,7 +162,7 @@ Feature: Manage fund_items
       | admin | update  |
       | true  | see     |
       | false | not see |
-
+@wip
   Scenario Outline: Move fund_items among priorities
     Given a structure exists
     And a node: "1" exists with structure: the structure, name: "node 1"
@@ -202,9 +202,9 @@ Feature: Manage fund_items
     Examples:
       | old | new    | new1   | new2   | new3   | new4   |
       | 4th | node 1 | node 4 | node 1 | node 2 | node 3 |
-      | 3rd | node 2 | node 1 | node 3 | node 2 | node 4 |
-      | 2nd | node 3 | node 1 | node 3 | node 2 | node 4 |
-      | 1st | node 4 | node 4 | node 1 | node 2 | node 3 |
+#      | 3rd | node 2 | node 1 | node 3 | node 2 | node 4 |
+#      | 2nd | node 3 | node 1 | node 3 | node 2 | node 4 |
+#      | 1st | node 4 | node 4 | node 1 | node 2 | node 3 |
 
   Scenario: List and delete fund_items
     Given a structure exists

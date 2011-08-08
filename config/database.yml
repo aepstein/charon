@@ -29,7 +29,7 @@ production:
   timeout: 5000
 
 external_registrations_development:
-  adapter: mysql
+  adapter: mysql2
   database: new_sao
   username: root
   host: localhost
