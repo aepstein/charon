@@ -23,7 +23,8 @@ describe FundEdition do
     it 'should not save with a duplicate perspective for fund_item' do
       fund_edition.save!
       duplicate_fund_edition = build( :fund_edition,
-       :fund_item => fund_edition.fund_item )
+       :fund_item => fund_edition.fund_item,
+       :fund_request => fund_edition.fund_request )
       duplicate_fund_edition.perspective.should eql fund_edition.perspective
       duplicate_fund_edition.save.should be_false
     end
@@ -151,6 +152,50 @@ describe FundEdition do
       fund_edition.previous.should be_nil
       next_edition.previous.should eql fund_edition
     end
+  end
+
+  context 'fund_request scopes' do
+
+    let(:initial_request) { create( :fund_request, :state => 'released' ) }
+    let(:unactionable_request) {
+      create( :withdrawn_fund_request, :fund_grant => initial_request.fund_grant )
+    }
+    let(:updated_request) {
+      sleep 1
+      create( :fund_request, :fund_grant => initial_request.fund_grant )
+    }
+    let(:original_edition) {
+      create( :fund_edition, :fund_request => initial_request )
+    }
+    let(:amended_edition) {
+      create( :fund_edition, :fund_request => updated_request,
+        :fund_item => original_edition.fund_item )
+    }
+    let(:appended_edition) {
+      create( :fund_edition, :fund_request => updated_request )
+    }
+    let(:withdrawn_edition) {
+      create( :fund_edition, :fund_request => unactionable_request )
+    }
+
+    it 'should have not_prior_to_fund_request method that returns only editions whose item_ids do not appear in editions of earlier actionable requests' do
+      amended_edition
+      appended_edition
+      withdrawn_edition
+      scope = FundEdition.not_prior_to_fund_request( updated_request )
+      scope.length.should eql 2
+      scope.should include appended_edition, withdrawn_edition
+      scope = FundEdition.not_prior_to_fund_request( initial_request )
+      scope.length.should eql 4
+      scope.should include amended_edition, appended_edition,
+        withdrawn_edition, original_edition
+      withdrawn_appended = create( :fund_edition,
+        :fund_request => withdrawn_edition.fund_request,
+        :fund_item => appended_edition.fund_item )
+      FundEdition.not_prior_to_fund_request( updated_request ).
+        should_not include withdrawn_appended
+    end
+
   end
 
   it 'should have a title method that returns the requestable title if defined, nil otherwise' do

@@ -3,6 +3,7 @@ class FundRequest < ActiveRecord::Base
 
   SEARCHABLE = [ :organization_name_contains, :fund_source_name_contains,
     :with_state ]
+  UNACTIONABLE_STATES = [ :withdrawn, :rejected ]
 
   attr_accessible :fund_request_type_id
   attr_accessible :reject_message, :as => :rejector
@@ -18,7 +19,14 @@ class FundRequest < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
-  has_many :fund_editions, :dependent => :destroy, :inverse_of => :fund_request
+  has_many :fund_editions, :dependent => :destroy, :inverse_of => :fund_request do
+    def appended
+      initial.not_prior_to_fund_request @association.owner
+    end
+    def amended
+      initial.prior_to_fund_request @association.owner
+    end
+  end
   has_many :fund_items, :through => :fund_grant, :order => 'fund_items.position ASC' do
 
     # Allocate items according to specified preferences
@@ -98,7 +106,7 @@ class FundRequest < ActiveRecord::Base
   validates :fund_request_type, :presence => true, :on => :create
   validate :fund_source_must_be_same_for_grant_and_queue
   validate :fund_request_type_must_be_associated_with_fund_source,
-    :no_draft_fund_request_exists, :on => :create
+    :on => :create
 
   state_machine :review_state, :initial => :unreviewed, :namespace => 'review' do
 
@@ -121,6 +129,10 @@ class FundRequest < ActiveRecord::Base
   state_machine :initial => :started do
 
     state :finalized, :released, :started, :tentative
+
+    state :started do
+      validate :no_draft_fund_request_exists, :on => :create
+    end
 
     state :withdrawn do
       validates :withdrawn_by_user, :presence => true
@@ -193,6 +205,10 @@ class FundRequest < ActiveRecord::Base
       where { |fund_sources| fund_sources.name =~ "%#{name}%" } )
   }
   scope :actionable, without_state( :withdrawn, :rejected )
+  scope :prior_to, lambda { |request|
+    where { created_at < request.created_at }.
+    where { id != request.id }
+  }
   scope :draft, with_state( :started, :tentative, :finalized )
   scope :incomplete, lambda { where("(SELECT COUNT(*) FROM fund_editions WHERE " +
     "fund_request_id = fund_requests.id AND perspective = ?) > " +
