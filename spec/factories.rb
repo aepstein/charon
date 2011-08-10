@@ -197,6 +197,11 @@ FactoryGirl.define do
       end
     end
     after_build { |fund_request| fund_request.fund_grant.fund_source.association(:fund_queues).reset }
+
+    factory :withdrawn_fund_request do
+      association :withdrawn_by_user, :factory => :user
+      state 'withdrawn'
+    end
   end
 
   factory :fund_request_type do

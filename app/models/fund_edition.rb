@@ -41,6 +41,7 @@ class FundEdition < ActiveRecord::Base
       document
     end
   end
+  has_many :fund_editions, :through => :fund_item
 
   accepts_nested_attributes_for :administrative_expense
   accepts_nested_attributes_for :local_event_expense
@@ -61,11 +62,14 @@ class FundEdition < ActiveRecord::Base
   validates :amount,
     :numericality => { :greater_than_or_equal_to => 0 }
   validates :perspective, :inclusion => { :in => PERSPECTIVES },
-    :uniqueness => { :scope => :fund_item_id }
+    :uniqueness => { :scope => [ :fund_request_id, :fund_item_id ] }
   validate :amount_must_be_within_requestable_max,
     :amount_must_be_within_original_edition, :amount_must_be_within_node_limit,
-    :displace_item_must_be_displaceable
+    :displace_item_must_be_displaceable,
+    :must_not_exceed_appendable_amount_limit
   validate :previous_edition_must_exist, :item_and_request_must_have_same_grant,
+    :must_not_exceed_amendable_quantity_limit,
+    :must_not_exceed_appendable_quantity_limit, :must_not_exceed_quantity_limit,
     :on => :create
 
   after_save :set_fund_item_title, :reposition_item
@@ -171,6 +175,21 @@ class FundEdition < ActiveRecord::Base
     fund_item.fund_editions.previous_to( self )
   end
 
+  # Returns prior initial editions that this edition would amend
+  # * returns empty array if no persisted fund_item is associated
+  def priors
+    return [] unless fund_item && fund_item.persisted? && fund_request &&
+      fund_request.persisted?
+    fund_item.fund_editions.joins { fund_request }.
+      where { perspective == my { perspective } }.
+      where { fund_request.created_at < my { fund_request.created_at } }.
+      merge( FundRequest.unscoped.actionable )
+  end
+
+  def appended?; priors.empty?; end
+
+  def amended?; !appended?; end
+
   def to_s; "#{perspective} fund_edition of #{fund_item}"; end
 
   protected
@@ -211,6 +230,36 @@ class FundEdition < ActiveRecord::Base
     if previous.blank?
       errors.add( :perspective, " is not allowed until there is a " +
         "#{previous_perspective} fund_edition for the fund_item" )
+    end
+  end
+
+  def must_not_exceed_amendable_quantity_limit
+    return unless fund_request && fund_request.fund_request_type.amendable_quantity_limit
+    unless fund_request.fund_editions.amended.count < fund_request.fund_request_type.amendable_quantity_limit
+      errors.add( :fund_item, " exceeds number of amended items allowed for the request" )
+    end
+  end
+
+  def must_not_exceed_appendable_quantity_limit
+    return unless fund_request && fund_request.fund_request_type.appendable_quantity_limit
+    unless fund_request.fund_editions.appended.count < fund_request.fund_request_type.appendable_quantity_limit
+      errors.add( :fund_item, " exceeds number of new items allowed for the request" )
+    end
+  end
+
+  def must_not_exceed_quantity_limit
+    return unless fund_request && fund_request.fund_request_type.quantity_limit
+    unless fund_request.fund_editions.count < fund_request.fund_request_type.quantity_limit
+      errors.add( :fund_item, " exceeds number of items allowed for the request" )
+    end
+  end
+
+  def must_not_exceed_appendable_amount_limit
+    return unless amount && fund_request &&
+      fund_request.fund_request_type.appendable_amount_limit
+    if fund_request.fund_editions.appended.where { id != my { id } }.
+      sum( :amount ) + amount > fund_request.fund_request_type.appendable_amount_limit
+      errors.add( :amount, " exceeds amount allowed for new items in the request" )
     end
   end
 

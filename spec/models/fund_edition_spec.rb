@@ -23,7 +23,8 @@ describe FundEdition do
     it 'should not save with a duplicate perspective for fund_item' do
       fund_edition.save!
       duplicate_fund_edition = build( :fund_edition,
-       :fund_item => fund_edition.fund_item )
+       :fund_item => fund_edition.fund_item,
+       :fund_request => fund_edition.fund_request )
       duplicate_fund_edition.perspective.should eql fund_edition.perspective
       duplicate_fund_edition.save.should be_false
     end
@@ -151,6 +152,43 @@ describe FundEdition do
       fund_edition.previous.should be_nil
       next_edition.previous.should eql fund_edition
     end
+  end
+
+  context 'fund_request scopes' do
+
+    let(:initial_request) { create( :fund_request, :state => 'released' ) }
+    let(:unactionable_request) {
+      create( :withdrawn_fund_request, :fund_grant => initial_request.fund_grant )
+    }
+    let(:updated_request) {
+      sleep 1
+      create( :fund_request, :fund_grant => initial_request.fund_grant )
+    }
+    let(:original_edition) {
+      create( :fund_edition, :fund_request => initial_request )
+    }
+    let(:amended_edition) {
+      create( :fund_edition, :fund_request => updated_request,
+        :fund_item => original_edition.fund_item )
+    }
+    let(:appended_edition) {
+      create( :fund_edition, :fund_request => updated_request )
+    }
+    let(:withdrawn_edition) {
+      create( :fund_edition, :fund_request => unactionable_request,
+        :fund_item => appended_edition.fund_item )
+    }
+
+    it 'should have priors instance method that is empty except for amendments' do
+      amended_edition
+      appended_edition
+      withdrawn_edition
+      amended_edition.priors.length.should eql 1
+      amended_edition.priors.should include original_edition
+      appended_edition.priors.should be_empty
+      withdrawn_edition.priors.should be_empty
+    end
+
   end
 
   it 'should have a title method that returns the requestable title if defined, nil otherwise' do

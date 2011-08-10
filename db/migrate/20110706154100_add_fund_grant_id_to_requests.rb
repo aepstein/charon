@@ -53,6 +53,14 @@ class AddFundGrantIdToRequests < ActiveRecord::Migration
     SQL
     change_column :fund_editions, :fund_request_id, :integer, :null => false
 
+    say "Re-index fund_editions based on perspective, item and request"
+    remove_index :fund_editions,
+      :name => 'index_editions_on_fund_item_id_and_perspective'
+    add_index :fund_editions, [ :fund_request_id, :fund_item_id, :perspective ],
+      :unique => true, :name => 'unique_perspective'
+    add_index :fund_editions, :fund_request_id
+    add_index :fund_editions, :fund_item_id
+
     say "Remove deprecated references from fund_items"
     remove_column :fund_items, :fund_request_id
   end
