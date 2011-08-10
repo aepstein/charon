@@ -175,6 +175,21 @@ class FundEdition < ActiveRecord::Base
     fund_item.fund_editions.previous_to( self )
   end
 
+  # Returns prior initial editions that this edition would amend
+  # * returns empty array if no persisted fund_item is associated
+  def priors
+    return [] unless fund_item && fund_item.persisted? && fund_request &&
+      fund_request.persisted?
+    fund_item.fund_editions.joins { fund_request }.
+      where { perspective == my { perspective } }.
+      where { fund_request.created_at < my { fund_request.created_at } }.
+      merge( FundRequest.unscoped.actionable )
+  end
+
+  def appended?; priors.empty?; end
+
+  def amended?; !appended?; end
+
   def to_s; "#{perspective} fund_edition of #{fund_item}"; end
 
   protected

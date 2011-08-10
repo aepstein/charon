@@ -175,25 +175,18 @@ describe FundEdition do
       create( :fund_edition, :fund_request => updated_request )
     }
     let(:withdrawn_edition) {
-      create( :fund_edition, :fund_request => unactionable_request )
+      create( :fund_edition, :fund_request => unactionable_request,
+        :fund_item => appended_edition.fund_item )
     }
 
-    it 'should have not_prior_to_fund_request method that returns only editions whose item_ids do not appear in editions of earlier actionable requests' do
+    it 'should have priors instance method that is empty except for amendments' do
       amended_edition
       appended_edition
       withdrawn_edition
-      scope = FundEdition.not_prior_to_fund_request( updated_request )
-      scope.length.should eql 2
-      scope.should include appended_edition, withdrawn_edition
-      scope = FundEdition.not_prior_to_fund_request( initial_request )
-      scope.length.should eql 4
-      scope.should include amended_edition, appended_edition,
-        withdrawn_edition, original_edition
-      withdrawn_appended = create( :fund_edition,
-        :fund_request => withdrawn_edition.fund_request,
-        :fund_item => appended_edition.fund_item )
-      FundEdition.not_prior_to_fund_request( updated_request ).
-        should_not include withdrawn_appended
+      amended_edition.priors.length.should eql 1
+      amended_edition.priors.should include original_edition
+      appended_edition.priors.should be_empty
+      withdrawn_edition.priors.should be_empty
     end
 
   end
