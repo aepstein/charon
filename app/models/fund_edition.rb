@@ -217,28 +217,28 @@ class FundEdition < ActiveRecord::Base
   def item_and_request_must_have_same_grant
     return if fund_item.blank? || fund_request.blank?
     if fund_item.fund_grant != fund_request.fund_grant
-      errors.add(:fund_item, " is not part of the fund grant for the request.")
+      errors.add :fund_item, "is not part of the fund grant for the request"
     end
   end
 
   def amount_must_be_within_node_limit
     return if amount.blank? || fund_item.blank? || fund_item.node.blank?
     if amount > fund_item.node.item_amount_limit
-      errors.add(:amount, " is greater than maximum for #{fund_item.node}.")
+      errors.add :amount, "is greater than maximum for #{fund_item.node}"
     end
   end
 
   def amount_must_be_within_requestable_max
     return if requestable.nil? || amount.nil?
     if amount > requestable.max_fund_request then
-      errors.add(:amount, " is greater than the maximum fund_request.")
+      errors.add :amount, "is greater than the maximum request amount"
     end
   end
 
   def amount_must_be_within_original_edition
     return unless amount && previous
     if amount > previous.amount
-      errors.add(:amount, " is greater than original fund_request amount.")
+      errors.add :amount, "is greater than original request amount"
     end
   end
 
@@ -248,38 +248,42 @@ class FundEdition < ActiveRecord::Base
   def previous_edition_must_exist
     return unless previous_perspective && fund_item
     if previous.blank?
-      errors.add( :perspective, " is not allowed until there is a " +
+      errors.add( :perspective, "is not allowed until there is a " +
         "#{previous_perspective} fund_edition for the fund_item" )
     end
   end
 
   def must_not_exceed_amendable_quantity_limit
-    return unless fund_request && fund_request.fund_request_type.amendable_quantity_limit
-    unless fund_request.fund_editions.amended.count < fund_request.fund_request_type.amendable_quantity_limit
-      errors.add( :fund_item, " exceeds number of amended items allowed for the request" )
+    return unless fund_request && fund_request.fund_request_type.amendable_quantity_limit &&
+      perspective == FundEdition::PERSPECTIVES.first && amended?
+    unless fund_request.fund_editions.initial.amendments.length < fund_request.fund_request_type.amendable_quantity_limit
+      errors.add :fund_item, "exceeds number of amended items allowed for the request"
     end
   end
 
   def must_not_exceed_appendable_quantity_limit
-    return unless fund_request && fund_request.fund_request_type.appendable_quantity_limit
-    unless fund_request.fund_editions.appended.count < fund_request.fund_request_type.appendable_quantity_limit
-      errors.add( :fund_item, " exceeds number of new items allowed for the request" )
+    return unless fund_request && fund_request.fund_request_type.appendable_quantity_limit &&
+      perspective == FundEdition::PERSPECTIVES.first && appended?
+    unless fund_request.fund_editions.initial.appendments.length < fund_request.fund_request_type.appendable_quantity_limit
+      errors.add :fund_item, "exceeds number of new items allowed for the request"
     end
   end
 
   def must_not_exceed_quantity_limit
-    return unless fund_request && fund_request.fund_request_type.quantity_limit
-    unless fund_request.fund_editions.count < fund_request.fund_request_type.quantity_limit
-      errors.add( :fund_item, " exceeds number of items allowed for the request" )
+    return unless fund_request && fund_request.fund_request_type.quantity_limit &&
+      perspective == FundEdition::PERSPECTIVES.first
+    unless fund_request.fund_editions.initial.count < fund_request.fund_request_type.quantity_limit
+      errors.add :fund_item, "exceeds number of items allowed for the request"
     end
   end
 
   def must_not_exceed_appendable_amount_limit
-    return unless amount && fund_request &&
-      fund_request.fund_request_type.appendable_amount_limit
-    if fund_request.fund_editions.appended.where { id != my { id } }.
-      sum( :amount ) + amount > fund_request.fund_request_type.appendable_amount_limit
-      errors.add( :amount, " exceeds amount allowed for new items in the request" )
+    return unless amount && fund_request && perspective &&
+      perspective == FundEdition::PERSPECTIVES.first &&
+      fund_request.fund_request_type.appendable_amount_limit && appended?
+    if fund_request.fund_editions.initial.appendments.where { id != my { id } }.
+      reduce( &:+ ) + amount > fund_request.fund_request_type.appendable_amount_limit
+      errors.add :amount, "exceeds amount allowed for new items in the request"
     end
   end
 
@@ -287,7 +291,7 @@ class FundEdition < ActiveRecord::Base
   def displace_item_must_be_displaceable
     return unless displace_item && fund_item
     unless displaceable_items.include?( displace_item )
-      errors.add :displace_item, " cannot be displaced by this item"
+      errors.add :displace_item, "cannot be displaced by this item"
     end
   end
 

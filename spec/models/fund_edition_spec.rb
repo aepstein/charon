@@ -40,7 +40,7 @@ describe FundEdition do
       fund_edition.amount = fund_edition.fund_item.node.item_amount_limit + 1.0
       fund_edition.save.should be_false
       fund_edition.errors.first.should eql [ :amount,
-        " is greater than maximum for #{fund_edition.fund_item.node}."]
+        "is greater than maximum for #{fund_edition.fund_item.node}"]
       fund_edition.max_fund_request.should eql fund_edition.fund_item.node.item_amount_limit
     end
 
@@ -66,13 +66,46 @@ describe FundEdition do
       review.amount.should > original.amount
       review.previous.should eql original
       review.save.should be_false
-      review.errors.first.should eql [:amount, " is greater than original fund_request amount."]
+      review.errors.first.should eql [:amount, "is greater than original request amount"]
       review.max_fund_request.should eql original.amount
     end
 
     it 'should not save a non-initial fund_edition if a previous fund_edition does not exist' do
       fund_edition.perspective = FundEdition::PERSPECTIVES.last
       fund_edition.save.should be_false
+    end
+
+    it 'should enforce an appendable quantity limit' do
+      request = create(:fund_request)
+      request.fund_request_type.update_attribute :appendable_quantity_limit, 1
+      create(:fund_edition, :fund_request => request)
+      invalid = build(:fund_edition, :fund_request => request)
+      invalid.save.should be_false
+      invalid.errors.first.should eql [:fund_item, "exceeds number of new items allowed for the request"]
+    end
+
+    it 'should enforce an amendable quantity limit' do
+      request = create(:fund_request, :state => 'released')
+      request.fund_request_type.update_attribute :amendable_quantity_limit, 0
+      create(:fund_edition, :fund_request => request)
+      original = create(:fund_edition, :fund_request => request)
+      sleep 1
+      secondary_request = create(:fund_request, :fund_grant => request.fund_grant,
+        :fund_request_type => request.fund_request_type )
+      original.fund_item.association(:fund_editions).reset
+      invalid = build(:fund_edition, :fund_request => secondary_request, :fund_item => original.fund_item)
+      invalid.save.should be_false
+      invalid.errors.first.should eql [:fund_item, "exceeds number of amended items allowed for the request"]
+    end
+
+    it 'should enforce a quantity limit' do
+      request = create(:fund_request)
+      request.fund_request_type.update_attribute :quantity_limit, 2
+      create(:fund_edition, :fund_request => request)
+      create(:fund_edition, :fund_request => request)
+      invalid = build(:fund_edition, :fund_request => request)
+      invalid.save.should be_false
+      invalid.errors.first.should eql [:fund_item, "exceeds number of items allowed for the request"]
     end
 
   end
