@@ -56,6 +56,26 @@ class FundEdition < ActiveRecord::Base
 
   scope :initial, where( :perspective => PERSPECTIVES.first )
   scope :final, where( :perspective => PERSPECTIVES.last )
+  # Extends query to include any prior actionable editions:
+  # * belonging to actionable request created prior to that of the edition
+  scope :with_priors, joins { fund_request }.
+    joins( 'LEFT JOIN fund_editions AS prior_editions ON ' +
+      'prior_editions.fund_item_id = fund_editions.fund_item_id AND ' +
+      'prior_editions.fund_request_id != fund_editions.fund_request_id ' +
+      'LEFT JOIN fund_requests AS prior_requests ON ' +
+      'prior_editions.fund_request_id = prior_requests.id AND ' +
+      'prior_requests.created_at < fund_requests.created_at AND ' +
+      'prior_requests.state NOT IN ( ' +
+       FundRequest::UNACTIONABLE_STATES.map { |s| connection.quote s }.join(',') +
+       ')' ).
+     group('fund_editions.id')
+  # Limit to editions which have no prior actionable edition
+  # * these are new to the request in which they appear
+  scope :appendments, with_priors.having('COUNT(prior_requests.id) = 0')
+  # Limit to editions which have prior actionable edition
+  # * these appeared in at least one actionable request prior to the request in which they appear
+  scope :amendments, with_priors.having('COUNT(prior_requests.id) > 0')
+
 
   validates :fund_item, :presence => true
   validates :fund_request, :presence => true

@@ -158,6 +158,7 @@ describe FundEdition do
 
     let(:initial_request) { create( :fund_request, :state => 'released' ) }
     let(:unactionable_request) {
+      sleep 1
       create( :withdrawn_fund_request, :fund_grant => initial_request.fund_grant )
     }
     let(:updated_request) {
@@ -168,25 +169,44 @@ describe FundEdition do
       create( :fund_edition, :fund_request => initial_request )
     }
     let(:amended_edition) {
-      create( :fund_edition, :fund_request => updated_request,
-        :fund_item => original_edition.fund_item )
-    }
-    let(:appended_edition) {
-      create( :fund_edition, :fund_request => updated_request )
+      original_edition
+      withdrawn_edition
+      updated_request
+      create( :fund_edition, :fund_item => original_edition.fund_item,
+        :fund_request => updated_request )
     }
     let(:withdrawn_edition) {
-      create( :fund_edition, :fund_request => unactionable_request,
-        :fund_item => appended_edition.fund_item )
+      create( :fund_edition, :fund_request => unactionable_request )
+    }
+    let(:appended_edition) {
+      withdrawn_edition
+      updated_request
+      create( :fund_edition, :fund_item => withdrawn_edition.fund_item,
+        :fund_request => updated_request )
     }
 
     it 'should have priors instance method that is empty except for amendments' do
-      amended_edition
-      appended_edition
-      withdrawn_edition
+      appended_edition.priors.should be_empty
+      withdrawn_edition.priors.should_not include appended_edition
+      withdrawn_edition.priors.should be_empty
       amended_edition.priors.length.should eql 1
       amended_edition.priors.should include original_edition
-      appended_edition.priors.should be_empty
-      withdrawn_edition.priors.should be_empty
+    end
+
+    it 'should have appendments scope that only includes appended editions' do
+      amended_edition
+      appended_edition
+      scope = FundEdition.appendments
+      scope.length.should eql 3
+      scope.should include original_edition, appended_edition, withdrawn_edition
+    end
+
+    it 'should have amendments scope that only includes amended editions' do
+      amended_edition
+      appended_edition
+      scope = FundEdition.amendments
+      scope.length.should eql 1
+      scope.should include amended_edition
     end
 
   end
