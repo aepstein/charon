@@ -108,6 +108,17 @@ describe FundEdition do
       invalid.errors.first.should eql [:fund_item, "exceeds number of items allowed for the request"]
     end
 
+    it 'should enforce appendable amount limit' do
+      request = create(:fund_request)
+      request.fund_request_type.update_attribute :appendable_amount_limit, 1000.0
+      create(:fund_edition, :fund_request => request, :amount => 99.0)
+      create(:fund_edition, :fund_request => request, :amount => 900.0)
+      request.association(:fund_editions).reset
+      invalid = build(:fund_edition, :fund_request => request, :amount => 2.0)
+      invalid.save.should be_false
+      invalid.errors.first.should eql [:amount, "exceeds amount allowed for new items in the request"]
+    end
+
   end
 
   context 'item repositioning' do

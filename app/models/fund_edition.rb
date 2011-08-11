@@ -281,8 +281,8 @@ class FundEdition < ActiveRecord::Base
     return unless amount && fund_request && perspective &&
       perspective == FundEdition::PERSPECTIVES.first &&
       fund_request.fund_request_type.appendable_amount_limit && appended?
-    if fund_request.fund_editions.initial.appendments.where { id != my { id } }.
-      reduce( &:+ ) + amount > fund_request.fund_request_type.appendable_amount_limit
+    if fund_request.fund_editions.initial.appendments.where { id != my { id } }.map(&:amount).
+      reduce( 0.0, &:+ ) + amount > fund_request.fund_request_type.appendable_amount_limit
       errors.add :amount, "exceeds amount allowed for new items in the request"
     end
   end
