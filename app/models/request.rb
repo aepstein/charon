@@ -282,7 +282,8 @@ class Request < ActiveRecord::Base
 
   def deliver_required_approval_notice
     needed_approvals = users.unfulfilled(Approver.where( :quantity => nil )).map do |u|
-      a = Approval.new( :user => u )
+      a = Approval.new
+      a.user = u
       a.approvable = self
       a
     end
