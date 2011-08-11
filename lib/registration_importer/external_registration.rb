@@ -28,8 +28,7 @@ module RegistrationImporter
     establish_connection "external_registrations_#{::Rails.env}".to_sym
     set_table_name "orgs"
     set_primary_keys :org_id, :term_id
-    default_scope select( MAP.keys.join(', ') ).includes( :contacts ).
-      order( 'orgs.updated_time ASC' )
+    default_scope select( MAP.keys.join(', ') ).order( 'orgs.updated_time ASC' )
 
     scope :importable, lambda {
       max_registration = Registration.unscoped.
@@ -42,15 +41,17 @@ module RegistrationImporter
       end
     }
 
-    has_many :contacts, :class_name => 'ExternalContact', :foreign_key => [ :org_id, :term_id ] do
-      def users
-        all.inject([]) do |memo, contact|
-          contact.users.each { |user| memo << user }
-          memo.uniq
-        end
-      end
-    end
     belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
+
+    def contacts(reset=false)
+      @contacts = nil if reset
+      @contacts ||= ExternalContact.where( :org_id => org_id, :term_id => term_id )
+    end
+
+    def contacts_users(reset=false)
+      @contacts_users = nil if reset
+      @contacts_users ||= contacts(reset).map(&:users).reduce([],&:+).uniq
+    end
 
     def reg_approved
       read_attribute(:reg_approved) == 'YES'
@@ -84,9 +85,9 @@ module RegistrationImporter
     end
 
     def import_contacts( destination )
-      deletes = destination.memberships.reject { |m| contacts.users.include?( [m.role, m.user] ) }
+      deletes = destination.memberships.reject { |m| contacts_users.include?( [m.role, m.user] ) }
       destination.memberships.delete( deletes ) unless deletes.empty?
-      adds = contacts.users.reject { |u| destination.memberships.users.include? u }
+      adds = contacts_users.reject { |u| destination.memberships.users.include? u }
       adds.each do |pair|
         m = destination.memberships.build
         m.role = pair.first

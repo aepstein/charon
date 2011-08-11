@@ -29,8 +29,17 @@ module RegistrationImporter
     default_scope select( MAP.keys.join(', ') )
 
     belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
-    belongs_to :registration, :class_name => 'ExternalRegistration',
-      :foreign_key => [ :org_id, :term_id ]
+
+    def registration=(new_registration)
+      self.org_id = new_registration.org_id
+      self.term_id = new_registration.term_id
+      @registration = new_registration
+    end
+
+    def registration
+      return @registration = nil unless org_id? && term_id?
+      @registration ||= ExternalRegistration.find(org_id, term_id)
+    end
 
     def users
       net_ids.inject([]) do |memo, net_id|
