@@ -1,5 +1,6 @@
 class FundQueue < ActiveRecord::Base
-  attr_accessible :submit_at, :release_at, :fund_request_type_ids
+  attr_accessible :advertised_submit_at, :submit_at, :release_at,
+    :fund_request_type_ids
   attr_readonly :fund_source_id
 
   belongs_to :fund_source, :inverse_of => :fund_queues
@@ -17,6 +18,12 @@ class FundQueue < ActiveRecord::Base
     :uniqueness => { :scope => :fund_source_id },
     :timeliness => { :type => :datetime, :before => :release_at,
       :after => :open_at }
+  validates :advertised_submit_at, :presence => true,
+    :timeliness => { :type => :datetime, :on_or_before => :submit_at }
+
+  before_validation do |queue|
+    queue.advertised_submit_at = queue.submit_at if queue.advertised_submit_at.blank?
+  end
 
   def open_at; fund_source.open_at if fund_source; end
 

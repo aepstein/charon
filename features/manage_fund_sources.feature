@@ -79,6 +79,7 @@ Feature: Manage fund_sources
     And I fill in "Contact web" with "http://example.com/"
     And I fill in "Open at" with "2009-10-15 12:00 pm"
     And I fill in "Closed at" with "2009-10-20 12:00 pm"
+    And I fill in "Advertised submit at" with "2009-10-19 11:00 am"
     And I fill in "Submit at" with "2009-10-19 12:00 pm"
     And I fill in "Release at" with "2009-10-19 06:00 pm"
     And I check "Special Project"
@@ -93,8 +94,8 @@ Feature: Manage fund_sources
     And I should see "Open at: 2009-10-15 12:00:00"
     And I should see "Closed at: 2009-10-20 12:00:00"
     And I should see the following fund_queues:
-      | Submit at                       | Release at                      | Fund request types |
-      | Mon, 19 Oct 2009 12:00:00 -0400 | Mon, 19 Oct 2009 18:00:00 -0400 | Special Project    |
+      | Advertised submit at            | Submit at                       | Release at                      | Fund request types |
+      | Mon, 19 Oct 2009 11:00:00 -0400 | Mon, 19 Oct 2009 12:00:00 -0400 | Mon, 19 Oct 2009 18:00:00 -0400 | Special Project    |
     When I follow "Edit"
     And I fill in "Name" with "Semester GPSAFC"
     And I fill in "Contact name" with "Another Office"

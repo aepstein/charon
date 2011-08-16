@@ -1,4 +1,5 @@
 <%= table_row_tag do %>
+  <td><%= fund_queue.advertised_submit_at.to_s :rfc822 %></td>
   <td><%= fund_queue.submit_at.to_s :rfc822 %></td>
   <td><%= fund_queue.release_at.to_s :rfc822 %></td>
   <td><%= fund_queue.fund_request_types.map(&:name).join(', ') %></td>

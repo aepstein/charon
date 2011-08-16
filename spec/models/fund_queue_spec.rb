@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe FundQueue do
 
@@ -36,6 +36,11 @@ describe FundQueue do
 
   it 'should not save without release_at' do
     @fund_queue.release_at = nil
+    @fund_queue.save.should be_false
+  end
+
+  it 'should not save with advertised_submit_at > submit_at' do
+    @fund_queue.advertised_submit_at = @fund_queue.submit_at + 1.minute
     @fund_queue.save.should be_false
   end
 
