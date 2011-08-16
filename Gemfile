@@ -29,7 +29,8 @@ gem 'composite_primary_keys', '~> 4.0.0.beta7', :require => false # Require on d
 gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
 gem 'ancestry'
-gem 'acts_as_list', '~> 0.1.3'
+#gem 'acts_as_list', '~> 0.1.3'
+gem 'acts_as_list', :git => 'git://github.com/swanandp/acts_as_list.git'
 gem 'decent_exposure'
 group :development, :test do
   gem 'rspec-rails', '~> 2.6.1'
