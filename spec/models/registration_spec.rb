@@ -103,6 +103,18 @@ describe Registration do
     organization.memberships.length.should eql 0
   end
 
+  it 'should set last_current_registration for an organization if registration is current' do
+    organization = create( :organization )
+    registration = create( :registration )
+    registration.current?.should be_false
+    organization.registrations << registration
+    organization.last_current_registration.should be_nil
+    current_registration = create( :current_registration )
+    organization.registrations << current_registration
+    organization.reload
+    organization.last_current_registration.should eql current_registration
+  end
+
   def registration_matching_scenario( registration )
     new_registration = create( :registration, :external_id => registration.external_id,
       :organization => create(:organization) )

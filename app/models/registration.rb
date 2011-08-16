@@ -115,7 +115,7 @@ class Registration < ActiveRecord::Base
   # by checking if another organization is matched by the same external id
   def adopt_organization
     if external_id? && organization.blank?
-      self.organization = Organization.joins( :registrations ).merge(
+      self.organization = Organization.joins { registrations }.merge(
         Registration.unscoped.where( :external_id => external_id ) ).
         readonly(false).first
     end
@@ -126,12 +126,17 @@ class Registration < ActiveRecord::Base
   # * reset registrations collection so saved changes are reloaded in the collection
   # ** this reset assures fulfill and unfulfill will work off of updated registration
   # * synchronize name if it has changed and this is the current registration
+  # * set last_current_registration to this if this is the current registration
   # * fulfill and unfulfill organization as appropriate
   # * fail silently if the organization name update fails
   def update_organization
     return true unless organization
     organization.association(:registrations).reset
     if current?
+      if organization.last_current_registration != self
+        organization.last_current_registration = self
+        organization.save!
+      end
       organization.update_attributes name.to_organization_name_attributes
       organization.fulfillments.fulfill!
     end

@@ -67,6 +67,7 @@ class Organization < ActiveRecord::Base
       )
     end
   end
+  belongs_to :last_current_registration, :class_name => 'Registration'
 
   before_validation :format_name
 
