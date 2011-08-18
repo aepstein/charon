@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.0.rc5'
+gem 'rails', '~> 3.1.0.rc5'
 gem 'mysql2', '~> 0.2'
 gem 'json'
 gem 'sass'
@@ -25,7 +25,10 @@ gem 'validation_reflection'
 gem 'formtastic'
 gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
-gem 'composite_primary_keys', '~> 4.0.0.beta7', :require => false # Require on demand
+#gem 'composite_primary_keys', '~> 4.0.0.beta7', :require => false # Require on demand
+gem 'composite_primary_keys', :require => false,
+  :git => 'git://github.com/aepstein/composite_primary_keys.git',
+  :ref => 'd93cb688a3df969e078f0a24b4e0bdbb74c61448'
 gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
 gem 'ancestry'
