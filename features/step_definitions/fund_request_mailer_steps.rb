@@ -1,5 +1,5 @@
-Given /^an? ([a-z\s]+) email is sent for #{capture_model}$/ do |notice, context|
-  notice[" "]= "_"
+Given /^an? ([a-z\s_]+) email is sent for #{capture_model}$/ do |notice, context|
+  notice.gsub! /[\s]+/, '_'
   "#{model(context).class.to_s}Mailer".constantize.send( "#{notice}", model(context) ).deliver
 end
 

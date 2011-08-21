@@ -1,0 +1,16 @@
+<p>
+Dear recent officers of <%= @organization.name %>,
+</p>
+
+<p>
+You are receiving this message because important information is available for <%= @organization.name %>, but cannot be released until the organization is registered.  You can register the organization here: <%=link_to 'http://sao.cornell.edu/SO/', 'http://sao.cornell.edu/SO/' %>.
+</p>
+
+<p>
+Best regards,
+</p>
+
+<p>
+<%= Charon::Application.app_config['default_contact']['name'] %>
+</p>
+
