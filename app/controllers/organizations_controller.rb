@@ -3,6 +3,7 @@ class OrganizationsController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_organization_from_params, :only => [ :new, :create ]
+  before_filter :initialize_organization_profile, :only => [ :new, :edit ]
   filter_access_to :new, :create, :edit, :update, :destroy, :profile, :attribute_check => true
 
   # GET /organizations
@@ -77,7 +78,8 @@ class OrganizationsController < ApplicationController
   # PUT /organizations/1.xml
   def update
     respond_to do |format|
-      if @organization.update_attributes(params[:organization])
+      if @organization.update_attributes( params[:organization],
+        :as => ( permitted_to?( :manage, @organization ) ? :admin : :default ) )
         flash[:notice] = 'Organization was successfully updated.'
         format.html { redirect_to(@organization) }
         format.xml  { head :ok }
@@ -112,9 +114,13 @@ class OrganizationsController < ApplicationController
     @organizations = Organization.scoped
   end
 
+  def initialize_organization_profile
+    @organization.build_organization_profile if @organization.organization_profile.blank?
+  end
+
   def new_organization_from_params
-    @organization = @registration.find_or_build_organization( params[:organization] ) if @registration
-    @organization ||= Organization.new( params[:organization] )
+    @organization = @registration.find_or_build_organization( params[:organization], :as => :admin ) if @registration
+    @organization ||= Organization.new( params[:organization], :as => :admin )
   end
 
 end

@@ -187,6 +187,11 @@ describe FundRequest do
   end
 
   it 'should have a notify_unnotified! class method' do
+    class FundRequest
+      def require_requestor_recipients!
+        return true
+      end
+    end
     other_state = create(:fund_request, :state => 'tentative')
     unnotified = create(:fund_request)
     notified_before = create(:fund_request)

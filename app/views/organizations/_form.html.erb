@@ -1,8 +1,17 @@
-  <%= render "shared/error_messages", :target => form.object %>
-  <%= form.inputs do %>
-  <%= form.input :first_name %>
-  <%= form.input :last_name %>
-  <%= form.input :club_sport, :as => :radio %>
+<%= render "shared/error_messages", :target => form.object %>
+<%= form.inputs do %>
+  <% if permitted_to? :manage, form.object %>
+    <%= form.input :first_name %>
+    <%= form.input :last_name %>
+    <%= form.input :club_sport, :as => :radio %>
   <% end %>
-  <%= form.buttons %>
+<% end %>
+
+<%= form.semantic_fields_for :organization_profile do |subform| %>
+  <%= subform.inputs do %>
+    <%= render :partial => 'organization_profiles/form', :object => subform %>
+  <% end %>
+<% end %>
+
+<%= form.buttons %>
 

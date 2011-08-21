@@ -5,7 +5,7 @@ class FundEdition < ActiveRecord::Base
     :administrative_expense_attributes, :local_event_expense_attributes,
     :speaker_expense_attributes, :travel_event_expense_attributes,
     :durable_good_expense_attributes, :publication_expense_attributes,
-    :external_equity_report_attributes, :documents_attributes
+    :documents_attributes
   attr_readonly :fund_item_id, :perspective
 
   attr_accessor :displace_item
@@ -15,7 +15,6 @@ class FundEdition < ActiveRecord::Base
 
   has_one :administrative_expense, :inverse_of => :fund_edition
   has_one :durable_good_expense, :inverse_of => :fund_edition
-  has_one :external_equity_report, :inverse_of => :fund_edition
   has_one :local_event_expense, :inverse_of => :fund_edition
   has_one :publication_expense, :inverse_of => :fund_edition
   has_one :speaker_expense, :inverse_of => :fund_edition
@@ -49,7 +48,6 @@ class FundEdition < ActiveRecord::Base
   accepts_nested_attributes_for :travel_event_expense
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
-  accepts_nested_attributes_for :external_equity_report
   accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['original'].blank? || attributes['original'].original_filename.blank? }
 
   has_paper_trail :class_name => 'SecureVersion'

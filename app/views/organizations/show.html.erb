@@ -14,10 +14,20 @@
 
 <p>
   <b><%= FundEdition::PERSPECTIVES.first.capitalize %> frameworks:</b>
+  <p>
+  The organization is authorized to request funds under the following permissions frameworks.
+  </p>
   <% @organization.frameworks( FundEdition::PERSPECTIVES.first ).each do |framework| %>
   <li><%=h framework %></li>
   <% end %>
   </ul>
+</p>
+
+<h3>Registration-supplied profile</h3>
+
+<p>
+The following information is determined from the organization's registration with
+the <%=link_to 'Student Activities Office', 'http://sao.cornell.edu/SO/' %>.
 </p>
 
 <p>
@@ -31,6 +41,16 @@
 
 <p>
   <b>Percent Grad:</b> <%= @organization.registrations.current.percent_members_of_type 'grads' %>%
+</p>
+<% end %>
+
+<h3>Organization-supplied profile</h3>
+
+<% if @organization.organization_profile %>
+<%= render :partial => 'organization_profiles/detail', :object => @organization.organization_profile %>
+<% else %>
+<p>
+The organization has not supplied additional profile information.
 </p>
 <% end %>
 

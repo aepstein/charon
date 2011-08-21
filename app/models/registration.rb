@@ -81,15 +81,15 @@ class Registration < ActiveRecord::Base
       number_of_grads + number_of_staff + number_of_faculty + number_of_others )
   end
 
-  def find_or_create_organization( params=nil )
-    find_or_build_organization( params ).save if organization.nil? || organization.new_record?
+  def find_or_create_organization( params={}, options={} )
+    find_or_build_organization( params, options ).save if organization.nil? || organization.new_record?
     organization
   end
 
-  def find_or_build_organization( params=nil )
+  def find_or_build_organization( params={}, options={} )
     return organization unless organization.nil?
-    params = Hash.new if params.nil?
-    build_organization( params.merge( name.to_organization_name_attributes ) )
+    params ||= Hash.new
+    build_organization( params.merge( name.to_organization_name_attributes ), options )
   end
 
   def to_s; name; end

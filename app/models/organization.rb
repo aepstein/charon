@@ -1,10 +1,14 @@
 class Organization < ActiveRecord::Base
   SEARCHABLE = [ :name_contains ]
-  attr_accessible :first_name, :last_name, :club_sport
+  attr_accessible :organization_profile_attributes
+  attr_accessible :first_name, :last_name, :club_sport,
+    :organization_profile_attributes, :as => :admin
 
   notifiable_events :registration_required
   is_fulfiller
 
+  has_one :organization_profile, :inverse_of => :organization,
+    :dependent => :destroy
   has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
   has_many :activity_accounts, :through => :university_accounts
   has_many :fund_grants, :dependent => :destroy, :inverse_of => :organization
@@ -71,6 +75,8 @@ class Organization < ActiveRecord::Base
   belongs_to :last_current_registration, :class_name => 'Registration'
   has_many :last_current_users, :through => :last_current_registration,
     :source => :users
+
+  accepts_nested_attributes_for :organization_profile, :update_only => true
 
   before_validation :format_name
 

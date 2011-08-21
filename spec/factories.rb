@@ -249,6 +249,10 @@ FactoryGirl.define do
     end
   end
 
+  factory :organization_profile do
+    association :organization
+  end
+
   factory :registration do
     sequence(:name) { |n| "Registered Organization #{n}" }
     sequence(:external_id) { |i| i }
@@ -437,10 +441,6 @@ FactoryGirl.define do
     number_of_travelers 1
     nights_of_lodging 10
     engagement_fee 1000
-  end
-
-  factory :external_equity_report do
-    association :fund_edition, :factory => :external_equity_report_fund_edition
   end
 
 end

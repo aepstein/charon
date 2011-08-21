@@ -275,7 +275,7 @@ authorization do
       if_attribute :user => { :registrations => intersects_with { user.registrations } }
     end
 
-    has_permission_on [ :organizations ], :to => :request do
+    has_permission_on [ :organizations ], :to => [ :request, :update ] do
       if_attribute :memberships => { :user_id => is { user.id },
         :active => is { true }, :role => { :name => is_in { Role::REQUESTOR } } }
     end

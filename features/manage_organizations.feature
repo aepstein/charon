@@ -64,13 +64,13 @@ Feature: Manage organizations
       | user      | create  | update  | destroy | show | profile |
       | admin     | see     | see     | see     | see  | see     |
       | manager   | not see | see     | see     | see  | see     |
-      | requestor | not see | not see | not see | see  | see     |
+      | requestor | not see | see     | not see | see  | see     |
       | reviewer  | not see | not see | not see | see  | see     |
       | regular   | not see | not see | not see | see  | not see |
 
   Scenario Outline: Register a new organization and edit
     Given a current_registration exists with name: "Cornell Club", registered: true
-    And a framework exists with name: "Budget FundRequests"
+    And a framework exists with name: "Fund Requests"
     And a registration_criterion exists with type_of_member: "undergrads", minimal_percentage: 0, must_register: true
     And a requestor_requirement exists with fulfillable: the registration_criterion, framework: the framework
     And I log in as user: "admin"
@@ -78,26 +78,65 @@ Feature: Manage organizations
     When I fill in "First name" with "Cornell"
     And I fill in "Last name" with "Club"
     And I choose "Yes"
+    And I fill in "Anticipated expenses" with "0.01"
+    And I fill in "Anticipated income" with "0.10"
+    And I fill in "Current liabilities" with "1.0"
+    And I fill in "Current assets" with "10.0"
     And I press "Create"
     Then I should see "Organization was successfully created."
     And I should see "First name: Cornell"
     And I should see "Last name: Club"
     And I should see "Club sport? Yes"
+    And I should see "Anticipated expenses: $0.01"
+    And I should see "Anticipated income: $0.10"
+    And I should see "Current liabilities: $1.00"
+    And I should see "Current assets: $10.00"
+    And I should see "Net equity: $9.09"
     When I follow "Edit"
     And I fill in "First name" with "The Cornell"
     And I fill in "Last name" with "Night Club"
     And I choose "No"
+    And I fill in "Anticipated expenses" with "0.02"
+    And I fill in "Anticipated income" with "0.20"
+    And I fill in "Current liabilities" with "2.0"
+    And I fill in "Current assets" with "20.0"
     And I press "Update"
     Then I should see "Organization was successfully updated."
     And I should see "First name: The Cornell"
     And I should see "Last name: Night Club"
     And I should see "Club sport? No"
-    And I should <registered> "Budget FundRequests"
+    And I should <registered> "Fund Requests"
     And I should <registered> "Registered? Yes"
+    And I should see "Anticipated expenses: $0.02"
+    And I should see "Anticipated income: $0.20"
+    And I should see "Current liabilities: $2.00"
+    And I should see "Current assets: $20.00"
+    And I should see "Net equity: $18.18"
     Examples:
       | context                           | registered |
       | page                              | not see    |
       | page for the current_registration | see        |
+
+  Scenario Outline: Restricted update rights for user
+    Given an organization exists
+    And an organization_profile exists with organization: the organization
+    And a requestor_role exists
+    And a membership exists with organization: the organization, user: user "admin", role: the requestor_role
+    And I log in as user: "admin"
+    And I am on the edit page for the organization
+    When I fill in "First name" with "Kung"
+    And I fill in "Last name" with "Fu"
+    And I fill in "Anticipated expenses" with "100.0"
+    And user: "admin" has admin: <admin>
+    And I press "Update"
+    Then I should see "Organization was successfully updated."
+    And I should <see> "First name: Kung"
+    And I should <see> "Last name: Fu"
+    And I should see "Anticipated expenses: $100.00"
+    Examples:
+      | admin | see     |
+      | true  | see     |
+      | false | not see |
 
   Scenario: Search organizations
     Given there are no organizations
