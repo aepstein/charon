@@ -2,6 +2,7 @@ class Organization < ActiveRecord::Base
   SEARCHABLE = [ :name_contains ]
   attr_accessible :first_name, :last_name, :club_sport
 
+  notifiable_events :registration_required
   is_fulfiller
 
   has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
@@ -68,6 +69,8 @@ class Organization < ActiveRecord::Base
     end
   end
   belongs_to :last_current_registration, :class_name => 'Registration'
+  has_many :last_current_users, :through => :last_current_registration,
+    :source => :users
 
   before_validation :format_name
 
@@ -102,6 +105,16 @@ class Organization < ActiveRecord::Base
   def registered?
     return false if registrations.current.blank?
     registrations.current.registered?
+  end
+
+  # Checks whether requestor recipients are present as active members
+  # If at least one active membership is present in requestor perspective, true
+  # Else: send registration_required_notice for requestor organization
+  def require_requestor_recipients!
+    return true if users.where( 'memberships.role_id IN ( SELECT id FROM roles ' +
+      'WHERE name IN (?) )', Role::REQUESTOR ).any?
+    send_registration_required_notice!
+    false
   end
 
   def independent?

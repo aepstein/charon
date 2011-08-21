@@ -1,6 +1,4 @@
 class FundRequest < ActiveRecord::Base
-  include Notifiable
-
   SEARCHABLE = [ :organization_name_contains, :fund_source_name_contains,
     :with_state ]
   UNACTIONABLE_STATES = [ :withdrawn, :rejected ]
@@ -189,7 +187,7 @@ class FundRequest < ActiveRecord::Base
   end
 
   notifiable_events :started, :tentative, :finalized, :rejected, :submitted,
-    :released, :withdrawn
+    :released, :withdrawn, :if => :require_requestor_recipients!
 
   has_paper_trail :class_name => 'SecureVersion'
 
@@ -235,6 +233,8 @@ class FundRequest < ActiveRecord::Base
     end
     fund_requests.each { |fund_request| fund_request.send("send_#{state}_notice!") }
   end
+
+  delegate :require_requestor_recipients!, :to => :fund_grant
 
   # Is the request sufficiently complete to approve?
   # * for started request: an edition must exist for every grant item, but not

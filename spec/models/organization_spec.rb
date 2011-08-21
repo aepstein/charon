@@ -44,5 +44,24 @@ describe Organization do
     create(:organization).registered?.should be_false
   end
 
+  context 'require_requestor_recipients!' do
+    it 'should have require_requestor_recipients! return true if at least one requestor user is present' do
+      @organization.save!
+      create(:membership, :role => create(:requestor_role),
+        :organization => @organization )
+      @organization.association(:users).reset
+      @organization.users.should_not be_empty
+      @organization.require_requestor_recipients!.should be_true
+    end
+
+    it 'should have require_requestor_recipients! return false and send ' +
+      'registration_required_notice if no requestor users are present' do
+      @organization.save!
+      @organization.users.should be_empty
+      @organization.should_receive :send_registration_required_notice!
+      @organization.require_requestor_recipients!.should be_false
+    end
+  end
+
 end
 

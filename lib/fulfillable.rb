@@ -26,7 +26,7 @@ module Fulfillable
             "WHERE fulfillments.fulfiller_id IS NULL AND #{plural_ft}.id IN " +
             "(#{fulfiller_ids.join ','})"
           )
-          reset
+          @association.reset
         end
 
         # Identify all the records that do not fulfill this condition and
@@ -41,7 +41,7 @@ module Fulfillable
             (fulfiller_ids.empty? ? "" : " AND fulfiller_id NOT IN " +
             "(#{fulfiller_ids.join ','})")
           )
-          reset
+          @association.reset
         end
       end
 

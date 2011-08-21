@@ -21,11 +21,10 @@ class FundGrant < ActiveRecord::Base
   end
   has_many :fund_items, :inverse_of => :fund_grant, :dependent => :destroy
 
-  # TODO - need :through => :organization, but need Rails 3.1 to implement
-  has_many :users do
+  has_many :users, :through => :organization do
     # Retrieves users associated with a perspective for the grant
     def for_perspective( perspective )
-      role_names = case perspective
+      role_names = case perspective.to_s
       when FundEdition::PERSPECTIVES.first
         Role::REQUESTOR
       else
@@ -109,6 +108,8 @@ class FundGrant < ActiveRecord::Base
     end
     nil
   end
+
+  delegate :require_requestor_recipients!, :to => :organization
 
 end
 
