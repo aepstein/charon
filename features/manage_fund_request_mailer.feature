@@ -69,8 +69,8 @@ Feature: Manage fund_request mailers
     And the email parts should contain "Dear Officers of Money Taking Club,"
     And the email parts should contain "This email is a confirmation that you have completed all submission requirements for your fund request for Money Taking Fund, but the request cannot be automatically submitted because it was submitted after the last posted deadline."
     And the email parts should contain "You should receive an additional notice if it is accepted for review."
-@wip
-  Scenario Outline: Send notice regarding an submitted fund_request
+
+  Scenario Outline: Send notice regarding a submitted fund_request
     Given a node: "doc" exists with structure: the structure
     And a document_type exists
     And the document_type is amongst the document_types of the node
@@ -85,9 +85,10 @@ Feature: Manage fund_request mailers
     And 1 email should be delivered to "officer@example.com"
     And the email subject should contain "Request of Money Taking Club from Money Taking Fund has been accepted for review"
     And the email parts should contain "Dear Officers of Money Taking Club,"
-    And the email parts should contain "This email is a confirmation that your fund_request for Money Taking Fund has been accepted for review."
+    And the email parts should contain "This email is a confirmation that your fund request for Money Taking Fund has been accepted for review."
     And the email parts should contain "You will receive additional notice when a determination is released."
-    And the email <attachment> have an attachment named "money-taking-club.pdf" with type "application/pdf"
+    And the email parts <attachment> contain "You must provide certain supporting documents in support of your fund request.  Please follow the attached instructions and checklist to assemble any required supporting documents."
+    And the email <attachment> have an attachment named "money-taking-club.pdf" of type "application/pdf"
     Examples:
       | node   | attachment |
       | doc    | should     |

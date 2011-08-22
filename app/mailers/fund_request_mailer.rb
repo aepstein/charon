@@ -31,14 +31,16 @@ class FundRequestMailer < ActionMailer::Base
 
   def submitted_notice( fund_request )
     @fund_request = fund_request
-    if fund_request.fund_items.documentable.any?
-      attachments["#{fund_request.fund_grant.organization.to_s :file}.pdf"] = DocumentsReport.new( fund_request ).to_pdf
-    end
-    mail(
+    message = mail(
       :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
       :from => fund_request.contact_to_email,
       :subject => "#{fund_request} has been accepted for review"
     )
+    if fund_request.fund_items.documentable.any?
+      filename = "#{fund_request.fund_grant.organization.to_s :file}.pdf"
+      message.attachments[filename] = DocumentsReport.new( fund_request ).to_pdf
+    end
+    message
   end
 
   def released_notice(fund_request)

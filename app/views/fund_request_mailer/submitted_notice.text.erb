@@ -1,12 +1,9 @@
 Dear Officers of <%= @fund_request.fund_grant.organization %>,
 
-This email is a confirmation that your fund_request for <%= @fund_request.fund_grant.fund_source.to_s %> has been accepted for review.  You will receive additional notice when a determination is released.
+This email is a confirmation that your fund request for <%= @fund_request.fund_grant.fund_source.to_s %> has been accepted for review.  You will receive additional notice when a determination is released.
 
-<% if @fund_request.fund_items.documentable.any? %>
-<%
-# TODO
-%>
-
-<% end %>
 To see it, please go to: <<%= fund_request_url @fund_request %>>.
+<% if @fund_request.fund_items.documentable.any? %>
+You must provide certain supporting documents in support of your fund request.  Please follow the attached instructions and checklist to assemble any required supporting documents.
+<% end %>
 

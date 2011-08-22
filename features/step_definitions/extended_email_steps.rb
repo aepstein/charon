@@ -17,14 +17,14 @@ Then(/^#{capture_email} (text|html|parts) should( not)? contain "(.*)"$/) do |em
   end
 end
 
-Then /^#{capture_email} should(?: not)? have an attachment named "(.+)"(?: of type "(.+)")?$/ do |email_ref, negate, file, type|
+Then /^#{capture_email} should( not)? have an attachment named "([^"]+)"(?: of type "([^"]+)")?$/ do |email_ref, negate, file, type|
   if negate.blank?
-    email(email_ref).parts.attachments[file].should_not be_nil
+    email(email_ref).attachments[file].should_not be_nil
     unless type.blank?
-      email(email_ref).parts.attachments[file].content_type.should eql 'application/pdf'
+      email(email_ref).attachments[file].mime_type.should eql 'application/pdf'
     end
   else
-    email(email_ref).parts.attachments[file].should be_nil
+    email(email_ref).attachments[file].should be_nil
   end
 end
 
