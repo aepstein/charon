@@ -31,7 +31,7 @@ class DocumentsReport < Prawn::Document
     font 'Helvetica', :size => 10 do
       self.rows = [ [ 'FundItem/Document Type', 'E-filed?', "Staff Use Only\nReceived?" ] ]
       self.fund_item_rows = Array.new
-      rowify_fund_items( fund_request.fund_items )
+      rowify_fund_items( fund_request.fund_items.documentable.uniq )
       table rows, :header => true, :width => 540 do |table|
         table.row(0).background_color = '000000'
         table.row(0).text_color = 'FFFFFF'

@@ -89,6 +89,8 @@ class Registration < ActiveRecord::Base
   def find_or_build_organization( params={}, options={} )
     return organization unless organization.nil?
     params ||= Hash.new
+    options ||= Hash.new
+    options[:as] ||= :admin
     build_organization( params.merge( name.to_organization_name_attributes ), options )
   end
 

@@ -133,6 +133,8 @@ class Organization < ActiveRecord::Base
     case format
     when :last_first
       "#{last_name}, #{first_name}"
+    when :file
+      name.downcase.gsub /[^\w]+/, '-'
     else
       first_name.blank? ? last_name : "#{first_name} #{last_name}"
     end
@@ -147,8 +149,8 @@ class Organization < ActiveRecord::Base
     end
   end
 
-  def to_s
-    name
+  def to_s(format=nil)
+    name(format)
   end
 end
 

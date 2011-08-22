@@ -84,6 +84,7 @@ class FundItem < ActiveRecord::Base
     where { id.not_in( FundEdition.unscoped.joins { fund_request }.
       select { fund_item_id }.merge( FundRequest.unscoped.actionable ) ) }
   }
+  scope :documentable, joins { document_types.inner }
 
   validates :title, :presence => true
   validates :node, :presence => true

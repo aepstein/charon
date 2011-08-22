@@ -25,7 +25,8 @@ class FundRequest < ActiveRecord::Base
       initial.prior_to_fund_request @association.owner
     end
   end
-  has_many :fund_items, :through => :fund_grant, :order => 'fund_items.position ASC' do
+  has_many :fund_items, :through => :fund_editions, :uniq => true,
+    :order => 'fund_items.position ASC' do
 
     # Allocate items according to specified preferences
     # * iterate through items according to specified priority

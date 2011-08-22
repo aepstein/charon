@@ -13,7 +13,8 @@ Feature: Manage fund_request mailers
     And an approver exists with framework: the framework, role: role "treasurer", perspective: "requestor"
     And an organization: "requestor" exists with last_name: "Money Taking Club"
     And an organization: "reviewer" exists with last_name: "Money Giving Club"
-    And a fund_source exists with framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized release message."
+    And a structure exists
+    And a fund_source exists with structure: the structure, framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized release message."
     And a fund_queue exists with fund_source: the fund_source
     And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
     And the fund_request_type is amongst the fund_request_types of the fund_queue
@@ -68,9 +69,14 @@ Feature: Manage fund_request mailers
     And the email parts should contain "Dear Officers of Money Taking Club,"
     And the email parts should contain "This email is a confirmation that you have completed all submission requirements for your fund request for Money Taking Fund, but the request cannot be automatically submitted because it was submitted after the last posted deadline."
     And the email parts should contain "You should receive an additional notice if it is accepted for review."
-
-  Scenario: Send notice regarding an submitted fund_request
-    Given all emails have been delivered
+@wip
+  Scenario Outline: Send notice regarding an submitted fund_request
+    Given a node: "doc" exists with structure: the structure
+    And a document_type exists
+    And the document_type is amongst the document_types of the node
+    And a node: "no_doc" exists with structure: the structure
+    And a fund_item exists with fund_grant: the fund_grant, node: node "<node>"
+    And a fund_edition exists with fund_request: fund_request "started", fund_item: the fund_item
     And fund_request: "started" has state: "submitted"
     And an submitted notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
@@ -81,6 +87,11 @@ Feature: Manage fund_request mailers
     And the email parts should contain "Dear Officers of Money Taking Club,"
     And the email parts should contain "This email is a confirmation that your fund_request for Money Taking Fund has been accepted for review."
     And the email parts should contain "You will receive additional notice when a determination is released."
+    And the email <attachment> have an attachment named "money-taking-club.pdf" with type "application/pdf"
+    Examples:
+      | node   | attachment |
+      | doc    | should     |
+      | no_doc | should not |
 
   Scenario: Send notice regarding a rejected fund_request
     Given all emails have been delivered

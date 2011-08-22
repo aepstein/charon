@@ -50,6 +50,8 @@ class Node < ActiveRecord::Base
   # Returns only nodes with number of fund_items less than the limit for the node
   scope :under_limit, having { item_quantity_limit.gt( count( fund_items.id ) ) }.
     group { id }
+  # Returns only nodes with at least one document_type associated
+  scope :documentable, joins { document_types.inner }
 
   def to_s; name; end
 

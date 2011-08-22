@@ -11,7 +11,7 @@ describe Registration do
   it "should calculate percent_members_of_type correctly" do
     factory = create(:registration)
     factory.number_of_undergrads = 60
-    factory.percent_members_of_type(:undergrads).should == 100.0
+    factory.percent_members_of_type(:undergrads).should eql 100.0
   end
 
   it "should be able to create an organization from the registration" do
@@ -19,8 +19,8 @@ describe Registration do
     organization = registration.find_or_create_organization
     organization.id.should_not be_nil
     organization.registrations << registration
-    registration.organization_id.should == organization.id
-    registration.find_or_create_organization.should == organization
+    registration.organization_id.should eql organization.id
+    registration.find_or_create_organization.should eql organization
   end
 
   it 'should fulfill/unfulfill related organizations on create/update' do
