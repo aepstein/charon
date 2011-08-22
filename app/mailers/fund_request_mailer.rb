@@ -37,7 +37,7 @@ class FundRequestMailer < ActionMailer::Base
       :subject => "#{fund_request} has been accepted for review"
     )
     if fund_request.fund_items.documentable.any?
-      filename = "#{fund_request.fund_grant.organization.to_s :file}.pdf"
+      filename = "#{fund_request.fund_grant.organization.to_s :file}-checklist.pdf"
       message.attachments[filename] = DocumentsReport.new( fund_request ).to_pdf
     end
     message

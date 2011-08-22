@@ -88,7 +88,7 @@ Feature: Manage fund_request mailers
     And the email parts should contain "This email is a confirmation that your fund request for Money Taking Fund has been accepted for review."
     And the email parts should contain "You will receive additional notice when a determination is released."
     And the email parts <attachment> contain "You must provide certain supporting documents in support of your fund request.  Please follow the attached instructions and checklist to assemble any required supporting documents."
-    And the email <attachment> have an attachment named "money-taking-club.pdf" of type "application/pdf"
+    And the email <attachment> have an attachment named "money-taking-club-checklist.pdf" of type "application/pdf"
     Examples:
       | node   | attachment |
       | doc    | should     |
