@@ -28,7 +28,7 @@
   <b>Parent:</b> <%=h @node.parent %>
 </p>
 
-<p><b>Document types:</b> <%= @node.document_types.join ', ' %></p>
+<p><b>Document types:</b> <%= @node.document_types.any? ? @node.document_types.join( ', ' ) : 'None' %></p>
 
 <p>
 <% if permitted_to? :edit, @node -%>

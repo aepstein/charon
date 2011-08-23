@@ -38,13 +38,16 @@ Feature: Manage nodes
       | regular | not see | not see | not see | see     |
 
   Scenario: Create new node and update
-    Given I log in as user: "admin"
+    Given a document_type exists with name: "Price quote"
+    And a document_type exists with name: "Letter of intent"
+    And I log in as user: "admin"
     And I am on the new node page for structure: "annual"
     When I fill in "Name" with "administrative expense"
     And I select "Administrative" from "node_requestable_type"
     And I select "simple" from "Category"
     And I fill in "Item amount limit" with "1000"
     And I fill in "Item quantity limit" with "4"
+    And I check "Price quote"
     And I press "Create"
     Then I should see "Node was successfully created."
     And I should see "Name: administrative expense"
@@ -52,12 +55,14 @@ Feature: Manage nodes
     And I should see "Category: simple"
     And I should see "Item amount limit: $1,000.00"
     And I should see "Item quantity limit: 4"
+    And I should see "Document types: Price quote"
     When I follow "Edit"
     And I fill in "Name" with "local event expense"
     And I select "Local Event" from "node_requestable_type"
     And I select "complex" from "Category"
     And I fill in "Item amount limit" with "2000"
     And I fill in "Item quantity limit" with "2"
+    And I uncheck "Price quote"
     And I press "Update"
     Then I should see "Node was successfully updated."
     And I should see "Name: local event expense"
@@ -65,6 +70,7 @@ Feature: Manage nodes
     And I should see "Category: complex"
     And I should see "Item amount limit: $2,000.00"
     And I should see "Item quantity limit: 2"
+    And I should see "Document types: None"
 
   Scenario: Delete and list nodes
     Given a node exists with name: "node 4", structure: structure "annual"
