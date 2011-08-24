@@ -52,7 +52,7 @@ Charon::Application.routes.draw do
   resources :nodes, :except => [ :index, :create, :new ]
   resources :organizations do
     member do
-      get :profile
+      get :dashboard
     end
     resources :activity_accounts, :only => [ :index ]
     resources :activity_reports, :only => [ :index, :new, :create ] do

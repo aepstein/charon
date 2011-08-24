@@ -41,19 +41,19 @@ describe FundSource do
 
   context 'scopes' do
     it 'should have a closed scope' do
-      generate_non_open_fund_sources
+      generate_non_current_fund_sources
       FundSource.closed.length.should eql 1
       FundSource.closed.should include @closed
     end
 
-    it 'should have an open scope' do
-      generate_non_open_fund_sources
-      FundSource.open.length.should eql 1
-      FundSource.open.should include @fund_source
+    it 'should have a current scope' do
+      generate_non_current_fund_sources
+      FundSource.current.length.should eql 1
+      FundSource.current.should include @fund_source
     end
 
     it 'should have an upcoming scope' do
-      generate_non_open_fund_sources
+      generate_non_current_fund_sources
       FundSource.upcoming.length.should eql 1
       FundSource.upcoming.should include @upcoming
     end
@@ -65,7 +65,7 @@ describe FundSource do
     fund_item.fund_request.fund_grant.fund_source.fund_requests.fund_item_amount_for_status(fund_item.fund_request.status).should == fund_item.amount
   end
 
-  def generate_non_open_fund_sources
+  def generate_non_current_fund_sources
     @closed = create(:closed_fund_source)
     @upcoming = create(:upcoming_fund_source)
   end

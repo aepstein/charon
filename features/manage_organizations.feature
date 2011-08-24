@@ -39,14 +39,14 @@ Feature: Manage organizations
     And a user: "reviewer" exists
     And a membership exists with organization: the organization, user: user "reviewer", role: the reviewer_role
     And I log in as user: "<user>"
-    Given I am on the profile page for the organization
-    Then I should <profile> authorized
+    Given I am on the dashboard page for the organization
+    Then I should <dashboard> authorized
     Given I am on the page for the organization
     Then I should <show> authorized
     And I should <update> "Edit"
     Given I am on the organizations page
     Then I should <show> "Focus Organization"
-    And I should <profile> "Profile"
+    And I should <dashboard> "Dashboard"
     And I should <update> "Edit"
     And I should <destroy> "Destroy"
     And I should <create> "New organization"
@@ -61,12 +61,12 @@ Feature: Manage organizations
     Given I delete on the page for the organization
     Then I should <destroy> authorized
     Examples:
-      | user      | create  | update  | destroy | show | profile |
-      | admin     | see     | see     | see     | see  | see     |
-      | manager   | not see | see     | see     | see  | see     |
-      | requestor | not see | see     | not see | see  | see     |
-      | reviewer  | not see | not see | not see | see  | see     |
-      | regular   | not see | not see | not see | see  | not see |
+      | user      | create  | update  | destroy | show | dashboard |
+      | admin     | see     | see     | see     | see  | see       |
+      | manager   | not see | see     | see     | see  | see       |
+      | requestor | not see | see     | not see | see  | see       |
+      | reviewer  | not see | not see | not see | see  | see       |
+      | regular   | not see | not see | not see | see  | not see   |
 
   Scenario Outline: Register a new organization and edit
     Given a current_registration exists with name: "Cornell Club", registered: true

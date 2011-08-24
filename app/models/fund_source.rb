@@ -78,11 +78,11 @@ class FundSource < ActiveRecord::Base
 
   default_scope :order => 'fund_sources.name ASC'
   scope :closed, lambda { where( :closed_at.lt => Time.zone.now ) }
-  scope :open, lambda {
+  scope :current, lambda {
     where( :open_at.lt => Time.zone.now, :closed_at.gt => Time.zone.now )
   }
   scope :open_deadline, lambda {
-    open.joins { fund_queues }.
+    current.joins { fund_queues }.
     where { fund_queues.submit_at.gt( Time.zone.now ) }
   }
   scope :open_deadline_for_first, lambda {
@@ -114,7 +114,7 @@ class FundSource < ActiveRecord::Base
     closed_at < Time.zone.now
   end
 
-  def open?
+  def current?
     (open_at < Time.zone.now) && (closed_at > Time.zone.now)
   end
 

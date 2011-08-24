@@ -62,19 +62,19 @@ describe FundGrant do
 
   context 'scopes' do
     it 'should have a closed scope' do
-      generate_non_open_fund_grants
+      generate_non_current_fund_grants
       FundGrant.closed.length.should eql 1
       FundGrant.closed.should include @closed
     end
 
-    it 'should have an open scope' do
-      generate_non_open_fund_grants
-      FundGrant.open.length.should eql 1
-      FundGrant.open.should include @fund_grant
+    it 'should have a current scope' do
+      generate_non_current_fund_grants
+      FundGrant.current.length.should eql 1
+      FundGrant.current.should include @fund_grant
     end
   end
 
-  def generate_non_open_fund_grants
+  def generate_non_current_fund_grants
     @fund_grant.save!
     @closed = create(:closed_fund_grant)
     @upcoming = create(:upcoming_fund_grant)

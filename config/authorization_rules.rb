@@ -319,17 +319,17 @@ end
 
 privileges do
   privilege :request do
-    includes :profile
+    includes :dashboard
   end
   privilege :review do
-    includes :profile
+    includes :dashboard
   end
   privilege :approve do
     includes :show
   end
   #TODO should manage really include show? performance issues in queries
   privilege :manage do
-    includes :create, :update, :destroy, :show, :profile
+    includes :create, :update, :destroy, :show, :dashboard
   end
   privilege :create do
     includes :new

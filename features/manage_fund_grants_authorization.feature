@@ -72,8 +72,8 @@ Feature: Manage fund_grants authorization
     Then I should <create> authorized
     Examples:
       | state    | queue | user                | create  |
-      | open     | focus | applicant_requestor | see     |
-      | open     | other | applicant_requestor | not see |
+      | current  | focus | applicant_requestor | see     |
+      | current  | other | applicant_requestor | not see |
       | upcoming | focus | applicant_requestor | not see |
       | closed   | focus | applicant_requestor | not see |
 

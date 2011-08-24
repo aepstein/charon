@@ -15,35 +15,35 @@ You may <%=
 </p>
 <% end %>
 
-<% if @organization.fund_sources.no_fund_grant.open.any? %>
+<% if @organization.fund_sources.no_fund_grant.current.any? %>
 <p>
 You may <%=
   link_to( "request grants from " +
-    pluralize( @organization.fund_sources.no_fund_grant.open.count, 'open fund sources'),
+    pluralize( @organization.fund_sources.no_fund_grant.current.count, 'current fund sources'),
     new_organization_fund_grant_path( @organization ) )
 %>.
 </p>
 <% else %>
 <p>
-There are no open fund sources for you to request grants.
+There are no current fund sources for you to request grants.
 </p>
 <% end %>
 
 <h3>Fund grants</h3>
 
-<% if @organization.fund_grants.open.any? %>
+<% if @organization.fund_grants.current.any? %>
 <p>
-You have <%=pluralize @organization.fund_grants.open.length, 'open fund grant' %>:
+You have <%=pluralize @organization.fund_grants.current.length, 'current fund grant' %>:
 </p>
 
 <ul>
-<% @organization.fund_grants.open.each do |fund_grant| %>
+<% @organization.fund_grants.current.each do |fund_grant| %>
 <li><%= link_to fund_grant.fund_source.to_s, fund_grant %></li>
 <% end %>
 </ul>
 <% else %>
 <p>
-You have no open fund grants.
+You have no current fund grants.
 </p>
 <% end %>
 

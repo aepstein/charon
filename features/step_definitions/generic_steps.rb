@@ -4,13 +4,13 @@ Given(/^#{capture_model} (?:has|have) #{capture_fields}$/) do |name, fields|
   subject.save!
 end
 
-Given /^#{capture_model} is (closed|open|upcoming)$/ do |name, state|
+Given /^#{capture_model} is (closed|current|upcoming)$/ do |name, state|
   subject = model(name)
   case state
   when 'closed'
     subject.update_attributes! :open_at => Time.zone.now - 1.year,
       :closed_at => Time.zone.now - 1.day
-  when 'open'
+  when 'current'
 #    subject.update_attributes! :open_at => Time.zone.now - 1.year,
 #      :closed_at => Time.zone.now + 1.month
   when 'upcoming'

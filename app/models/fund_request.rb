@@ -1,6 +1,7 @@
 class FundRequest < ActiveRecord::Base
   SEARCHABLE = [ :organization_name_contains, :fund_source_name_contains,
     :with_state ]
+  ACTIVE_STATES = [ :started, :tentative, :submitted, :finalized ]
   UNACTIONABLE_STATES = [ :withdrawn, :rejected ]
 
   attr_accessible :fund_request_type_id
@@ -204,6 +205,8 @@ class FundRequest < ActiveRecord::Base
       where { |fund_sources| fund_sources.name =~ "%#{name}%" } )
   }
   scope :actionable, without_state( :withdrawn, :rejected )
+  scope :active, lambda { with_state( ACTIVE_STATES ) }
+  scope :inactive, lambda { without_state( ACTIVE_STATES ) }
   scope :prior_to, lambda { |request|
     where { created_at < request.created_at }.
     where { id != request.id }

@@ -3,10 +3,6 @@
 <a href="<%= new_fund_request_approval_url(@approval.approvable) %>"><%= new_fund_request_approval_url(@approval.approvable) %></a>.
 </p>
 
-<p><b>Please note:</b> If you click the link above and you receive an "Unauthorized fund_request" message, click "my profile"
-and make sure you have first approved all agreements awaiting your approval.  You are not authorized to sign documents
-until you have signed related agreements.</p>
-
 <p>
 If you have any questions, please contact <%=h @approval.approvable.contact_name %>
 &lt;<a href="mailto:<%= @approval.approvable.contact_email%>"><%= @approval.approvable.contact_email %></a>&gt;.

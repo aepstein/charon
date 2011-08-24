@@ -4,7 +4,7 @@ class OrganizationsController < ApplicationController
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_organization_from_params, :only => [ :new, :create ]
   before_filter :initialize_organization_profile, :only => [ :new, :edit ]
-  filter_access_to :new, :create, :edit, :update, :destroy, :profile, :attribute_check => true
+  filter_access_to :new, :create, :edit, :update, :destroy, :dashboard, :attribute_check => true
 
   # GET /organizations
   # GET /organizations.xml
@@ -34,10 +34,10 @@ class OrganizationsController < ApplicationController
     end
   end
 
-  # GET /organizations/1/profile
-  # GET /organizations/1/profile.xml
-  def profile
-    # profile.html.erb
+  # GET /organizations/1/dashboard
+  # GET /organizations/1/dashboard.xml
+  def dashboard
+    # dashboard.html.erb
   end
 
   # GET /organizations/new
