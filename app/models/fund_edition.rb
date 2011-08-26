@@ -273,7 +273,7 @@ class FundEdition < ActiveRecord::Base
 
   def must_not_exceed_quantity_limit
     return unless fund_request && fund_request.fund_request_type.quantity_limit &&
-      perspective == :PERSPECTIVES.first
+      perspective == PERSPECTIVES.first
     unless fund_request.fund_editions.initial.count < fund_request.fund_request_type.quantity_limit
       errors.add :fund_item, "exceeds number of items allowed for the request"
     end
