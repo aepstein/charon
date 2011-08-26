@@ -101,7 +101,7 @@ Feature: Manage fund_items
       |released |ready       |conflictor         |not see|not see|see    |not see|not see|
       |released |ready       |observer_requestor |not see|not see|not see|not see|not see|
       |released |ready       |regular            |not see|not see|not see|not see|not see|
-@wip
+
   Scenario Outline: Create or update an fund_item with embedded fund_edition
     Given an organization exists with last_name: "Applicant"
     And a structure exists
