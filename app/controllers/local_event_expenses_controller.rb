@@ -10,7 +10,7 @@ class LocalEventExpensesController < ApplicationController
         :fund_item => { :fund_grant => { :organization => :users } } } ).
       where('fund_editions.perspective = ? AND local_event_expenses.start_date >= ?',
         'reviewer', Date.today - 1.weeks ).
-      order { date }
+      order { start_date }
     page = params[:page] ? params[:page] : 1
     respond_to do |format|
       format.html { @events = @events.page(page) }

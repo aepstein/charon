@@ -310,7 +310,7 @@ class FundEdition < ActiveRecord::Base
 
   # Repositions item to position of displace_item if displace_item is set
   def reposition_item
-    if displace_item && perspective && perspective == FundEdition::PERSPECTIVES.first
+    if displace_item && perspective && perspective == PERSPECTIVES.first
       np = displace_item.position
       self.displace_item = nil
       fund_item.insert_at np

@@ -99,7 +99,7 @@ Feature: Manage fund_items
       |released |ready       |conflictor         |not see|not see|see    |not see|
       |released |ready       |observer_requestor |not see|not see|not see|not see|
       |released |ready       |regular            |not see|not see|not see|not see|
-@wip
+
   Scenario Outline: Create or update an fund_item with embedded fund_edition
     Given an organization exists with last_name: "Applicant"
     And a structure exists
@@ -139,7 +139,7 @@ Feature: Manage fund_items
     Examples:
       | request | node        | box                  | button    | parent  |
       | other   | New         | Root Item            | Root Item | not see |
-#      | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
+      | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
 
   Scenario Outline: Prevent unauthorized user from updating an unauthorized fund_edition
     Given an organization exists with last_name: "Applicant"
@@ -162,7 +162,7 @@ Feature: Manage fund_items
       | admin | update  |
       | true  | see     |
       | false | not see |
-
+@wip
   Scenario Outline: Move fund_items among priorities
     Given a structure exists
     And a node: "1" exists with structure: the structure, name: "node 1"
@@ -172,13 +172,13 @@ Feature: Manage fund_items
     And a fund_source exists with structure: the structure
     And a fund_grant exists with fund_source: the fund_source
     And a fund_request exists with fund_grant: the fund_grant
-    And an fund_item: "1" exists with fund_grant: the fund_grant, node: node "1"
+    And a fund_item: "1" exists with fund_grant: the fund_grant, node: node "1"
     And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
-    And an fund_item: "2" exists with fund_grant: the fund_grant, node: node "2", parent: fund_item "1"
+    And a fund_item: "2" exists with fund_grant: the fund_grant, node: node "2", parent: fund_item "1"
     And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
-    And an fund_item: "3" exists with fund_grant: the fund_grant, node: node "3", parent: fund_item "1"
+    And a fund_item: "3" exists with fund_grant: the fund_grant, node: node "3", parent: fund_item "1"
     And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
-    And an fund_item: "4" exists with fund_grant: the fund_grant, node: node "4"
+    And a fund_item: "4" exists with fund_grant: the fund_grant, node: node "4"
     And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And I log in as user: "admin"
     When I am on the fund_items page for the fund_request
@@ -216,9 +216,13 @@ Feature: Manage fund_items
     And a fund_grant exists with fund_source: the fund_source
     And a fund_request exists with fund_grant: the fund_grant
     And an fund_item: "1" exists with fund_grant: the fund_grant, node: node "1"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And an fund_item: "2" exists with fund_grant: the fund_grant, node: node "2", parent: fund_item "1"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And an fund_item: "3" exists with fund_grant: the fund_grant, node: node "3", parent: fund_item "1"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And an fund_item: "4" exists with fund_grant: the fund_grant, node: node "4"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And I log in as user: "admin"
     When I follow "Destroy" for the 3rd fund_item for the fund_request
     Given I am on the fund_items page for the fund_request
