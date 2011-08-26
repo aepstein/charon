@@ -169,17 +169,23 @@ Feature: Manage fund_items
     And a node: "2" exists with structure: the structure, parent: node "1", name: "node 2"
     And a node: "3" exists with structure: the structure, parent: node "1", name: "node 3"
     And a node: "4" exists with structure: the structure, name: "node 4"
+    And a node: "5" exists with structure: the structure, parent: node "4", name: "node 5"
+    And a node: "6" exists with structure: the structure, parent: node "4", name: "node 6"
     And a fund_source exists with structure: the structure
     And a fund_grant exists with fund_source: the fund_source
     And a fund_request exists with fund_grant: the fund_grant
     And a fund_item: "1" exists with fund_grant: the fund_grant, node: node "1"
-    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And a fund_item: "2" exists with fund_grant: the fund_grant, node: node "2", parent: fund_item "1"
-    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And a fund_item: "3" exists with fund_grant: the fund_grant, node: node "3", parent: fund_item "1"
-    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And a fund_item: "4" exists with fund_grant: the fund_grant, node: node "4"
-    And fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_item: "5" exists with fund_grant: the fund_grant, node: node "5", parent: fund_item "4"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_item: "6" exists with fund_grant: the fund_grant, node: node "6", parent: fund_item "4"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And I log in as user: "admin"
     When I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
@@ -188,6 +194,8 @@ Feature: Manage fund_items
       | node 2 |
       | node 3 |
       | node 4 |
+      | node 5 |
+      | node 6 |
     When I follow "Edit" for the <old> fund_item for the fund_request
     And I select "<new>" from "Move to priority of"
     And I press "Update Fund item"
@@ -199,12 +207,16 @@ Feature: Manage fund_items
       | <new2> |
       | <new3> |
       | <new4> |
+      | <new5> |
+      | <new6> |
     Examples:
-      | old | new    | new1   | new2   | new3   | new4   |
-      | 4th | node 1 | node 4 | node 1 | node 2 | node 3 |
-      | 3rd | node 2 | node 1 | node 3 | node 2 | node 4 |
-      | 2nd | node 3 | node 1 | node 3 | node 2 | node 4 |
-      | 1st | node 4 | node 4 | node 1 | node 2 | node 3 |
+      | old | new    | new1   | new2   | new3   | new4   | new5   | new6   |
+      | 6th | node 5 | node 1 | node 2 | node 3 | node 4 | node 6 | node 5 |
+      | 5th | node 6 | node 1 | node 2 | node 3 | node 4 | node 6 | node 5 |
+      | 4th | node 1 | node 4 | node 5 | node 6 | node 1 | node 2 | node 3 |
+      | 3rd | node 2 | node 1 | node 3 | node 2 | node 4 | node 5 | node 6 |
+      | 2nd | node 3 | node 1 | node 3 | node 2 | node 4 | node 5 | node 6 |
+      | 1st | node 4 | node 4 | node 5 | node 6 | node 1 | node 2 | node 3 |
 
   Scenario: List and delete fund_items
     Given a structure exists

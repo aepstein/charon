@@ -309,9 +309,13 @@ class FundEdition < ActiveRecord::Base
   end
 
   # Repositions item to position of displace_item if displace_item is set
+  # Also repositions descendants:
+  # * to end of list if item is placed at end of list
+  # * immediately ahead of item if item is not at end of list
   def reposition_item
     if displace_item && perspective && perspective == PERSPECTIVES.first
-      np = displace_item.position
+      np = displace_item.position +
+      ( displace_item.position > fund_item.position ? displace_item.descendants.count : 0 )
       self.displace_item = nil
       fund_item.insert_at np
       if fund_item.descendants.length > 0
