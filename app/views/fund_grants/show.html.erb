@@ -5,6 +5,10 @@
 </p>
 
 <p>
+<%
+#TODO: reloading organization should not be necessary
+%>
+<% @fund_grant.organization.reload %>
  <b>Organization:</b> <%= @fund_grant.organization %>
 </p>
 

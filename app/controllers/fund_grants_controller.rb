@@ -1,7 +1,7 @@
 class FundGrantsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index ]
+  before_filter :initialize_index, :only => [ :index, :closed ]
   before_filter :new_fund_grant_from_params, :only => [ :new, :create ]
   before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :destroy, :show,
@@ -10,6 +10,11 @@ class FundGrantsController < ApplicationController
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @fund_source ) if @fund_source
     permitted_to!( :index )
+  end
+
+  def closed
+    @fund_grants = @fund_grants.closed
+    index
   end
 
   # GET /organizations/:organization_id/fund_grants

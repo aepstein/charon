@@ -1,7 +1,7 @@
 class FundRequestsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index, :duplicate ]
+  before_filter :initialize_index, :only => [ :index, :duplicate, :inactive ]
   before_filter :new_fund_request_from_params, :only => [ :new, :create ]
   before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy,
@@ -9,10 +9,15 @@ class FundRequestsController < ApplicationController
   filter_access_to :documents_report do
     permitted_to! :show, @fund_request
   end
-  filter_access_to :index, :duplicate do
+  filter_access_to :index, :duplicate, :inactive do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @fund_source ) if @fund_source
     permitted_to!( :index )
+  end
+
+  def inactive
+    @fund_requests = @fund_requests.inactive
+    index
   end
 
   # /fund_requests/:id/documents_report.pdf

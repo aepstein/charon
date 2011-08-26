@@ -1,25 +1,37 @@
+<%=content_tag 'h2', "#{@organization} Dashboard" %>
+
 <h3>Fund requests</h3>
 
-<% if @organization.fund_requests.active.any? %>
-You have the following active requests in process:
+<% if @organization.fund_requests.active.length > 0 %>
+<p>
+You have <%=pluralize @organization.fund_requests.active.length, 'active request' %> in process:
+</p>
+
+<%=render :partial => 'fund_requests/fund_requests',
+  :object => @organization.fund_requests.active,
+  :locals => { :organization => @organization } %>
+
 <% else %>
+<p>
 You have no fund requests in process.
+</p>
 <% end %>
 
 <% if @organization.fund_requests.inactive.any? %>
 <p>
 You may <%=
-  link_to "view #{pluralize @organization.fund_grants.inactive.count, 'inactive fund request'}",
+  link_to "view #{pluralize @organization.fund_requests.inactive.count, 'inactive fund request'}",
   inactive_organization_fund_requests_path( @organization )
 %>.
 </p>
 <% end %>
 
-<% if @organization.fund_sources.no_fund_grant.current.any? %>
+<% if @organization.fund_sources.allowed_for(current_user).length > 0 %>
 <p>
 You may <%=
   link_to( "request grants from " +
-    pluralize( @organization.fund_sources.no_fund_grant.current.count, 'current fund sources'),
+    pluralize( @organization.fund_sources.allowed_for(current_user).length,
+      'fund source'),
     new_organization_fund_grant_path( @organization ) )
 %>.
 </p>
@@ -36,7 +48,7 @@ There are no current fund sources for you to request grants.
 You have <%=pluralize @organization.fund_grants.current.length, 'current fund grant' %>:
 </p>
 
-<ul>
+<ul id="current_fund_grants">
 <% @organization.fund_grants.current.each do |fund_grant| %>
 <li><%= link_to fund_grant.fund_source.to_s, fund_grant %></li>
 <% end %>

@@ -136,7 +136,7 @@ class Organization < ActiveRecord::Base
     when :file
       name.downcase.gsub /[^\w]+/, '-'
     else
-      first_name.blank? ? last_name : "#{first_name} #{last_name}"
+      first_name? ? "#{first_name} #{last_name}" : last_name
     end
   end
 
