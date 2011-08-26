@@ -9,7 +9,3 @@
                      ) if permitted_to?( :destroy, fund_item ) %></td>
   <% end %>
 
-  <%= render :partial => 'fund_items/fund_item',
-             :collection => fund_item.children.ordered,
-             :locals => { :fund_request => fund_request }  %>
-

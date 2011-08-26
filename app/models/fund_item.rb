@@ -91,7 +91,8 @@ class FundItem < ActiveRecord::Base
   validates :fund_grant, :presence => true
   validates :amount,
     :numericality => { :greater_than_or_equal_to => 0.0 }
-  validate :node_must_be_allowed, :on => :create
+  validate :node_must_be_allowed, :parent_must_be_in_same_fund_grant,
+    :on => :create
 
   before_validation :set_title
   before_validation :initialize_nested_position, :on => :create
@@ -148,6 +149,13 @@ class FundItem < ActiveRecord::Base
   def node_must_be_allowed
     return if node.blank? || fund_grant.blank?
     errors.add( :node_id, "must be an allowed node." ) unless allowed_nodes.include?( node )
+  end
+
+  def parent_must_be_in_same_fund_grant
+    return unless parent && fund_grant
+    if parent.fund_grant != fund_grant
+      errors.add( :parent, "must be part of the same fund grant" )
+    end
   end
 
   def must_not_exceed_appendable_quantity_limit

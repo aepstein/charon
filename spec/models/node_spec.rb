@@ -23,13 +23,13 @@ describe Node do
     requestable_type = 'invalid'
     Node::ALLOWED_TYPES.should_not include(requestable_type)
     node = build(:node, { :requestable_type => requestable_type })
-    node.valid?.should == false
+    node.valid?.should be_false
   end
 
   it "should not save without a valid category" do
     node = create(:node)
     node.category = nil
-    node.save.should == false
+    node.save.should be_false
   end
 
   it 'should not save with a duplicate name for a certain structure' do
@@ -38,6 +38,5 @@ describe Node do
     duplicate.structure = @node.structure
     duplicate.valid?.should be_false
   end
-
 end
 

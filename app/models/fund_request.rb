@@ -238,6 +238,15 @@ class FundRequest < ActiveRecord::Base
     fund_requests.each { |fund_request| fund_request.send("send_#{state}_notice!") }
   end
 
+  def self.unactionable_states(format=nil)
+    case format
+    when :sql
+      UNACTIONABLE_STATES.map { |s| connection.quote s }.join ','
+    else
+      UNACTIONABLE_STATES
+    end
+  end
+
   delegate :require_requestor_recipients!, :to => :fund_grant
 
   # Is the request sufficiently complete to approve?
@@ -257,7 +266,7 @@ class FundRequest < ActiveRecord::Base
   end
 
   # Is the request actionable?
-  def actionable?; %w( withdrawn rejected ).all? { |s| s != state }; end
+  def actionable?; UNACTIONABLE_STATES.map(&:to_s).all? { |s| s != state }; end
 
   # Is the request the first actionable request?
   def first_actionable?

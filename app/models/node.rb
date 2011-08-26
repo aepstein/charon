@@ -31,18 +31,24 @@ class Node < ActiveRecord::Base
   default_scope :order => 'nodes.name ASC'
 
   # Outer joins to fund_items that are children of the fund_item
-  # * limits to nodes that can be child fund_items of the fund_item
+  # * excludes
   scope :with_child_fund_items_for, lambda { |fund_item|
     fund_item.node.children.joins { fund_items.outer }.
-    joins( "AND fund_items.ancestry = " +
-      "#{connection.quote fund_item.child_ancestry}" )
+    joins( "AND fund_items.ancestry = #{connection.quote fund_item.child_ancestry} " +
+      "AND fund_items.id IN (SELECT fund_editions.fund_item_id FROM " +
+      "fund_editions INNER JOIN fund_requests ON " +
+      "fund_editions.fund_request_id = fund_requests.id AND " +
+      "fund_requests.state NOT IN ( #{FundRequest.unactionable_states :sql} ) )" )
   }
   # Outer joins to fund_items that are root items of the fund_grant
   # * limits to nodes that can be root fund_items of the fund_grant
   scope :with_root_fund_items_for, lambda { |fund_grant|
     fund_grant.fund_source.structure.nodes.roots.joins { fund_items.outer }.
-    joins( "AND fund_items.ancestry IS NULL AND fund_items.fund_grant_id = " +
-      "#{fund_grant.id}" )
+    joins( "AND fund_items.fund_grant_id = #{fund_grant.id} " +
+      "AND fund_items.id IN (SELECT fund_editions.fund_item_id FROM " +
+      "fund_editions INNER JOIN fund_requests ON " +
+      "fund_editions.fund_request_id = fund_requests.id AND " +
+      "fund_requests.state NOT IN ( #{FundRequest.unactionable_states :sql} ) )" )
   }
   # Returns only nodes with number of fund_items reaching limit for the node
   scope :at_limit, having { item_quantity_limit.eq( count( fund_items.id ) ) }.

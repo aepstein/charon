@@ -3,6 +3,3 @@
   <%= render :partial => 'fund_items/detail', :object => detailed,
     :locals => { :level => ( level + 1 ), :fund_request => fund_request } %>
 
-  <%= render :partial => 'fund_items/detailed', :collection => detailed.children,
-    :locals => { :fund_request => fund_request } %>
-
