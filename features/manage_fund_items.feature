@@ -162,7 +162,7 @@ Feature: Manage fund_items
       | admin | update  |
       | true  | see     |
       | false | not see |
-@wip
+
   Scenario Outline: Move fund_items among priorities
     Given a structure exists
     And a node: "1" exists with structure: the structure, name: "node 1"

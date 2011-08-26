@@ -314,6 +314,14 @@ class FundEdition < ActiveRecord::Base
       np = displace_item.position
       self.displace_item = nil
       fund_item.insert_at np
+      if fund_item.descendants.length > 0
+        last = fund_item.last?
+        fund_item.descendants.ordered.reduce(np) do |new_position, item|
+          new_position += 1 unless last
+          item.insert_at new_position
+          new_position
+        end
+      end
     end
   end
 
