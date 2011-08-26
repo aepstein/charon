@@ -401,7 +401,8 @@ FactoryGirl.define do
 
   factory :local_event_expense do
     association :fund_edition, :factory => :local_event_expense_fund_edition
-    date Time.zone.today + 2.months
+    start_date Time.zone.today + 2.months
+    end_date { |e| e.start_date }
     title 'An Event'
     location 'Willard Straight Hall'
     purpose 'To do something fun'
@@ -422,7 +423,8 @@ FactoryGirl.define do
 
   factory :travel_event_expense do
     association :fund_edition, :factory => :travel_event_expense_fund_edition
-    date Time.zone.today + 2.months
+    start_date Time.zone.today + 2.months
+    end_date { |e| e.start_date }
     title "A tournament"
     location 'Los Angeles, CA'
     purpose 'To compete'

@@ -8,7 +8,7 @@ class LocalEventExpensesController < ApplicationController
     @events = LocalEventExpense.scoped.includes(
       :fund_edition => { :fund_request => [],
         :fund_item => { :fund_grant => { :organization => :users } } } ).
-      where('fund_editions.perspective = ? AND local_event_expenses.date >= ?',
+      where('fund_editions.perspective = ? AND local_event_expenses.start_date >= ?',
         'reviewer', Date.today - 1.weeks ).
       order { date }
     page = params[:page] ? params[:page] : 1
@@ -18,7 +18,7 @@ class LocalEventExpensesController < ApplicationController
         csv_string = CSV.generate do |csv|
           csv << %w( date title location uup purpose organizer contacts )
           @events.each do |event|
-            csv << ( [ event.date,
+            csv << ( [ event.start_date,
                        event.title,
                        event.location,
                        event.uup_required? ? 'Y' : 'N',

@@ -1,7 +1,7 @@
 class TravelEventExpense < ActiveRecord::Base
-  attr_accessible :date, :title, :location, :purpose, :travelers_per_group,
-    :number_of_groups, :distance, :nights_of_lodging, :per_person_fees,
-    :per_group_fees
+  attr_accessible :start_date, :end_date, :title, :location, :purpose,
+    :travelers_per_group, :number_of_groups, :distance, :nights_of_lodging,
+    :per_person_fees, :per_group_fees
   attr_readonly :fund_edition_id
 
   belongs_to :fund_edition, :inverse_of => :travel_event_expense
@@ -9,7 +9,9 @@ class TravelEventExpense < ActiveRecord::Base
   has_paper_trail :class_name => 'SecureVersion'
 
   validates :fund_edition, :presence => true
-  validates :date, :timeliness => { :type => :date }
+  validates :start_date, :timeliness => { :type => :date }
+  validates :end_date, :timeliness => { :type => :date,
+	  :greater_than_or_equal_to => :start_date }
   validates :title, :presence => true
   validates :location, :presence => true
   validates :purpose, :presence => true

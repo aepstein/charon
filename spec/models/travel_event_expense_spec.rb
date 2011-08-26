@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe TravelEventExpense do
   before(:each) do
@@ -11,43 +11,50 @@ describe TravelEventExpense do
 
   it "should not save without a fund_edition" do
     @expense.fund_edition = nil
-    @expense.save.should == false
+    @expense.save.should be_false
   end
 
-  it "should not save with an invalid date" do
-    @expense.date = nil
-    @expense.save.should == false
-    @expense.date = 'blah'
-    @expense.save.should == false
+  it "should not save with an invalid or blank start date" do
+    @expense.start_date = nil
+    @expense.save.should be_false
+    @expense.start_date = 'blah'
+    @expense.save.should be_false
+  end
+
+  it "should not save with an invalid or blank end date" do
+    @expense.end_date = nil
+    @expense.save.should be_false
+    @expense.end_date = 'blah'
+    @expense.save.should be_false
   end
 
   it "should not save without a title" do
     @expense.title = ''
-    @expense.save.should == false
+    @expense.save.should be_false
   end
 
   it "should not save without a location" do
     @expense.location = ''
-    @expense.save.should == false
+    @expense.save.should be_false
   end
 
   it "should not save without a purpose" do
     @expense.purpose = ''
-    @expense.save.should == false
+    @expense.save.should be_false
   end
 
   it "should not save with invalid members per group" do
     @expense.travelers_per_group = nil
-    @expense.save.should == false
+    @expense.save.should be_false
     @expense.travelers_per_group = 0
-    @expense.save.should == false
+    @expense.save.should be_false
   end
 
   it "should not save with invalid number of groups" do
     @expense.number_of_groups = nil
-    @expense.save.should == false
+    @expense.save.should be_false
     @expense.number_of_groups = 0
-    @expense.save.should == false
+    @expense.save.should be_false
   end
 
   it "should not save with invalid mileage" do
