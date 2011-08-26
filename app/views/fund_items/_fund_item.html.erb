@@ -7,5 +7,7 @@
                      ) if permitted_to?( :edit, fund_request ) %></td>
     <td><%= link_to( 'Destroy', fund_item, :confirm => 'Are you sure?', :method => :delete
                      ) if permitted_to?( :destroy, fund_item ) %></td>
+    <td><%= link_to( 'Remove', fund_item.fund_editions.for_request( fund_request ).first,
+      :confirm => 'Are you sure?', :method => :delete ) if fund_item.fund_editions.for_request( fund_request ).any? && permitted_to?( :destroy, fund_item.fund_editions.for_request( fund_request ).first ) %></td>
   <% end %>
 

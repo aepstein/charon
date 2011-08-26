@@ -21,6 +21,7 @@ Charon::Application.routes.draw do
   resources :fund_grants, :except => [ :create, :new, :index ] do
     resources :fund_requests, :only => [ :create, :new, :index ]
   end
+  resources :fund_editions, :only => [ :destroy ]
   resources :fund_items, :only => [ :destroy ]
   resources :fund_queues, :only => [] do
     resources :fund_requests, :only => [ :index ] do
