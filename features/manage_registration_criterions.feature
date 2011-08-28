@@ -8,7 +8,7 @@ Feature: Manage registration_criterions
     And a user: "regular" exists
 
   Scenario Outline: Test permissions for registration criterions controller actions
-    Given a registration_criterion: "basic" exists
+    Given a registration_criterion: "basic" exists with type_of_member: "undergrads", minimal_percentage: 10
     And I log in as user: "<user>"
     And I am on the page for registration_criterion: "basic"
     Then I should <show> authorized
