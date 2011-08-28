@@ -22,6 +22,35 @@ Feature: Manage fund_grants authorization
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
 
+  Scenario Outline: Show allocations
+    Given a category: "administrative" exists with name: "Administrative"
+    And a category: "event" exists with name: "Events"
+    And a category: "other" exists with name: "Curios"
+    And a structure exists
+    And a node: "administrative" exists with structure: the structure, category: category "administrative"
+    And a node: "event" exists with structure: the structure, category: category "event"
+    And a node: "other" exists with structure: the structure, category: category "other"
+    And a fund_source exists with organization: organization "source", structure: the structure
+    And a fund_grant exists with organization: organization "applicant", fund_source: the fund_source
+    And a fund_item exists with fund_grant: the fund_grant, node: node "administrative", amount: "100.0", released_amount: "200.0"
+    And a fund_item exists with fund_grant: the fund_grant, node: node "event", amount: "150.0", released_amount: "250.0"
+    And I log in as user: "<user>"
+    And I am on the page for the fund_grant
+    Then I should <unreleased> the following categories:
+      | Category       | Unreleased Amount  | Released Amount |
+      | Administrative | $100.00 | $200.00         |
+      | Events         | $150.00 | $250.00         |
+      | TOTAL          | $250.00 | $450.00         |
+    And I should <released> the following categories:
+      | Category       | Released Amount |
+      | Administrative | $200.00         |
+      | Events         | $250.00         |
+      | TOTAL          | $450.00         |
+    Examples:
+      | user                | unreleased | released |
+      | admin               | see        | not see  |
+      | applicant_requestor | not see    | see      |
+
   Scenario Outline: Test permissions for fund_grants controller w/o fund_source
     Given a fund_source exists with name: "Annual", organization: organization "source"
     And a fund_grant: "annual" exists with fund_source: the fund_source, organization: organization "applicant"

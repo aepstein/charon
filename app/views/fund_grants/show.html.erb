@@ -16,6 +16,38 @@
   <b>Released at:</b> <%= @fund_grant.released_at? ? @fund_grant.released_at.to_s( :rfc822 ) : 'Not released' %>
 </p>
 
+<%=content_tag 'h3', "Allocation summary" %>
+
+<p>The following amounts have been allocated per category.</p>
+
+<table>
+  <thead>
+    <th>Category</th>
+    <% if permitted_to? :manage, @fund_grant %>
+     <th>Unreleased Amount</th>
+    <% end %>
+    <th>Released Amount</th>
+  </thead>
+  <tbody>
+    <% @fund_grant.categories.group { id }.each do |category| %>
+      <%= table_row_tag do %>
+        <td><%= category %></td>
+        <% if permitted_to? :manage, @fund_grant %>
+        <td><%=number_to_currency @fund_grant.fund_items.amount_for_category category %></td>
+        <% end %>
+        <td><%=number_to_currency @fund_grant.fund_items.released_amount_for_category category %></td>
+      <% end %>
+    <% end %>
+    <%= table_row_tag do %>
+      <td>TOTAL</td>
+      <% if permitted_to? :manage, @fund_grant %>
+      <td><%=number_to_currency @fund_grant.fund_items.sum( :amount ) %></td>
+      <% end %>
+      <td><%=number_to_currency @fund_grant.fund_items.sum( :released_amount ) %></td>
+    <% end %>
+  </tbody>
+</table>
+
 <p>
 <% if permitted_to? :edit, @fund_grant %>
 <%= link_to 'Edit', edit_fund_grant_path( @fund_grant ) %>

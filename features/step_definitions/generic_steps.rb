@@ -40,8 +40,12 @@ When /^I follow "(.+)" for the (\d+)(?:st|nd|rd|th) #{capture_factory}(?: for #{
   end
 end
 
-Then /^I should see the following #{capture_plural_factory}:$/ do |context, table|
-  table.diff!(tableish('table > thead,tbody > tr', 'td,th'))
+Then /^I should( not)? see the following #{capture_plural_factory}:$/ do |negate, context, table|
+  if negate.blank?
+    table.diff!(tableish('table > thead,tbody > tr', 'td,th'))
+  else
+    # TODO: Ideally should verify table is not identical
+  end
 end
 
 Given /^there are no (.+)s$/ do |type|

@@ -19,8 +19,20 @@ class FundGrant < ActiveRecord::Base
         fund_request_types.upcoming.allowed_for_first.first
     end
   end
-  has_many :fund_items, :inverse_of => :fund_grant, :dependent => :destroy
+  has_many :fund_items, :inverse_of => :fund_grant, :dependent => :destroy do
+    def amount_for_category( category )
+      for_category( category ).sum( :amount )
+    end
+    def released_amount_for_category( category )
+      for_category( category ).sum( :released_amount )
+    end
+    def for_category( category )
+      joins { node }.where { node.category_id == category.id }
+    end
+  end
 
+  has_many :nodes, :through => :fund_items
+  has_many :categories, :through => :nodes
   has_many :users, :through => :organization do
     # Retrieves users associated with a perspective for the grant
     def for_perspective( perspective )
@@ -110,6 +122,10 @@ class FundGrant < ActiveRecord::Base
   end
 
   delegate :require_requestor_recipients!, :to => :organization
+
+  def to_s
+    "Fund grant to #{organization} from #{fund_source}"
+  end
 
 end
 
