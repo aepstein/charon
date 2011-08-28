@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe FundItem do
   let( :fund_item ) { build(:fund_item) }
@@ -81,6 +81,10 @@ describe FundItem do
     end
 
     it 'allowed_nodes should include correct child nodes that are under limit for a parent' do
+      fund_item.save!
+      create( :fund_edition, :fund_item => fund_item, :fund_request => unactionable_request )
+      create( :fund_edition, :fund_item => fund_item, :fund_request => fund_request )
+      fund_item.association(:fund_editions).reset
       at_limit_node = create(:node, :structure => fund_item.node.structure,
         :parent => fund_item.node )
       at_limit_item = create(:fund_item, :parent => fund_item, :node => at_limit_node,
