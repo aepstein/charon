@@ -62,6 +62,11 @@ describe FundRequest do
     end
   end
 
+  it 'should send a started_notice on create' do
+    @fund_request.should_receive(:send_started_notice!)
+    @fund_request.save!
+  end
+
   it "should reset approval checkpoint on transition to submitted" do
     queue = @fund_request.fund_grant.fund_source.fund_queues.first
     @fund_request.state = 'tentative'

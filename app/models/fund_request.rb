@@ -108,6 +108,8 @@ class FundRequest < ActiveRecord::Base
   validate :fund_request_type_must_be_associated_with_fund_source,
     :on => :create
 
+  after_create :send_started_notice!
+
   state_machine :review_state, :initial => :unreviewed, :namespace => 'review' do
 
     state :unreviewed, :tentative, :ready
