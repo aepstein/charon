@@ -146,6 +146,23 @@ describe FundEdition do
       excessive_edition.save.should be_false
     end
 
+    it 'should not save when parent item does not have edition of same perspective in request' do
+      fund_edition.save!
+      parent = fund_edition.fund_item
+      child_node = create(:node, :parent => parent.node,
+        :structure => parent.node.structure, :item_quantity_limit => 2 )
+      first_item = create( :fund_item, :parent => parent,
+        :node => child_node, :fund_grant => parent.fund_grant )
+      create( :fund_edition, :fund_item => first_item,
+        :fund_request => fund_edition.fund_request )
+      fund_edition.fund_request.update_attribute :reject_message, 'rejected'
+      fund_edition.fund_request.update_attribute :state, 'rejected'
+      new_request = create( :fund_request, :fund_grant => fund_edition.fund_request.fund_grant )
+      orphan_edition = build( :fund_edition, :fund_request => new_request, :fund_item => first_item )
+      orphan_edition.save.should be_false
+      orphan_edition.errors.first.should eql [:fund_item, "parent must be in request"]
+    end
+
   end
 
   context 'item repositioning' do

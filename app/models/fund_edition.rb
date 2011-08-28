@@ -88,7 +88,8 @@ class FundEdition < ActiveRecord::Base
   validate :previous_edition_must_exist, :item_and_request_must_have_same_grant,
     :must_not_exceed_amendable_quantity_limit,
     :must_not_exceed_appendable_quantity_limit, :must_not_exceed_quantity_limit,
-    :fund_item_node_must_be_allowed, :on => :create
+    :fund_item_node_must_be_allowed, :parent_must_have_same_perspective_in_request,
+    :on => :create
   validate
 
   after_save :set_fund_item_title, :reposition_item
@@ -305,6 +306,15 @@ class FundEdition < ActiveRecord::Base
     return unless displace_item && fund_item
     unless displaceable_items.include?( displace_item )
       errors.add :displace_item, "cannot be displaced by this item"
+    end
+  end
+
+  # Assures a subitem is not added to a request before its parent
+  def parent_must_have_same_perspective_in_request
+    return unless perspective && fund_request && fund_item && fund_item.parent
+    unless fund_item.parent.fund_editions.for_request( fund_request ).
+      map(&:perspective).include? perspective
+      errors.add :fund_item, "parent must be in request"
     end
   end
 
