@@ -22,7 +22,7 @@
   <% else -%>
   <td/>
   <td><%= link_to 'Show Detail', fund_request %></td>
-  <td><%= link_to 'Manage FundItems', fund_request_fund_items_path(fund_request) %></td>
+  <td><%= link_to 'Manage Items', fund_request_fund_items_path(fund_request) %></td>
   <td><%= link_to( 'Destroy', fund_request, :confirm => 'Are you sure you wish to destroy?', :method => :delete) if permitted_to? :destroy, fund_request %></td>
   <td><%= link_to( 'Approve', new_fund_request_approval_path( fund_request ) ) if permitted_to?( :approve, fund_request ) && fund_request.approvals.where( :user_id => current_user.id ).empty? %></td>
   <td><%= link_to_unapprove_fund_request(fund_request) %></td>
