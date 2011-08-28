@@ -12,7 +12,7 @@ Feature: Manage fulfillments
     And an organization: "focus" exists with last_name: "Fulfilled Organization"
     And an agreement: "focus" exists with name: "Key Agreement"
     And a user_status_criterion: "focus" exists
-    And a registration_criterion: "focus" exists
+    And a registration_criterion: "focus" exists with type_of_member: "undergrads", minimal_percentage: 10
     And a fulfillment exists with fulfiller: user "focus", fulfillable: agreement "focus"
     And a fulfillment exists with fulfiller: organization "focus", fulfillable: registration_criterion "focus"
     And I log in as user: "<user>"
