@@ -53,6 +53,7 @@ class Registration < ActiveRecord::Base
 
   def fulfills?(criterion)
     return false if criterion.must_register? && !registered?
+    return true unless criterion.minimal_percentage? && criterion.type_of_member?
     percent_members_of_type(criterion.type_of_member) >= criterion.minimal_percentage
   end
 

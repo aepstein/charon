@@ -101,7 +101,7 @@ class FundSource < ActiveRecord::Base
     FundSource.joins { framework }.
     merge( Framework.unscoped.fulfilled_for( perspective, subjects ) )
   }
-  scope :unfulfilled_for, lambda { |fulfillers, *subjects|
+  scope :unfulfilled_for, lambda { |perspective, *subjects|
     FundSource.joins { framework }.
     merge( Framework.unscoped.unfulfilled_for( perspective, subjects ) )
   }

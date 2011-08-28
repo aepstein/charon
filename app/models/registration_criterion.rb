@@ -4,8 +4,10 @@ class RegistrationCriterion < ActiveRecord::Base
   is_fulfillable
 
   validates :minimal_percentage, :numericality => { :integer_only => true,
-    :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100 }
-  validates :type_of_member, :inclusion => { :in => Registration::MEMBER_TYPES }
+    :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100,
+    :allow_blank => true }
+  validates :type_of_member, :inclusion => { :in => Registration::MEMBER_TYPES,
+    :allow_blank => true }
   validates :must_register, :uniqueness => { :scope =>
     [ :type_of_member, :minimal_percentage ] }
 

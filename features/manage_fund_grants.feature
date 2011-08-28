@@ -51,7 +51,40 @@ Feature: Manage fund_grants
     And I should see "Fund source: Annual Budget"
     And I should see "Request type: Unrestricted"
     And I should see "State: started"
-    # TODO should we be able to edit a fund_grant?
+    # TODO: should we be able to edit a fund_grant?
+
+  Scenario Outline: Display unfulfilled fund grant information on new fund_grant
+    Given a framework: "focus" exists
+    And a framework: "other" exists
+    And a registration_criterion exists with must_register: true
+    And an agreement exists with name: "Ethical Conduct Statement"
+    And a requestor_requirement exists with framework: framework "<o_requirement>", fulfillable: the registration_criterion
+    And a requestor_requirement exists with framework: framework "<u_requirement>", fulfillable: the agreement
+    And a fund_source exists with name: "Annual Budget", framework: framework "focus"
+    And a fund_queue exists with fund_source: the fund_source
+    And fund_request_type: "unrestricted" is amongst the fund_request_types of the fund_queue
+    And a fund_source exists with name: "Semester Budget"
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_request_type exists
+    And the fund_request_type is amongst the fund_request_types of the fund_queue
+    And an organization exists with last_name: "Spending Club"
+    And a requestor_role exists
+    And a user: "applicant_requestor" exists
+    And a membership exists with organization: the organization, role: the requestor_role, user: user "applicant_requestor", active: true
+    And I log in as user: "<user>"
+    And I am on the new fund_grant page for the organization
+    Then I should <unfulfilled> "You may be interested in the following fund sources, for which you or your organization have not fulfilled all requirements."
+    And I should <unfulfilled> "Certain requirements must be fulfilled before you may request funds from Annual Budget on behalf of Spending Club."
+    And I should <see_o> "Spending Club:"
+    And I should <see_o> "must have a current registration with an approved status"
+    And I should <see_u> "You:"
+    And I should <see_u> "must approve the Ethical Conduct Statement"
+    Examples:
+      | o_requirement | u_requirement | user                | unfulfilled | see_o   | see_u   |
+      | focus         | focus         | applicant_requestor | see         | see     | see     |
+      | focus         | other         | applicant_requestor | see         | see     | not see |
+      | other         | focus         | applicant_requestor | see         | not see | see     |
+      | other         | other         | applicant_requestor | not see     | not see | not see |
 
   Scenario: List and delete fund_grants
     Given a fund_source: "annual" exists with name: "Annual"

@@ -23,6 +23,11 @@ class Organization < ActiveRecord::Base
         fulfilled_for( FundEdition::PERSPECTIVES.first, @association.owner, user )
     end
 
+    def unfulfilled_for( user )
+      no_fund_grant.open_deadline_for_first.
+        unfulfilled_for( FundEdition::PERSPECTIVES.first, @association.owner, user )
+    end
+
     # For what sources has no grant been created for this organization?
     def no_fund_grant
       FundSource.no_fund_grant_for( @association.owner )

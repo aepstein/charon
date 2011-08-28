@@ -290,8 +290,6 @@ FactoryGirl.define do
 
   factory :registration_criterion do
     must_register true
-    minimal_percentage 10
-    type_of_member 'undergrads'
   end
 
   factory :requirement do
