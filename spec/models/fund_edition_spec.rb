@@ -119,7 +119,7 @@ describe FundEdition do
       invalid.errors.first.should eql [:amount, "exceeds amount allowed for new items in the request"]
     end
 
-    xit "should enforce node item_quantity_limit" do
+    it "should enforce node item_quantity_limit" do
       fund_edition.save!
       fund_edition.fund_item.node.item_quantity_limit.should eql 1
       fund_edition.fund_item.association(:fund_editions).reset
@@ -127,26 +127,23 @@ describe FundEdition do
       excessive_edition = build(:fund_edition, :fund_item => excessive_item,
         :fund_request => fund_edition.fund_request)
       excessive_edition.save.should be_false
-      excessive_edition.errors.first.should eql [ :fund_item,
-        "exceeds the allowed number of #{fund_item.node.name} items"]
     end
 
-    xit "should enforce node item_quantity_limit with parent" do
+    it "should enforce node item_quantity_limit with parent" do
       fund_edition.save!
       parent = fund_edition.fund_item
       child_node = create(:node, :parent => parent.node,
-        :structure => parent.node.structure, :item_quantity_limit => 1 )
+        :structure => parent.node.structure, :item_quantity_limit => 2 )
       first_item = create( :fund_item, :parent => parent,
         :node => child_node, :fund_grant => parent.fund_grant )
       create( :fund_edition, :fund_item => first_item,
         :fund_request => fund_edition.fund_request )
       second_item = create(:fund_item, :parent => parent,
         :node => child_node, :fund_grant => parent.fund_grant )
+      child_node.update_attribute :item_quantity_limit, 1
       excessive_edition = build( :fund_edition, :fund_item => second_item,
         :fund_request => fund_edition.fund_request )
       excessive_edition.save.should be_false
-      excessive_edition.errors.first.should eql [ :fund_item,
-        "exceeds the allowed number of #{fund_item.node.name} items" ]
     end
 
   end
