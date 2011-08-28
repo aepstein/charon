@@ -50,6 +50,8 @@ class FundGrant < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
+  notifiable_events :release, :if => :require_requestor_recipients!
+
   scope :ordered, includes { [ organization, fund_source ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
   scope :current, lambda { joins(:fund_source).merge( FundSource.unscoped.current ) }
@@ -70,6 +72,15 @@ class FundGrant < ActiveRecord::Base
   validates :fund_source_id, :uniqueness => { :scope => :organization_id }
   validates :released_at,
     :timeliness => { :type => :datetime, :allow_blank => true }
+
+
+  delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_source
+
+  def release!
+    fund_items.update_all "released_amount = amount"
+    update_attribute :released_at, Time.zone.now
+    send_release_notice!
+  end
 
   # Organization associated with this grant in requestor perspective
   def requestor; organization; end

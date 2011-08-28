@@ -96,7 +96,6 @@ class FundSource < ActiveRecord::Base
       select { fund_source_id }
     ) }
   }
-
   scope :fulfilled_for, lambda { |perspective, *subjects|
     FundSource.joins { framework }.
     merge( Framework.unscoped.fulfilled_for( perspective, subjects ) )
@@ -105,6 +104,8 @@ class FundSource < ActiveRecord::Base
     FundSource.joins { framework }.
     merge( Framework.unscoped.unfulfilled_for( perspective, subjects ) )
   }
+
+  def contact_to_email; "#{contact_name} <#{contact_email}>"; end
 
   def upcoming?
     open_at > Time.zone.now

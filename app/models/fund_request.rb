@@ -289,14 +289,7 @@ class FundRequest < ActiveRecord::Base
   # Returns the closest future queue
   def adoptable_queue; fund_grant.fund_source.fund_queues.active; end
 
-  def contact_name; fund_grant && fund_grant.fund_source ? fund_grant.fund_source.contact_name : nil; end
-
-  def contact_email; fund_grant && fund_grant.fund_source ? fund_grant.fund_source.contact_email : nil; end
-
-  def contact_to_email
-    return nil unless fund_grant && fund_grant.fund_source
-    "#{fund_grant.fund_source.contact_name} <#{fund_grant.fund_source.contact_email}>"
-  end
+  delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_grant
 
   # Is the request ready for release?
   # * based on status of review state machine
