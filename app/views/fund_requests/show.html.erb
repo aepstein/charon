@@ -16,14 +16,25 @@
   <b>State:</b> <%= @fund_request.state %>
 </p>
 
+<%=content_tag 'h3', 'Item summary' %>
+
 <p>
-<%= link_to 'Edit', edit_fund_request_path( @fund_request ) if permitted_to?( :edit, @fund_request ) %>
+Below is a summary of all items in the fund request.  Please note that this
+summary does not indicate the amounts actually allocated for the fund grant
+associated with the request.
 </p>
+
+<%=render :partial => 'fund_requests/fund_items',
+  :object => @fund_request.fund_items.ordered,
+  :locals => { :fund_request => @fund_request } %>
 
 <%
 # TODO: Add detailed display of information for request:
 # * Allocation summary
 # * Approval summary
-# * Item summary
 %>
+
+<p>
+<%= link_to 'Edit', edit_fund_request_path( @fund_request ) if permitted_to?( :edit, @fund_request ) %>
+</p>
 

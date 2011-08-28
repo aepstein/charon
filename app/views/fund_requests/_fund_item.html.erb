@@ -1,0 +1,7 @@
+<%= table_row_tag( true, true ) do %>
+  <td colspan="2"><%= fund_item.title %></td>
+<% end %>
+
+<%=render :partial => 'fund_requests/fund_edition',
+  :collection =>  fund_item.fund_editions.for_request( fund_request ) %>
+

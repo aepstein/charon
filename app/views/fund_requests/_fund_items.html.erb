@@ -1,0 +1,12 @@
+<table cellspacing="0" cellpadding="0">
+  <thead>
+    <tr>
+      <th>Item</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%=render :partial => 'fund_requests/fund_item', :collection => fund_items,
+    :locals => { :fund_request => fund_request } %>
+  </tbody>
+</table>
+

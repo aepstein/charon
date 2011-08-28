@@ -5,16 +5,16 @@ module ApplicationHelper
     sanitize Markdown.new(content).to_html
   end
 
-  def table_row_tag(increment=true, &block)
-    content_tag 'tr', capture(&block), :class => table_row_class(increment)
+  def table_row_tag(increment=true, preorder=false, &block)
+    content_tag 'tr', capture(&block), :class => table_row_class(increment,preorder)
   end
 
-  def table_row_class(increment=true)
+  def table_row_class(increment=true,preorder=false)
     @table_row_class ||= 'row1'
     out = @table_row_class
     @table_row_class = ( @table_row_class == 'row1' ? 'row2' : 'row1' ) if increment
     @table_row_class = 'row1' if increment == :reset
-    out
+    preorder ? @table_row_class : out
   end
 
   def link_to_external_registration(organization)
