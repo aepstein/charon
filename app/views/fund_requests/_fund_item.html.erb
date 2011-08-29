@@ -1,7 +1,15 @@
 <%= table_row_tag( true, true ) do %>
-  <td colspan="2"><%= fund_item.title %></td>
+  <td colspan="2"><%= fund_item.title %><% if fund_item.title != fund_item.node.name %> (<%= fund_item.node.name %>)<% end %></td>
+  <%=render :partial => 'fund_items/managed_fund_item',
+    :object => fund_item,
+    :locals => { :fund_request => fund_request } %>
 <% end %>
-
+<%= table_row_tag( false ) do %>
+  <td colspan="2"></td>
+  <td colspan="4"><%= render :partial => 'fund_items/new_fund_item',
+    :object => fund_item.fund_grant.fund_items.build( :parent_id => fund_item.id ),
+    :locals => { :fund_request => fund_request } %></td>
+<% end %>
 <%=render :partial => 'fund_requests/fund_edition',
   :collection =>  fund_item.fund_editions.for_request( fund_request ) %>
 

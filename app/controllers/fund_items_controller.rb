@@ -74,7 +74,7 @@ class FundItemsController < ApplicationController
     respond_to do |format|
       if @fund_item.save
         flash[:notice] = 'Fund item was successfully created.'
-        format.html { redirect_to polymorphic_url( [ @fund_request, @fund_item ] ) }
+        format.html { redirect_to @fund_request }
         format.xml  { render :xml => @fund_item, :status => :created, :location => @fund_item }
       else
         populate_fund_editions
@@ -97,7 +97,7 @@ class FundItemsController < ApplicationController
     respond_to do |format|
       if @fund_item.save
         flash[:notice] = 'Fund item was successfully updated.'
-        format.html { redirect_to polymorphic_url( [ @fund_request, @fund_item ] ) }
+        format.html { redirect_to @fund_request }
         format.xml  { head :ok }
       else
         populate_fund_editions

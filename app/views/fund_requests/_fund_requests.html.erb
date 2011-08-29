@@ -1,7 +1,10 @@
-<% state ||= false %>
-<% fund_source ||= false %>
-<% organization ||= false %>
-
+<% state ||= false
+   fund_grant ||= false
+   fund_source = fund_grant.fund_source if fund_grant
+   fund_source ||= false
+   organization = fund_grant.organization if fund_grant
+   organization ||= false
+%>
 <table>
 <thead>
   <tr>
@@ -14,6 +17,7 @@
   <% unless state -%>
     <th>State</th>
   <% end -%>
+  <th>Type</th>
   </tr>
 </thead>
 <tbody>

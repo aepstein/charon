@@ -19,18 +19,54 @@
 <%=content_tag 'h3', 'Item summary' %>
 
 <p>
-Below is a summary of all items in the fund request.  Please note that this
-summary does not indicate the amounts actually allocated for the fund grant
-associated with the request.
+Below is a summary of all items in the fund request.  <strong>Please note that
+this summary <em>does not indicate the amounts actually allocated</em> to the
+organization.</strong>  For actual allocations, see the
+<%=link_to 'associated fund grant', @fund_request.fund_grant %>.
 </p>
 
 <%=render :partial => 'fund_requests/fund_items',
   :object => @fund_request.fund_items.ordered,
   :locals => { :fund_request => @fund_request } %>
 
+<p>
+<%= render :partial => 'fund_items/new_fund_item',
+    :object => @fund_request.fund_grant.fund_items.build,
+    :locals => { :fund_request => @fund_request } %>
+</p>
+
+<%=content_tag 'h3', 'Requestor approvals' %>
+<% if @fund_request.users.length > 0 %>
+<p>
+The following users have approved:
+</p>
+
+<ul>
+<% @fund_request.users.each do |user| %>
+<%=content_tag 'li', user.name(:net_id) %>
+<% end %>
+</ul>
+<% else %>
+<p>No users have approved.</p>
+<% end %>
+
+<% if FundRequest::ACTIVE_STATES.map(&:to_s).include?( @fund_request.state ) &&
+   fund_request.users.unfulfilled.length > 0 %>
+<p>
+The following users must approve before the request is submitted:
+</p>
+
+<ul>
+<% @fund_request.users.unfulfilled.each do |user| %>
+<%=content_tag 'li', user.name(:net_id) %>
+<% end %>
+</ul>
+<% else %>
+<p>No more user approvals are required for submission.</p>
+<% end %>
+
 <%
 # TODO: Add detailed display of information for request:
-# * Allocation summary
 # * Approval summary
 %>
 

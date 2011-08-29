@@ -86,6 +86,30 @@ Feature: Manage fund_grants
       | other         | focus         | applicant_requestor | see         | not see | see     |
       | other         | other         | applicant_requestor | not see     | not see | not see |
 
+  Scenario Outline: Display fund requests associated with a fund_grant
+    Given an organization exists
+    And a user exists
+    And a requestor_role exists
+    And a membership exists with user: the user, role: the requestor_role, organization: the organization
+    And a fund_source exists
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_request_type exists with name: "Primary"
+    And the fund_request_type is amongst the fund_request_types of the fund_queue
+    And a fund_grant: "focus" exists with organization: the organization, fund_source: the fund_source
+    And a fund_grant: "other" exists with fund_source: the fund_source
+    And a fund_request exists with fund_grant: fund_grant "<grant>", fund_request_type: the fund_request_type
+    And I log in as the user
+    And I am on the page for the fund_grant: "focus"
+    Then I should <no_request> "No fund requests are associated with this grant."
+    And I should <request> "The following fund requests are associated with this grant:"
+    And I should <request> "started"
+    And I should <request> "Primary"
+    And I should see "You may prepare a new fund request."
+    Examples:
+      | grant | no_request | request |
+      | other | see        | not see |
+      | focus | not see    | see     |
+
   Scenario: List and delete fund_grants
     Given a fund_source: "annual" exists with name: "Annual"
     And a fund_source: "semester" exists with name: "Semester"

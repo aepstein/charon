@@ -48,6 +48,28 @@
   </tbody>
 </table>
 
+<%=content_tag 'h3', "Fund requests" %>
+
+<% if @fund_grant.fund_requests.length > 0 %>
+<p>
+The following fund requests are associated with this grant:
+</p>
+
+<%=render :partial => 'fund_requests/fund_requests',
+  :object => @fund_grant.fund_requests,
+  :locals => { :fund_grant => @fund_grant } %>
+<% else %>
+<p>
+No fund requests are associated with this grant.
+</p>
+<% end %>
+
+<% if permitted_to? :create, @fund_grant.fund_requests.build %>
+<p>
+You may <%=link_to 'prepare a new fund request', new_fund_grant_fund_request_path(@fund_grant) %>.
+</p>
+<% end %>
+
 <p>
 <% if permitted_to? :edit, @fund_grant %>
 <%= link_to 'Edit', edit_fund_grant_path( @fund_grant ) %>

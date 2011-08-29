@@ -25,15 +25,15 @@ gem 'validation_reflection'
 gem 'formtastic'
 gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
-#gem 'composite_primary_keys', '~> 4.0.0.beta7', :require => false # Require on demand
-gem 'composite_primary_keys', :require => false,
-  :git => 'git://github.com/aepstein/composite_primary_keys.git',
-  :ref => 'd93cb688a3df969e078f0a24b4e0bdbb74c61448'
+gem 'composite_primary_keys', '~> 4.0.0.beta8', :require => false # Require on demand
+#gem 'composite_primary_keys', :require => false,
+#  :git => 'git://github.com/aepstein/composite_primary_keys.git',
+#  :ref => 'd93cb688a3df969e078f0a24b4e0bdbb74c61448'
 gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
 gem 'ancestry'
-#gem 'acts_as_list', '~> 0.1.3'
-gem 'acts_as_list', :git => 'git://github.com/swanandp/acts_as_list.git'
+gem 'acts_as_list', '~> 0.1.4'
+#gem 'acts_as_list', :git => 'git://github.com/swanandp/acts_as_list.git'
 gem 'decent_exposure'
 group :development, :test do
   gem 'rspec-rails', '~> 2.6.1'
