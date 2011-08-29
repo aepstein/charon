@@ -17,6 +17,14 @@ Feature: Organization dashboard
     And I should see "There are no current fund sources for you to request grants."
     And I should see "You have no current fund grants."
     And I should see "You have no closed fund grants."
+    And I should see "Your organization has not submitted a financial profile."
+    And I should see "You may edit your organization's profile here."
+
+  Scenario: With organization profile
+    Given an organization_profile exists with organization: organization "applicant"
+    And I am on the dashboard page for organization: "applicant"
+    Then I should see "Your organization's financial profile was last updated on"
+    And I should see "You may edit your organization's profile here."
 
   Scenario: Active fund requests
     Given a fund_source exists with name: "Easy Money"

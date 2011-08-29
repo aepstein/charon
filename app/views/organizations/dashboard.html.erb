@@ -1,5 +1,18 @@
 <%=content_tag 'h2', "#{@organization} Dashboard" %>
 
+<h3>Organization profile</h3>
+
+<p>
+<% if @organization.organization_profile %>
+Your organization's financial profile was last updated on <%= @organization.organization_profile.updated_at.to_s :us_ordinal %>.
+<% else %>
+Your organization has not submitted a financial profile.
+<% end %>
+<% if permitted_to? :edit, @organization %>
+You may <%=link_to 'edit your organization\'s profile here', edit_organization_path(@organization) %>.
+<% end %>
+</p>
+
 <h3>Fund requests</h3>
 
 <% if @organization.fund_requests.active.length > 0 %>
