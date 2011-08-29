@@ -324,17 +324,16 @@ class FundEdition < ActiveRecord::Base
   # * immediately ahead of item if item is not at end of list
   def reposition_item
     if displace_item && perspective && perspective == PERSPECTIVES.first
-      np = displace_item.position +
-      ( displace_item.position > fund_item.position ? displace_item.descendants.count : 0 )
+      if fund_item.position < displace_item.position
+        target = displace_item.position + displace_item.descendants.count
+      else
+        target = displace_item.position
+      end
       self.displace_item = nil
-      fund_item.insert_at np
-      if fund_item.descendants.length > 0
-        last = fund_item.last?
-        fund_item.descendants.ordered.reduce(np) do |new_position, item|
-          new_position += 1 unless last
-          item.insert_at new_position
-          new_position
-        end
+      fund_item.subtree.ordered.reduce(target) do |new_position, item|
+        new_position += 1 if new_position < item.position && item != fund_item
+        item.insert_at new_position
+        new_position
       end
     end
   end
