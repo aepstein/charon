@@ -3,6 +3,7 @@
     <td><%= render :partial => 'fund_items/new_fund_item',
                    :object => fund_item.fund_grant.fund_items.build( :parent_id => fund_item.id ),
                    :locals => { :fund_request => fund_request } %></td>
+    <td><%=link_to 'Show', polymorphic_path( [fund_request, fund_item] ) %></td>
     <%=render :partial => 'fund_items/managed_fund_item',
       :object => fund_item,
       :locals => { :fund_request => fund_request } %>

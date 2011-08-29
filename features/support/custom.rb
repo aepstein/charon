@@ -1,5 +1,5 @@
 Spork.prefork do
-  require File.dirname(__FILE__) + '/../../spec/factories'
+#  require File.dirname(__FILE__) + '/../../spec/factories'
 end
 
 Spork.each_run do

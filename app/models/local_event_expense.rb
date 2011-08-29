@@ -1,6 +1,6 @@
 class LocalEventExpense < ActiveRecord::Base
   attr_accessible :start_date, :end_date, :title, :location, :purpose,
-    :number_of_attendees, :price_per_attendee, :copies_quantity, :services_cost,
+    :number_of_attendees, :price_per_attendee, :copies_quantity,
     :uup_required, :accessibility_considered
   attr_readonly :fund_edition_id
 
@@ -21,8 +21,6 @@ class LocalEventExpense < ActiveRecord::Base
 	  :numericality => { :greater_than_or_equal_to => 0 }
   validates :copies_quantity,
     :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
-  validates :services_cost,
-    :numericality => { :greater_than_or_equal_to => 0 }
 
   delegate :fund_request, :to => :fund_edition
 
@@ -37,7 +35,7 @@ class LocalEventExpense < ActiveRecord::Base
   end
 
 	def max_fund_request
-	  copies_cost + services_cost
+	  copies_cost
   end
 
 end

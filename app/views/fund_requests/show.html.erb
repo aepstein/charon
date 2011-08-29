@@ -51,7 +51,7 @@ The following users have approved:
 <% end %>
 
 <% if FundRequest::ACTIVE_STATES.map(&:to_s).include?( @fund_request.state ) &&
-   fund_request.users.unfulfilled.length > 0 %>
+   @fund_request.users.unfulfilled.length > 0 %>
 <p>
 The following users must approve before the request is submitted:
 </p>
@@ -64,11 +64,6 @@ The following users must approve before the request is submitted:
 <% else %>
 <p>No more user approvals are required for submission.</p>
 <% end %>
-
-<%
-# TODO: Add detailed display of information for request:
-# * Approval summary
-%>
 
 <p>
 <%= link_to 'Edit', edit_fund_request_path( @fund_request ) if permitted_to?( :edit, @fund_request ) %>

@@ -1,5 +1,4 @@
 class FundItem < ActiveRecord::Base
-  #TODO conditionally make amount available based on user role
   attr_accessible :node_id, :parent_id, :amount, :fund_editions_attributes
   attr_readonly :fund_request_id, :node_id, :ancestry
 
