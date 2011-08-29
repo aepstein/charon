@@ -115,6 +115,7 @@ Feature: Manage fund_items
     And a fund_request: "focus" exists with fund_grant: fund grant "focus"
     And a fund_item exists with node: node "existing", fund_grant: fund_grant "<request>"
     And a fund_edition exists with fund_item: the fund_item, fund_request: fund_request "<request>"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: fund_request "<request>", perspective: "reviewer"
     And I log in as user: "admin"
     When I am on the fund_items page for fund_request: "focus"
     Then I should not see "Reviewer"
@@ -175,7 +176,8 @@ Feature: Manage fund_items
     And a node: "5" exists with structure: the structure, parent: node "4", name: "node 5"
     And a node: "6" exists with structure: the structure, parent: node "4", name: "node 6"
     And a fund_source exists with structure: the structure
-    And a fund_grant exists with fund_source: the fund_source
+    And an organization exists
+    And a fund_grant exists with fund_source: the fund_source, organization: the organization
     And a fund_request exists with fund_grant: the fund_grant
     And a fund_item: "1" exists with fund_grant: the fund_grant, node: node "1"
     And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
@@ -189,7 +191,10 @@ Feature: Manage fund_items
     And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And a fund_item: "6" exists with fund_grant: the fund_grant, node: node "6", parent: fund_item "4"
     And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
-    And I log in as user: "admin"
+    And a requestor_role exists
+    And a user: "applicant_requestor" exists
+    And a membership exists with organization: the organization, user: user "applicant_requestor", role: the requestor_role
+    And I log in as user: "applicant_requestor"
     When I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
       | Title  |
