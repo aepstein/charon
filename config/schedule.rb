@@ -26,10 +26,10 @@ job_type :rake,    'cd :path && RAILS_ENV=:environment /usr/bin/env bundle exec 
 
 
 every 1.hours do
-  rake 'external_registrations:import:latest'
+#  rake 'external_registrations:import:latest'
 end
 
 every 1.days do
-  rake 'staffing:import'
+#  rake 'staffing:import'
 end
 
