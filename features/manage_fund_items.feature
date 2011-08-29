@@ -125,7 +125,8 @@ Feature: Manage fund_items
     And I fill in "Requestor comment" with "This is *important*."
     And I press "Create Fund item"
     Then I should see "Fund item was successfully created."
-    And I should <parent> "Parent: Existing"
+    When I follow "Show" for the <item> fund_item for fund_request: "focus"
+    Then I should <parent> "Parent: Existing"
     And I should see "Node: <node>"
     And I should see "Requestor amount: $100.00"
     And I should see "This is important."
@@ -136,14 +137,15 @@ Feature: Manage fund_items
     And I fill in "Reviewer comment" with "Final comment."
     And I press "Update Fund item"
     Then I should see "Fund item was successfully updated."
-    And I should see "Requestor amount: $200.00"
+    When I follow "Show" for the <item> fund_item for fund_request: "focus"
+    Then I should see "Requestor amount: $200.00"
     And I should see "Different comment."
     And I should see "Reviewer amount: $100.00"
     And I should see "Final comment."
     Examples:
-      | request | node        | box                  | button    | parent  |
-      | other   | New         | Root Item            | Root Item | not see |
-      | focus   | Subordinate | Subitem for Existing | Subitem   | see     |
+      | request | node        | box                  | button    | item | parent  |
+      | other   | New         | Root Item            | Root Item | 1st  | not see |
+      | focus   | Subordinate | Subitem for Existing | Subitem   | 2nd  | see     |
 
   Scenario Outline: Prevent unauthorized user from updating an unauthorized fund_edition
     Given an organization exists with last_name: "Applicant"

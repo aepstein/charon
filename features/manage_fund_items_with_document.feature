@@ -22,13 +22,15 @@ Feature: Manage fund_items with document
     And I attach the file "features/support/assets/small.pdf" to "Requestor price quote"
     And I press "Create"
     Then I should see "Fund item was successfully created."
-    And I should see the following documents:
+    When I follow "Show" for the 1st fund_item for fund_request: "focus"
+    Then I should see the following documents:
       | Type        |
       | price quote |
     When I follow "Edit"
     And I press "Update"
     Then I should see "Fund item was successfully updated."
-    And I should see the following documents:
+    When I follow "Show" for the 1st fund_item for fund_request: "focus"
+    Then I should see the following documents:
       | Type        |
       | price quote |
     When I follow "Edit"

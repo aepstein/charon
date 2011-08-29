@@ -1,6 +1,6 @@
 class FundItem < ActiveRecord::Base
   attr_accessible :node_id, :parent_id, :amount, :fund_editions_attributes
-  attr_readonly :fund_request_id, :node_id, :ancestry
+  attr_readonly :fund_request_id, :node_id, :ancestry, :parent_id
 
   belongs_to :node, :inverse_of => :fund_items
   belongs_to :fund_grant, :touch => true, :inverse_of => :fund_items

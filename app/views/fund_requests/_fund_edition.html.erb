@@ -18,7 +18,7 @@
 
       <% if fund_edition.documents.length > 0 %>
         <ul>
-          <% fund_edition.document.each do |document| %>
+          <% fund_edition.documents.each do |document| %>
           <li><%=link_to document, document, :format => :pdf %></li>
           <% end %>
         </ul>
