@@ -113,3 +113,38 @@ Feature: Manage fund_grants
       | Organization |
       | Last Club    |
 
+  Scenario Outline: Display unfulfilled fund grant information on new fund_grant
+    Given a framework: "focus" exists
+    And a framework: "other" exists
+    And a registration_criterion exists with must_register: true
+    And an agreement exists with name: "Ethical Conduct Statement"
+    And a requestor_requirement exists with framework: framework "<o_requirement>", fulfillable: the registration_criterion
+    And a requestor_requirement exists with framework: framework "<u_requirement>", fulfillable: the agreement
+    And a fund_source exists with name: "Annual Budget", framework: framework "focus"
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_request_type exists
+    And the fund_request_type is amongst the fund_request_types of the fund_queue
+    And an organization exists with last_name: "Spending Club"
+    And a requestor_role exists
+    And a user: "applicant_requestor" exists
+    And a membership exists with organization: the organization, role: the requestor_role, user: user "applicant_requestor", active: true
+    And I log in as user: "<user>"
+    And I am on the new fund_grant page for the organization
+    Then I should <unfulfilled> "You may be interested in the following fund sources, for which you or your organization have not fulfilled all requirements."
+    And I should <unfulfilled> "Certain requirements must be fulfilled before you may request funds from Annual Budget on behalf of Spending Club."
+    And I should <see_o> "Spending Club:"
+    And I should <see_o> "must have a current registration with an approved status"
+    And I should <see_u> "You:"
+    And I should <see_u> "must approve the Ethical Conduct Statement"
+    Given a fund_grant exists with organization: the organization, fund_source: the fund_source
+    And I am on the new fund_request page for the fund_grant
+    Then I should <authorized> authorized
+    And I should <see_o> "Spending Club must have a current registration with an approved status"
+    And I should <see_u> "You must approve the Ethical Conduct Statement"
+    Examples:
+      |o_requirement|u_requirement|user               |unfulfilled|authorized|see_o  |see_u  |
+      |focus        |focus        |applicant_requestor|see        |not see   |see    |see    |
+      |focus        |other        |applicant_requestor|see        |not see   |see    |not see|
+      |other        |focus        |applicant_requestor|see        |not see   |not see|see    |
+      |other        |other        |applicant_requestor|not see    |see       |not see|not see|
+
