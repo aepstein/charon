@@ -6,7 +6,7 @@ class FundQueue < ActiveRecord::Base
   belongs_to :fund_source, :inverse_of => :fund_queues
 
   has_many :fund_requests, :inverse_of => :fund_queue, :dependent => :nullify do
-    # Allocate all requests associated with this fund source
+    # Allocate all ready requests associated with this fund source
     # * apply club_sport and other caps according to how organizations are recorded
     def allocate_with_caps(club_sport, other)
       with_state( :ready ).includes( :organization, { :fund_items => :fund_editions } ).each do |r|
@@ -19,7 +19,11 @@ class FundQueue < ActiveRecord::Base
     end
   end
   has_many :fund_items, :through => :fund_requests, :uniq => true do
+    # Allocate all ready requests associate with this fund queue
+    # * apply flat percentage cuts to reviewer amounts approved
     def allocate_with_cuts(percentage)
+      where( "fund_requests.state = ?", 'ready' ).
+      where( "fund_editions.perspective = ?", FundEdition::PERSPECTIVES.last ).
       update_all "fund_items.amount = fund_editions.amount*(#{percentage}/100)"
     end
   end
