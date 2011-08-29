@@ -109,6 +109,7 @@ FactoryGirl.define do
     fund_request { |edition|
       if edition.fund_item
         g = edition.fund_item.fund_grant
+        g.association(:fund_requests).reset if g.fund_requests.length == 0
         g.fund_requests.first || edition.association( :fund_request, :fund_grant => g )
       else
         edition.association( :fund_request )
@@ -157,6 +158,9 @@ FactoryGirl.define do
     node { |fund_item|
       fund_item.association :node,
         :structure => fund_item.fund_grant.fund_source.structure
+    }
+    after_create { |item|
+      item.fund_grant.association(:fund_items).reset
     }
 
 

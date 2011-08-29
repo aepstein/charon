@@ -173,7 +173,10 @@ describe FundEdition do
     let( :displacor ) { create(:fund_item, :node => node, :fund_grant => grant ) }
 
     it 'should reposition associated item to displace_item that is a sibling in same request' do
-      request = create( :fund_edition, :fund_item => displaceable ).fund_request
+      request = create( :fund_request, :fund_grant => displaceable.fund_grant )
+      displaceable.fund_grant.association(:fund_requests).reset
+      create( :fund_edition, :fund_item => displaceable, :fund_request => request )
+      request.association(:fund_editions).reset
       edition = create( :fund_edition, :fund_item => displacor, :fund_request => request )
       request.association(:fund_items).reset
       edition.displace_item = displaceable
@@ -182,7 +185,10 @@ describe FundEdition do
 
     it 'should not save if displace_item is not a sibling' do
       child_node = create(:node, :parent => node, :structure => node.structure)
-      request = create( :fund_edition, :fund_item => displaceable ).fund_request
+      request = create( :fund_request, :fund_grant => displaceable.fund_grant )
+      displaceable.fund_grant.association(:fund_requests).reset
+      create( :fund_edition, :fund_item => displaceable, :fund_request => request )
+      request.association(:fund_editions).reset
       edition = create( :fund_edition, :fund_item => displacor, :fund_request => request )
       child_item = create( :fund_item, :node => child_node, :parent => displaceable,
         :fund_grant => grant )
@@ -194,7 +200,10 @@ describe FundEdition do
     end
 
     it 'should not save if displace_item is not in request' do
-      request = create( :fund_edition, :fund_item => displaceable ).fund_request
+      request = create( :fund_request, :fund_grant => displaceable.fund_grant )
+      displaceable.fund_grant.association(:fund_requests).reset
+      create( :fund_edition, :fund_item => displaceable, :fund_request => request )
+      request.association(:fund_editions).reset
       request.update_attribute :state, 'submitted'
       other_request = create( :fund_request, :fund_grant => request.fund_grant )
       edition = create( :fund_edition, :fund_item => displacor,

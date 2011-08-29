@@ -42,9 +42,9 @@ class FundGrant < ActiveRecord::Base
       else
         Role::REVIEWER
       end
-      User.joins( :memberships ).merge( @association.owner.send(perspective).
-      memberships.active.joins( :role ).
-      merge( Role.where( :name.in => role_names ) ) )
+      User.joins( :memberships ).merge(
+        @association.owner.send(perspective).memberships.active.
+        where { role_id.in Role.where { name.in role_names }.select { id } } )
     end
   end
 
