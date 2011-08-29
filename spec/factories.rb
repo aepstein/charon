@@ -411,7 +411,6 @@ FactoryGirl.define do
     number_of_attendees 50
     price_per_attendee 5.50
     copies_quantity 500
-    services_cost 1102
   end
 
   factory :publication_expense do

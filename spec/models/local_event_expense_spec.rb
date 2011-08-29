@@ -53,10 +53,5 @@ describe LocalEventExpense do
     @expense.save.should be_false
   end
 
-  it "should not save without services" do
-    @expense.services_cost = ''
-    @expense.save.should be_false
-  end
-
 end
 
