@@ -22,6 +22,11 @@ class Document < ActiveRecord::Base
 
   def max_size_string; return document_type.max_size_string if document_type; end
 
+  def to_s
+    return super unless document_type
+    document_type.to_s
+  end
+
   private
 
   def document_type_must_be_allowed_by_fund_edition
