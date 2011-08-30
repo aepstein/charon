@@ -27,6 +27,11 @@ class FundQueue < ActiveRecord::Base
       update_all "fund_items.amount = fund_editions.amount*(#{percentage}/100)"
     end
   end
+  has_many :fund_grants, :through => :fund_requests, :uniq => true do
+    def ready
+      where( "fund_requests.review_state = ?", 'ready' )
+    end
+  end
 
   has_and_belongs_to_many :fund_request_types
 
