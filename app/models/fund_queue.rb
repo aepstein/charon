@@ -22,7 +22,7 @@ class FundQueue < ActiveRecord::Base
     # Allocate all ready requests associate with this fund queue
     # * apply flat percentage cuts to reviewer amounts approved
     def allocate_with_cuts(percentage)
-      where( "fund_requests.state = ?", 'ready' ).
+      where( "fund_requests.review_state = ?", 'ready' ).
       where( "fund_editions.perspective = ?", FundEdition::PERSPECTIVES.last ).
       update_all "fund_items.amount = fund_editions.amount*(#{percentage}/100)"
     end
