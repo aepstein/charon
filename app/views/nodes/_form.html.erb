@@ -1,6 +1,6 @@
   <%= render "shared/error_messages", :target => form.object %>
   <%= form.inputs do %>
-  <%= form.input :parent, :label => "Parent Node", :collection => form.object.structure.nodes,
+  <%= form.input :parent_id, :label => "Parent Node", :collection => form.object.structure.nodes,
     :input_html => { :include_blank => true } %>
   <%= form.input :name %>
   <%= form.input :requestable_type, :label => "Type of fund_request calculation form",
