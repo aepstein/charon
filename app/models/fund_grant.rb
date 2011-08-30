@@ -76,10 +76,14 @@ class FundGrant < ActiveRecord::Base
 
   delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_source
 
+  def release_with_notice!
+    release!
+    send_release_notice!
+  end
+
   def release!
     fund_items.update_all "released_amount = amount"
     update_attribute :released_at, Time.zone.now
-    send_release_notice!
   end
 
   # Organization associated with this grant in requestor perspective
