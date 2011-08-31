@@ -65,7 +65,7 @@ Feature: Manage fund_requests
     And I should see "Department code: A00"
     And I should see "Subledger code: 0001"
     And I should see "Subaccount code: 00005"
-@wip
+
   Scenario: List and delete university accounts
     Given an organization: "first" exists with last_name: "First Club"
     And an organization: "last" exists with last_name: "Last Club"

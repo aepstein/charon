@@ -50,7 +50,7 @@ Feature: Manage activity accounts
       | member            | not see | not see | see     | not see | not see |
       | regular           | not see | not see | not see | not see | not see |
 
-  Scenario: Create and update university_accounts
+  Scenario: Create and update activity_accounts
     Given a university_account: "first" exists with department_code: "A00", subledger_code: "0001"
     And a university_account: "second" exists with department_code: "B00", subledger_code: "0002"
     And a fund_source exists with name: "SAFC"
@@ -63,16 +63,16 @@ Feature: Manage activity accounts
     And I select "SAFC Local Event" from "Category"
     And I press "Create"
     Then I should see "Activity account was successfully created."
-    And I should see "University account: A00-0001"
+    And I should see "University account: A000001-00000"
     And I should see "FundSource: SAFC"
     And I should see "Category: SAFC Local Event"
     When I follow "Edit"
-    And I select "B00-0002" from "University account"
+    And I select "B000002-00000" from "University account"
     And I select "ISPB" from "Fund source"
     And I select "ISPB Food" from "Category"
     And I press "Update"
     Then I should see "Activity account was successfully updated."
-    And I should see "University account: B00-0002"
+    And I should see "University account: B000002-00000"
     And I should see "FundSource: ISPB"
     And I should see "Category: ISPB Food"
 
