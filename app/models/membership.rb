@@ -24,14 +24,15 @@ class Membership < ActiveRecord::Base
   validate :must_have_registration_or_organization
 
   def set_organization_from_registration
-    unless registration.blank?
+    if registration
       self.active = registration.active?
-      self.organization = registration.organization unless registration.organization.blank?
+      self.organization = registration.organization if registration.organization
     end
+    true
   end
 
   def set_from_member_source
-    unless member_source.blank?
+    if member_source
       self.role = member_source.role
       self.organization = member_source.organization
     end

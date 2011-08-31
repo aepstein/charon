@@ -33,6 +33,7 @@ describe Registration do
     registration = create(:current_registration,
       :organization => create(:organization), :number_of_undergrads => 10,
       :registered => true )
+    registration.organization.association(:fulfillments).reset
     fulfillables = registration.organization.fulfillments.map(&:fulfillable)
     fulfillables.size.should eql 2
     fulfillables.should include criterion1

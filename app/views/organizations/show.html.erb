@@ -67,6 +67,7 @@ The organization has not supplied additional profile information.
 <%= link_to 'List fulfillments', organization_fulfillments_path(@organization) %> |
 <%= nested_index @organization, :inventory_items, [ :active, :retired ] %> |
 <%= link_to 'List activity accounts', organization_activity_accounts_path(@organization) %> |
+<%= nested_index @organization, :memberships, [ :active ] %> |
 <%= link_to 'Back', organizations_path %>
 </p>
 

@@ -155,6 +155,7 @@ class Organization < ActiveRecord::Base
   end
 
   def to_s(format=nil)
+    return super unless last_name
     name(format)
   end
 end

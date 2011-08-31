@@ -6,26 +6,6 @@ Feature: Manage organizations
   Background:
     Given a user: "admin" exists with admin: true
     And a user: "regular" exists
-# TODO provide way for users to find out what criteria are not met in a framework context
-#  Scenario Outline: Show unfulfilled requirements for organization in profile
-#    Given a role exists
-#    And a framework exists with name: "SAFC"
-#    And a registration_criterion exists with must_register: true, minimal_percentage: 10, type_of_member: "staff"
-#    And a requirement exists with permission: permission "first", fulfillable: the registration_criterion
-#    And a requirement exists with permission: permission "second", fulfillable: the registration_criterion
-#    And an organization: "qualified" exists
-#    And a registration exists with organization: organization "qualified", number_of_staff: 10, registered: true
-#    And an organization: "unqualified" exists
-#    And a membership exists with active: true, organization: organization "qualified", role: the role
-#    And a membership exists with active: true, organization: organization "unqualified", role: the role
-#    And I am logged in as "admin" with password "secret"
-#    And I am on the profile page for organization: "<organization>"
-#    Then I should <see> "The organization has unfulfilled requirements that may limit what it is able to do:"
-#    And I should <see> "The organization must be registered and have at least 10% staff as members in the registration in order to create, update SAFC fund_requests. Click here to update the registration."
-#    Examples:
-#      | organization | see     |
-#      | qualified    | not see |
-#      | unqualified  | see     |
 
   Scenario Outline: Test permissions for organizations controller
     Given an organization exists with last_name: "Focus Organization"
@@ -73,6 +53,9 @@ Feature: Manage organizations
     And a framework exists with name: "Fund Requests"
     And a registration_criterion exists with type_of_member: "undergrads", minimal_percentage: 0, must_register: true
     And a requestor_requirement exists with fulfillable: the registration_criterion, framework: the framework
+    And a requestor_role exists
+    And a user: "registered" exists with first_name: "Mister", last_name: "Registered"
+    And a membership exists with role: the requestor_role, user: user "registered", registration: the current_registration
     And I log in as user: "admin"
     And I am on the new organization <context>
     When I fill in "First name" with "Cornell"
@@ -112,6 +95,8 @@ Feature: Manage organizations
     And I should see "Current liabilities: $2.00"
     And I should see "Current assets: $20.00"
     And I should see "Net equity: $18.18"
+    And I follow "List memberships"
+    Then I should <registered> "Mister Registered"
     Examples:
       | context                           | registered |
       | page                              | not see    |

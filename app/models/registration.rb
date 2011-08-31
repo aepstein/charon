@@ -29,7 +29,7 @@ class Registration < ActiveRecord::Base
   }
 
   before_save :adopt_registration_term, :adopt_organization
-  after_save :update_organization, :update_memberships, :update_peers
+  after_save :update_memberships, :update_organization, :update_peers
 
   attr_accessor :skip_update_peers
 
@@ -125,6 +125,17 @@ class Registration < ActiveRecord::Base
     true
   end
 
+  # Update memberships to point to the organization
+  # Optional force argument forces update regardless of whether organization changed
+  def update_memberships(force = false)
+    if organization && ( force || organization_id_changed? )
+      organization.memberships << memberships.where(
+        memberships.arel_table[:organization_id].eq(nil).
+        or( memberships.arel_table[:organization_id].not_eq( organization_id ) ) )
+    end
+    true
+  end
+
   # Update organization:
   # * reset registrations collection so saved changes are reloaded in the collection
   # ** this reset assures fulfill and unfulfill will work off of updated registration
@@ -134,26 +145,16 @@ class Registration < ActiveRecord::Base
   # * fail silently if the organization name update fails
   def update_organization
     return true unless organization
-    organization.association(:registrations).reset
+    organization.association(:registrations).reset if organization
     if current?
       if organization.last_current_registration != self
         organization.last_current_registration = self
         organization.save!
       end
-      organization.update_attributes name.to_organization_name_attributes
+      organization.update_attributes name.to_organization_name_attributes, :as => :admin
       organization.fulfillments.fulfill!
     end
     organization.fulfillments.unfulfill!
-    true
-  end
-
-  # Update memberships to point to the organization
-  def update_memberships
-    if organization && organization_id_changed?
-      organization.memberships << memberships.where(
-        memberships.arel_table[:organization_id].eq(nil).
-        or( memberships.arel_table[:organization_id].not_eq( organization_id ) ) )
-    end
     true
   end
 
