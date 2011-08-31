@@ -47,21 +47,25 @@ Feature: Manage fund_requests
     And I am on the new university_account page for organization: "first"
     When I fill in "Department code" with "A00"
     And I fill in "Subledger code" with "0001"
+    And I fill in "Subaccount code" with "00000"
     And I press "Create"
     Then I should see "University account was successfully created."
     And I should see "Organization: Spending Club"
     And I should see "Department code: A00"
     And I should see "Subledger code: 0001"
+    And I should see "Subaccount code: 00000"
     When I follow "Edit"
     And I fill in "Organization" with "Other Spending Club, The"
     And I fill in "Department code" with "A00"
     And I fill in "Subledger code" with "0001"
+    And I fill in "Subaccount code" with "00005"
     And I press "Update"
     Then I should see "University account was successfully updated."
     And I should see "Organization: The Other Spending Club"
     And I should see "Department code: A00"
     And I should see "Subledger code: 0001"
-
+    And I should see "Subaccount code: 00005"
+@wip
   Scenario: List and delete university accounts
     Given an organization: "first" exists with last_name: "First Club"
     And an organization: "last" exists with last_name: "Last Club"
@@ -74,33 +78,33 @@ Feature: Manage fund_requests
     When I fill in "Department code" with "A0"
     And I press "Search"
     Then I should see the following university_accounts:
-      | Organization | Department code | Subledger code |
-      | First Club   | A00             | 0001           |
-      | First Club   | A00             | 0002           |
+      | Organization | Department code | Subledger code | Subaccount code |
+      | First Club   | A00             | 0001           | 00000           |
+      | First Club   | A00             | 0002           | 00000           |
     Given I am on the university_accounts page
     And I fill in "Subledger code" with "01"
     And I press "Search"
     Then I should see the following inventory_items:
-      | Organization | Department code | Subledger code |
-      | First Club   | A00             | 0001           |
-      | Last Club    | B00             | 0001           |
+      | Organization | Department code | Subledger code | Subaccount code |
+      | First Club   | A00             | 0001           | 00000           |
+      | Last Club    | B00             | 0001           | 00000           |
     Given I am on the university_accounts page
     When I fill in "Organization" with "first"
     And I press "Search"
     Then I should see the following university_accounts:
-      | Organization | Department code | Subledger code |
-      | First Club   | A00             | 0001           |
-      | First Club   | A00             | 0002           |
+      | Organization | Department code | Subledger code | Subaccount code |
+      | First Club   | A00             | 0001           | 00000           |
+      | First Club   | A00             | 0002           | 00000           |
     Given I am on the university_accounts page for organization: "first"
     Then I should see the following university_accounts:
-      | Department code | Subledger code |
-      | A00             | 0001           |
-      | A00             | 0002           |
+      | Department code | Subledger code | Subaccount code |
+      | A00             | 0001           | 00000           |
+      | A00             | 0002           | 00000           |
     When I follow "Destroy" for the 3rd university_account
     And I am on the university_accounts page
     Then I should see the following university_accounts:
-      | Organization | Department code | Subledger code |
-      | First Club   | A00             | 0001           |
-      | First Club   | A00             | 0002           |
-      | Last Club    | B00             | 0002           |
+      | Organization | Department code | Subledger code | Subaccount code |
+      | First Club   | A00             | 0001           | 00000           |
+      | First Club   | A00             | 0002           | 00000           |
+      | Last Club    | B00             | 0002           | 00000           |
 

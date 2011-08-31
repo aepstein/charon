@@ -130,7 +130,7 @@ class Organization < ActiveRecord::Base
 
   def independent?
     return registrations.current.independent? unless registrations.current.blank?
-    return registrations.last(:order => 'registration_terms.starts_at ASC').independent? unless registrations.empty?
+    return registrations.joins { registration_term }.last(:order => 'registration_terms.starts_at ASC').independent? unless registrations.empty?
     false
   end
 

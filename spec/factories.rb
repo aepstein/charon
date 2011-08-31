@@ -384,6 +384,7 @@ FactoryGirl.define do
     association :organization
     department_code 'S52'
     sequence(:subledger_code) { |n| n.to_s.rjust( 4, '0' ) }
+    subaccount_code '00000'
   end
 
   # Expense calculators

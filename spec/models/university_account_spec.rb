@@ -34,6 +34,15 @@ describe UniversityAccount do
     @university_account.save.should be_false
   end
 
+  it 'should not save with an invalid subaccount code' do
+    %w( blah g889 89 889 8079 ).each do |scenario|
+      @university_account.subaccount_code = scenario
+      @university_account.save.should be_false
+    end
+    @university_account.subaccount_code = nil
+    @university_account.save.should be_false
+  end
+
   it 'should not save without an organization' do
     @university_account.organization = nil
     @university_account.save.should be_false

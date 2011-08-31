@@ -11,6 +11,10 @@
 </p>
 
 <p>
+  <b>Subaccount code:</b> <%=h @university_account.subaccount_code %>
+</p>
+
+<p>
 <%= link_to( 'Edit', edit_university_account_path(@university_account) ) if permitted_to? :edit, @university_account %> |
 <%= link_to @university_account.organization %> |
 <%= link_to 'List activity accounts', university_account_activity_accounts_path(@university_account) %>

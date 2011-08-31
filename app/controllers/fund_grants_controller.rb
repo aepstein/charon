@@ -20,13 +20,14 @@ class FundGrantsController < ApplicationController
   # GET /organizations/:organization_id/fund_grants
   # GET /organizations/:organization_id/fund_grants.xml
   def index
+    @fund_grants_unpaginated = @fund_grants
     @search = params[:search] || Hash.new
     @search.each do |k,v|
       if !v.blank? && FundGrant::SEARCHABLE.include?( k.to_sym )
-        @fund_grants = @fund_grants.send k, v
+        @fund_grants_unpaginated = @fund_grants_unpaginated.send k, v
       end
     end
-    @fund_grants = @fund_grants.page(params[:page])
+    @fund_grants = @fund_grants_unpaginated.page(params[:page])
 
     respond_to do |format|
       format.html { render :action => 'index' }
@@ -140,14 +141,21 @@ class FundGrantsController < ApplicationController
   def csv_index
     csv_string = ""
     CSV.generate(csv_string) do |csv|
-      csv << ( ['organizations', 'independent?','club sport?','state','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
-      @search.each do |fund_grant|
-        next unless permitted_to?( :review, fund_grant )
-        csv << ( [ fund_grant.fund_grant.organization.name,
-                   ( fund_grant.fund_grant.organization.independent? ? 'Yes' : 'No' ),
-                   ( fund_grant.fund_grant.organization.club_sport? ? 'Yes' : 'No' ),
-                   fund_grant.state,
-                   "#{fund_grant.fund_items.sum('fund_items.amount')}" ] + Category.all.map { |c| "#{fund_grant.fund_items.allocation_for_category(c)}" } )
+      csv << ( ['organizations', 'independent?', 'registered?', 'account(s)','club sport?','state','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
+      @fund_grants_unpaginated.each do |fund_grant|
+        next unless permitted_to?( :show, fund_grant )
+        csv << ( [ fund_grant.organization.name,
+                   ( fund_grant.organization.independent? ? 'Yes' : 'No' ),
+                   ( fund_grant.organization.registered? ? 'Yes' : 'No' ),
+                   fund_grant.organization.university_accounts.map(&:to_s).join(";"),
+                   ( fund_grant.organization.club_sport? ? 'Yes' : 'No' ),
+                   "#{fund_grant.fund_items.sum(:released_amount)}" ] +
+                   Category.all.map do |c|
+                     fund_grant.fund_items.joins { node }.where {
+                       node.category_id == c.id
+                     }.sum(:released_amount).to_s
+                   end
+               )
       end
     end
     send_data csv_string, :disposition => "attachment; filename=fund_grants.csv", :type => 'text/csv'
