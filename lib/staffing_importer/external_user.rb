@@ -11,7 +11,7 @@ module StaffingImporter
     }
     USER_ATTRIBUTES = [ :net_id, :first_name, :last_name, :email ]
 
-    establish_connection "external_staffing_#{RAILS_ENV}".to_sym
+    establish_connection "external_staffing_#{::Rails.env}".to_sym
     set_table_name "users"
     set_primary_key :id
 
