@@ -6,7 +6,7 @@
     <% if approvable then %>
     <td><%= approval.approvable %></td>
     <% end %>
-    <td><%= approval.created_at %></td>
+    <td><%= approval.created_at.to_s :us_ordinal %></td>
     <td><%= link_to( 'Create', new_approvable_approval_path( approval.approvable ) ) if approval.new_record? && permitted_to?( :create, approval )%></td>
     <td><%= link_to( 'Destroy', approval, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, approval %></td>
   <% end %>
