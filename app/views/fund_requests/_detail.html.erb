@@ -1,2 +1,3 @@
-<%= render :partial => 'fund_items/detailed', :collection => detail.fund_items.roots %>
+<%= render :partial => 'fund_items/detailed', :collection => detail.fund_items,
+  :locals => { :fund_request => detail } %>
 
