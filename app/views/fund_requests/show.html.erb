@@ -40,16 +40,14 @@ organization.</strong>  For actual allocations, see the
 </p>
 
 <%=content_tag 'h3', 'Requestor approvals' %>
-<% if @fund_request.users.length > 0 %>
+<% if @fund_request.approvals.length > 0 %>
 <p>
 The following users have approved:
 </p>
 
-<ul>
-<% @fund_request.users.each do |user| %>
-<%=content_tag 'li', user.name(:net_id) %>
-<% end %>
-</ul>
+<%=render :partial => 'approvals/approvals',
+  :object => @fund_request.approvals,
+  :locals => { :user => true } %>
 <% else %>
 <p>No users have approved.</p>
 <% end %>

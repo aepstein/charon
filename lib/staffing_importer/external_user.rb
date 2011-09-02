@@ -15,7 +15,7 @@ module StaffingImporter
     set_table_name "users"
     set_primary_key :id
 
-    named_scope :with_source, lambda { |source|
+    scope :with_source, lambda { |source|
       { :joins => 'INNER JOIN memberships ON users.id = memberships.user_id INNER JOIN ' +
           'enrollments ON memberships.position_id = enrollments.position_id',
         :conditions => [ 'memberships.starts_at <= :t AND memberships.ends_at >= :t ' +
