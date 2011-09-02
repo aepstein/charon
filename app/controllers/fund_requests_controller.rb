@@ -165,6 +165,7 @@ class FundRequestsController < ApplicationController
   def initialize_context
     @fund_grant = FundGrant.find params[:fund_grant_id] if params[:fund_grant_id]
     @fund_request = FundRequest.find params[:id] if params[:id]
+    @fund_grant = @fund_request.fund_grant if @fund_request
     @fund_source = FundSource.find params[:fund_source_id] if params[:fund_source_id]
     @fund_source ||= @fund_request.fund_grant.fund_source if @fund_request
     @organization = Organization.find params[:organization_id] if params[:organization_id]
