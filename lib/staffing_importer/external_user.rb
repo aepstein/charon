@@ -36,13 +36,17 @@ module StaffingImporter
         user.save && changes += 1 if user.changed?
         unless source.users.include?( user )
           adds += 1
-          source.memberships.create( :user => user, :active => true )
+          new_membership = source.memberships.build
+          new_membership.user = user
+          new_membership.active = true
+          new_membership.save!
         end
       end
       # Remove old memberships
       old = source.users.map(&:net_id) - users.map(&:net_id)
       unless old.empty?
-        source.memberships.delete( source.memberships.unscoped.joins(:user) & User.unscoped.where(:net_id.in => old) )
+        source.memberships.delete( source.memberships.unscoped.joins(:user).
+        merge( User.unscoped.where( :net_id.in => old ) ) )
       end
       [adds, changes, old.length, ( Time.zone.now - starts )]
     end

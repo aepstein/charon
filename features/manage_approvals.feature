@@ -134,9 +134,13 @@ Feature: Manage approvals
     And an organization: "applicant" exists
     And a membership exists with user: the user, role: the requestor_role, organization: the organization
     And a fund_grant exists with organization: the organization
+    And a fund_item exists with fund_grant: the fund_grant, title: "Important Item"
     And a fund_request exists with fund_grant: the fund_grant
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request, amount: "100.0"
     And I log in as the user
     And I am on the new approval page for the fund_request
+    Then I should see "Important Item"
+    And I should see "Requestor amount: $100.00"
     And I press "Confirm Approval"
     Then I should see "Approval was successfully created."
 
