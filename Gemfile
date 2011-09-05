@@ -3,9 +3,6 @@ source 'http://rubygems.org'
 gem 'rails', '~> 3.1.0'
 gem 'mysql2', '~> 0.2'
 gem 'json'
-gem 'sass'
-gem 'coffee-script'
-gem 'uglifier'
 gem 'jquery-rails'
 gem 'kaminari'
 gem 'carrierwave'
@@ -30,11 +27,18 @@ gem 'escape_utils'
 gem 'ancestry'
 gem 'acts_as_list', '~> 0.1.4'
 gem 'decent_exposure'
+group :assets do
+  gem 'sass-rails', "  ~> 3.1.0"
+  gem 'coffee-rails', "~> 3.1.0"
+  gem 'uglifier'
+end
 group :development, :test do
   gem 'rspec-rails', '~> 2.6.1'
 end
-group :test do
+group :development do
   gem 'thin'
+end
+group :test do
   gem 'test-unit'
   gem 'cucumber-rails'
   gem 'database_cleaner'

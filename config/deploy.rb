@@ -1,5 +1,3 @@
-require 'bundler/capistrano'
-
 set :application, "charon"
 role :app, "kvm02.assembly.cornell.edu"
 role :web, "kvm02.assembly.cornell.edu"
@@ -41,7 +39,7 @@ end
 
 after 'deploy:update_code', 'deploy:symlink_shared'
 
-after 'deploy:update_code' do
-  run "cd #{release_path}; RAILS_ENV=production bundle exec rake assets:precompile"
-end
+#after 'deploy:update_code' do
+#  run "cd #{release_path}; RAILS_ENV=production bundle exec rake assets:precompile"
+#end
 
