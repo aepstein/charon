@@ -39,7 +39,6 @@ You may <%=
 </p>
 <% end %>
 
-<% if @organization.fund_sources.allowed_for(current_user).length > 0 %>
 <p>
 You may <%=
   link_to( "request grants from " +
@@ -48,11 +47,6 @@ You may <%=
     new_organization_fund_grant_path( @organization ) )
 %>.
 </p>
-<% else %>
-<p>
-There are no current fund sources for you to request grants.
-</p>
-<% end %>
 
 <h3>Fund grants</h3>
 

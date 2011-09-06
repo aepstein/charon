@@ -14,7 +14,7 @@ Feature: Organization dashboard
     Given I am on the dashboard page for organization: "applicant"
     Then I should see "Money Taking Club Dashboard"
     And I should see "You have no fund requests in process."
-    And I should see "There are no current fund sources for you to request grants."
+    And I should see "You may request grants from 0 fund sources."
     And I should see "You have no current fund grants."
     And I should see "You have no closed fund grants."
     And I should see "Your organization has not submitted a financial profile."
@@ -51,7 +51,6 @@ Feature: Organization dashboard
     And the fund_request_type is amongst the fund_request_types of the fund_queue
     And I am on the dashboard page for organization: "applicant"
     Then I should see "You may request grants from 1 fund source."
-    And I should not see "There are no current fund sources for you to request grants."
 
   Scenario: Current fund grants
     Given a fund_source exists with name: "Easy Money"
