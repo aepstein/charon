@@ -1,0 +1,21 @@
+<table>
+  <thead>
+  <tr>
+    <th>State</th>
+    <th>Quantity</th>
+    <th>Requested</th>
+    <th>Reviewed</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% fund_source.fund_requests.quantity_and_amount_report.each do |state| %>
+    <%= table_row_tag do %>
+      <td><%= state[0] %></td>
+      <td><%= state[1] %></td>
+      <td><%=number_to_currency state[2] %></td>
+      <td><%=number_to_currency state[3] %></td>
+    <% end %>
+  <% end %>
+  </tbody>
+</table>
+

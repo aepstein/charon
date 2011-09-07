@@ -37,6 +37,33 @@ class FundSource < ActiveRecord::Base
       end
     end
 
+    # Returns an array with rows representing different request states.
+    # For each row, contents are:
+    # * state name
+    # * number of distinct requests in state
+    # * total requestor amounts for state
+    # * total reviewer amounts for state
+    def quantity_and_amount_report
+      connection.select_rows(
+        "SELECT fund_requests.state, COUNT(DISTINCT fund_requests.id), " +
+        "SUM(requestor_editions.amount), " +
+        "SUM(reviewer_editions.amount) FROM " +
+        "fund_grants INNER JOIN fund_requests ON " +
+        "fund_grants.id = fund_requests.fund_grant_id " +
+        "LEFT JOIN fund_editions AS requestor_editions ON " +
+        "requestor_editions.fund_request_id = fund_requests.id AND " +
+        "requestor_editions.perspective = " +
+        "#{connection.quote FundEdition::PERSPECTIVES.first} " +
+        "LEFT JOIN fund_editions AS reviewer_editions ON " +
+        "reviewer_editions.fund_request_id = fund_requests.id AND " +
+        "reviewer_editions.perspective = " +
+        "#{connection.quote FundEdition::PERSPECTIVES.last} " +
+        "WHERE fund_grants.fund_source_id = #{@association.owner.id} " +
+        "GROUP BY fund_requests.state " +
+        "ORDER BY fund_requests.state "
+      )
+    end
+
     # TODO: relocate to queue, deduct amounts previously requested where appropriate
     def amount_for_perspective_and_status(perspective, status)
       sub = "SELECT fund_items.id FROM fund_items INNER JOIN fund_requests WHERE fund_request_id = fund_requests.id " +

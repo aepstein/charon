@@ -52,6 +52,13 @@ The following reports are available:
 </ul>
 
 <p>
+Request quantity and amount report:
+</p>
+
+<%=render :partial => 'fund_sources/fund_requests_quantity_and_amount_report',
+  :locals => { :fund_source => @fund_source } %>
+
+<p>
   <b>Release message:</b> (included in notices sent to requestor members when fund_request is released)
 </p>
 
