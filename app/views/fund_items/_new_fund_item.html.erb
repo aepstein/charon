@@ -3,8 +3,8 @@
     <% unless new_fund_item.parent.nil? -%>
       <%= f.hidden_field :parent_id %>
     <% end -%>
-    <%= f.label :node_id, ( new_fund_item.parent ? "Add New Subitem for #{new_fund_item.parent}" : 'Add New Root Item') %>
-    <%= f.collection_select :node_id, new_fund_item.allowed_nodes, :id, :name %>
+    <%= f.label :node_id, ( new_fund_item.parent ? "Add New Subitem for #{new_fund_item.parent}" : 'Add New Root Item') %><br/>
+    <%= f.collection_select :node_id, new_fund_item.allowed_nodes, :id, :name %><br/>
     <%= f.submit( new_fund_item.parent ? 'Add Subitem' : 'Add Root Item' ) %>
   <% end %>
 <% end -%>
