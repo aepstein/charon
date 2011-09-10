@@ -170,7 +170,8 @@ class FundRequestsController < ApplicationController
     @fund_source ||= @fund_request.fund_grant.fund_source if @fund_request
     @organization = Organization.find params[:organization_id] if params[:organization_id]
     @organization ||= @fund_request.fund_grant.organization if @organization
-    @context = @fund_grant || @fund_source || @organization
+    @fund_queue = FundQueue.find params[:fund_queue_id] if params[:fund_queue_id]
+    @context = @fund_queue || @fund_grant || @fund_source || @organization
   end
 
   def initialize_index
@@ -182,6 +183,10 @@ class FundRequestsController < ApplicationController
     if @fund_source
       @fund_requests = @fund_requests.
         where { |r| r.fund_grants.fund_source_id == @fund_source.id }
+    end
+    if @fund_queue
+      @fund_requests = @fund_requests.
+        where { |r| r.fund_queue_id == @fund_queue.id }
     end
 #    @fund_requests = @fund_requests.with_permissions_to(:show)
   end
