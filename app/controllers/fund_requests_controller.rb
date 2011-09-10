@@ -12,7 +12,8 @@ class FundRequestsController < ApplicationController
   filter_access_to :index, :duplicate, :inactive do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @fund_source ) if @fund_source
-    permitted_to!( :index )
+    permitted_to!( :show, @fund_queue.fund_source ) if @fund_queue.fund_source
+    true
   end
 
   def inactive
