@@ -146,7 +146,12 @@ class FundItemsController < ApplicationController
 
   def populate_fund_editions
     @fund_item.fund_editions.populate_for_fund_request @fund_request
-    @fund_item.fund_editions.each { |fund_edition| fund_edition.documents.populate }
+    @fund_item.fund_editions.each { |fund_edition|
+      if ( fund_edition.persisted? && permitted_to?( :update, fund_edition ) ) ||
+         ( fund_edition.new_record? && permitted_to?( :create, fund_edition ) )
+        fund_edition.documents.populate
+      end
+    }
   end
 
   def attach_fund_request_to_new_fund_editions
