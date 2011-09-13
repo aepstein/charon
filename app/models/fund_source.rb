@@ -45,22 +45,26 @@ class FundSource < ActiveRecord::Base
     # * total reviewer amounts for state
     def quantity_and_amount_report
       connection.select_rows(
-        "SELECT fund_requests.state, COUNT(DISTINCT fund_requests.id), " +
-        "SUM(requestor_editions.amount), " +
-        "SUM(reviewer_editions.amount) FROM " +
-        "fund_grants INNER JOIN fund_requests ON " +
-        "fund_grants.id = fund_requests.fund_grant_id " +
-        "LEFT JOIN fund_editions AS requestor_editions ON " +
-        "requestor_editions.fund_request_id = fund_requests.id AND " +
-        "requestor_editions.perspective = " +
-        "#{connection.quote FundEdition::PERSPECTIVES.first} " +
-        "LEFT JOIN fund_editions AS reviewer_editions ON " +
-        "reviewer_editions.fund_request_id = fund_requests.id AND " +
-        "reviewer_editions.perspective = " +
-        "#{connection.quote FundEdition::PERSPECTIVES.last} " +
+        "SELECT states.state, COUNT(DISTINCT states.id), " +
+        "(SELECT SUM(fund_editions.amount) FROM fund_editions " +
+        "INNER JOIN fund_requests ON fund_editions.fund_request_id = fund_requests.id " +
+        "INNER JOIN fund_grants AS g ON fund_requests.fund_grant_id = g.id " +
+        "WHERE fund_requests.state = states.state AND " +
+        "g.fund_source_id = fund_grants.fund_source_id AND " +
+        "fund_editions.perspective = #{connection.quote FundEdition::PERSPECTIVES.first} ) " +
+        "AS requestor_amount, " +
+        "(SELECT SUM(fund_editions.amount) FROM fund_editions " +
+        "INNER JOIN fund_requests ON fund_editions.fund_request_id = fund_requests.id " +
+        "INNER JOIN fund_grants AS g ON fund_requests.fund_grant_id = g.id " +
+        "WHERE fund_requests.state = states.state AND " +
+        "g.fund_source_id = fund_grants.fund_source_id AND " +
+        "fund_editions.perspective = #{connection.quote FundEdition::PERSPECTIVES.last} ) " +
+        "AS reviewer_amount " +
+        "FROM fund_grants INNER JOIN fund_requests AS states ON " +
+        "fund_grants.id = states.fund_grant_id " +
         "WHERE fund_grants.fund_source_id = #{@association.owner.id} " +
-        "GROUP BY fund_requests.state " +
-        "ORDER BY fund_requests.state "
+        "GROUP BY states.state " +
+        "ORDER BY states.state "
       )
     end
 
