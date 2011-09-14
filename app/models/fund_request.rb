@@ -1,6 +1,6 @@
 class FundRequest < ActiveRecord::Base
   SEARCHABLE = [ :organization_name_contains, :fund_source_name_contains,
-    :with_state ]
+    :with_state, :with_review_state ]
   ACTIVE_STATES = [ :started, :tentative, :submitted, :finalized ]
   UNACTIONABLE_STATES = [ :withdrawn, :rejected ]
 

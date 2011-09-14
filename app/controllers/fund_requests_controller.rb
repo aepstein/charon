@@ -81,6 +81,9 @@ class FundRequestsController < ApplicationController
     @search = params[:search] || Hash.new
     @search.each do |k,v|
       if !v.blank? && FundRequest::SEARCHABLE.include?( k.to_sym )
+        if %w( with_state with_review_state ).include?( k )
+          v = v.to_sym
+        end
         @fund_requests = @fund_requests.send k, v
       end
     end
