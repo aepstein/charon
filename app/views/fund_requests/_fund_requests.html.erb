@@ -4,6 +4,7 @@
    fund_source ||= false
    organization = fund_grant.organization if fund_grant
    organization ||= false
+   review_state ||= false
 %>
 <table>
 <thead>
@@ -17,12 +18,16 @@
   <% unless state -%>
     <th>State</th>
   <% end -%>
+  <% unless review_state -%>
+    <th>Review State</th>
+  <% end -%>
   <th>Type</th>
   </tr>
 </thead>
 <tbody>
   <%= render :partial => 'fund_requests/fund_request', :collection => fund_requests, :locals => {
-    :organization => organization, :state => state, :fund_source => fund_source
+    :organization => organization, :state => state, :fund_source => fund_source,
+    :review_state => review_state
   } %>
 </tbody>
 </table>

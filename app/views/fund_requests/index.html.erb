@@ -22,6 +22,14 @@
     { :include_blank => true } %>
   </p>
   <p>
+    <%= label_tag 'search[with_review_state]', 'Review State' %>
+    <%= select_tag 'search[with_review_state]', options_from_collection_for_select(
+      # TODO should factor out the list into a class constant
+      %w( unreviewed tentative ready ),
+      :to_s, :to_s, @search['with_review_state'] ),
+    { :include_blank => true } %>
+  </p>
+  <p>
     <%= submit_tag 'Search' %>
   </p>
 <% end %>

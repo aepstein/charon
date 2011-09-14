@@ -1,4 +1,5 @@
 <% state ||= false %>
+<% review_state ||= false %>
 <% fund_source ||= false %>
 <% organization ||= false %>
 
@@ -11,6 +12,9 @@
   <% end %>
   <% unless state %>
   <td><%= fund_request.state %></td>
+  <% end %>
+  <% unless review_state %>
+  <td><%= fund_request.review_state if permitted_to?( :review, fund_request ) %></td>
   <% end %>
   <td><%= fund_request.fund_request_type %></td>
   <td><%= link_to 'Show', fund_request %></td>
