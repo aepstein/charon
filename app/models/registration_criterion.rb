@@ -12,7 +12,7 @@ class RegistrationCriterion < ActiveRecord::Base
     [ :type_of_member, :minimal_percentage ] }
 
   def organization_ids
-    organizations.select("DISTINCT organizations.id").map(&:id)
+    organizations.map(&:id)
   end
 
   # Returns organizations with fulfilling registrations

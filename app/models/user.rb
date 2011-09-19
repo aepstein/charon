@@ -106,6 +106,10 @@ class User < ActiveRecord::Base
 
   def fund_request_ids; fund_requests.map(&:id); end
 
+  def organization_ids
+    organizations.select( "DISTINCT organizations.*" ).map(&:id)
+  end
+
   def initialize_password
     if password.blank?
       chars = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
