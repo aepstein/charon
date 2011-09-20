@@ -59,6 +59,18 @@ Request quantity and amount report:
   :locals => { :fund_source => @fund_source } %>
 
 <p>
+  <b>Grants quantity:</b> <%= @fund_source.fund_grants.count %>
+</p>
+
+<p>
+  <b>Unreleased grant amount:</b> <%=number_to_currency @fund_source.fund_items.sum(:amount) %>
+</p>
+
+<p>
+  <b>Released grant amount:</b> <%=number_to_currency @fund_source.fund_items.sum(:released_amount) %>
+</p>
+
+<p>
   <b>Release message:</b> (included in notices sent to requestor members when fund_request is released)
 </p>
 
