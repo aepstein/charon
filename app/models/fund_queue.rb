@@ -12,9 +12,9 @@ class FundQueue < ActiveRecord::Base
       with_review_state( :ready ).includes { [ fund_editions.fund_item,
         fund_grant.organization ] }.each do |r|
         if r.fund_grant.organization.club_sport?
-          r.fund_items.allocate club_sport
+          r.fund_items.allocate! club_sport
         else
-          r.fund_items.allocate other
+          r.fund_items.allocate! other
         end
       end
     end
