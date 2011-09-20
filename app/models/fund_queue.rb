@@ -9,7 +9,8 @@ class FundQueue < ActiveRecord::Base
     # Allocate all ready requests associated with this fund source
     # * apply club_sport and other caps according to how organizations are recorded
     def allocate_with_caps(club_sport, other)
-      with_review_state( :ready ).includes( :organization, { :fund_items => :fund_editions } ).each do |r|
+      with_review_state( :ready ).includes { [ fund_grant.fund_items.fund_editions,
+        fund_grant.organization ] }.each do |r|
         if r.organization.club_sport?
           r.fund_items.allocate club_sport
         else
