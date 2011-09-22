@@ -118,7 +118,7 @@ GEM
     mysql2 (0.3.7)
     net-ldap (0.2.2)
     nokogiri (1.5.0)
-    paper_trail (2.3.1)
+    paper_trail (2.3.3)
       rails (~> 3)
     pdf-reader (0.10.0)
       Ascii85 (~> 1.0.0)
@@ -252,7 +252,7 @@ DEPENDENCIES
   kaminari
   launchy
   mysql2 (~> 0.2)
-  paper_trail
+  paper_trail (~> 2.3.3)
   pickle (~> 0.4.8)
   prawn
   prawn-fast-png

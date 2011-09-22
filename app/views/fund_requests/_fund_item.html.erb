@@ -12,4 +12,17 @@
 <% end %>
 <%=render :partial => 'fund_requests/fund_edition',
   :collection =>  fund_item.fund_editions.for_request( fund_request ) %>
+<% fund_item.fund_editions.for_request( fund_request ).each do |fund_edition| %>
+  <% if permitted_to? :show, fund_edition %>
+    <% if fund_request.review_state == 'ready' ||
+      permitted_to?( :edit, fund_edition )  %>
+    <%=render :partial => 'fund_requests/fund_edition',
+      :object => fund_edition %>
+    <% else %>
+    <%=render :partial => 'fund_requests/fund_edition',
+      :object => fund_edition.version_at( fund_request.released_at,
+        :has_one => true ) %>
+    <% end %>
+  <% end %>
+<% end %>
 

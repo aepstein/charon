@@ -11,7 +11,7 @@ gem 'prawn'
 gem 'prawn-fast-png'
 gem 'squeel'
 gem 'ransack'
-gem 'paper_trail'
+gem 'paper_trail', '~> 2.3.3'
 gem 'state_machine'
 gem 'whenever', :require => false
 gem 'bluecloth'

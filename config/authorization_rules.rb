@@ -137,7 +137,7 @@ authorization do
     end
     has_permission_on [ :fund_editions ], :to => :manage, :join_by => :and do
       if_permitted_to :review, :fund_request
-      if_attribute :fund_request => { :state => is { 'submitted'},
+      if_attribute :fund_request => { :state => is_in { %w( released submitted ) },
         :review_state => is { 'unreviewed' } }
       if_attribute :perspective => is { FundEdition::PERSPECTIVES.last }
     end
@@ -214,13 +214,18 @@ authorization do
     has_permission_on [ :fund_requests ], :to => [ :manage, :show, :allocate ] do
       if_permitted_to :manage, :fund_grant
     end
+    has_permission_on [ :fund_requests ], :to => :reconsider, :join_by => :and do
+      if_permitted_to :manage
+      if_attribute :state => is_in { %w( released ) }
+      if_attribute :review_state => is_in { %w( ready ) }
+    end
     has_permission_on [ :fund_requests ], :to => [ :create, :update ], :join_by => :and do
       if_permitted_to :request
       if_attribute :state => is_in { %w( started ) }
     end
     has_permission_on [ :fund_requests ], :to => [ :update ], :join_by => :and do
       if_permitted_to :review
-      if_attribute :state => is_in { %w( submitted ) },
+      if_attribute :state => is_in { %w( released submitted ) },
         :review_state => is_in { %w( unreviewed ) }
     end
     has_permission_on [ :fund_requests ], :to => :approve, :join_by => :and do
@@ -233,7 +238,7 @@ authorization do
     end
     has_permission_on [ :fund_requests ], :to => :approve, :join_by => :and do
       if_permitted_to :review
-      if_attribute :state => is_in { %w( submitted ) }
+      if_attribute :state => is_in { %w( released submitted ) }
       if_attribute :review_state => is_in { %w( unreviewed tentative ) }
     end
     has_permission_on [ :fund_requests ], :to => :unapprove, :join_by => :and do

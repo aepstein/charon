@@ -1,35 +1,33 @@
-<% if permitted_to? :show, fund_edition %>
-  <%= table_row_tag false do %>
-    <td colspan="2"><%= fund_edition.perspective.capitalize %>:</td>
-  <% end %>
+<%= table_row_tag false do %>
+  <td colspan="2"><%= fund_edition.perspective.capitalize %>:</td>
+<% end %>
 
-  <%= table_row_tag false do %>
-    <td>
-      <%=markdown fund_edition.comment %>
+<%= table_row_tag false do %>
+  <td>
+    <%=markdown fund_edition.comment %>
 
-      <% if fund_edition.requestable %>
-        <%= render :partial => "#{fund_edition.requestable.class.to_s.tableize}/detail",
-                   :object => fund_edition.requestable %>
-        <%= render :partial => "#{fund_edition.requestable.class.to_s.tableize}/calculation",
-                   :object => fund_edition.requestable %>
-      <% else %>
-        <p>No supporting calculations.</p>
-      <% end %>
+    <% if fund_edition.requestable %>
+      <%= render :partial => "#{fund_edition.requestable.class.to_s.tableize}/detail",
+                 :object => fund_edition.requestable %>
+      <%= render :partial => "#{fund_edition.requestable.class.to_s.tableize}/calculation",
+                 :object => fund_edition.requestable %>
+    <% else %>
+      <p>No supporting calculations.</p>
+    <% end %>
 
-      <% if fund_edition.documents.length > 0 %>
-        <ul>
-          <% fund_edition.documents.each do |document| %>
-          <li><%=link_to document, original_document_path( document, :format => :pdf ) %></li>
-          <% end %>
-        </ul>
-      <% else %>
-        <p>No attached documents.</p>
-      <% end %>
-    </td>
+    <% if fund_edition.documents.length > 0 %>
+      <ul>
+        <% fund_edition.documents.each do |document| %>
+        <li><%=link_to document, original_document_path( document, :format => :pdf ) %></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No attached documents.</p>
+    <% end %>
+  </td>
 
-    <td>
-      <%=number_to_currency fund_edition.amount %>
-    </td>
-  <% end %>
+  <td>
+    <%=number_to_currency fund_edition.amount %>
+  </td>
 <% end %>
 

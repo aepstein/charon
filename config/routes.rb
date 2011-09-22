@@ -34,7 +34,7 @@ Charon::Application.routes.draw do
   resources :fund_requests, :except => [ :create, :new ] do
     member do
       get :reject, :documents_report
-      put :do_reject, :submit, :withdraw
+      put :do_reject, :submit, :withdraw, :reconsider
     end
     resources :approvals, :only => [ :create, :destroy, :index, :new ]
     resources :fund_items, :except => [ :destroy ]

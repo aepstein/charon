@@ -5,14 +5,14 @@ class FundRequestsController < ApplicationController
   before_filter :new_fund_request_from_params, :only => [ :new, :create ]
   before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy,
-    :show, :submit, :withdraw, :attribute_check => true
+    :show, :submit, :withdraw, :reconsider, :attribute_check => true
   filter_access_to :documents_report do
     permitted_to! :show, @fund_request
   end
   filter_access_to :index, :duplicate, :inactive do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @fund_source ) if @fund_source
-    permitted_to!( :show, @fund_queue.fund_source ) if @fund_queue.fund_source
+    permitted_to!( :show, @fund_queue.fund_source ) if @fund_queue && @fund_queue.fund_source
     true
   end
 
@@ -37,6 +37,16 @@ class FundRequestsController < ApplicationController
     @fund_request.withdrawn_by_user = current_user
     @fund_request.withdraw!
     flash[:notice] = 'Fund request was successfully withdrawn.'
+    respond_to do |format|
+      format.html { redirect_to :back }
+      format.xml { head :ok }
+    end
+  end
+
+  # PUT /fund_requests/:id/reconsider
+  def reconsider
+    @fund_request.reconsider_review!
+    flash[:notice] = 'Fund request was marked for reconsideration.'
     respond_to do |format|
       format.html { redirect_to :back }
       format.xml { head :ok }

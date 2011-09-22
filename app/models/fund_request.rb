@@ -95,7 +95,8 @@ class FundRequest < ActiveRecord::Base
     def unfulfilled( approvers = Approver.unscoped )
       User.scoped.not_approved( @association.owner ).joins('INNER JOIN approvers').
       merge( approvers.unquantified.unfulfilled_for( @association.owner ) ).
-      where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
+      where( 'users.id = memberships.user_id' ).
+      group('memberships.user_id', 'approvers.quantity')
     end
   end
 
@@ -115,17 +116,27 @@ class FundRequest < ActiveRecord::Base
     state :unreviewed, :tentative, :ready
 
     event :approve do
-      transition :assigned => :tentative, :if => :approvable?
+      transition :unreviewed => :tentative, :if => :approvable?
       transition :tentative => :ready, :if => :approvals_fulfilled?
       transition :tentative => same
     end
 
     event :unapprove do
-      transition :tentative => :assigned, :if => :approvals_unfulfilled?
+      transition [ :tentative, :ready ] => :unreviewed, :if => :approvals_unfulfilled?
       transition :tentative => same
     end
 
-    after_transition :assigned => :tentative, :do => :deliver_required_approval_notice
+    event :reconsider do
+      transition :ready => :unreviewed
+    end
+
+    after_transition :on => :reconsider do |request, transition|
+      if request.submitted_at?
+        request.approvals.where { created_at > request.submitted_at }.
+          delete_all
+      end
+    end
+
   end
 
   state_machine :initial => :started do
