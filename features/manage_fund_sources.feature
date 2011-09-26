@@ -93,7 +93,7 @@ Feature: Manage fund_sources
     And I should see "Contact web: http://example.com/"
     And I should see "Open at: 2009-10-15 12:00:00"
     And I should see "Closed at: 2009-10-20 12:00:00"
-    And I should see the following fund_queues:
+    And I should see the following entries in "#fund_queues":
       | Advertised submit at            | Submit at                       | Release at                      | Fund request types |
       | Mon, 19 Oct 2009 11:00:00 -0400 | Mon, 19 Oct 2009 12:00:00 -0400 | Mon, 19 Oct 2009 18:00:00 -0400 | Special Project    |
     When I follow "Edit"
