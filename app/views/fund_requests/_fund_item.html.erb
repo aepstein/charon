@@ -10,8 +10,6 @@
     :object => fund_item.fund_grant.fund_items.build( :parent_id => fund_item.id ),
     :locals => { :fund_request => fund_request } %></td>
 <% end %>
-<%=render :partial => 'fund_requests/fund_edition',
-  :collection =>  fund_item.fund_editions.for_request( fund_request ) %>
 <% fund_item.fund_editions.for_request( fund_request ).each do |fund_edition| %>
   <% if permitted_to? :show, fund_edition %>
     <% if fund_request.review_state == 'ready' ||
