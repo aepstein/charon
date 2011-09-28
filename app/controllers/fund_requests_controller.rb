@@ -15,6 +15,9 @@ class FundRequestsController < ApplicationController
     permitted_to!( :show, @fund_queue.fund_source ) if @fund_queue && @fund_queue.fund_source
     true
   end
+  filter_access_to :reviews_report do
+    permitted_to!( :review, @fund_queue )
+  end
 
   def inactive
     @fund_requests = @fund_requests.inactive
@@ -28,6 +31,17 @@ class FundRequestsController < ApplicationController
         send_data DocumentsReport.new( @fund_request ).to_pdf,
           :filename => 'documents_report.pdf', :type => :pdf,
           :disposition => 'inline'
+      end
+    end
+  end
+
+  # GET /fund_queues/:fund_queue_id/fund_requests/reviews_report.csv
+  def reviews_report
+    respond_to do |format|
+      format.csv do
+        send_data @fund_queue.fund_requests.reviews_report,
+          :filename => "fund_queue_#{@fund_queue.id}_reviews_report.csv",
+          :type => :csv, :disposition => 'attachment'
       end
     end
   end

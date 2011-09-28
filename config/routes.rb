@@ -26,7 +26,7 @@ Charon::Application.routes.draw do
   resources :fund_queues, :only => [] do
     resources :fund_requests, :only => [ :index ] do
       collection do
-        get :duplicate
+        get :duplicate, :reviews_report
       end
     end
   end

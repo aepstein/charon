@@ -18,6 +18,34 @@ class FundQueue < ActiveRecord::Base
         end
       end
     end
+    # Returns CSV spreadsheet representing requests assigned to this queue
+    def reviews_report
+      rows = connection.select_rows <<-SQL
+        SELECT CONCAT(organizations.first_name, " ", organizations.last_name)
+        AS name, (SELECT registered FROM registrations INNER JOIN
+        registration_terms ON registrations.registration_term_id =
+        registration_terms.id WHERE registration_terms.current = 1
+        AND registrations.organization_id = organizations.id LIMIT 1) AS
+        registered, (SELECT independent FROM registrations INNER JOIN
+        registration_terms ON registrations.registration_term_id =
+        registration_terms.id WHERE registration_terms.current = 1 AND
+        registrations.organization_id = organizations.id LIMIT 1) AS
+        independent, BINARY organizations.club_sport, fund_requests.state,
+        (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
+        = 'requestor' AND fund_request_id = fund_requests.id ) AS request,
+        (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
+        = 'reviewer' AND fund_request_id = fund_requests.id ) AS review FROM
+        organizations INNER JOIN fund_grants ON organizations.id =
+        fund_grants.organization_id INNER JOIN fund_requests ON
+        fund_grants.id = fund_requests.fund_grant_id WHERE
+        fund_requests.fund_queue_id = #{@association.owner.id}
+        ORDER BY organizations.last_name, organizations.first_name
+      SQL
+      CSV.generate do |csv|
+        csv << %w( organization registered? independent? club_sport? state request review )
+        rows.each { |row| csv << row }
+      end
+    end
   end
   has_many :fund_items, :through => :fund_requests, :uniq => true do
     # Allocate all ready requests associate with this fund queue
