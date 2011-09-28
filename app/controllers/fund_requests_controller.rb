@@ -16,7 +16,7 @@ class FundRequestsController < ApplicationController
     true
   end
   filter_access_to :reviews_report do
-    permitted_to!( :review, @fund_queue )
+    permitted_to!( :review, @fund_queue.fund_source )
   end
 
   def inactive
