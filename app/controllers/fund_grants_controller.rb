@@ -19,7 +19,7 @@ class FundGrantsController < ApplicationController
   def released_report
     respond_to do |format|
       format.csv do
-        send_data @fund_source.fund_requests.released_report,
+        send_data @fund_source.fund_grants.released_report,
           :filename => "fund_source_#{@fund_source.id}_released_report.csv",
           :type => :csv, :disposition => 'attachment'
       end
