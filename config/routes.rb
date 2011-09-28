@@ -40,7 +40,11 @@ Charon::Application.routes.draw do
     resources :fund_items, :except => [ :destroy ]
   end
   resources :fund_sources, :except => [ :create, :new ] do
-    resources :fund_grants, :only => [ :index ]
+    resources :fund_grants, :only => [ :index ] do
+      collection do
+        get :released_report
+      end
+    end
     resources :fund_requests, :only => [ :index ]
   end
   resources :inventory_items, :except => [ :new, :create ] do

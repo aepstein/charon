@@ -8,11 +8,48 @@ class FundSource < ActiveRecord::Base
   belongs_to :structure, :inverse_of => :fund_sources
   belongs_to :framework, :inverse_of => :fund_sources
   has_many :activity_accounts, :dependent => :destroy, :inverse_of => :fund_source
-  has_many :fund_grants, :dependent => :destroy, :inverse_of => :fund_source do |grant|
+  has_many :fund_grants, :dependent => :destroy, :inverse_of => :fund_source do
     def build_for( organization )
       grant = build
       grant.organization = organization
       grant
+    end
+    def released_report
+      category_sql = Category.all.map do |c|
+        "(SELECT SUM(fund_items.released_amount) FROM fund_items " +
+        "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
+        "WHERE fund_items.fund_grant_id = fund_grants.id AND " +
+        "nodes.category_id = #{c.id} )"
+      end.join(", ")
+      rows = connection.execute <<-SQL
+        SELECT CONCAT(organizations.first_name, " ", organizations.last_name)
+        AS name, (SELECT registered FROM registrations INNER JOIN
+        registration_terms ON registrations.registration_term_id =
+        registration_terms.id WHERE registration_terms.current = 1 AND
+        registrations.organization_id = organizations.id LIMIT 1) AS registered,
+        (SELECT independent FROM registrations INNER JOIN registration_terms ON
+        registrations.registration_term_id = registration_terms.id WHERE
+        registration_terms.current = 1 AND registrations.organization_id =
+        organizations.id LIMIT 1) AS independent, BINARY
+        organizations.club_sport, CONCAT(university_accounts.department_code,
+        university_accounts.subledger_code, '-',
+        university_accounts.subaccount_code) AS account, (SELECT
+        SUM(fund_items.released_amount) FROM fund_items WHERE
+        fund_items.fund_grant_id = fund_grants.id) AS allocation
+        #{category_sql.blank? ? '' : ', ' + category_sql}
+        FROM organizations INNER JOIN fund_grants ON organizations.id =
+        fund_grants.organization_id LEFT JOIN university_accounts ON
+        organizations.id = university_accounts.organization_id WHERE
+        fund_grants.fund_source_id = 7 ORDER BY organizations.last_name,
+        organizations.first_name
+      SQL
+      CSV.generate do |csv|
+        csv << (
+          %w( organization registered? independent? club_sport? account allocation ) +
+          Category.all.map(&:name)
+        )
+        rows.each { |row| csv << row }
+      end
     end
   end
   has_many :fund_queues, :inverse_of => :fund_source, :dependent => :destroy do

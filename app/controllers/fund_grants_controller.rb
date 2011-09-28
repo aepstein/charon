@@ -11,6 +11,20 @@ class FundGrantsController < ApplicationController
     permitted_to!( :show, @fund_source ) if @fund_source
     permitted_to!( :index )
   end
+  filter_access_to :released_report do
+    permitted_to!( :review, @fund_source ) if @fund_source
+  end
+
+  # GET /fund_sources/:fund_source_id/fund_grants/released_report.csv
+  def released_report
+    respond_to do |format|
+      format.csv do
+        send_data @fund_source.fund_requests.released_report,
+          :filename => "fund_source_#{@fund_source.id}_released_report.csv",
+          :type => :csv, :disposition => 'attachment'
+      end
+    end
+  end
 
   def closed
     @fund_grants = @fund_grants.closed
