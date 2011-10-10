@@ -1,7 +1,8 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.1.0'
+gem 'rails', '~> 3.1.1'
 gem 'mysql2', '~> 0.2'
+gem 'bcrypt-ruby', '~> 3.0.0'
 gem 'json'
 gem 'jquery-rails'
 gem 'kaminari'

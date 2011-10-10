@@ -9,7 +9,10 @@ module Fulfiller
           Fulfillment::FULFILLABLE_TYPES[ @association.owner.class.to_s ].each do |fulfillable_type|
             current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
             @association.owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
-              create!( :fulfillable => criterion ) unless current.include?( criterion.id )
+              unless current.include?( criterion.id )
+                #TODO: Since Rails 3.1.1 had to force fulfiller (if bug fixed, can drop fulfiller)
+                create!( :fulfillable => criterion )
+              end
             end
           end
         end

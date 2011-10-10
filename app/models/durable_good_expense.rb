@@ -7,8 +7,8 @@ class DurableGoodExpense < ActiveRecord::Base
   has_paper_trail :class_name => 'SecureVersion'
 
   validates :fund_edition, :presence => true
-  validates :price, :numericality => { :greater_than => 0 }
-  validates :quantity, :numericality => { :greater_than => 0 }
+  validates :price, :numericality => { :greater_than_or_equal_to => 0.0 }
+  validates :quantity, :numericality => { :greater_than_or_equal_to => 0.0 }
   validates :description, :presence => true
 
 	def max_fund_request

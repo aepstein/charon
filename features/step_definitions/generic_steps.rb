@@ -42,6 +42,7 @@ end
 
 Then /^I should( not)? see the following #{capture_plural_factory}:$/ do |negate, context, table|
   if negate.blank?
+    # TODO: #tableish is deprecated research way to do with Capybara::Nodes::Finders
     table.diff!(tableish('table > thead,tbody > tr', 'td,th'))
   else
     # TODO: Ideally should verify table is not identical
