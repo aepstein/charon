@@ -1,0 +1,22 @@
+<p>
+Use this form to update university accounts active status in bulk.
+</p>
+
+<%= form_tag( do_activate_university_accounts_path, :method => :put ) do %>
+  <p>
+  <%=label_tag :accounts %><br/>
+  Provide a line-separated list of account numbers (like S52400021000)<br/>
+  <%=text_area_tag :accounts %>
+  </p>
+  <p>
+  Activate or deactivate these accounts?<br/>
+  <%=radio_button_tag :activate, 'active' %>
+  <%=label_tag :activate_active, "Activate" %><br/>
+  <%=radio_button_tag :activate, 'inactive' %>
+  <%=label_tag :activate_inactive, "Inactivate" %>
+  </p>
+  <p>
+  <%=submit_tag 'Save changes' %>
+  </p>
+<% end %>
+

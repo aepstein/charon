@@ -38,6 +38,8 @@ authorization do
       if_attribute :organization_id => is { nil }
     end
 
+    has_permission_on [ :university_accounts ], :to => [ :activate ]
+
     has_permission_on [ :users ], :to => [ :admin ]
 
   end

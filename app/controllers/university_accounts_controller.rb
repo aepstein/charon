@@ -3,9 +3,34 @@ class UniversityAccountsController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_university_account_from_params, :only => [ :new, :create ]
-  filter_access_to :show, :new, :create, :update, :edit, :update, :destroy, :attribute_check => true
+  filter_access_to :show, :new, :create, :update, :edit, :update, :destroy,
+    :attribute_check => true
   filter_access_to :index do
     permitted_to! :index
+  end
+  filter_access_to :activate, :do_activate do
+    permitted_to! :activate
+  end
+
+  # GET /university_accounts/activate
+  def activate
+  end
+
+  # PUT /university_accounts/do_activate
+  def do_activate
+    respond_to do |format|
+      if params[:accounts].blank? || params[:activate].blank?
+        hits = 0
+      else
+        hits = UniversityAccount.unscoped.where( "CONCAT( department_code, subledger_code, " +
+          "subaccount_code ) IN (?)", CSV.parse(params[:accounts]).flatten
+        ).update_all( [ "active = ?", ( params[:activate] == 'active' ? true : false ) ] )
+      end
+      flash[:notice] = ( ( params[:activate] == 'active' ? 'A' : 'Ina' ) +
+       "ctivated #{hits} university account#{hits == 1 ? '' : 's'}." )
+      format.html { redirect_to activate_university_accounts_url }
+      format.xml { head :ok }
+    end
   end
 
   # GET /university_accounts

@@ -32,13 +32,17 @@ Feature: Manage fund_requests
     And I should <create> "New university account"
     Given I am on the university_accounts page
     Then I should <show> "A00"
+    Given I am on the activate university_accounts page
+    Then I should <activate> authorized
+    Given I put on the do_activate university_accounts page
+    Then I should <activate> authorized
     Given I delete on the page for the university_account
     Then I should <destroy> authorized
     Examples:
-      | user    | create  | update  | show    | destroy |
-      | admin   | see     | see     | see     | see     |
-      | member  | not see | not see | not see | not see |
-      | regular | not see | not see | not see | not see |
+      | user    | create  | update  | show    | destroy | activate |
+      | admin   | see     | see     | see     | see     | see      |
+      | member  | not see | not see | not see | not see | not see  |
+      | regular | not see | not see | not see | not see | not see  |
 
   Scenario: Create and update university_accounts
     Given an organization: "first" exists with last_name: "Spending Club"
@@ -111,4 +115,22 @@ Feature: Manage fund_requests
       | First Club   | A00             | 0001           | 00000           |
       | First Club   | A00             | 0002           | 00000           |
       | Last Club    | B00             | 0002           | 00000           |
+
+  Scenario: Activate university accounts in bulk
+    Given a university_account: "active" exists with department_code: "A00", subledger_code: "0000", subaccount_code: "00000", active: true
+    And a university_account: "inactive" exists with department_code: "B00", subledger_code: "0000", subaccount_code: "00000", active: false
+    And I log in as user: "admin"
+    And I am on the activate university_accounts page
+    And I fill in "accounts" with "B00000000000"
+    And I choose "Activate"
+    And I press "Save changes"
+    Then I should see "Activated 1 university account."
+    And university_account: "inactive"'s active should be true
+    Given I am on the activate university_accounts page
+    When I fill in "accounts" with "A00000000000,B00000000000"
+    And I choose "Inactivate"
+    And I press "Save changes"
+    Then I should see "Inactivated 2 university accounts."
+    And university_account: "active"'s active should be false
+    And university_account: "inactive"'s active should be false
 

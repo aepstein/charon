@@ -109,6 +109,10 @@ Charon::Application.routes.draw do
     resources :nodes, :only => [ :index, :create, :new ]
   end
   resources :university_accounts, :except => [ :new, :create ] do
+    collection do
+      get :activate
+      put :do_activate
+    end
     resources :activity_accounts, :only => [ :index, :new, :create ]
   end
   resources :user_status_criterions do
