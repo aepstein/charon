@@ -2,7 +2,7 @@ class UniversityAccount < ActiveRecord::Base
   include OrganizationNameLookup
 
   attr_accessible :department_code, :subledger_code, :subaccount_code,
-    :organization_name
+    :organization_name, :active
 
   has_many :activity_accounts, :inverse_of => :university_account, :dependent => :destroy
   belongs_to :organization, :inverse_of => :university_accounts

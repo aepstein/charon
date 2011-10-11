@@ -6,6 +6,7 @@
     <td><%= university_account.department_code %></td>
     <td><%= university_account.subledger_code %></td>
     <td><%= university_account.subaccount_code %></td>
+    <td><%=raw university_account.active? ? 'Yes' : 'No' %></td>
     <td><%= link_to 'Show', university_account %></td>
     <td><%= link_to( 'Edit', edit_university_account_path(university_account) ) if permitted_to? :edit, university_account %></td>
     <td><%= link_to( 'Destroy', university_account, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, university_account %></td>

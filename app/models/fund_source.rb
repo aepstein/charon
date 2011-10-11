@@ -33,7 +33,8 @@ class FundSource < ActiveRecord::Base
         organizations.id LIMIT 1) AS independent, BINARY
         organizations.club_sport, CONCAT(university_accounts.department_code,
         university_accounts.subledger_code, '-',
-        university_accounts.subaccount_code) AS account, (SELECT
+        university_accounts.subaccount_code) AS account,
+        BINARY university_accounts.active, (SELECT
         SUM(fund_items.released_amount) FROM fund_items WHERE
         fund_items.fund_grant_id = fund_grants.id) AS allocation
         #{category_sql.blank? ? '' : ', ' + category_sql}
@@ -45,7 +46,7 @@ class FundSource < ActiveRecord::Base
       SQL
       CSV.generate do |csv|
         csv << (
-          %w( organization registered? independent? club_sport? account allocation ) +
+          %w( organization registered? independent? club_sport? account active? allocation ) +
           Category.all.map(&:name)
         )
         rows.each { |row| csv << row }

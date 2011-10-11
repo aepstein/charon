@@ -1,17 +1,21 @@
 <p>
-  <b>Organization:</b> <%=h @university_account.organization %>
+  <b>Organization:</b> <%= @university_account.organization %>
 </p>
 
 <p>
-  <b>Department code:</b> <%=h @university_account.department_code %>
+  <b>Department code:</b> <%= @university_account.department_code %>
 </p>
 
 <p>
-  <b>Subledger code:</b> <%=h @university_account.subledger_code %>
+  <b>Subledger code:</b> <%= @university_account.subledger_code %>
 </p>
 
 <p>
-  <b>Subaccount code:</b> <%=h @university_account.subaccount_code %>
+  <b>Subaccount code:</b> <%= @university_account.subaccount_code %>
+</p>
+
+<p>
+  <b>Active?</b> <%=raw @university_account.active? ? 'Yes' : 'No' %>
 </p>
 
 <p>
