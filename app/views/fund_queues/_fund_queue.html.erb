@@ -3,5 +3,7 @@
   <td><%= fund_queue.submit_at.to_s :rfc822 %></td>
   <td><%= fund_queue.release_at.to_s :rfc822 %></td>
   <td><%= fund_queue.fund_request_types.map(&:name).join(', ') %></td>
+  <td><%=link_to 'Show', fund_queue %></td>
+  <td><%=link_to 'Requests', fund_queue_fund_requests_path( fund_queue ) %></td>
 <% end %>
 

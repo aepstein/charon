@@ -47,6 +47,7 @@ class FundQueue < ActiveRecord::Base
       end
     end
   end
+  has_many :fund_editions, :through => :fund_requests, :uniq => true
   has_many :fund_items, :through => :fund_requests, :uniq => true do
     # Allocate all ready requests associate with this fund queue
     # * apply flat percentage cuts to reviewer amounts approved

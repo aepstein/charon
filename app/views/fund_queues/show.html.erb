@@ -1,0 +1,48 @@
+<h2>Show fund queue</h2>
+
+<p>
+  <b>Fund source:</b> <%= @fund_queue.fund_source %>
+</p>
+
+<p>
+  <b>Submit at:</b> <%= @fund_queue.submit_at %>
+</p>
+
+<h3>Statistics</h3>
+
+<p>
+  <b>Total requests (count):</b> <%= @fund_queue.fund_requests.count %>
+</p>
+
+<p>
+  <b>Total requests (amount):</b> <%=number_to_currency @fund_queue.fund_editions.
+    where { perspective == 'requestor' }.sum(:amount) %>
+</p>
+
+<p>
+  <b>Total reviewer amount (before caps and cuts):</b> <%=number_to_currency @fund_queue.fund_editions.
+    where { perspective == 'reviewer' }.sum(:amount) %>
+</p>
+
+<p>
+  <b>Total relevant allocations (unreleased):</b> <%=number_to_currency(
+    FundItem.where { |i| i.id.in( FundEdition.joins { fund_request }.
+      where { |e| e.fund_request.fund_queue_id == @fund_queue.id }.
+      select( :fund_item_id ) ) }.
+    sum( :amount )
+  ) %>
+</p>
+
+<p>
+  <b>Total relevant allocations (released):</b> <%=number_to_currency(
+    FundItem.where { |i| i.id.in( FundEdition.joins { fund_request }.
+      where { |e| e.fund_request.fund_queue_id == @fund_queue.id }.
+      select( :fund_item_id ) ) }.
+    sum( :released_amount )
+  ) %>
+</p>
+
+<p>
+<%=link_to 'Fund requests', fund_queue_fund_requests_path( @fund_queue ) %>
+</p>
+

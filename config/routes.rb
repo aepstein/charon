@@ -23,7 +23,7 @@ Charon::Application.routes.draw do
   end
   resources :fund_editions, :only => [ :destroy ]
   resources :fund_items, :only => [ :destroy ]
-  resources :fund_queues, :only => [] do
+  resources :fund_queues, :only => [ :show ] do
     resources :fund_requests, :only => [ :index ] do
       collection do
         get :duplicate, :reviews_report
