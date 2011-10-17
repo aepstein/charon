@@ -21,7 +21,7 @@ class FundQueue < ActiveRecord::Base
     # Returns CSV spreadsheet representing requests assigned to this queue
     def reviews_report
       rows = connection.select_rows <<-SQL
-        SELECT CONCAT(organizations.first_name, " ", organizations.last_name)
+        SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
         AS name, (SELECT registered FROM registrations INNER JOIN
         registration_terms ON registrations.registration_term_id =
         registration_terms.id WHERE registration_terms.current = 1

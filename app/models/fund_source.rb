@@ -22,7 +22,7 @@ class FundSource < ActiveRecord::Base
         "nodes.category_id = #{c.id} )"
       end.join(", ")
       rows = connection.execute <<-SQL
-        SELECT CONCAT(organizations.first_name, " ", organizations.last_name)
+        SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
         AS name, (SELECT registered FROM registrations INNER JOIN
         registration_terms ON registrations.registration_term_id =
         registration_terms.id WHERE registration_terms.current = 1 AND

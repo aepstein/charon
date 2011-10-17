@@ -42,6 +42,14 @@
   ) %>
 </p>
 
+<h3>Reports</h3>
+
+<ul>
+  <li><%=link_to 'Reviews report',
+    reviews_report_fund_queue_fund_requests_path( @fund_queue, :format => :csv )
+  %></li>
+</ul>
+
 <p>
 <%=link_to 'Fund requests', fund_queue_fund_requests_path( @fund_queue ) %>
 </p>
