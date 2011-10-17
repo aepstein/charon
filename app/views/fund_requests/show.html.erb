@@ -20,6 +20,42 @@
   <b>State:</b> <%= @fund_request.state %>
 </p>
 
+<%=content_tag 'h3', 'Amount totals' %>
+
+<p>
+For actual allocations, see the
+<%=link_to 'associated fund grant', @fund_request.fund_grant %>.
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nature</th>
+      <th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%=table_row_tag do %>
+      <td>Request</td>
+      <td><%=number_to_currency @fund_request.fund_editions.
+        where { perspective == 'requestor' }.sum(:amount) %></td>
+    <% end %>
+    <% if permitted_to?( :review, @fund_request ) || @fund_request.state == 'released' %>
+      <%=table_row_tag do %>
+        <td>Reviewer-approved (before caps and cuts, <em>not allocation</em>)</td>
+        <td><%=number_to_currency @fund_request.fund_editions.
+        where { perspective == 'reviewer' }.sum(:amount) %></td>
+      <% end %>
+      <%= table_row_tag do %>
+        <td>Released allocation (related to items in this request)</td>
+        <td><%=number_to_currency FundItem.unscoped.where {
+          id.in( my { @fund_request.fund_editions.select("fund_item_id") } )
+        }.sum(:released_amount) %></td>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
+
 <%=content_tag 'h3', 'Item summary' %>
 
 <p>
