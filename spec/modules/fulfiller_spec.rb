@@ -84,10 +84,10 @@ describe Organization do
 
   it_behaves_like 'fulfiller' do
     let( :fulfilled_fulfillable ) {
-      create( :registration_criterion )
+      create( :registration_criterion, :minimal_percentage => 10, :type_of_member => 'undergrads' )
     }
     let( :unfulfilled_fulfillable ) {
-      create( :registration_criterion, :type_of_member => 'grads' )
+      create( :registration_criterion, :minimal_percentage => 10, :type_of_member => 'grads' )
     }
   end
 end

@@ -226,21 +226,21 @@ class FundEdition < ActiveRecord::Base
 
   def amount_must_be_within_node_limit
     return if amount.blank? || fund_item.blank? || fund_item.node.blank?
-    if amount > fund_item.node.item_amount_limit
+    if amount > fund_item.node.item_amount_limit.ceil
       errors.add :amount, "is greater than maximum for #{fund_item.node}"
     end
   end
 
   def amount_must_be_within_requestable_max
     return if requestable.nil? || amount.nil?
-    if amount > requestable.max_fund_request then
+    if amount > requestable.max_fund_request.ceil then
       errors.add :amount, "is greater than the maximum request amount"
     end
   end
 
   def amount_must_be_within_original_edition
     return unless amount && previous
-    if amount > previous.amount
+    if amount > previous.amount.ceil
       errors.add :amount, "is greater than original request amount"
     end
   end
