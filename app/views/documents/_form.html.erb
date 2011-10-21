@@ -1,7 +1,8 @@
   <%= render "shared/error_messages", :target => form.object %>
   <%= form.inputs do %>
     <%= form.input( :document_type, :collection => form.object.fund_edition.document_types ) if form.object.new_record? %>
-    <%= form.input :original, :as => :file, :label => 'File' %>
+    <%= form.input :original, :as => :file, :label => 'File',
+      :hint => "Attachment must be PDF file." %>
   <% end %>
   <%= form.buttons %>
 

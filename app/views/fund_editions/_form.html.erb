@@ -23,7 +23,16 @@
       <%= document_form.input :document_type_id, :as => :hidden %>
       <%= document_form.input :original, :as => :file,
         :label => document_form.object.fund_edition.perspective.titleize + ' ' +
-          document_form.object.document_type.to_s %>
+          document_form.object.document_type.to_s,
+        :hint => "File must be in PDF format and may not exceed " +
+          "#{document_form.object.max_size_string}." %>
+      <li>
+      <% if document_form.object.original? -%>
+        The file you attach will replace the previously uploaded<% else
+        -%>There is no previously uploaded<% end
+        -%> <%= document_form.object.fund_edition.perspective + ' ' +
+        document_form.object.document_type.to_s %>.
+      </li>
       <%= document_form.hidden_field :original_cache %>
     <% end %>
   <% end %>
