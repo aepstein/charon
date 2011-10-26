@@ -26,7 +26,9 @@ gem 'declarative_authorization', '>= 0.5'
 #gem 'composite_primary_keys', '~> 4.0.0', :require => false # Require on demand
 gem 'composite_primary_keys', :require => false,
   :git => 'git://github.com/tomhughes/composite_primary_keys.git'
-gem 'rails3-jquery-autocomplete'
+gem 'cornell-assemblies-rails',
+  :git => 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
+#gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
 gem 'ancestry'
 gem 'acts_as_list', '~> 0.1.4'
