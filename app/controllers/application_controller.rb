@@ -7,6 +7,8 @@ class ApplicationController < ActionController::Base
   is_authenticator
   has_breadcrumbs
 
+  protected
+
   def permission_denied
     flash[:error] = "You are not allowed to perform the requested action."
     if @fund_grant && @fund_grant.fund_source
@@ -19,8 +21,6 @@ class ApplicationController < ActionController::Base
     end
     redirect_to profile_url
   end
-
-  protected
 
   # Prepares a concise explanation of unfulfilled requirements pertinent to a
   # fund grant
