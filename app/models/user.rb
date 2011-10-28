@@ -28,8 +28,7 @@ class User < ActiveRecord::Base
   }
 
   is_fulfiller
-
-  has_secure_password
+  is_authenticable
 
   has_many :approvals, :inverse_of => :user do
     def agreements
@@ -96,9 +95,9 @@ class User < ActiveRecord::Base
 
   validates :net_id, :presence => true, :uniqueness => true
   validates :email, :presence => true
+  validates :status, inclusion: { in: STATUSES, allow_blank: true }
 
-  before_validation :extract_email, :initialize_password, :initialize_addresses, :on => :create
-  validates_inclusion_of :status, :in => STATUSES, :allow_blank => true
+  before_validation :extract_email, :initialize_addresses, :on => :create
   before_validation :import_simple_ldap_attributes
   after_save :import_complex_ldap_attributes
 
@@ -108,16 +107,6 @@ class User < ActiveRecord::Base
 
   def organization_ids
     organizations.select( "DISTINCT organizations.*" ).map(&:id)
-  end
-
-  def initialize_password
-    if password.blank?
-      chars = ("a".."z").to_a + ("A".."Z").to_a + ("0".."9").to_a
-      newpass = ""
-      1.upto(8) { |i| newpass << chars[rand(chars.size-1)] }
-      self.password, self.password_confirmation = newpass, newpass
-    end
-    true
   end
 
   # Returns the user status criterions that the user presently fulfills
