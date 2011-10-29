@@ -1,8 +1,9 @@
 GIT
   remote: git://assembly.cornell.edu/git/cornell-assemblies-rails.git
-  revision: 794cf046fd5398ffbf5124212a07c776e2728a84
+  revision: f99c8b958fc63b22cc4c3a198614ddcf9d13c5bf
   specs:
     cornell-assemblies-rails (0.0.1)
+      bcrypt-ruby (~> 3.0.1)
       jquery-rails (~> 1.0.15)
       rails (~> 3.1.1)
       rails3-jquery-autocomplete (~> 1.0.4)
@@ -247,7 +248,6 @@ PLATFORMS
 DEPENDENCIES
   acts_as_list (~> 0.1.4)
   ancestry
-  bcrypt-ruby (~> 3.0.0)
   bluecloth
   capybara
   carrierwave
