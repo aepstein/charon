@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gem 'rails', '~> 3.1.1'
 gem 'rack', '=1.3.3' #TODO can drop this after rack 1.3.5 release
 gem 'mysql2', '~> 0.2'
-gem 'bcrypt-ruby', '~> 3.0.0'
 gem 'json'
 gem 'jquery-rails'
 gem 'kaminari'
