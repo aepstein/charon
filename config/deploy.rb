@@ -1,3 +1,5 @@
+require 'whenever/capistrano'
+
 set :application, "charon"
 role :app, "kvm02.assembly.cornell.edu"
 role :web, "kvm02.assembly.cornell.edu"
@@ -14,7 +16,6 @@ set :branch, "master"
 set :git_enable_submodules, 0
 
 set :whenever_command, 'bundle exec whenever'
-require 'whenever/capistrano'
 
 namespace :deploy do
   desc "Tell Passenger to restart the app."
