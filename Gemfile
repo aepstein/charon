@@ -1,8 +1,9 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 3.1.1'
-gem 'rack', '=1.3.3' #TODO can drop this after rack 1.3.5 release
+gem 'rack', '~> 1.3.5'
 gem 'mysql2', '~> 0.2'
+gem 'exception_notification'
 gem 'json'
 gem 'jquery-rails'
 gem 'kaminari'
