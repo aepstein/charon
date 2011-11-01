@@ -191,6 +191,14 @@ class FundRequest < ActiveRecord::Base
 
     before_transition all - [ :submitted ] => :submitted,
       :do => [ :adopt_queue, :set_approval_checkpoint ]
+    before_transition(
+      any - [ :withdrawn, :rejected ] => [ :withdrawn, :rejected ]
+    ) do |request, transition|
+      if request.fund_queue
+        request.fund_queue = nil
+      end
+    end
+
 
     after_transition :except_to => same, :do => :timestamp_state!
     after_transition :started => :tentative, :do => :deliver_required_approval_notice

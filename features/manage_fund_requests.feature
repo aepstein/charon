@@ -178,6 +178,14 @@ Feature: Manage fund_requests
       | Requestor  | State      |
       | First Club | submitted  |
       | Last Club  | submitted  |
+    Given I am on the unqueued fund_requests page for fund_source: "semester"
+    Then I should see the following fund_requests:
+      | Requestor  | State     |
+      | First Club | tentative |
+      | Last Club  | started   |
+    Given I am on the unqueued fund_requests page for fund_source: "annual"
+    Then I should see the following fund_requests:
+      | Requestor  | State     |
     Given I am on the fund_requests page for organization: "first"
     Then I should see the following fund_requests:
       | Fund source | State     |

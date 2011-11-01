@@ -217,5 +217,25 @@ describe FundRequest do
     notified_before.started_notice_at.should be_within(5.seconds).of(Time.zone.now)
   end
 
+  it 'should dissociate from a queue when withdrawn' do
+    @fund_request.state = 'submitted'
+    @fund_request.fund_queue = @fund_request.fund_grant.fund_source.fund_queues.first
+    @fund_request.fund_queue.should_not be_nil
+    @fund_request.save!
+    @fund_request.withdrawn_by_user = create(:user)
+    @fund_request.withdraw!
+    @fund_request.fund_queue.should be_nil
+  end
+
+  it 'should dissociate from a queue when rejected' do
+    @fund_request.state = 'submitted'
+    @fund_request.fund_queue = @fund_request.fund_grant.fund_source.fund_queues.first
+    @fund_request.fund_queue.should_not be_nil
+    @fund_request.save!
+    @fund_request.reject_message = 'some messsage'
+    @fund_request.reject!
+    @fund_request.fund_queue.should be_nil
+  end
+
 end
 

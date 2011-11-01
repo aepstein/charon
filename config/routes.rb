@@ -45,7 +45,11 @@ Charon::Application.routes.draw do
         get :released_report
       end
     end
-    resources :fund_requests, :only => [ :index ]
+    resources :fund_requests, :only => [ :index ] do
+      collection do
+        get :unqueued
+      end
+    end
   end
   resources :inventory_items, :except => [ :new, :create ] do
       collection do
