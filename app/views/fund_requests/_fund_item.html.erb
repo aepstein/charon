@@ -10,6 +10,10 @@
     :object => fund_item.fund_grant.fund_items.build( :parent_id => fund_item.id ),
     :locals => { :fund_request => fund_request } %></td>
 <% end %>
+<%= table_row_tag( false ) do %>
+  <td>Allocated amount</td>
+  <td><%=number_to_currency fund_item.released_amount %></td>
+<% end %>
 <% fund_item.fund_editions.for_request( fund_request ).each do |fund_edition| %>
   <% if permitted_to? :show, fund_edition %>
     <% if fund_request.review_state == 'ready' ||

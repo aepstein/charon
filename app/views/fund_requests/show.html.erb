@@ -23,7 +23,7 @@
 <%=content_tag 'h3', 'Amount totals' %>
 
 <p>
-For actual allocations, see the
+For actual allocations by category of funding, see the
 <%=link_to 'associated fund grant', @fund_request.fund_grant %>.
 </p>
 
@@ -59,10 +59,7 @@ For actual allocations, see the
 <%=content_tag 'h3', 'Item summary' %>
 
 <p>
-Below is a summary of all items in the fund request.  <strong>Please note that
-this summary <em>does not indicate the amounts actually allocated</em> to the
-organization.</strong>  For actual allocations, see the
-<%=link_to 'associated fund grant', @fund_request.fund_grant %>.
+Please note that the requestor and reviewer amounts listed below do not reflect the actual allocation of funds to the organization.
 </p>
 
 <%=render :partial => 'fund_requests/fund_items',
