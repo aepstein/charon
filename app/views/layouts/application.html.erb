@@ -8,6 +8,8 @@
 	<meta http-equiv="Content-Language" content="en-us" />
 	<link rel="SHORTCUT ICON" href="<%= image_path('favicon.ico') %>" type="image/x-icon" />
 	<%=raw stylesheet_link_tag 'application' %>
+	<!--[if IE 6]><%=raw stylesheet_link_tag 'ie6' %><![endif]-->
+	<!--[if IE 7]><%=raw stylesheet_link_tag 'ie7' %><![endif]-->
 	<%=raw javascript_include_tag 'application' %>
   <%= csrf_meta_tag %>
 </head>

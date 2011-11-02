@@ -1,6 +1,6 @@
 GIT
   remote: git://assembly.cornell.edu/git/cornell-assemblies-rails.git
-  revision: f2c8971492e35d5a4f07fffc806e1f1fab329948
+  revision: 9ef456967b6cca3c649a1b5fa8a17a1ecf32d250
   specs:
     cornell-assemblies-rails (0.0.1)
       bcrypt-ruby (~> 3.0.1)
@@ -141,7 +141,7 @@ GEM
       rake
     polyamorous (0.5.0)
       activerecord (~> 3.0)
-    polyglot (0.3.2)
+    polyglot (0.3.3)
     prawn (0.12.0)
       pdf-reader (>= 0.9.0)
       ttfunk (~> 1.0.2)
