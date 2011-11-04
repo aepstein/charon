@@ -23,9 +23,7 @@ gem 'validation_reflection'
 gem 'formtastic'
 gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
-#gem 'composite_primary_keys', '~> 4.0.0', :require => false # Require on demand
-gem 'composite_primary_keys', :require => false,
-  :git => 'git://github.com/tomhughes/composite_primary_keys.git'
+gem 'composite_primary_keys', '~> 4.1', :require => false # Require on demand
 gem 'cornell-assemblies-rails',
   :git => 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
 #gem 'rails3-jquery-autocomplete'
