@@ -34,7 +34,9 @@ class FundQueue < ActiveRecord::Base
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'requestor' AND fund_request_id = fund_requests.id ) AS request,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
-        = 'reviewer' AND fund_request_id = fund_requests.id ) AS review FROM
+        = 'reviewer' AND fund_request_id = fund_requests.id ) AS review,
+        (SELECT SUM(fund_items.amount) FROM fund_items WHERE fund_grant_id =
+        fund_grants.id ) AS allocation FROM
         organizations INNER JOIN fund_grants ON organizations.id =
         fund_grants.organization_id INNER JOIN fund_requests ON
         fund_grants.id = fund_requests.fund_grant_id WHERE
@@ -42,7 +44,7 @@ class FundQueue < ActiveRecord::Base
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
-        csv << %w( organization registered? independent? club_sport? state request review )
+        csv << %w( organization registered? independent? club_sport? state request review allocation )
         rows.each { |row| csv << row }
       end
     end
