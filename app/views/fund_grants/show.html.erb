@@ -22,11 +22,13 @@
 
 <table>
   <thead>
-    <th>Category</th>
-    <% if permitted_to? :manage, @fund_grant %>
-     <th>Unreleased Amount</th>
-    <% end %>
-    <th>Released Amount</th>
+    <tr>
+      <th>Category</th>
+      <% if permitted_to? :manage, @fund_grant %>
+       <th>Unreleased Amount</th>
+      <% end %>
+      <th>Released Amount</th>
+    </tr>
   </thead>
   <tbody>
     <% @fund_grant.categories.group { id }.each do |category| %>

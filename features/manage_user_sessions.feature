@@ -5,11 +5,11 @@ Feature: Manage user sessions
 
   Background:
     Given a user: "user" exists with net_id: "zzz999"
-@wip
+
   Scenario: Login an existing user
     Given I log in as user: "user"
     Then I should see "You logged in successfully."
-@wip
+
   Scenario Outline: Administrative menu appears only for administrator
     Given a user: "admin" exists with admin: true
     And I log in as user: "<user>"

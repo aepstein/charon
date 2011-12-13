@@ -26,11 +26,11 @@ Given /^(?:|I )(put|post|delete) on (.+)$/ do |method, page_name|
 end
 
 Then /^I should see authorized$/ do
-  Then %{I should not see "You are not allowed to perform the requested action."}
+  step %{I should not see "You are not allowed to perform the requested action."}
 end
 
 Then /^I should not see authorized$/ do
-  Then %{I should see "You are not allowed to perform the requested action."}
+  step %{I should see "You are not allowed to perform the requested action."}
 end
 
 When /^I follow "(.+)" for the (\d+)(?:st|nd|rd|th) #{capture_factory}(?: for #{capture_model})?$/ do |link, position, subject, context|
@@ -42,8 +42,7 @@ end
 
 Then /^I should( not)? see the following #{capture_plural_factory}:$/ do |negate, context, table|
   if negate.blank?
-    # TODO: #tableish is deprecated research way to do with Capybara::Nodes::Finders
-    table.diff!(tableish('table > thead,tbody > tr', 'td,th'))
+    table.diff!( tableish( 'table > thead,tbody > tr', 'th,td' ) )
   else
     # TODO: Ideally should verify table is not identical
   end
@@ -98,6 +97,6 @@ Then(/^#{capture_model} should not be (?:in|one of|amongst) the (\w+) of #{captu
 end
 
 Then /^I should see the following entries in "(.+)":$/ do |table_id, table|
-  table.diff! tableish("#{table_id} > thead,tbody > tr", 'td,th')
+  table.diff!( tableish( "#{table_id} > thead,tbody > tr", 'th,td' ) )
 end
 

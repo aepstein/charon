@@ -45,10 +45,10 @@ Feature: Manage fund_requests
     Given the fund_request has state: "<state>"
     And I put on the withdraw page for the fund_request
     Then I should <withdraw> authorized
-    Given the fund_request has state: "<state>"
+    Given the fund_request has state: "<state>", fund_queue: the fund_queue
     And I put on the reconsider page for the fund_request
     Then I should <reconsider> authorized
-    Given the fund_request has state: "<state>"
+    Given the fund_request has state: "<state>", fund_queue: the fund_queue
     And I am on the reject page for the fund_request
     Then I should <reject> authorized
     Given I put on the do_reject page for the fund_request
