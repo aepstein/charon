@@ -9,7 +9,7 @@ end
 Then(/^#{capture_email} (text|html|parts) should( not)? contain "(.*)"$/) do |email_ref, alternative, negative, text|
   if alternative == 'parts'
     %w( text html ).each do |alt|
-      Then %{#{email_ref} #{alt} should#{negative} contain "#{text}"}
+      step %{#{email_ref} #{alt} should#{negative} contain "#{text}"}
     end
   else
     part = email(email_ref).send("#{alternative}_part").body
