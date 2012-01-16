@@ -21,6 +21,11 @@ production:
 #  bind_dn: cn=admin,dc=local,dc=net
 #  password: secret
 
+demo:
+  host: directory.cornell.edu
+  port: 389
+  base: o=Cornell University,c=US
+
 cornell_directory:
   host: directory.cornell.edu
   port: 389
