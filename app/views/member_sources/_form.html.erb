@@ -1,0 +1,10 @@
+  <%= render "shared/error_messages", :target => form.object %>
+  <%= form.inputs do %>
+    <%= form.input :role,
+      hint: 'What role should members from this source have in organization?' %>
+    <%= form.input :minimum_votes,
+      hint: 'How many votes must they have in the committee to have this role?' %>
+    <%= form.input :external_committee_id,
+      hint: 'What is the unique identifier for the committee?' %>
+  <% end %>
+
