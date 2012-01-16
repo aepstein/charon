@@ -2,18 +2,18 @@ class Organization < ActiveRecord::Base
   SEARCHABLE = [ :name_contains ]
   attr_accessible :organization_profile_attributes
   attr_accessible :first_name, :last_name, :club_sport,
-    :organization_profile_attributes, :as => :admin
+    :organization_profile_attributes, :member_sources_attributes, as: :admin
 
   notifiable_events :registration_required
   is_fulfiller
 
-  has_one :organization_profile, :inverse_of => :organization,
-    :dependent => :destroy
-  has_many :activity_reports, :dependent => :destroy, :inverse_of => :organization
-  has_many :activity_accounts, :through => :university_accounts
-  has_many :fund_grants, :dependent => :destroy, :inverse_of => :organization
-  has_many :fund_requests, :through => :fund_grants
-  has_many :fund_sources, :inverse_of => :organization do
+  has_one :organization_profile, inverse_of: :organization,
+    dependent: :destroy
+  has_many :activity_reports, dependent: :destroy, inverse_of: :organization
+  has_many :activity_accounts, through: :university_accounts
+  has_many :fund_grants, dependent: :destroy, inverse_of: :organization
+  has_many :fund_requests, through: :fund_grants
+  has_many :fund_sources, inverse_of: :organization do
     #  What fund sources is this organization eligible to start a grant for?
     # * must have an open deadline (submit_at is in the future)
     # * must fulfill criteria for user
@@ -33,15 +33,15 @@ class Organization < ActiveRecord::Base
       FundSource.no_fund_grant_for( @association.owner )
     end
   end
-  has_many :inventory_items, :dependent => :destroy, :inverse_of => :organization
-  has_many :memberships, :dependent => :destroy, :inverse_of => :organization
-  has_many :member_sources, :inverse_of => :organization
-  has_many :registrations, :dependent => :nullify, :inverse_of => :organization do
+  has_many :inventory_items, dependent: :destroy, inverse_of: :organization
+  has_many :memberships, dependent: :destroy, inverse_of: :organization
+  has_many :member_sources, inverse_of: :organization
+  has_many :registrations, dependent: :nullify, inverse_of: :organization do
     def current
       select { |registration| registration.current? }.first
     end
   end
-  has_many :roles, :through => :memberships do
+  has_many :roles, through: :memberships do
     def user_id_equals( id )
       scoped.where( 'memberships.user_id = ?', id )
     end
@@ -49,9 +49,9 @@ class Organization < ActiveRecord::Base
       user_id_equals( user.id ).all.map(&:id)
     end
   end
-  has_many :university_accounts, :dependent => :destroy, :inverse_of => :organization
-  has_many :users, :through => :memberships,
-    :conditions => { :memberships => { :active => true } } do
+  has_many :university_accounts, dependent: :destroy, inverse_of: :organization
+  has_many :users, through: :memberships,
+    conditions: { memberships: { active: true } } do
     # What users do not fulfill the set of requirements?
     def unfulfilled_for( requirements )
       m = Membership.arel_table
@@ -77,11 +77,13 @@ class Organization < ActiveRecord::Base
       )
     end
   end
-  belongs_to :last_current_registration, :class_name => 'Registration'
-  has_many :last_current_users, :through => :last_current_registration,
-    :source => :users
+  belongs_to :last_current_registration, class_name: 'Registration'
+  has_many :last_current_users, through: :last_current_registration,
+    source: :users
 
-  accepts_nested_attributes_for :organization_profile, :update_only => true
+  accepts_nested_attributes_for :organization_profile, update_only: true
+  accepts_nested_attributes_for :member_sources, allow_destroy: true,
+    reject_if: :all_blank
 
   before_validation :format_name
 

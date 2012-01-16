@@ -1,5 +1,9 @@
   <%= render "shared/error_messages", :target => form.object %>
   <%= form.inputs do %>
+    <% if form.object.persisted? %>
+      <%= form.input :_destroy, as: :boolean, label: 'Remove?',
+        hint: 'Check to remove this source' %>
+    <% end %>
     <%= form.input :role,
       hint: 'What role should members from this source have in organization?' %>
     <%= form.input :minimum_votes,
