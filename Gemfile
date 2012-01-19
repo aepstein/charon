@@ -14,7 +14,7 @@ gem 'prawn-fast-png'
 gem 'squeel'
 gem 'ransack'
 gem 'paper_trail', '~> 2.3.3'
-gem 'state_machine'
+gem 'state_machine', '~> 1.0.0'
 gem 'whenever', :require => false
 gem 'bluecloth'
 gem 'cornell_netid'
@@ -47,9 +47,9 @@ group :test do
   gem 'cucumber-rails'
   gem 'database_cleaner'
   gem 'capybara'
-  gem 'spork'
-  gem 'factory_girl', '~> 2.0.0', :require => false
-  gem 'factory_girl_rails', '~> 1.1.0'
+  gem 'spork', '~> 0.9.0rc'
+  gem 'factory_girl', '~> 2.0', :require => false
+  gem 'factory_girl_rails', '~> 1.1'
   gem 'pickle', '~> 0.4.8'
   gem 'email_spec'
   gem 'launchy'

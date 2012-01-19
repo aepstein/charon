@@ -106,28 +106,24 @@ FactoryGirl.define do
   factory :fund_edition do
     amount 0.0
     perspective 'requestor'
-    fund_request { |edition|
-      if edition.fund_item
-        g = edition.fund_item.fund_grant
-        g.association(:fund_requests).reset if g.fund_requests.length == 0
-        g.fund_requests.first || edition.association( :fund_request, :fund_grant => g )
-      else
-        edition.association( :fund_request )
-      end
-    }
-    fund_item { |edition|
-      edition.association( :fund_item, :fund_grant => edition.fund_request.fund_grant )
-    }
-    after_create { |edition|
+    association :fund_request
+    fund_item do
+      FactoryGirl.create( :fund_item, fund_grant: fund_request.fund_grant )
+    end
+
+    after_build do |edition|
+    end
+
+    after_create do |edition|
       edition.fund_request.association(:fund_editions).reset
       edition.fund_item.association(:fund_editions).reset
-    }
+    end
 
     factory :attachable_fund_edition do
-      fund_item { |edition|
-        edition.association :attachable_fund_item,
-          :fund_grant => edition.fund_request.fund_grant
-      }
+      fund_item do
+        association :attachable_fund_item,
+          :fund_grant => fund_request.fund_grant
+      end
     end
 
     FactoryData::ALLOWED_NODE_TYPES.each do |t|
