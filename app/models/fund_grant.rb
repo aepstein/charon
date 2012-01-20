@@ -30,7 +30,7 @@ class FundGrant < ActiveRecord::Base
       joins { node }.where { node.category_id == category.id }
     end
   end
-
+  has_many :fund_editions, :through => :fund_items
   has_many :nodes, :through => :fund_items
   has_many :categories, :through => :nodes
   has_many :users, :through => :organization do

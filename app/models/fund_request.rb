@@ -74,6 +74,33 @@ class FundRequest < ActiveRecord::Base
       scoped.appended_to( self )
     end
 
+    # Amended items
+    # * must have an edition in another actionable request that is older than this
+    def amended
+      scoped.where do |i|
+        i.id.in( FundEdition.select { fund_item_id }.
+          where do |e|
+            e.fund_request_id.in(
+              FundRequest.select { id }.
+              where { |r| r.id.not_eq( proxy_association.owner.id ) }.
+              without_state( FundRequest::UNACTIONABLE_STATES ).
+              where { |r| r.created_at.lt( proxy_association.owner.created_at ) }
+            )
+          end
+        )
+      end
+    end
+
+    # Return amendable fund items
+    # * must be in the fund_grant from a previous submission
+    # * must not already be in the request
+    def amendable
+      proxy_association.owner.fund_grant.fund_items.where do |q|
+        q.id.not_in( proxy_association.owner.fund_editions.scoped.
+          select { fund_item_id } )
+      end
+    end
+
     def for_category(category)
       self.select { |fund_item| fund_item.node.category_id == category.id }
     end

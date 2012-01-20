@@ -111,9 +111,6 @@ FactoryGirl.define do
       FactoryGirl.create( :fund_item, fund_grant: fund_request.fund_grant )
     end
 
-    after_build do |edition|
-    end
-
     after_create do |edition|
       edition.fund_request.association(:fund_editions).reset
       edition.fund_item.association(:fund_editions).reset
