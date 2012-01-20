@@ -26,17 +26,17 @@ FactoryGirl.define do
     number_of_grads 10
     number_of_undergrads 15
     number_of_others 0
-    starts_on { |report| Time.zone.today - 1.month }
-    ends_on { |report| report.starts_on + 1.day }
+    starts_on { Time.zone.today - 1.month }
+    ends_on { starts_on.to_date + 1.day }
 
     factory :current_activity_report do
-      starts_on { |report| Time.zone.today }
-      ends_on { |report| report.starts_on + 1.day }
+      starts_on { Time.zone.today }
+      ends_on { starts_on.to_date + 1.day }
     end
 
     factory :future_activity_report do
-      starts_on { |report| Time.zone.today + 1.month }
-      ends_on { |report| report.starts_on + 1.day }
+      starts_on { Time.zone.today + 1.month }
+      ends_on { starts_on.to_date + 1.day }
     end
 
   end
@@ -236,7 +236,7 @@ FactoryGirl.define do
     sequence(:identifier) { |n| "id##{n}" }
     description "Boots"
     acquired_on { Time.zone.today }
-    scheduled_retirement_on { |r| r.acquired_on + 1.year }
+    scheduled_retirement_on { acquired_on.to_date + 1.year }
     purchase_price 100.0
   end
 
