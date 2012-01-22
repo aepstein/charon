@@ -16,10 +16,6 @@ module Charon
     config.assets.enabled = true
     config.assets.version = '1.0'
 
-    def self.relative_url_root
-      '/charon'
-    end
-
     def self.app_config
       @@app_config ||= YAML.load(File.read(File.expand_path('../application.yml', __FILE__)))[Rails.env]
     end
