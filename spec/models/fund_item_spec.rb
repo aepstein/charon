@@ -127,7 +127,48 @@ describe FundItem do
       item.save.should be_false
       item.errors.first.should eql [ :parent, "must be part of the same fund grant" ]
     end
+  end
 
+  context 'appended and amended items' do
+    let (:original_request) { create( :fund_request, fund_grant: fund_item.fund_grant,
+      state: 'released' ) }
+    let (:amended_request) { create( :fund_request, fund_grant: fund_item.fund_grant ) }
+    before(:each) do
+      fund_item.save!
+      create( :fund_edition, fund_request: original_request, fund_item: fund_item )
+      sleep 1
+      create( :fund_edition, fund_request: amended_request, fund_item: fund_item )
+    end
+
+    it 'should have amended_in' do
+      FundItem.amended_in(original_request).count.should eql 0
+      FundItem.amended_in(original_request).length.should eql 0
+      FundItem.amended_in(original_request).should be_empty
+      FundItem.amended_in(amended_request).count.should eql 1
+      FundItem.amended_in(amended_request).length.should eql 1
+      FundItem.amended_in(amended_request).should include fund_item
+      original_request.state = 'rejected'
+      original_request.reject_message = 'not acceptable'
+      original_request.save!
+      FundItem.amended_in(amended_request).count.should eql 0
+      FundItem.amended_in(amended_request).length.should eql 0
+      FundItem.amended_in(amended_request).should be_empty
+    end
+
+    it 'should have appended_to' do
+      FundItem.appended_to(original_request).count.should eql 1
+      FundItem.appended_to(original_request).length.should eql 1
+      FundItem.appended_to(original_request).should include fund_item
+      FundItem.appended_to(amended_request).count.should eql 0
+      FundItem.appended_to(amended_request).length.should eql 0
+      FundItem.appended_to(amended_request).should be_empty
+      original_request.state = 'rejected'
+      original_request.reject_message = 'not acceptable'
+      original_request.save!
+      FundItem.appended_to(amended_request).count.should eql 1
+      FundItem.appended_to(amended_request).length.should eql 1
+      FundItem.appended_to(amended_request).should include fund_item
+    end
   end
 
 end
