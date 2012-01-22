@@ -5,20 +5,20 @@ class FundRequest < ActiveRecord::Base
   UNACTIONABLE_STATES = [ :withdrawn, :rejected ]
 
   attr_accessible :fund_request_type_id
-  attr_accessible :reject_message, :as => :rejector
+  attr_accessible :reject_message, as: :rejector
   attr_readonly :fund_grant_id, :fund_request_type_id
 
-  belongs_to :fund_grant, :inverse_of => :fund_requests
-  belongs_to :fund_queue, :inverse_of => :fund_requests
-  belongs_to :fund_request_type, :inverse_of => :fund_requests
-  belongs_to :withdrawn_by_user, :class_name => 'User'
+  belongs_to :fund_grant, inverse_of: :fund_requests
+  belongs_to :fund_queue, inverse_of: :fund_requests
+  belongs_to :fund_request_type, inverse_of: :fund_requests
+  belongs_to :withdrawn_by_user, class_name: 'User'
 
-  has_many :approvals, :dependent => :delete_all, :as => :approvable do
+  has_many :approvals, dependent: :delete_all, as: :approvable do
     def existing
       self.reject { |approval| approval.new_record? }
     end
   end
-  has_many :fund_editions, :dependent => :destroy, :inverse_of => :fund_request do
+  has_many :fund_editions, dependent: :destroy, inverse_of: :fund_request do
     def appended
       initial.not_prior_to_fund_request proxy_association.owner
     end
@@ -26,8 +26,8 @@ class FundRequest < ActiveRecord::Base
       initial.prior_to_fund_request proxy_association.owner
     end
   end
-  has_many :fund_items, :through => :fund_editions, :uniq => true,
-    :order => 'fund_items.position ASC' do
+  has_many :fund_items, through: :fund_editions, uniq: true,
+    order: 'fund_items.position ASC' do
 
     # Allocate items according to specified preferences
     # * iterate through items according to specified priority
@@ -114,18 +114,18 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  before_validation :set_approval_checkpoint, :on => :create
+  before_validation :set_approval_checkpoint, on: :create
 
-  validates :fund_grant, :presence => true
-  validates :approval_checkpoint, :timeliness => { :type => :datetime }
-  validates :fund_request_type, :presence => true, :on => :create
+  validates :fund_grant, presence: true
+  validates :approval_checkpoint, timeliness: { type: :datetime }
+  validates :fund_request_type, presence: true, on: :create
   validate :fund_source_must_be_same_for_grant_and_queue
   validate :fund_request_type_must_be_associated_with_fund_source,
-    :on => :create
+    on: :create
 
   after_create :send_started_notice!
 
-  state_machine :review_state, :initial => :unreviewed, :namespace => 'review' do
+  state_machine :review_state, initial: :unreviewed, namespace: 'review' do
 
     state :unreviewed, :tentative, :ready
 
@@ -144,7 +144,7 @@ class FundRequest < ActiveRecord::Base
       transition :ready => :unreviewed
     end
 
-    after_transition :on => :reconsider do |request, transition|
+    after_transition on: :reconsider do |request, transition|
       if request.submitted_at?
         request.approvals.where { created_at > request.submitted_at }.
           delete_all
@@ -282,7 +282,7 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  delegate :require_requestor_recipients!, :to => :fund_grant
+  delegate :require_requestor_recipients!, to: :fund_grant
 
   # Is the request sufficiently complete to approve?
   # * for started request: an edition must exist for every grant item, but not

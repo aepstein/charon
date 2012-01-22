@@ -75,12 +75,12 @@ class FundEdition < ActiveRecord::Base
   scope :amendments, with_priors.having('COUNT(prior_requests.id) > 0')
 
 
-  validates :fund_item, :presence => true
-  validates :fund_request, :presence => true
+  validates :fund_item, presence: true
+  validates :fund_request, presence: true
   validates :amount,
-    :numericality => { :greater_than_or_equal_to => 0 }
-  validates :perspective, :inclusion => { :in => PERSPECTIVES },
-    :uniqueness => { :scope => [ :fund_request_id, :fund_item_id ] }
+    numericality: { greater_than_or_equal_to: 0 }
+  validates :perspective, inclusion: { in: PERSPECTIVES },
+    uniqueness: { scope: [ :fund_request_id, :fund_item_id ] }
   validate :amount_must_be_within_requestable_max,
     :amount_must_be_within_original_edition, :amount_must_be_within_node_limit,
     :displace_item_must_be_displaceable,
@@ -90,7 +90,6 @@ class FundEdition < ActiveRecord::Base
     :must_not_exceed_appendable_quantity_limit, :must_not_exceed_quantity_limit,
     :fund_item_node_must_be_allowed, :parent_must_have_same_perspective_in_request,
     :on => :create
-  validate
 
   after_save :set_fund_item_title, :reposition_item
   after_destroy do |edition|
@@ -116,7 +115,10 @@ class FundEdition < ActiveRecord::Base
     amounts << fund_item.node.item_amount_limit if fund_item && fund_item.node
     amounts << requestable.max_fund_request if requestable
     unless previous_perspective.blank?
-      amounts << fund_item.fund_editions.where( :perspective => FundEdition::PERSPECTIVES[FundEdition::PERSPECTIVES.index(perspective) - 1] ).first.amount
+      amounts << fund_item.fund_editions.
+        where( perspective: FundEdition::PERSPECTIVES[
+          FundEdition::PERSPECTIVES.index(perspective) - 1
+         ] ).first.amount
     end
     amounts.sort.first
   end
