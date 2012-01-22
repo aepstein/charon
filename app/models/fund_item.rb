@@ -2,9 +2,9 @@ class FundItem < ActiveRecord::Base
   attr_accessible :node_id, :parent_id, :amount, :fund_editions_attributes
   attr_readonly :fund_request_id, :node_id, :ancestry, :parent_id
 
-  belongs_to :node, :inverse_of => :fund_items
-  belongs_to :fund_grant, :touch => true, :inverse_of => :fund_items
-  has_many :fund_editions, :inverse_of => :fund_item do
+  belongs_to :node, inverse_of: :fund_items
+  belongs_to :fund_grant, touch: true, inverse_of: :fund_items
+  has_many :fund_editions, inverse_of: :fund_item do
 
     # Editions associated with a specific request
     # * sorts by perspective sequence
@@ -67,11 +67,11 @@ class FundItem < ActiveRecord::Base
       next_edition
     end
   end
-  has_many :fund_requests, :through => :fund_editions
-  has_many :documents, :through => :fund_editions
-  has_many :document_types, :through => :node
+  has_many :fund_requests, through: :fund_editions
+  has_many :documents, through: :fund_editions
+  has_many :document_types, through: :node
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
   has_ancestry
 
   acts_as_list :scope => [ :fund_grant_id ]
@@ -79,22 +79,46 @@ class FundItem < ActiveRecord::Base
   accepts_nested_attributes_for :fund_editions
 
   scope :ordered, order { position }
+
+  # Appended items
+  # * must not be amended
   scope :appended_to, lambda { |fund_request|
-    where { id.not_in( FundEdition.unscoped.joins { fund_request }.
-      select { fund_item_id }.merge( FundRequest.unscoped.actionable ) ) }
+    where { |i| i.id.not_in( FundItem.select { id }.amended_in( fund_request ) ) }
+  }
+
+  # Amended items
+  # * must have an edition in another actionable request that is older than this
+  scope :amended_in, lambda { |fund_request|
+    where do |i|
+      # Must have an edition
+      i.id.in( FundEdition.select { fund_item_id }.
+        where do |e|
+          # ...which is in request that is
+          e.fund_request_id.in(
+            FundRequest.select { id }.
+            # another request
+            where { |r| r.id.not_eq( fund_request.id ) }.
+            # not an unactionable state
+            without_state( FundRequest::UNACTIONABLE_STATES ).
+            # older than this request
+            where { |r| r.created_at.lt( fund_request.created_at ) }
+          )
+        end
+      )
+    end
   }
   scope :documentable, joins { document_types.inner }
 
-  validates :title, :presence => true
-  validates :node, :presence => true
-  validates :fund_grant, :presence => true
+  validates :title, presence: true
+  validates :node, presence: true
+  validates :fund_grant, presence: true
   validates :amount,
-    :numericality => { :greater_than_or_equal_to => 0.0 }
+    numericality: { greater_than_or_equal_to: 0.0 }
   validate :node_must_be_allowed, :parent_must_be_in_same_fund_grant,
-    :on => :create
+    on: :create
 
   before_validation :set_title
-  before_validation :initialize_nested_position, :on => :create
+  before_validation :initialize_nested_position, on: :create
 
   # What types of nodes can this item be created as?
   def allowed_nodes

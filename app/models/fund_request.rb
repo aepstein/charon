@@ -71,24 +71,11 @@ class FundRequest < ActiveRecord::Base
     end
 
     def appended
-      scoped.appended_to( self )
+      scoped.appended_to( proxy_association.owner )
     end
 
-    # Amended items
-    # * must have an edition in another actionable request that is older than this
     def amended
-      scoped.where do |i|
-        i.id.in( FundEdition.select { fund_item_id }.
-          where do |e|
-            e.fund_request_id.in(
-              FundRequest.select { id }.
-              where { |r| r.id.not_eq( proxy_association.owner.id ) }.
-              without_state( FundRequest::UNACTIONABLE_STATES ).
-              where { |r| r.created_at.lt( proxy_association.owner.created_at ) }
-            )
-          end
-        )
-      end
+      scoped.amended_in( proxy_association.owner )
     end
 
     # Return amendable fund items
