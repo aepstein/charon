@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.1.3'
-gem 'rack', '~> 1.3.5'
+gem 'rails', '~> 3.2.0'
+#gem 'rack', '~> 1.3.5'
 gem 'mysql2', '~> 0.2'
 gem 'exception_notification'
 gem 'json'
@@ -11,19 +11,21 @@ gem 'carrierwave'
 gem 'validates_timeliness'
 gem 'prawn'
 gem 'prawn-fast-png'
-gem 'squeel'
+#gem 'squeel'
+gem 'squeel', git: 'git://github.com/aepstein/squeel.git', branch: 'patch-1'
 gem 'ransack'
 gem 'paper_trail', '~> 2.3.3'
-gem 'state_machine', '~> 1.0.0'
+gem 'state_machine', '~> 1.0'
 gem 'whenever', :require => false
 gem 'bluecloth'
 gem 'cornell_netid'
 gem 'cornell_ldap', '>= 1.3.1'
-gem 'validation_reflection'
+#gem 'validation_reflection'
 gem 'formtastic'
 gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
-gem 'composite_primary_keys', '~> 4.1', :require => false # Require on demand
+gem 'composite_primary_keys', '~> 5.0.0.rc1',
+  require: false # Require on demand
 gem 'cornell-assemblies-rails',
   :git => 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
 #gem 'rails3-jquery-autocomplete'
@@ -32,12 +34,12 @@ gem 'ancestry'
 gem 'acts_as_list', '~> 0.1.4'
 gem 'decent_exposure'
 group :assets do
-  gem 'sass-rails', "  ~> 3.1.0"
-  gem 'coffee-rails', "~> 3.1.0"
+  gem 'sass-rails', "~> 3.1"
+  gem 'coffee-rails', "~> 3.1"
   gem 'uglifier'
 end
 group :development, :test do
-  gem 'rspec-rails', '~> 2.6.1'
+  gem 'rspec-rails', '~> 2.6'
 end
 group :development do
   gem 'thin'

@@ -13,8 +13,8 @@ module RegistrationImporter
     REGISTRATION_TERM_ATTRIBUTES = [ :term_ldescr, :current, :reg_start_time, :reg_end_time ]
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
-    set_table_name "terms"
-    set_primary_key :term_id
+    self.table_name = "terms"
+    self.primary_key = :term_id
     default_scope :select => MAP.keys.join(', ')
 
     has_many :registrations, :class_name => 'ExternalRegistration', :foreign_key => :term_id do

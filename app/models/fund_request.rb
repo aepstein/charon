@@ -20,10 +20,10 @@ class FundRequest < ActiveRecord::Base
   end
   has_many :fund_editions, :dependent => :destroy, :inverse_of => :fund_request do
     def appended
-      initial.not_prior_to_fund_request @association.owner
+      initial.not_prior_to_fund_request proxy_association.owner
     end
     def amended
-      initial.prior_to_fund_request @association.owner
+      initial.prior_to_fund_request proxy_association.owner
     end
   end
   has_many :fund_items, :through => :fund_editions, :uniq => true,
@@ -37,15 +37,15 @@ class FundRequest < ActiveRecord::Base
     # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
-        exclusion = @association.owner.fund_grant.fund_items.where(
-            :id.not_in => @association.owner.fund_editions.final.map( &:fund_item_id )
+        exclusion = proxy_association.owner.fund_grant.fund_items.where(
+            :id.not_in => proxy_association.owner.fund_editions.final.map( &:fund_item_id )
           ).sum( :amount )
         cap -= exclusion if exclusion
       end
       includes( :fund_editions ).roots.each do |fund_item|
           cap = allocate_fund_item! fund_item, cap
       end
-      @association.reset
+      proxy_association.reset
       true
     end
 
@@ -54,7 +54,7 @@ class FundRequest < ActiveRecord::Base
     # * apply cap if one is specified and deduct allocation from cap
     # * recursively call to each child, passing on remaining cap
     def allocate_fund_item!(fund_item, cap = nil)
-      fund_edition = fund_item.fund_editions.for_request( @association.owner ).last
+      fund_edition = fund_item.fund_editions.for_request( proxy_association.owner ).last
       if fund_edition.perspective == FundEdition::PERSPECTIVES.last
         max = ( (fund_edition) ? fund_edition.amount : 0.0 )
         if cap
@@ -227,7 +227,7 @@ class FundRequest < ActiveRecord::Base
     end
 
 
-    after_transition :except_to => same, :do => :timestamp_state!
+    after_transition all => all, :except_to => same, :do => :timestamp_state!
     after_transition :started => :tentative, :do => :deliver_required_approval_notice
     after_transition all - [ :submitted ] => :submitted,
       :do => [ :send_submitted_notice! ]

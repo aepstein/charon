@@ -24,7 +24,7 @@ module RegistrationImporter
     }
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
-    set_table_name "orgs_contacts"
+    self.table_name = "orgs_contacts"
     set_primary_keys :org_id, :term_id, :contacttype
     default_scope select( MAP.keys.join(', ') )
 
