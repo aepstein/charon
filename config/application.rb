@@ -15,7 +15,6 @@ module Charon
     config.active_record.identity_map = true
     config.assets.enabled = true
     config.assets.version = '1.0'
-#    config.assets.precompile = ['application.js', 'application.css', 'admin.js', 'admin.css']
 
     def self.relative_url_root
       '/charon'
