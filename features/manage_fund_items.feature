@@ -147,6 +147,63 @@ Feature: Manage fund_items
       | other   | New         | Root Item            | Root Item | 1st  | not see |
       | focus   | Subordinate | Subitem for Existing | Subitem   | 2nd  | see     |
 
+@wip
+  Scenario Outline: Update a fund_item from a previous request
+    Given an organization exists with last_name: "Applicant"
+    And a structure exists
+    And a node: "new" exists with name: "New", structure: the structure
+    And a node: "existing" exists with name: "Existing", structure: the structure
+    And a node: "subordinate" exists with name: "Subordinate", structure: the structure, parent: node "existing"
+    And a fund_source exists with structure: the structure
+    And a fund_grant: "other" exists with fund_source: the fund_source
+    And a fund_grant: "focus" exists with fund_source: the fund_source, organization: the organization
+
+    # Prior request
+    And a fund_request: "old" exists with fund_grant: fund_grant "<request>"
+    And a fund_item: "new" exists with node: node "new", fund_grant: fund_grant "<request>"
+    And a fund_item: "existing" exists with node: node "existing", fund_grant: fund_grant "<request>"
+    And a fund_item: "subordinate" exists with parent: fund_item "existing", node: node "subordinate", fund_grant: fund_grant "<request>"
+    And a fund_edition exists with fund_item: fund_item "new", fund_request: fund_request "old", amount: 200, comment: "This is *important*."
+    And a fund_edition exists with fund_item: fund_item "new", fund_request: fund_request "old", perspective: "reviewer", amount: 100, comment: "This is minor."
+    And a fund_edition exists with fund_item: fund_item "existing", fund_request: fund_request "old", amount: 200, comment: "This is *important*."
+    And a fund_edition exists with fund_item: fund_item "existing", fund_request: fund_request "old", perspective: "reviewer", amount: 100, comment: "This is minor."
+    And a fund_edition exists with fund_item: fund_item "subordinate", fund_request: fund_request "old", amount: 200, comment: "This is *important*."
+    And a fund_edition exists with fund_item: fund_item "subordinate", fund_request: fund_request "old", perspective: "reviewer", amount: 100, comment: "This is minor."
+
+    And a fund_request: "other" exists with fund_grant: fund_grant "other"
+    And a fund_request: "focus" exists with fund_grant: fund grant "focus"
+    And a fund_edition exists with fund_item: fund_item "existing", fund_request: fund_request "<request>"
+    And a fund_edition exists with fund_item: fund_item "existing", fund_request: fund_request "<request>"
+#    And a fund_edition exists with fund_item: the fund_item, fund_request: fund_request "<request>", perspective: "reviewer"
+
+    And I log in as user: "admin"
+    And I am on the page for fund_request: "focus"
+    When I follow "Add amended <node>"
+    And I press "Update Fund item"
+    Then I should see "Fund item was successfully updated."
+    When I follow "Show" for the <item> fund_item for fund_request: "focus"
+    Then I should <parent> "Parent: Existing"
+    And I should see "Node: <node>"
+    And I should see "Requestor amount: $100.00"
+    And I should see "This is important."
+    And I should not see "This is minor."
+    When I follow "Edit"
+    And I fill in "Requestor amount" with "200"
+    And I fill in "Requestor comment" with "Different comment."
+    And I fill in "Reviewer amount" with "100"
+    And I fill in "Reviewer comment" with "Final comment."
+    And I press "Update Fund item"
+    Then I should see "Fund item was successfully updated."
+    When I follow "Show" for the <item> fund_item for fund_request: "focus"
+    Then I should see "Requestor amount: $200.00"
+    And I should see "Different comment."
+    And I should see "Reviewer amount: $100.00"
+    And I should see "Final comment."
+    Examples:
+      | request | node        | item | parent  |
+      | other   | New         | 1st  | not see |
+      | focus   | Subordinate | 2nd  | see     |
+
   Scenario Outline: Prevent unauthorized user from updating an unauthorized fund_edition
     Given an organization exists with last_name: "Applicant"
     And a fund_grant exists with organization: the organization
