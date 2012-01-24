@@ -19,6 +19,10 @@ class FundRequest < ActiveRecord::Base
     end
   end
   has_many :fund_editions, dependent: :destroy, inverse_of: :fund_request do
+    def nonzero?
+      where { perspective.eq( FundEdition::PERSPECTIVES.first ) }.
+      sum(:amount) > 0.0
+    end
     def appended
       initial.not_prior_to_fund_request proxy_association.owner
     end
@@ -127,10 +131,10 @@ class FundRequest < ActiveRecord::Base
 
   state_machine :review_state, initial: :unreviewed, namespace: 'review' do
 
-    state :unreviewed, :tentative, :ready
+    state :unreviewed, :ready, :tentative
 
     event :approve do
-      transition :unreviewed => :tentative, :if => :approvable?
+      transition :unreviewed => :tentative, :if => :review_approvable?
       transition :tentative => :ready, :if => :approvals_fulfilled?
       transition :tentative => same
     end
@@ -155,23 +159,23 @@ class FundRequest < ActiveRecord::Base
 
   state_machine :initial => :started do
 
-    state :finalized, :released, :started, :tentative
+    state :finalized, :released, :tentative
 
     state :started do
-      validate :no_draft_fund_request_exists, :on => :create
+      validate :no_draft_fund_request_exists, on: :create
     end
 
     state :withdrawn do
-      validates :withdrawn_by_user, :presence => true
+      validates :withdrawn_by_user, presence: true
     end
 
     state :rejected do
-      validates :reject_message, :presence => true
+      validates :reject_message, presence: true
     end
 
     state :submitted do
-      validates :fund_queue, :presence => true
-      validates :fund_queue_id, :uniqueness => { :scope => [ :fund_grant_id ] }
+      validates :fund_queue, presence: true
+      validates :fund_queue_id, uniqueness: { scope: [ :fund_grant_id ] }
     end
 
     event :approve do
@@ -205,6 +209,7 @@ class FundRequest < ActiveRecord::Base
 
     before_transition all - [ :submitted ] => :submitted,
       :do => [ :adopt_queue, :set_approval_checkpoint ]
+
     before_transition(
       any - [ :withdrawn, :rejected ] => [ :withdrawn, :rejected ]
     ) do |request, transition|
@@ -296,22 +301,6 @@ class FundRequest < ActiveRecord::Base
 
   delegate :require_requestor_recipients!, to: :fund_grant
 
-  # Is the request sufficiently complete to approve?
-  # * for started request: an edition must exist for every grant item, but not
-  #   necessarily in this request
-  # * for accepted request: must have final edition for each initial edition
-  #   submitted
-  def approvable?
-    case state
-    when 'started'
-      fund_grant.fund_items.where( 'fund_items.id NOT IN ' +
-        '(SELECT fund_item_id FROM fund_editions)' ).empty?
-    else
-      fund_editions.where(:perspective => FundEdition::PERSPECTIVES.first).count ==
-      fund_editions.where(:perspective => FundEdition::PERSPECTIVES.last).count
-    end
-  end
-
   # Is the request actionable?
   def actionable?; UNACTIONABLE_STATES.map(&:to_s).all? { |s| s != state }; end
 
@@ -320,6 +309,21 @@ class FundRequest < ActiveRecord::Base
     fund_grant.new_record? ||
     ( actionable? &&
       !fund_grant.fund_requests.actionable.where { id != my { id } }.any? )
+  end
+
+  # Are conditions met to advance from started => tentative state?
+  # * must have an edition for each item in this or another request
+  # * sum of editions in this request must be non-zero
+  def approvable?
+    fund_grant.fund_items.where( 'fund_items.id NOT IN ' +
+      '(SELECT fund_item_id FROM fund_editions)' ).empty? && fund_editions.nonzero?
+  end
+
+  # Are conditions met to advanec from unreviewed => tentative review state?
+  # * must have a review for each review state
+  def review_approvable?
+    fund_editions.where( perspective: FundEdition::PERSPECTIVES.first ).count ==
+    fund_editions.where( perspective: FundEdition::PERSPECTIVES.last ).count
   end
 
   # Are there any approval criteria that have not been fulfilled for current
@@ -346,7 +350,7 @@ class FundRequest < ActiveRecord::Base
     nil
   end
 
-  delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_grant
+  delegate :contact_name, :contact_email, :contact_to_email, to: :fund_grant
 
   # Is the request ready for release?
   # * based on status of review state machine

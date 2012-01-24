@@ -32,7 +32,7 @@ describe Approval do
   end
 
   it "should have agreeements named scope that returns only agreements" do
-    fund_request_approval = create(:approval, {:approvable => create(:fund_request)})
+    fund_request_approval = create(:approval, {:approvable => create(:approvable_fund_request)})
     agreement_approval = create(:approval, {:approvable => create(:agreement)})
     approvals = Approval.agreements
     approvals.should include( agreement_approval )

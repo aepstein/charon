@@ -80,6 +80,7 @@ describe FundRequest do
 
   it "should call deliver_required_approval_notice on entering tentative state" do
     @fund_request.save!
+    create( :fund_edition, fund_request: @fund_request, amount: 100.0 )
     @fund_request.should_receive(:deliver_required_approval_notice)
     @fund_request.approvable?.should be_true
     @fund_request.approve!
@@ -145,27 +146,35 @@ describe FundRequest do
     FundRequest.incomplete.should include incomplete
   end
 
-  it 'should have an approvable? method that will not allow approval of started request unless all new items have an edition' do
+  it 'should have an can_approve? method that will not allow approval of started request unless all new items have an edition' do
     @fund_request.save!
-    item = create(:fund_edition, :fund_request => @fund_request).fund_item
-    @fund_request.approvable?.should be_true
+    item = create(:fund_edition, :fund_request => @fund_request, :amount => 100.0).fund_item
+    @fund_request.can_approve?.should be_true
     second_item = create(:fund_item, :fund_grant => @fund_request.fund_grant)
     @fund_request.reload
-    @fund_request.approvable?.should be_false
+    @fund_request.can_approve?.should be_false
   end
 
-  it 'should have an approvable? method that will not allow approval of submitted requests unless all initial editions have corresponding finals' do
+  it 'should have an can_approve? method that will not allow approval of started request unless non-zero request item is included' do
+    @fund_request.save!
+    item = create(:fund_edition, :fund_request => @fund_request, :amount => 100.0).fund_item
+    @fund_request.can_approve?.should be_true
+    @fund_request.fund_editions.first.update_attribute :amount, 0.0
+    @fund_request.can_approve?.should be_false
+  end
+
+  it 'should have an can_approve_review? method that will not allow approval of submitted requests unless all initial editions have corresponding finals' do
     queue = @fund_request.fund_grant.fund_source.fund_queues.first
     @fund_request.fund_queue = queue
     @fund_request.state = 'submitted'
     @fund_request.save!
     item = create(:fund_edition, :fund_request => @fund_request).fund_item
     @fund_request.reload
-    @fund_request.approvable?.should be_false
+    @fund_request.can_approve_review?.should be_false
     item.reload
     item.fund_editions.build_next_for_fund_request( @fund_request ).save!
     @fund_request.reload
-    @fund_request.approvable?.should be_true
+    @fund_request.can_approve_review?.should be_true
   end
 
   it 'should have users.unfulfilled method that returns users eligible towards current unfulfilled unquantified approver conditions' do

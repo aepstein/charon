@@ -55,7 +55,7 @@ FactoryGirl.define do
 
   factory :approval do
     association :user
-    association :approvable, :factory => :fund_request
+    association :approvable, :factory => :approvable_fund_request
     as_of { |approval| approval.approvable.updated_at + 1.second }
   end
 
@@ -198,6 +198,15 @@ FactoryGirl.define do
     factory :withdrawn_fund_request do
       association :withdrawn_by_user, :factory => :user
       state 'withdrawn'
+    end
+
+    factory :approvable_fund_request do
+      after_build do |fund_request|
+        FactoryGirl.create( :fund_item, fund_grant: fund_request.fund_grant )
+        fund_request.fund_grant.association(:fund_items).reset
+        fund_request.fund_editions << FactoryGirl.build( :fund_edition,
+          fund_item: fund_request.fund_grant.fund_items.first, amount: 100.0 )
+      end
     end
   end
 

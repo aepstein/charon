@@ -4,8 +4,8 @@ class Approval < ActiveRecord::Base
 
   has_paper_trail :class_name => 'SecureVersion'
 
-  belongs_to :approvable, :polymorphic => true
-  belongs_to :user, :inverse_of => :approvals
+  belongs_to :approvable, polymorphic: true
+  belongs_to :user, inverse_of: :approvals
 
   default_scope includes( :user ).
     order( 'users.last_name ASC, users.first_name ASC, users.middle_name ASC' )
@@ -14,12 +14,30 @@ class Approval < ActiveRecord::Base
   scope :fund_requests, where( :approvable_type => 'FundRequest' )
   scope :at_or_after, lambda { |time| where( :created_at.gte => time ) }
 
-  validates :as_of, :timeliness => { :type => :datetime }
+  validates :as_of, timeliness: { type: :datetime }
   validates :approvable_id,
-    :uniqueness => { :scope => [ :approvable_type, :user_id ] }
-  validates :approvable, :presence => true
-  validates :user, :presence => true
+    uniqueness: { scope: [ :approvable_type, :user_id ] }
+  validates :approvable, presence: true
+  validates :user, presence: true
   validate :approvable_must_not_change
+  validate do
+    if approvable.class == FundRequest
+      if approvable.state_name == :started
+        unless approvable.can_approve?
+          errors.add( :approvable, ' is not in an approvable state' )
+        end
+        unless approvable.fund_editions.nonzero?
+          approvable.errors.add( :base, ' must have at least one non-zero item' )
+        end
+      elsif ( approvable.review_state_name == :unreviewed &&
+        [ :submitted, :released ].include?( approvable.state_name ) )
+        unless approvable.can_approve?
+          errors.add( :approvable, ' is not in an approvable state' )
+          approvable.errors.add( :base, ' reviewer edition must accompany every item' )
+        end
+      end
+    end
+  end
 
   after_create :approve_approvable, :deliver_approval_notice, :fulfill_user
   after_destroy :unapprove_approvable, :deliver_unapproval_notice, :unfulfill_user
@@ -54,18 +72,20 @@ class Approval < ActiveRecord::Base
   end
 
   def approve_approvable
-    begin
+    return true unless approvable.class == FundRequest
+    if approvable.can_approve?
       approvable.approve
-    rescue StateMachine::InvalidTransition
-      return false
+    else
+      approvable.approve_review
     end
   end
 
   def unapprove_approvable
-    begin
+    return true unless approvable.class == FundRequest
+    if approvable.can_unapprove?
       approvable.unapprove
-    rescue StateMachine::InvalidTransition
-      return false
+    else
+      approvable.unapprove_review
     end
   end
 
