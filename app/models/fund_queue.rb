@@ -86,11 +86,12 @@ class FundQueue < ActiveRecord::Base
   def open_at; fund_source.open_at if fund_source; end
 
   def to_s
-    return super unless advertised_submit_at? && submit_at?
-    if ( Time.zone.now < advertised_submit_at ) || ( submit_at == advertised_submit_at )
+    return super unless advertised_submit_at? || submit_at?
+    return submit_at.to_s :rfc822 unless advertised_submit_at?
+    if Time.zone.now < advertised_submit_at
       "#{advertised_submit_at.to_s(:rfc822)}"
     else
-      "#{submit_at.to_s(:rfc822)} (extended from #{advertised_submit_at(:rfc822)})"
+      "#{submit_at.to_s(:rfc822)} (extended from #{advertised_submit_at.to_s(:rfc822)})"
     end
   end
 
