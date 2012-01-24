@@ -324,6 +324,16 @@ class FundRequest < ActiveRecord::Base
   # Returns the closest future queue
   def adoptable_queue; fund_grant.fund_source.fund_queues.active; end
 
+  # Return best queue to display for request
+  # * assigned queue, if applicable
+  # * adoptable queue, if available
+  # * nil otherwise
+  def target_queue
+    return fund_queue if fund_queue
+    return adoptable_queue if adoptable_queue
+    nil
+  end
+
   delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_grant
 
   # Is the request ready for release?

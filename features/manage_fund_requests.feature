@@ -134,6 +134,15 @@ Feature: Manage fund_requests
     When I follow "Edit"
     And I press "Update"
     Then I should see "Fund request was successfully updated."
+@wip
+  Scenario: Show appropriate deadline
+    Given a fund_source: "focus" exists
+    And a fund_source: "other" exists
+    And a fund_grant exists with fund_source: fund_source "focus"
+    And a fund_queue exists with fund_source: fund_source "<source>"
+    And a fund_request exists with fund_grant: the fund_grant, fund_queue: <queue>
+    Then I should <see_none> "Deadline: None available"
+    # TODO new step: see the queue
 
   Scenario: Reject fund_requests
     Given a fund_request exists with state: "finalized"

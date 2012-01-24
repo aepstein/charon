@@ -20,6 +20,10 @@
   <b>State:</b> <%= @fund_request.state %>
 </p>
 
+<p>
+  <b>Deadline:</b> <%= @fund_request.target_queue ? @fund_request.target_queue : 'None available' %>
+</p>
+
 <%=content_tag 'h3', 'Amount totals' %>
 
 <p>
