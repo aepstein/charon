@@ -70,14 +70,21 @@ class FundQueue < ActiveRecord::Base
   default_scope order( 'fund_queues.submit_at ASC' )
   scope :past, lambda { where( :submit_at.lt => Time.zone.now ) }
   scope :future, lambda { where( :submit_at.gt => Time.zone.now ) }
+  scope :advertised_after, lambda { |point|
+    where { ( advertised_submit_at.eq( nil ) & submit_at.gt( point ) ) |
+    ( advertised_submit_at.gt( point ) ) }
+  }
+  scope :advertised_before, lambda { |point|
+    where { ( advertised_submit_at.eq( nil ) & submit_at.lt( point ) ) |
+    ( advertised_submit_at.lt( point ) ) }
+  }
 
-  validates :fund_source, :presence => true
-  validates :submit_at, :presence => true,
-    :uniqueness => { :scope => :fund_source_id },
-    :timeliness => { :type => :datetime, :before => :release_at,
-      :after => :open_at }
-  validates :advertised_submit_at, :presence => true,
-    :timeliness => { :type => :datetime, :on_or_before => :submit_at }
+  validates :fund_source, presence: true
+  validates :submit_at, presence: true,
+    uniqueness: { scope: :fund_source_id },
+    timeliness: { type: :datetime, before: :release_at, after: :open_at }
+  validates :advertised_submit_at, presence: true,
+    timeliness: { type: :datetime, on_or_before: :submit_at }
 
   before_validation do |queue|
     queue.advertised_submit_at = queue.submit_at if queue.advertised_submit_at.blank?

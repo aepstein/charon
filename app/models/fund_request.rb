@@ -255,6 +255,18 @@ class FundRequest < ActiveRecord::Base
   scope :duplicate, where("fund_requests.fund_grant_id IN (SELECT fund_grant_id " +
     "FROM fund_requests AS duplicates WHERE duplicates.fund_grant_id = " +
     "fund_requests.fund_grant_id AND fund_requests.id <> duplicates.id)")
+  # Pull requests that have a future due date advertised that occurs on or before
+  # a specified deadline
+  # * use advertized due date where specified
+  # * look only for due dates matching request's source and type
+  scope :advertised_submit_due_by, lambda { |deadline|
+    joins { fund_grant }.where { fund_grant.fund_source_id.in(
+      FundQueue.unscoped.select { fund_source_id }.
+      advertised_after( Time.zone.now ).advertised_before( deadline ).
+      joins { fund_request_types }.
+      where { fund_request_types.id.eq( fund_requests.fund_request_type_id ) }
+    ) }
+  }
 
   paginates_per 10
 
