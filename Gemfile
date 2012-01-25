@@ -37,6 +37,8 @@ group :assets do
   gem 'sass-rails', "~> 3.1"
   gem 'coffee-rails', "~> 3.1"
   gem 'uglifier'
+  gem 'execjs'
+  gem 'therubyracer'
 end
 group :development, :test do
   gem 'rspec-rails', '~> 2.6'

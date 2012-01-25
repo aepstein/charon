@@ -23,8 +23,10 @@ test: &TEST
   user: root
 
 production:
-  adapter: sqlite3
-  database: db/production.sqlite3
+  adapter: mysql2
+  host: localhost
+  user: root
+  database: charon_development
   pool: 5
   timeout: 5000
 
