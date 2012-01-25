@@ -1,8 +1,8 @@
 require 'whenever/capistrano'
 
 set :application, "charon"
-role :app, "kvm02.assembly.cornell.edu"
-role :web, "kvm02.assembly.cornell.edu"
+role :app, "kvm02.assembly.cornell.edu", "xen1.assembly.cornell.edu"
+role :web, "kvm02.assembly.cornell.edu", "xen1.assembly.cornell.edu"
 role :db,  "kvm02.assembly.cornell.edu", :primary => true
 
 set :user, "www-data"
