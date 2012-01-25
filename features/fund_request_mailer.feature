@@ -19,7 +19,7 @@ Feature: Manage fund_request mailers
     And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
     And the fund_request_type is amongst the fund_request_types of the fund_queue
     And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
-    And a fund_request: "started" exists with state: "started", fund_grant: the fund_grant, fund_queue: the fund_queue
+    And an approvable_fund_request: "started" exists with state: "started", fund_grant: the fund_grant, fund_queue: the fund_queue
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
     And a user: "treasurer" exists with email: "treasurer@example.com", first_name: "Jane", last_name: "Doe"
     And a user: "officer" exists with email: "officer@example.com", first_name: "Alpha", last_name: "Beta"
