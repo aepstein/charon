@@ -1,8 +1,8 @@
 # Be sure to restart your server when you modify this file.
-if ::Rails.env == 'demo'
-  Charon::Application.config.session_store :cookie_store, :key => '_charon_demo_session'
+if Charon::Application.app_config['session_store']
+  Charon::Application.config.session_store :cookie_store, key: Charon::Application.app_config['session_store']
 else
-  Charon::Application.config.session_store :cookie_store, :key => '_charon_session'
+  Charon::Application.config.session_store :cookie_store, key: '_charon_session'
 end
 
 # Use the database for sessions instead of the cookie-based default,
