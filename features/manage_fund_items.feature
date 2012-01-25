@@ -234,6 +234,11 @@ Feature: Manage fund_items
     And a node: "4" exists with structure: the structure, name: "node 4"
     And a node: "5" exists with structure: the structure, parent: node "4", name: "node 5"
     And a node: "6" exists with structure: the structure, parent: node "4", name: "node 6"
+    And a node: "7" exists with structure: the structure, name: "node 7"
+    And a node: "8" exists with structure: the structure, parent: node "7", name: "node 8"
+    And a node: "9" exists with structure: the structure, name: "node 9"
+    And a node: "10" exists with structure: the structure, parent: node "9", name: "node 10"
+    And a node: "11" exists with structure: the structure, parent: node "9", name: "node 11"
     And a fund_source exists with structure: the structure
     And an organization exists
     And a fund_grant exists with fund_source: the fund_source, organization: the organization
@@ -250,40 +255,63 @@ Feature: Manage fund_items
     And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And a fund_item: "6" exists with fund_grant: the fund_grant, node: node "6", parent: fund_item "4"
     And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_item: "7" exists with fund_grant: the fund_grant, node: node "7"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_item: "8" exists with fund_grant: the fund_grant, node: node "8", parent: fund_item "7"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_item: "9" exists with fund_grant: the fund_grant, node: node "9"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_item: "10" exists with fund_grant: the fund_grant, node: node "10", parent: fund_item "9"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
+    And a fund_item: "11" exists with fund_grant: the fund_grant, node: node "11", parent: fund_item "9"
+    And a fund_edition exists with fund_item: the fund_item, fund_request: the fund_request
     And a requestor_role exists
     And a user: "applicant_requestor" exists
     And a membership exists with organization: the organization, user: user "applicant_requestor", role: the requestor_role
     And I log in as user: "applicant_requestor"
     When I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
-      | Title  |
-      | node 1 |
-      | node 2 |
-      | node 3 |
-      | node 4 |
-      | node 5 |
-      | node 6 |
+      | Title   |
+      | node 1  |
+      | node 2  |
+      | node 3  |
+      | node 4  |
+      | node 5  |
+      | node 6  |
+      | node 7  |
+      | node 8  |
+      | node 9  |
+      | node 10 |
+      | node 11 |
     When I follow "Edit" for the <old> fund_item for the fund_request
-    And I select "<new>" from "Move to priority of"
+    And I select "node <new>" from "Move to priority of"
     And I press "Update Fund item"
     Then I should see "Fund item was successfully updated."
     When I am on the fund_items page for the fund_request
     Then I should see the following fund_items:
-      | Title  |
-      | <new1> |
-      | <new2> |
-      | <new3> |
-      | <new4> |
-      | <new5> |
-      | <new6> |
+      | Title        |
+      | node <new1>  |
+      | node <new2>  |
+      | node <new3>  |
+      | node <new4>  |
+      | node <new5>  |
+      | node <new6>  |
+      | node <new7>  |
+      | node <new8>  |
+      | node <new9>  |
+      | node <new10> |
+      | node <new11> |
     Examples:
-      | old | new    | new1   | new2   | new3   | new4   | new5   | new6   |
-      | 6th | node 5 | node 1 | node 2 | node 3 | node 4 | node 6 | node 5 |
-      | 5th | node 6 | node 1 | node 2 | node 3 | node 4 | node 6 | node 5 |
-      | 4th | node 1 | node 4 | node 5 | node 6 | node 1 | node 2 | node 3 |
-      | 3rd | node 2 | node 1 | node 3 | node 2 | node 4 | node 5 | node 6 |
-      | 2nd | node 3 | node 1 | node 3 | node 2 | node 4 | node 5 | node 6 |
-      | 1st | node 4 | node 4 | node 5 | node 6 | node 1 | node 2 | node 3 |
+      | old | new | new1 | new2 | new3 | new4 | new5 | new6 | new7 | new8 | new9 | new10 | new11 |
+      | 6th | 5   | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | 10    | 11    |
+      | 5th | 6   | 1    | 2    | 3    | 4    | 6    | 5    | 7    | 8    | 9    | 10    | 11    |
+      | 4th | 1   | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | 10    | 11    |
+      | 3rd | 2   | 1    | 2    | 3    | 4    | 5    | 6    | 7    | 8    | 9    | 10    | 11    |
+      | 2nd | 3   | 1    | 3    | 2    | 4    | 5    | 6    | 7    | 8    | 9    | 10    | 11    |
+      | 1st | 4   | 4    | 5    | 6    | 1    | 2    | 3    | 7    | 8    | 9    | 10    | 11    |
+      | 7th | 1   | 1    | 2    | 3    | 7    | 8    | 4    | 5    | 6    | 9    | 10    | 11    |
+      | 4th | 7   | 1    | 2    | 3    | 7    | 8    | 4    | 5    | 6    | 9    | 10    | 11    |
+      | 1st | 9   | 4    | 5    | 6    | 7    | 8    | 9    | 10   | 11   | 1    | 2     | 3     |
 
   Scenario: List and delete fund_items
     Given a structure exists

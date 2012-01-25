@@ -48,7 +48,7 @@ Feature: Manage approvals
     And a fund_source exists with name: "Annual", organization: organization "source"
     And a fund_queue exists with fund_source: the fund_source
     And a fund_grant exists with fund_source: the fund_source, organization: organization "applicant"
-    And a fund_request exists with fund_grant: the fund_grant
+    And an approvable_fund_request exists with fund_grant: the fund_grant
     And an approval exists with user: user "owner", approvable: the fund_request
     And the fund_request has state: "<state>", review_state: "<review_state>", fund_queue: the fund_queue
     And I log in as user: "<user>"

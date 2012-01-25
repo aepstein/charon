@@ -32,6 +32,7 @@ gem 'cornell-assemblies-rails',
 gem 'escape_utils'
 gem 'ancestry'
 gem 'acts_as_list', '~> 0.1.4'
+#gem 'acts_as_list', git: 'git://github.com/swanandp/acts_as_list.git'
 group :assets do
   gem 'sass-rails', "~> 3.1"
   gem 'coffee-rails', "~> 3.1"

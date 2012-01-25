@@ -325,19 +325,24 @@ class FundEdition < ActiveRecord::Base
   # * to end of list if item is placed at end of list
   # * immediately ahead of item if item is not at end of list
   def reposition_item
-    if displace_item && perspective && perspective == PERSPECTIVES.first
-      if fund_item.position < displace_item.position
-        target = displace_item.position + displace_item.descendants.count
-      else
-        target = displace_item.position
-      end
-      self.displace_item = nil
-      fund_item.subtree.ordered.reduce(target) do |new_position, item|
-        new_position += 1 if new_position < item.position && item != fund_item
-        item.insert_at new_position
-        new_position
-      end
-    end
+    return true unless displace_item && perspective && perspective == PERSPECTIVES.first
+    # Determine insertion point and clear space for move
+    insertion_point = displace_item.position + displace_item.subtree.count
+    fund_item.fund_grant.fund_items.update_all(
+      [ "position = position + ?", fund_item.subtree.count ],
+      [ "position >= ?", insertion_point ]
+    )
+    # Determine offset and move item with subtree
+    offset = insertion_point - fund_item.position
+    offset -= fund_item.subtree.count if fund_item.position >= insertion_point
+    fund_item.subtree.update_all( [ 'position = position + ?', offset ] )
+    # Close gap beyond moved item
+    fund_item.fund_grant.fund_items.update_all(
+      [ 'position = position - ?', fund_item.subtree.count ],
+      [ 'position >= ?', fund_item.position + fund_item.subtree.count ]
+    )
+    fund_item.reload
+    true
   end
 
   # Use an instance variable to prevent infinite recursion
