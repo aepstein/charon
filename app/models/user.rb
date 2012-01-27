@@ -6,7 +6,6 @@ class User < ActiveRecord::Base
     :middle_name, :last_name, :date_of_birth, :addresses_attributes,
     :as => [ :admin, :default ]
   attr_accessible :admin, :net_id, :status, :as => :admin
-  attr_readonly :net_id
 
   default_scope order( 'users.last_name ASC, users.first_name ASC, ' +
     'users.middle_name ASC, users.net_id ASC' )
