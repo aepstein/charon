@@ -1,3 +1,11 @@
-<%= render :partial => 'fund_items/detailed', :collection => detail.fund_items,
-  :locals => { :fund_request => detail } %>
+<%=render partial: 'fund_requests/amount_totals', locals: { fund_request: detail } %>
+
+<%=render partial: 'fund_requests/fund_items', object: detail.fund_items.ordered,
+  locals: { fund_request: detail, freeze: true } %>
+
+<p>
+Approver acknowledges request amount below reflects the complete and total amount of funding requested in this document.
+</p>
+
+<%=render partial: 'fund_requests/amount_totals', locals: { fund_request: detail } %>
 
