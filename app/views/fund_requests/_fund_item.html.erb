@@ -1,18 +1,22 @@
+<% freeze ||= false %>
 <%= table_row_tag( true, true ) do %>
   <td colspan="2"><%= fund_item.title %><% if fund_item.title != fund_item.node.name %> (<%= fund_item.node.name %>)<% end %></td>
-  <%=render :partial => 'fund_items/managed_fund_item',
-    :object => fund_item,
-    :locals => { :fund_request => fund_request } %>
+  <% unless freeze %>
+    <%=render partial: 'fund_items/managed_fund_item',
+      object: fund_item, locals: { fund_request: fund_request } %>
+  <% end %>
 <% end %>
-<%= table_row_tag( false ) do %>
-  <td colspan="2"></td>
-  <td colspan="4"><%= render :partial => 'fund_items/new_fund_item',
-    :object => fund_item.fund_grant.fund_items.build( :parent_id => fund_item.id ),
-    :locals => { :fund_request => fund_request } %></td>
-<% end %>
-<%= table_row_tag( false ) do %>
-  <td>Allocated amount</td>
-  <td><%=number_to_currency fund_item.released_amount %></td>
+<% unless freeze %>
+  <%= table_row_tag( false ) do %>
+    <td colspan="2"></td>
+    <td colspan="4"><%= render partial: 'fund_items/new_fund_item',
+      object: fund_item.fund_grant.fund_items.build( parent_id: fund_item.id ),
+      locals: { fund_request: fund_request } %></td>
+  <% end %>
+  <%= table_row_tag( false ) do %>
+    <td>Allocated amount</td>
+    <td><%=number_to_currency fund_item.released_amount %></td>
+  <% end %>
 <% end %>
 <% fund_item.fund_editions.for_request( fund_request ).each do |fund_edition| %>
   <% if permitted_to? :show, fund_edition %>

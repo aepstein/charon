@@ -1,4 +1,5 @@
 <% fund_request ||= nil %>
+<% freeze ||= false %>
 <table>
 <thead>
   <tr>
@@ -6,8 +7,8 @@
   </tr>
 </thead>
 <tbody>
-<%= render :partial => 'fund_items/fund_item', :collection => fund_items,
-  :locals => { :fund_request => fund_request } %>
+<%= render partial: 'fund_items/fund_item', collection: fund_items,
+  locals: { fund_request: fund_request, freeze: freeze } %>
 </tbody>
 </table>
 

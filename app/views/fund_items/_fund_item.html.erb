@@ -1,5 +1,7 @@
+<% freeze ||= false %>
   <%= table_row_tag do %>
     <td><%= fund_item.title %><% if fund_item.title != fund_item.node.name %> (<%= fund_item.node.name %>)<% end %></td>
+    <% unless freeze %>
     <td><%= render :partial => 'fund_items/new_fund_item',
                    :object => fund_item.fund_grant.fund_items.build( :parent_id => fund_item.id ),
                    :locals => { :fund_request => fund_request } %></td>
@@ -7,5 +9,6 @@
     <%=render :partial => 'fund_items/managed_fund_item',
       :object => fund_item,
       :locals => { :fund_request => fund_request } %>
+    <% end %>
   <% end %>
 
