@@ -105,9 +105,10 @@ Feature: Manage fund_items
   Scenario Outline: Create or update an fund_item with embedded fund_edition
     Given an organization exists with last_name: "Applicant"
     And a structure exists
-    And a node: "new" exists with name: "New", structure: the structure
+    And a node: "new" exists with name: "New", structure: the structure, instruction: "There is something *special* to do here."
     And a node: "existing" exists with name: "Existing", structure: the structure
     And a node: "subordinate" exists with name: "Subordinate", structure: the structure, parent: node "existing"
+    And a node: "subordinate2" exists with name: "Sub-Subordinate", structure: the structure, parent: node "subordinate"
     And a fund_source exists with structure: the structure
     And a fund_grant: "other" exists with fund_source: the fund_source
     And a fund_request: "other" exists with fund_grant: fund_grant "other"
@@ -121,7 +122,12 @@ Feature: Manage fund_items
     Then I should not see "Reviewer"
     When I select "<node>" from "Add New <box>"
     And I press "Add <button>"
-    And I fill in "Requestor amount" with "100"
+#    Then I should see "Use this form to request funds related to the <box>"
+    And I should <instruct> "There is something special to do here."
+    And I should <sub_instruct> "After you save this item, there are certain items you may add as subitems:"
+    And I should <sub_instruct> "Sub-Subordinate"
+    And I should <sub_instruct> "Do not include those expenses in this form. Instead, after you save this form, add subitems to the item associated with this form."
+    When I fill in "Requestor amount" with "100"
     And I fill in "Requestor comment" with "This is *important*."
     And I press "Create Fund item"
     Then I should see "Fund item was successfully created."
@@ -143,9 +149,9 @@ Feature: Manage fund_items
     And I should see "Reviewer amount: $100.00"
     And I should see "Final comment."
     Examples:
-      | request | node        | box                  | button    | item | parent  |
-      | other   | New         | Root Item            | Root Item | 1st  | not see |
-      | focus   | Subordinate | Subitem for Existing | Subitem   | 2nd  | see     |
+      |request|node       |box                 |button   |instruct|sub_instruct|item|parent |
+      |other  |New        |Root Item           |Root Item|see     |not see     |1st |not see|
+      |focus  |Subordinate|Subitem for Existing|Subitem  |not see |see         |2nd |see    |
 
 # Incomplete test
 #  Scenario Outline: Update a fund_item from a previous request

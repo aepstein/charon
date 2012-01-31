@@ -9,7 +9,8 @@ class Node < ActiveRecord::Base
   }
 
   attr_accessible :name, :requestable_type, :item_amount_limit,
-    :item_quantity_limit, :parent_id, :category_id, :document_type_ids
+    :item_quantity_limit, :parent_id, :category_id, :document_type_ids,
+    :instruction
   attr_readonly :structure_id
 
   belongs_to :structure, :inverse_of => :nodes

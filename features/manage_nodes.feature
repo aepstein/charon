@@ -48,6 +48,7 @@ Feature: Manage nodes
     And I fill in "Item amount limit" with "1000"
     And I fill in "Item quantity limit" with "4"
     And I check "Price quote"
+    And I fill in "Instruction" with "You *should* do this."
     And I press "Create"
     Then I should see "Node was successfully created."
     And I should see "Name: administrative expense"
@@ -56,6 +57,7 @@ Feature: Manage nodes
     And I should see "Item amount limit: $1,000.00"
     And I should see "Item quantity limit: 4"
     And I should see "Document types: Price quote"
+    And I should see "You should do this."
     When I follow "Edit"
     And I fill in "Name" with "local event expense"
     And I select "Local Event" from "node_requestable_type"
@@ -63,6 +65,7 @@ Feature: Manage nodes
     And I fill in "Item amount limit" with "2000"
     And I fill in "Item quantity limit" with "2"
     And I uncheck "Price quote"
+    And I fill in "Instruction" with "You should not do this."
     And I press "Update"
     Then I should see "Node was successfully updated."
     And I should see "Name: local event expense"
@@ -71,6 +74,7 @@ Feature: Manage nodes
     And I should see "Item amount limit: $2,000.00"
     And I should see "Item quantity limit: 2"
     And I should see "Document types: None"
+    And I should see "You should not do this."
 
   Scenario: Delete and list nodes
     Given a node exists with name: "node 4", structure: structure "annual"

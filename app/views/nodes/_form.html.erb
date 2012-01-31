@@ -10,6 +10,8 @@
   <%= form.input :item_quantity_limit %>
   <%= form.input :document_types, :as => :check_boxes,
     :hint => 'What types of supporting documentation should be submitted?' %>
+  <%= form.input :instruction,
+    hint: 'What special instructions should be displayed for items of this node?' %>
   <% end %>
   <%= form.buttons %>
 

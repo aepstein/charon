@@ -1,5 +1,25 @@
 <%= render "shared/error_messages", :target => form.object %>
 
+<% if form.object.node %>
+  <em>Instructions:</em>
+
+  <p>Use this form to request funds related to the <%= form.object.node %>.</p>
+
+  <% if form.object.node.children.length > 0 %>
+  <p>After you save this item, there are certain items you may add as subitems:</p>
+  <ul>
+    <% form.object.node.children.each do |child| %>
+    <li><%= child %></li>
+    <% end %>
+  </ul>
+  <p>Do not include those expenses in this form.  Instead, after you save this form, add subitems to the item associated with this form.</p>
+  <% end %>
+
+  <% unless form.object.node.instruction.blank? %>
+  <%=markdown form.object.node.instruction %>
+  <% end %>
+<% end %>
+
 <%= form.inputs do %>
   <% if form.object.new_record? -%>
     <%= form.input :node_id, :as => :hidden %>
