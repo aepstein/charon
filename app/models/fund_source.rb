@@ -83,26 +83,19 @@ class FundSource < ActiveRecord::Base
     # * total reviewer amounts for state
     def quantity_and_amount_report
       connection.select_rows(
-        "SELECT states.state, COUNT(DISTINCT states.id), " +
+        "SELECT fund_requests.state, COUNT(DISTINCT fund_requests.id), " +
         "(SELECT SUM(fund_editions.amount) FROM fund_editions " +
-        "INNER JOIN fund_requests ON fund_editions.fund_request_id = fund_requests.id " +
-        "INNER JOIN fund_grants AS g ON fund_requests.fund_grant_id = g.id " +
-        "WHERE fund_requests.state = states.state AND " +
-        "g.fund_source_id = fund_grants.fund_source_id AND " +
-        "fund_editions.perspective = #{connection.quote FundEdition::PERSPECTIVES.first} ) " +
-        "AS requestor_amount, " +
+        "WHERE fund_editions.fund_request_id = fund_requests.id AND " +
+        "fund_editions.perspective = " +
+        "#{connection.quote FundEdition::PERSPECTIVES.first}), " +
         "(SELECT SUM(fund_editions.amount) FROM fund_editions " +
-        "INNER JOIN fund_requests ON fund_editions.fund_request_id = fund_requests.id " +
-        "INNER JOIN fund_grants AS g ON fund_requests.fund_grant_id = g.id " +
-        "WHERE fund_requests.state = states.state AND " +
-        "g.fund_source_id = fund_grants.fund_source_id AND " +
-        "fund_editions.perspective = #{connection.quote FundEdition::PERSPECTIVES.last} ) " +
-        "AS reviewer_amount " +
-        "FROM fund_grants INNER JOIN fund_requests AS states ON " +
-        "fund_grants.id = states.fund_grant_id " +
-        "WHERE fund_grants.fund_source_id = #{@association.owner.id} " +
-        "GROUP BY states.state " +
-        "ORDER BY states.state "
+        "WHERE fund_editions.fund_request_id = fund_requests.id AND " +
+        "fund_editions.perspective = " +
+        "#{connection.quote FundEdition::PERSPECTIVES.last}) " +
+        "FROM fund_grants INNER JOIN fund_requests ON fund_grants.id = fund_requests.fund_grant_id " +
+        "WHERE fund_grants.fund_source_id = #{proxy_association.owner.id} " +
+        "GROUP BY fund_requests.state " +
+        "ORDER BY fund_requests.state"
       )
     end
 
