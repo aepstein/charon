@@ -83,19 +83,18 @@ class FundSource < ActiveRecord::Base
     # * total reviewer amounts for state
     def quantity_and_amount_report
       connection.select_rows(
-        "SELECT fund_requests.state, COUNT(DISTINCT fund_requests.id), " +
-        "(SELECT SUM(fund_editions.amount) FROM fund_editions " +
-        "WHERE fund_editions.fund_request_id = fund_requests.id AND " +
-        "fund_editions.perspective = " +
-        "#{connection.quote FundEdition::PERSPECTIVES.first}), " +
-        "(SELECT SUM(fund_editions.amount) FROM fund_editions " +
-        "WHERE fund_editions.fund_request_id = fund_requests.id AND " +
-        "fund_editions.perspective = " +
-        "#{connection.quote FundEdition::PERSPECTIVES.last}) " +
+        "SELECT fund_requests.state AS state, " +
+        "COUNT(DISTINCT fund_requests.id) AS quantity, " +
+        "SUM(requests.amount) AS request, " +
+        "SUM(reviews.amount) AS review " +
         "FROM fund_grants INNER JOIN fund_requests ON fund_grants.id = fund_requests.fund_grant_id " +
+        "LEFT JOIN fund_editions AS requests ON fund_requests.id = requests.fund_request_id " +
+        "AND requests.perspective = #{connection.quote FundEdition::PERSPECTIVES.first} " +
+        "LEFT JOIN fund_editions AS reviews ON requests.fund_request_id = reviews.fund_request_id " +
+        "AND reviews.perspective = #{connection.quote FundEdition::PERSPECTIVES.last} " +
+        "AND reviews.fund_item_id = requests.fund_item_id " +
         "WHERE fund_grants.fund_source_id = #{proxy_association.owner.id} " +
-        "GROUP BY fund_requests.state " +
-        "ORDER BY fund_requests.state"
+        "GROUP BY fund_requests.state ORDER BY fund_requests.state"
       )
     end
 
