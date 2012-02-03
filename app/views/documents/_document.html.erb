@@ -1,6 +1,5 @@
   <%= table_row_tag do %>
     <td><%=h document.document_type %></td>
-    <td><%= link_to( 'Show', document ) if permitted_to?( :show, document ) %></td>
     <td><%= link_to( 'Download', original_document_path( document, :format => :pdf )
             ) if permitted_to?( :show, document ) %></td>
   <% end %>
