@@ -72,7 +72,7 @@ class FundItem < ActiveRecord::Base
   has_many :document_types, through: :node
 
   has_paper_trail class_name: 'SecureVersion'
-  has_ancestry
+  has_ancestry orphan_strategy: :destroy
 
   acts_as_list :scope => [ :fund_grant_id ]
 
@@ -119,9 +119,6 @@ class FundItem < ActiveRecord::Base
 
   before_validation :set_title
   before_validation :initialize_nested_position, on: :create
-  after_destroy do
-    children.each { |child| child.destroy }
-  end
 
   # What types of nodes can this item be created as?
   def allowed_nodes
