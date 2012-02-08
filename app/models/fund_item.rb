@@ -119,6 +119,9 @@ class FundItem < ActiveRecord::Base
 
   before_validation :set_title
   before_validation :initialize_nested_position, on: :create
+  after_destroy do
+    children.each { |child| child.destroy }
+  end
 
   # What types of nodes can this item be created as?
   def allowed_nodes
