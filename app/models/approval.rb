@@ -12,11 +12,10 @@ class Approval < ActiveRecord::Base
 
   scope :agreements, where( :approvable_type => 'Agreement' )
   scope :fund_requests, where( :approvable_type => 'FundRequest' )
-  scope :at_or_after, lambda { |time| where( :created_at.gte => time ) }
+  scope :at_or_after, lambda { |time| where { |a| a.created_at.gte( time ) } }
 
   validates :as_of, timeliness: { type: :datetime }
-  validates :approvable_id,
-    uniqueness: { scope: [ :approvable_type, :user_id ] }
+  validates :approvable_id, uniqueness: { scope: [ :approvable_type, :user_id ] }
   validates :approvable, presence: true
   validates :user, presence: true
   validate :approvable_must_not_change

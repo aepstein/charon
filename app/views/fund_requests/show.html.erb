@@ -20,6 +20,12 @@
   <b>State:</b> <%= @fund_request.state %>
 </p>
 
+<% if permitted_to? :review, @fund_request %>
+<p>
+  <b>Review state:</b>  <%= @fund_request.review_state %>
+</p>
+
+<% end %>
 <p>
   <b>Deadline:</b> <%= @fund_request.target_queue ? @fund_request.target_queue : 'None available' %>
 </p>
