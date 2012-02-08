@@ -93,7 +93,7 @@ class FundEdition < ActiveRecord::Base
 
   after_save :set_fund_item_title, :reposition_item
   after_destroy do |edition|
-    fund_item.destroy if fund_item.fund_editions.empty?
+    fund_item.destroy if fund_item && fund_item.fund_editions.empty?
   end
 
   def nested_changed?
