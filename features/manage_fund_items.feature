@@ -4,7 +4,7 @@ Feature: Manage fund_items
   I want fund_request fund_item form
 
   Background:
-    Given a user: "admin" exists with admin: true
+    Given a user: "admin" exists with admin: true, first_name: "Head", last_name: "Honcho", net_id: "hh001"
 
   Scenario Outline: Test permissions for fund_items controller
     Given an organization: "source" exists with last_name: "Funding Source"
@@ -131,6 +131,7 @@ Feature: Manage fund_items
     And I fill in "Requestor comment" with "This is *important*."
     And I press "Create Fund item"
     Then I should see "Fund item was successfully created."
+    And I should see "Requestor (Head Honcho (hh001)):"
     When I follow "Show" for the <item> fund_item for fund_request: "focus"
     Then I should <parent> "Parent: Existing"
     And I should see "Node: <node>"

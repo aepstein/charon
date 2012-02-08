@@ -85,5 +85,8 @@ The following users must approve before the request is submitted:
 
 <p>
 <%= link_to 'Edit', edit_fund_request_path( @fund_request ) if permitted_to?( :edit, @fund_request ) %>
+<% if permitted_to?( :approve, @fund_request ) && @fund_request.approvals.where( :user_id => current_user.id ).empty? %>
+<%= link_to( 'Approve', new_fund_request_approval_path( @fund_request ) ) %>
+<% end %>
 </p>
 

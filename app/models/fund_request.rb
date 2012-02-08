@@ -204,7 +204,7 @@ class FundRequest < ActiveRecord::Base
     end
 
     event :reject do
-      transition [ :finalized, :submitted ] => :rejected
+      transition [ :started, :tentative, :finalized, :submitted ] => :rejected
     end
 
     before_transition all - [ :submitted ] => :submitted,

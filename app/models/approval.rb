@@ -30,7 +30,7 @@ class Approval < ActiveRecord::Base
         end
       elsif ( approvable.review_state_name == :unreviewed &&
         [ :submitted, :released ].include?( approvable.state_name ) )
-        unless approvable.can_approve?
+        unless approvable.can_approve_review?
           errors.add( :approvable, ' is not in an approvable state' )
           approvable.errors.add( :base, ' reviewer edition must accompany every item' )
         end
