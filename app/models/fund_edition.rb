@@ -13,14 +13,14 @@ class FundEdition < ActiveRecord::Base
   belongs_to :fund_item, :inverse_of => :fund_editions
   belongs_to :fund_request, :inverse_of => :fund_editions
 
-  has_one :administrative_expense, :inverse_of => :fund_edition
-  has_one :durable_good_expense, :inverse_of => :fund_edition
-  has_one :local_event_expense, :inverse_of => :fund_edition
-  has_one :publication_expense, :inverse_of => :fund_edition
-  has_one :speaker_expense, :inverse_of => :fund_edition
-  has_one :travel_event_expense, :inverse_of => :fund_edition
+  has_one :administrative_expense, inverse_of: :fund_edition, dependent: :destroy
+  has_one :durable_good_expense, inverse_of: :fund_edition, dependent: :destroy
+  has_one :local_event_expense, inverse_of: :fund_edition, dependent: :destroy
+  has_one :publication_expense, inverse_of: :fund_edition, dependent: :destroy
+  has_one :speaker_expense, inverse_of: :fund_edition, dependent: :destroy
+  has_one :travel_event_expense, inverse_of: :fund_edition, dependent: :destroy
 
-  has_many :documents, :inverse_of => :fund_edition do
+  has_many :documents, inverse_of: :fund_edition, dependent: :destroy do
     def for_type?( document_type )
       self.map { |d| d.document_type }.include?( document_type )
     end

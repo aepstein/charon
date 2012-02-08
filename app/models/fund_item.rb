@@ -4,7 +4,7 @@ class FundItem < ActiveRecord::Base
 
   belongs_to :node, inverse_of: :fund_items
   belongs_to :fund_grant, touch: true, inverse_of: :fund_items
-  has_many :fund_editions, inverse_of: :fund_item do
+  has_many :fund_editions, inverse_of: :fund_item, dependent: :destroy do
 
     # Editions associated with a specific request
     # * sorts by perspective sequence
