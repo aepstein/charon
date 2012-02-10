@@ -44,6 +44,13 @@
 
 <h3>Reports</h3>
 
+<p>
+Request quantity and amount report:
+</p>
+
+<%=render :partial => 'fund_queues/fund_requests_quantity_and_amount_report',
+  :locals => { :fund_queue => @fund_queue } %>
+
 <ul>
   <li><%=link_to 'Reviews report',
     reviews_report_fund_queue_fund_requests_path( @fund_queue, :format => :csv )
