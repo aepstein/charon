@@ -23,7 +23,11 @@ class FundSource < ActiveRecord::Base
       end.join(", ")
       rows = connection.execute <<-SQL
         SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
-        AS name, (SELECT registered FROM registrations INNER JOIN
+        AS name, EXISTS(SELECT * FROM fund_requests AS r INNER JOIN fund_grants
+        AS g ON r.fund_grant_id = g.id INNER JOIN returning_fund_sources AS rs
+        ON g.fund_source_id = rs.returning_fund_source_id WHERE
+        rs.fund_source_id = fund_grants.fund_source_id AND r.state = 'released')
+        AS returning, (SELECT registered FROM registrations INNER JOIN
         registration_terms ON registrations.registration_term_id =
         registration_terms.id WHERE registration_terms.current = 1 AND
         registrations.organization_id = organizations.id LIMIT 1) AS registered,
@@ -46,7 +50,7 @@ class FundSource < ActiveRecord::Base
       SQL
       CSV.generate do |csv|
         csv << (
-          %w( organization registered? independent? club_sport? account active? allocation ) +
+          %w( organization returning? registered? independent? club_sport? account active? allocation ) +
           Category.all.map(&:name)
         )
         rows.each { |row| csv << row }

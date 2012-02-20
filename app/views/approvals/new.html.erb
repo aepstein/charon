@@ -1,13 +1,13 @@
 <h2>Approve <%=h @approval.approvable %></h2>
 
+  <p>
+  Please review the document below and <strong>click "Confirm Approval" at the bottom</strong> if you approve.  Once your approval is registered, you should receive an email confirmation.
+  </p>
+
 <%= semantic_form_for( @approval, :url => polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
   <%= render "shared/error_messages", :target => f.object %>
 
   <%= render 'shared/error_messages', target: f.object.approvable %>
-
-  <p>
-  Please review the document below and click "Confirm Approval" at the bottom if you approve.
-  </p>
 
   <%= render :partial => "#{@approval.approvable_type.underscore.pluralize}/detail",
     :object => @approval.approvable %>
