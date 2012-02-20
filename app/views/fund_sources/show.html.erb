@@ -36,6 +36,13 @@
   <b>Closed at:</b> <%=h @fund_source.closed_at %>
 </p>
 
+<h3>Returning fund sources</h3>
+<ul>
+<% @fund_source.returning_fund_sources.each do |source| %>
+<li><%= source %></li>
+<% end %>
+</ul>
+
 <h3>Queues</h3>
 <%=render :partial => 'fund_queues/fund_queues',
           :object => @fund_source.fund_queues %>

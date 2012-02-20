@@ -20,17 +20,22 @@ class Organization < ActiveRecord::Base
     # * must not have a prior grant created
     def allowed_for( user )
       no_fund_grant.open_deadline_for_first.
-        fulfilled_for( FundEdition::PERSPECTIVES.first, @association.owner, user )
+        fulfilled_for( FundEdition::PERSPECTIVES.first, proxy_association.owner, user )
     end
 
     def unfulfilled_for( user )
       no_fund_grant.open_deadline_for_first.
-        unfulfilled_for( FundEdition::PERSPECTIVES.first, @association.owner, user )
+        unfulfilled_for( FundEdition::PERSPECTIVES.first, proxy_association.owner, user )
+    end
+
+    def released
+      FundSource.where { |s| s.id.in( proxy_association.owner.fund_grants.
+        released.select { fund_source_id } ) }
     end
 
     # For what sources has no grant been created for this organization?
     def no_fund_grant
-      FundSource.no_fund_grant_for( @association.owner )
+      FundSource.no_fund_grant_for( proxy_association.owner )
     end
   end
   has_many :inventory_items, dependent: :destroy, inverse_of: :organization

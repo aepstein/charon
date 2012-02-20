@@ -1,7 +1,7 @@
 class FundSource < ActiveRecord::Base
   attr_accessible :name, :framework_id, :structure_id, :contact_name,
     :contact_email, :open_at, :closed_at, :release_message, :contact_web,
-    :fund_queues_attributes
+    :fund_queues_attributes, :returning_fund_source_ids
   attr_readonly :framework_id, :structure_id
 
   belongs_to :organization, :inverse_of => :fund_sources
@@ -119,6 +119,8 @@ class FundSource < ActiveRecord::Base
       scoped.where( FundQueue.arel_table[:submit_at].gt( Time.zone.now ) )
     end
   end
+  has_and_belongs_to_many :returning_fund_sources, join_table: :returning_fund_sources,
+    association_foreign_key: :returning_fund_source_id, class_name: 'FundSource'
 
   accepts_nested_attributes_for :fund_queues, :allow_destroy => true,
     :reject_if => proc { |a|

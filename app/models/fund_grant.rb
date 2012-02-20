@@ -64,6 +64,7 @@ class FundGrant < ActiveRecord::Base
   scope :fund_source_name_contains, lambda { |name|
     joins { fund_source }.merge FundSource.where( :name.like => name )
   }
+  scope :released, where { id.in( FundRequest.with_state(:released).select { fund_grant_id } ) }
 
   paginates_per 10
 
@@ -84,6 +85,10 @@ class FundGrant < ActiveRecord::Base
   def release!
     fund_items.update_all "released_amount = amount"
     update_attribute :released_at, Time.zone.now
+  end
+
+  def returning?
+    fund_source.returning_fund_sources.include?( organization.fund_sources.released )
   end
 
   # Organization associated with this grant in requestor perspective
