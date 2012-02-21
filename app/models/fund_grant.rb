@@ -88,7 +88,9 @@ class FundGrant < ActiveRecord::Base
   end
 
   def returning?
-    fund_source.returning_fund_sources.include?( organization.fund_sources.released )
+    fund_source.returning_fund_sources.
+    where { |s| s.id.in( organization.fund_sources.released.select { id } ) }.
+    any?
   end
 
   # Organization associated with this grant in requestor perspective
