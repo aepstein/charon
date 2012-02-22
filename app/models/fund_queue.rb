@@ -20,6 +20,14 @@ class FundQueue < ActiveRecord::Base
     end
     # Returns CSV spreadsheet representing requests assigned to this queue
     def reviews_report
+      category_sql = Category.all.map do |c|
+        "(SELECT SUM(fund_items.released_amount) FROM fund_items " +
+        "INNER JOIN fund_editions ON fund_editions.fund_item_id = fund_items.id " +
+        "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
+        "WHERE nodes.category_id = #{c.id} AND " +
+        "fund_editions.fund_request_id = fund_requests.id AND " +
+        "fund_editions.perspective = 'requestor') AS category#{c.id}"
+      end.join(", ")
       rows = connection.select_rows <<-SQL
         SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
         AS name, EXISTS(SELECT * FROM fund_requests AS r INNER JOIN fund_grants
@@ -41,15 +49,16 @@ class FundQueue < ActiveRecord::Base
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'reviewer' AND fund_request_id = fund_requests.id ) AS review,
         (SELECT SUM(fund_items.amount) FROM fund_items WHERE fund_grant_id =
-        fund_grants.id ) AS allocation FROM
+        fund_grants.id ) AS allocation
+        #{category_sql.empty? ? "" : ", " + category_sql} FROM
         organizations INNER JOIN fund_grants ON organizations.id =
         fund_grants.organization_id INNER JOIN fund_requests ON
         fund_grants.id = fund_requests.fund_grant_id WHERE
-        fund_requests.fund_queue_id = #{@association.owner.id}
+        fund_requests.fund_queue_id = #{proxy_association.owner.id}
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
-        csv << %w( organization returning? registered? independent? club_sport? state request review allocation )
+        csv << ( %w( organization returning? registered? independent? club_sport? state request review allocation ) + Category.all.map(&:name) )
         rows.each { |row| csv << row }
       end
     end
