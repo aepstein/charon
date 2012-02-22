@@ -30,7 +30,11 @@ class FundQueue < ActiveRecord::Base
       end.join(", ")
       rows = connection.select_rows <<-SQL
         SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
-        AS name, EXISTS(SELECT * FROM fund_requests AS r INNER JOIN fund_grants
+        AS name, (SELECT CONCAT(university_accounts.department_code,
+        university_accounts.subledger_code, '-', university_accounts.subaccount_code)
+        FROM university_accounts WHERE active = 1 AND
+        organization_id = organizations.id LIMIT 1) AS account,
+        EXISTS(SELECT * FROM fund_requests AS r INNER JOIN fund_grants
         AS g ON r.fund_grant_id = g.id INNER JOIN returning_fund_sources AS rs
         ON g.fund_source_id = rs.returning_fund_source_id WHERE
         rs.fund_source_id = fund_grants.fund_source_id AND r.state = 'released'
@@ -58,7 +62,7 @@ class FundQueue < ActiveRecord::Base
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
-        csv << ( %w( organization returning? registered? independent? club_sport? state request review allocation ) + Category.all.map(&:name) )
+        csv << ( %w( organization account returning? registered? independent? club_sport? state request review allocation ) + Category.all.map(&:name) )
         rows.each { |row| csv << row }
       end
     end
