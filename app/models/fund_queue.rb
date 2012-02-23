@@ -20,7 +20,7 @@ class FundQueue < ActiveRecord::Base
     end
     # Returns CSV spreadsheet representing requests assigned to this queue
     def reviews_report
-      category_sql = Category.all.map do |c|
+      category_sql = proxy_association.owner.fund_source.structure.categories.map do |c|
         "(SELECT SUM(fund_items.released_amount) FROM fund_items " +
         "INNER JOIN fund_editions ON fund_editions.fund_item_id = fund_items.id " +
         "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
@@ -31,9 +31,15 @@ class FundQueue < ActiveRecord::Base
       rows = connection.select_rows <<-SQL
         SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
         AS name, (SELECT CONCAT(university_accounts.department_code,
-        university_accounts.subledger_code, '-', university_accounts.subaccount_code)
-        FROM university_accounts WHERE active = 1 AND
-        organization_id = organizations.id LIMIT 1) AS account,
+        university_accounts.subledger_code)
+        FROM university_accounts WHERE organization_id = organizations.id
+        ORDER BY active DESC LIMIT 1) AS account,
+        (SELECT university_accounts.subaccount_code
+        FROM university_accounts WHERE organization_id = organizations.id
+        ORDER BY active DESC LIMIT 1) AS subaccount,
+        (SELECT active
+        FROM university_accounts WHERE organization_id = organizations.id
+        ORDER BY active DESC LIMIT 1) AS subaccount_active,
         EXISTS(SELECT * FROM fund_requests AS r INNER JOIN fund_grants
         AS g ON r.fund_grant_id = g.id INNER JOIN returning_fund_sources AS rs
         ON g.fund_source_id = rs.returning_fund_source_id WHERE
@@ -62,7 +68,7 @@ class FundQueue < ActiveRecord::Base
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
-        csv << ( %w( organization account returning? registered? independent? club_sport? state request review allocation ) + Category.all.map(&:name) )
+        csv << ( %w( organization account subaccount active? returning? registered? independent? club_sport? state request review allocation ) + Category.all.map(&:name) )
         rows.each { |row| csv << row }
       end
     end

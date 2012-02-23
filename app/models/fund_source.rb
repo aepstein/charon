@@ -15,7 +15,7 @@ class FundSource < ActiveRecord::Base
       grant
     end
     def released_report
-      category_sql = Category.all.map do |c|
+      category_sql = proxy_association.owner.structure.categories.map do |c|
         "(SELECT SUM(fund_items.released_amount) FROM fund_items " +
         "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
         "WHERE fund_items.fund_grant_id = fund_grants.id AND " +
