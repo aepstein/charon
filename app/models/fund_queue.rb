@@ -21,8 +21,8 @@ class FundQueue < ActiveRecord::Base
     # Returns CSV spreadsheet representing requests assigned to this queue
     def reviews_report
       category_sql = proxy_association.owner.fund_source.structure.categories.map do |c|
-        "(SELECT SUM(fund_items.released_amount) FROM fund_items " +
-        "INNER JOIN fund_editions ON fund_editions.fund_item_id = fund_items.id " +
+        "(SELECT SUM(fund_items.released_amount) FROM fund_editions " +
+        "INNER JOIN fund_items ON fund_items.id = fund_editions.fund_item_id " +
         "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
         "WHERE nodes.category_id = #{c.id} AND " +
         "fund_editions.fund_request_id = fund_requests.id AND " +
