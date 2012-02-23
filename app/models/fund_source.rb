@@ -46,13 +46,12 @@ class FundSource < ActiveRecord::Base
         FROM organizations INNER JOIN fund_grants ON organizations.id =
         fund_grants.organization_id LEFT JOIN university_accounts ON
         organizations.id = university_accounts.organization_id WHERE
-        fund_grants.fund_source_id = #{@association.owner.id}
+        fund_grants.fund_source_id = #{proxy_association.association.owner.id}
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
         csv << (
-          %w( organization returning? registered? independent? club_sport? account active? allocation ) +
-          Category.all.map(&:name)
+          %w( organization returning? registered? independent? club_sport? account active? allocation ) + proxy_association.owner.structure.categories.map(&:name)
         )
         rows.each { |row| csv << row }
       end

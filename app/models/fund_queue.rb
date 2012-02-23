@@ -68,7 +68,8 @@ class FundQueue < ActiveRecord::Base
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
-        csv << ( %w( organization account subaccount active? returning? registered? independent? club_sport? state request review allocation ) + Category.all.map(&:name) )
+        csv << ( %w( organization account subaccount active? returning? registered? independent? club_sport? state request review allocation ) + proxy_association.owner.fund_source.
+        structure.categories.map(&:name) )
         rows.each { |row| csv << row }
       end
     end
