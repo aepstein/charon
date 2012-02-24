@@ -58,8 +58,12 @@ class FundQueue < ActiveRecord::Base
         = 'requestor' AND fund_request_id = fund_requests.id ) AS request,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'reviewer' AND fund_request_id = fund_requests.id ) AS review,
-        (SELECT SUM(fund_items.amount) FROM fund_items WHERE fund_grant_id =
-        fund_grants.id ) AS allocation
+        (SELECT SUM(fund_items.released_amount) FROM fund_items WHERE fund_grant_id =
+        fund_grants.id ) AS cumulative_allocation,
+        (SELECT SUM(fund_items.released_amount) FROM fund_items INNER JOIN
+        fund_editions ON fund_items.id = fund_editions.fund_item_id WHERE
+        fund_editions.perspective = 'requestor' AND
+        fund_editions.fund_request_id = fund_requests.id) AS queue_allocation
         #{category_sql.empty? ? "" : ", " + category_sql} FROM
         organizations INNER JOIN fund_grants ON organizations.id =
         fund_grants.organization_id INNER JOIN fund_requests ON
@@ -68,7 +72,7 @@ class FundQueue < ActiveRecord::Base
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
-        csv << ( %w( organization account subaccount active? returning? registered? independent? club_sport? state request review allocation ) + proxy_association.owner.fund_source.
+        csv << ( %w( organization account subaccount active? returning? registered? independent? club_sport? state request review cumulative_allocation queue_allocation ) + proxy_association.owner.fund_source.
         structure.categories.map(&:name) )
         rows.each { |row| csv << row }
       end
