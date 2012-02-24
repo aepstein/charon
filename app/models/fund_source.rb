@@ -23,7 +23,17 @@ class FundSource < ActiveRecord::Base
       end.join(", ")
       rows = connection.execute <<-SQL
         SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
-        AS name, EXISTS(SELECT * FROM fund_requests AS r INNER JOIN fund_grants
+        AS name, (SELECT CONCAT(university_accounts.department_code,
+        university_accounts.subledger_code)
+        FROM university_accounts WHERE organization_id = organizations.id
+        ORDER BY active DESC LIMIT 1) AS account,
+        (SELECT university_accounts.subaccount_code
+        FROM university_accounts WHERE organization_id = organizations.id
+        ORDER BY active DESC LIMIT 1) AS subaccount,
+        (SELECT active
+        FROM university_accounts WHERE organization_id = organizations.id
+        ORDER BY active DESC LIMIT 1) AS subaccount_active,
+        EXISTS(SELECT * FROM fund_requests AS r INNER JOIN fund_grants
         AS g ON r.fund_grant_id = g.id INNER JOIN returning_fund_sources AS rs
         ON g.fund_source_id = rs.returning_fund_source_id WHERE
         rs.fund_source_id = fund_grants.fund_source_id AND r.state = 'released'
@@ -36,22 +46,18 @@ class FundSource < ActiveRecord::Base
         registrations.registration_term_id = registration_terms.id WHERE
         registration_terms.current = 1 AND registrations.organization_id =
         organizations.id LIMIT 1) AS independent, BINARY
-        organizations.club_sport, CONCAT(university_accounts.department_code,
-        university_accounts.subledger_code, '-',
-        university_accounts.subaccount_code) AS account,
-        BINARY university_accounts.active, (SELECT
+        organizations.club_sport, (SELECT
         SUM(fund_items.released_amount) FROM fund_items WHERE
         fund_items.fund_grant_id = fund_grants.id) AS allocation
         #{category_sql.blank? ? '' : ', ' + category_sql}
         FROM organizations INNER JOIN fund_grants ON organizations.id =
-        fund_grants.organization_id LEFT JOIN university_accounts ON
-        organizations.id = university_accounts.organization_id WHERE
-        fund_grants.fund_source_id = #{proxy_association.association.owner.id}
+        fund_grants.organization_id WHERE
+        fund_grants.fund_source_id = #{proxy_association.owner.id}
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
         csv << (
-          %w( organization returning? registered? independent? club_sport? account active? allocation ) + proxy_association.owner.structure.categories.map(&:name)
+          %w( organization account subaccount active? returning? registered? independent? club_sport? allocation ) + proxy_association.owner.structure.categories.map(&:name)
         )
         rows.each { |row| csv << row }
       end
