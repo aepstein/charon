@@ -204,6 +204,10 @@ authorization do
       if_permitted_to :manage, :fund_source
     end
 
+    has_permission_on [ :fund_queues ], :to => :show do
+      if_permitted_to :review, :fund_source
+    end
+
     has_permission_on [ :fund_requests ], :to => :request do
       if_permitted_to :request, :fund_grant
     end
