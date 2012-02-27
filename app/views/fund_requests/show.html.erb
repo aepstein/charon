@@ -30,6 +30,10 @@
   <b>Deadline:</b> <%= @fund_request.target_queue ? @fund_request.target_queue : 'None available' %>
 </p>
 
+<p>
+  <b>Returning?</b> <%= @fund_request.returning? ? 'Yes' : 'No'  %>
+</p>
+
 <%=content_tag 'h3', 'Amount totals' %>
 
 <p>
