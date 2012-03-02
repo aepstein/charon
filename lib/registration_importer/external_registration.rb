@@ -27,7 +27,7 @@ module RegistrationImporter
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
     self.table_name = "orgs"
-    set_primary_keys :org_id, :term_id
+    self.primary_keys = [ :org_id, :term_id ]
     default_scope select( MAP.keys.join(', ') ).order( 'orgs.updated_time ASC' )
 
     scope :importable, lambda {

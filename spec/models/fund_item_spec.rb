@@ -18,7 +18,7 @@ describe FundItem do
     fund_item.save!
   end
 
-  it "should save to the end of the list by default and act as list" do
+  it "should save to the end of the list by default" do
     items = Array.new
     grant = create( :fund_grant )
     node = create( :node, :structure => grant.fund_source.structure,
@@ -28,10 +28,6 @@ describe FundItem do
       grant.association(:fund_items).reset
     end
     3.times { |i| items[i].position.should eql( i + 1 ) }
-    items[2].insert_at 2
-    items.each { |item| item.reload }
-    items[1].position.should eql 3
-    items[2].position.should eql 2
   end
 
   it 'should save a nested item just before the sibling of its parent' do

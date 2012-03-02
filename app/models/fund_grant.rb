@@ -74,7 +74,6 @@ class FundGrant < ActiveRecord::Base
   validates :released_at,
     :timeliness => { :type => :datetime, :allow_blank => true }
 
-
   delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_source
 
   def release_with_notice!

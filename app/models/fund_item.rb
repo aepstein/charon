@@ -74,8 +74,6 @@ class FundItem < ActiveRecord::Base
   has_paper_trail class_name: 'SecureVersion'
   has_ancestry orphan_strategy: :destroy
 
-  acts_as_list :scope => [ :fund_grant_id ]
-
   accepts_nested_attributes_for :fund_editions
 
   scope :ordered, order { position }
@@ -119,6 +117,7 @@ class FundItem < ActiveRecord::Base
 
   before_validation :set_title
   before_validation :initialize_nested_position, on: :create
+  before_create :clear_for_new_position
 
   # What types of nodes can this item be created as?
   def allowed_nodes
@@ -152,9 +151,28 @@ class FundItem < ActiveRecord::Base
 
   # Set the initial position to which the item should be assigned
   def initialize_nested_position
-    return true if position || is_root?
-    last = siblings.ordered.last || parent
-    self.position = last.position + 1
+    return true if position
+
+    last_position = if is_root?
+      fund_grant.fund_items.maximum( :position )
+    else
+      siblings.maximum( :position ) || parent.position
+    end
+
+    self.position = ( last_position.blank? ? 1 : ( last_position + 1 ) )
+  end
+
+  # Clear space for item
+  # * if the item occurs before the end of an existing list, move the existing
+  # items of same or later position down a space to make room for the item
+  def clear_for_new_position
+    end_of_list = fund_grant.fund_items.maximum( :position )
+    unless end_of_list && end_of_list < position
+      fund_grant.fund_items.where { |i| i.id != id }.
+        where { |i| i.position >= position }.update_all(
+          'fund_items.position = fund_items.position + 1' )
+    end
+    true
   end
 
   # Set the title automatically

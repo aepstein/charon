@@ -21,7 +21,7 @@ gem 'cornell_ldap', '>= 1.3.1'
 gem 'formtastic'
 gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
-gem 'composite_primary_keys', '~> 5.0.0.rc1',
+gem 'composite_primary_keys', '~> 5.0',
   require: false # Require on demand
 gem 'cornell-assemblies-rails',
   :git => 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'

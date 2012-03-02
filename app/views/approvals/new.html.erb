@@ -15,8 +15,8 @@
   <%= f.inputs do %>
     <%= f.input :as_of, :as => :hidden %>
   <% end %>
-  <%= f.buttons do %>
-    <%= f.commit_button :label => 'Confirm Approval' %>
+  <%= f.actions do %>
+    <%= f.action :submit, :label => 'Confirm Approval' %>
   <% end %>
 <% end %>
 
