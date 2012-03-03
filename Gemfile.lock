@@ -1,13 +1,13 @@
 GIT
   remote: git://assembly.cornell.edu/git/cornell-assemblies-rails.git
-  revision: 6a604889e1e2ea4e6ef7877fd66e2a271cd56e3f
+  revision: 540b8b67502b63a351f0d77aeb8db2bbaf028353
   specs:
     cornell-assemblies-rails (0.0.1)
-      bcrypt-ruby (~> 3.0.1)
+      bcrypt-ruby (~> 3.0)
       formtastic (~> 2.1)
-      jquery-rails (~> 1.0.15)
+      jquery-rails (~> 2.0)
       rails (~> 3.1)
-      rails3-jquery-autocomplete (~> 1.0.4)
+      rails3-jquery-autocomplete (~> 1.0)
 
 GEM
   remote: http://rubygems.org/
@@ -103,15 +103,15 @@ GEM
       factory_girl (~> 2.6.0)
       railties (>= 3.0.0)
     ffi (1.0.11)
-    formtastic (2.1.0)
+    formtastic (2.1.1)
       actionpack (~> 3.0)
     gherkin (2.9.0)
       json (>= 1.4.6)
     hike (1.2.1)
     i18n (0.6.0)
     journey (1.0.3)
-    jquery-rails (1.0.19)
-      railties (~> 3.0)
+    jquery-rails (2.0.1)
+      railties (>= 3.2.0, < 5.0)
       thor (~> 0.14)
     json (1.6.5)
     kaminari (0.13.0)
