@@ -384,8 +384,7 @@ FactoryGirl.define do
 
   factory :university_account do
     association :organization
-    department_code 'S52'
-    sequence(:subledger_code) { |n| n.to_s.rjust( 4, '0' ) }
+    sequence(:account_code) { |n| 'S52' + n.to_s.rjust( 4, '0' ) }
     subaccount_code '00000'
   end
 

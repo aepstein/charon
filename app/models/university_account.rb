@@ -1,32 +1,29 @@
 class UniversityAccount < ActiveRecord::Base
   include OrganizationNameLookup
 
-  attr_accessible :department_code, :subledger_code, :subaccount_code,
-    :organization_name, :active
+  attr_accessible :account_code, :subaccount_code, :organization_name, :active
 
-  has_many :activity_accounts, :inverse_of => :university_account, :dependent => :destroy
-  belongs_to :organization, :inverse_of => :university_accounts
+  has_many :activity_accounts, inverse_of: :university_account, dependent: :destroy
+  belongs_to :organization, inverse_of: :university_accounts
 
-  default_scope order( 'university_accounts.department_code ASC, ' +
-    'university_accounts.subledger_code ASC, ' +
+  default_scope order( 'university_accounts.account_code ASC, ' +
     'university_accounts.subaccount_code ASC' )
 
   scope :organization_name_contains, lambda { |name|
     joins { organization }.merge( Organization.unscoped.name_contains( name ) )
   }
 
-  validates_format_of :department_code, :with => /\A[A-Z]\d{2,2}\Z/
-  validates_format_of :subledger_code, :with => /\A\d{4,4}\Z/
-  validates_format_of :subaccount_code, :with => /\A\d{5,5}\Z/
-  validates_uniqueness_of :subaccount_code, :scope => [ :department_code, :subledger_code ]
-  validates_presence_of :organization
+  validates :account_code, presence: true
+  validates :subaccount_code, presence: true, format: { with: /\A\d{5,5}\Z/ },
+    uniqueness: { scope: :account_code }
+  validates :organization, presence: true
 
   before_validation do |r|
-    r.department_code = r.department_code.capitalize unless r.department_code.blank?
+    r.account_code = r.account_code.capitalize unless r.account_code.blank?
   end
 
 #  ransacker :organization_name_contains
 
-  def to_s; "#{department_code}#{subledger_code}-#{subaccount_code}"; end
+  def to_s; "#{account_code}-#{subaccount_code}"; end
 end
 

@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe UniversityAccount do
   before(:each) do
@@ -9,28 +9,14 @@ describe UniversityAccount do
     @university_account.id.should_not be_nil
   end
 
-  it 'should not save a duplicate department_code/subledger_code combination' do
+  it 'should not save a duplicate account_code/subaccount_code combination' do
     duplicate = build(:university_account)
-    duplicate.department_code = @university_account.department_code
-    duplicate.subledger_code = @university_account.subledger_code
+    duplicate.account_code = @university_account.account_code
     duplicate.save.should be_false
   end
 
-  it 'should not save with an invalid department code' do
-    %w( blah g889 89 889 ).each do |scenario|
-      @university_account.department_code = scenario
-      @university_account.save.should be_false
-    end
-    @university_account.department_code = nil
-    @university_account.save.should be_false
-  end
-
-  it 'should not save with an invalid department code' do
-    %w( blah g889 89 889 ).each do |scenario|
-      @university_account.subledger_code = scenario
-      @university_account.save.should be_false
-    end
-    @university_account.subledger_code = nil
+  it 'should not save with a blank account code' do
+    @university_account.account_code = nil
     @university_account.save.should be_false
   end
 

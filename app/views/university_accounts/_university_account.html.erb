@@ -3,8 +3,7 @@
     <% unless organization -%>
     <td><%= university_account.organization %></td>
     <% end -%>
-    <td><%= university_account.department_code %></td>
-    <td><%= university_account.subledger_code %></td>
+    <td><%= university_account.account_code %></td>
     <td><%= university_account.subaccount_code %></td>
     <td><%=raw university_account.active? ? 'Yes' : 'No' %></td>
     <td><%= link_to 'Show', university_account %></td>

@@ -22,7 +22,7 @@ class UniversityAccountsController < ApplicationController
       if params[:accounts].blank? || params[:activate].blank?
         hits = 0
       else
-        hits = UniversityAccount.unscoped.where( "CONCAT( department_code, subledger_code, " +
+        hits = UniversityAccount.unscoped.where( "CONCAT( account_code, " +
           "subaccount_code ) IN (?)", CSV.parse(params[:accounts]).flatten
         ).update_all( [ "active = ?", ( params[:activate] == 'active' ? true : false ) ] )
       end

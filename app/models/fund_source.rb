@@ -23,8 +23,7 @@ class FundSource < ActiveRecord::Base
       end.join(", ")
       rows = connection.execute <<-SQL
         SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
-        AS name, (SELECT CONCAT(university_accounts.department_code,
-        university_accounts.subledger_code)
+        AS name, (SELECT university_accounts.account_code
         FROM university_accounts WHERE organization_id = organizations.id
         ORDER BY active DESC LIMIT 1) AS account,
         (SELECT university_accounts.subaccount_code

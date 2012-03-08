@@ -3,10 +3,8 @@
   <% unless form.object.new_record? -%>
   <%= form.input( :organization_name, :label => 'Organization', :as => :string ) %>
   <% end -%>
-  <%= form.input :department_code,
-    :hint => "S52 is undergrad, S53 is grad." %>
-  <%= form.input :subledger_code,
-    :hint => "4000 is university, 4050 is independent." %>
+  <%= form.input :account_code,
+    :hint => "S52 is undergrad, S53 is grad. 4000 is university, 4050 is independent." %>
   <%= form.input :subaccount_code,
     :hint => "2XXXX is undergrad, 3XXXX is grad." %>
   <%= form.input :active, :as => :radio,
