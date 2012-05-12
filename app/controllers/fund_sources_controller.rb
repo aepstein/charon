@@ -102,6 +102,7 @@ class FundSourcesController < ApplicationController
 
   def initialize_index
     @fund_sources = @organization.fund_sources.with_permissions_to(:show)
+    @fund_sources ||= FundSource.with_permissions_to(:show)
   end
 
   def new_fund_source_from_params
