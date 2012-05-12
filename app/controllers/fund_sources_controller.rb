@@ -101,7 +101,7 @@ class FundSourcesController < ApplicationController
   end
 
   def initialize_index
-    @fund_sources = @organization.fund_sources.with_permissions_to(:show)
+    @fund_sources = @organization.fund_sources.with_permissions_to(:show) if @organization
     @fund_sources ||= FundSource.with_permissions_to(:show)
   end
 
