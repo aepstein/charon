@@ -4,6 +4,7 @@ class FundItem < ActiveRecord::Base
 
   belongs_to :node, inverse_of: :fund_items
   belongs_to :fund_grant, touch: true, inverse_of: :fund_items
+  has_many :fund_allocations, inverse_of: :fund_item, dependent: :destroy
   has_many :fund_editions, inverse_of: :fund_item, dependent: :destroy do
 
     # Editions associated with a specific request
@@ -110,8 +111,6 @@ class FundItem < ActiveRecord::Base
   validates :title, presence: true
   validates :node, presence: true
   validates :fund_grant, presence: true
-  validates :amount,
-    numericality: { greater_than_or_equal_to: 0.0 }
   validate :node_must_be_allowed, :parent_must_be_in_same_fund_grant,
     on: :create
 

@@ -18,6 +18,7 @@ class FundRequest < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
+  has_many :fund_allocations, inverse_of: :fund_request, dependent: :destroy
   has_many :fund_editions, dependent: :destroy, inverse_of: :fund_request do
     def nonzero?
       where { perspective.eq( FundEdition::PERSPECTIVES.first ) }.
@@ -34,6 +35,7 @@ class FundRequest < ActiveRecord::Base
     order: 'fund_items.position ASC' do
 
     # Allocate items according to specified preferences
+    # TODO retrofit for discrete fund_allocations
     # * iterate through items according to specified priority
     # * limit allocations to cap if specified
     # * if request covers only some items, reduce cap by amount currently
@@ -54,6 +56,7 @@ class FundRequest < ActiveRecord::Base
     end
 
     # Allocate an item and any children for which a final edition is present
+    # TODO retrofit for discrete fund_allocations
     # * allocate the item if a final edition is present in the request
     # * apply cap if one is specified and deduct allocation from cap
     # * recursively call to each child, passing on remaining cap

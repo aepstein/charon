@@ -4,22 +4,23 @@ class FundGrant < ActiveRecord::Base
   attr_accessible :fund_source_id
   attr_readonly :organization_id, :fund_source_id
 
-  belongs_to :organization, :inverse_of => :fund_grants
-  belongs_to :fund_source, :inverse_of => :fund_grants
+  belongs_to :organization, inverse_of: :fund_grants
+  belongs_to :fund_source, inverse_of: :fund_grants
 
-  has_many :fund_requests, :inverse_of => :fund_grant, :dependent => :destroy do
+  has_many :fund_allocations, through: :fund_requests
+  has_many :fund_requests, inverse_of: :fund_grant, dependent: :destroy do
     # Builds a first request, inferring request type from those that are
     # allowed for the first in upcoming queues
     # * will leave fund_request_type blank if owner has no fund source
     #   from which to make the inference
     def build_first
       request = build
-      return request if @association.owner.fund_source.blank?
-      request.fund_request_type = @association.owner.fund_source.
+      return request if proxy_association.owner.fund_source.blank?
+      request.fund_request_type = proxy_association.owner.fund_source.
         fund_request_types.upcoming.allowed_for_first.first
     end
   end
-  has_many :fund_items, :inverse_of => :fund_grant, :dependent => :destroy do
+  has_many :fund_items, inverse_of: :fund_grant, dependent: :destroy do
     def amount_for_category( category )
       for_category( category ).sum( :amount )
     end
@@ -30,10 +31,10 @@ class FundGrant < ActiveRecord::Base
       joins { node }.where { node.category_id == category.id }
     end
   end
-  has_many :fund_editions, :through => :fund_items
-  has_many :nodes, :through => :fund_items
-  has_many :categories, :through => :nodes
-  has_many :users, :through => :organization do
+  has_many :fund_editions, through: :fund_items
+  has_many :nodes, through: :fund_items
+  has_many :categories, through: :nodes
+  has_many :users, through: :organization do
     # Retrieves users associated with a perspective for the grant
     def for_perspective( perspective )
       role_names = case perspective.to_s
@@ -43,14 +44,14 @@ class FundGrant < ActiveRecord::Base
         Role::REVIEWER
       end
       User.joins( :memberships ).merge(
-        @association.owner.send(perspective).memberships.active.
+        proxy_association.owner.send(perspective).memberships.active.
         where { role_id.in Role.where { name.in role_names }.select { id } } )
     end
   end
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  notifiable_events :release, :if => :require_requestor_recipients!
+  notifiable_events :release, if: :require_requestor_recipients!
 
   scope :ordered, includes { [ organization, fund_source ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
