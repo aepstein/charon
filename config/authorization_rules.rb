@@ -4,7 +4,7 @@ authorization do
 
     has_permission_on [ :activity_accounts, :activity_reports, :addresses,
       :agreements, :approvers, :fund_sources, :categories, :document_types,
-      :fund_editions, :fund_grants, :fund_items, :fund_queues,
+      :fund_allocations, :fund_editions, :fund_grants, :fund_items, :fund_queues,
       :fund_request_types, :fund_requests, :fund_sources, :frameworks,
       :fulfillments, :inventory_items, :nodes, :organizations,
       :registration_criterions, :registrations, :registration_terms, :roles,
@@ -26,6 +26,14 @@ authorization do
     end
     has_permission_on [ :fund_requests ], :to => [ :withdraw ] do
       if_attribute :state => is_in { %w( tentative finalized submitted ) }
+    end
+    has_permission_on [ :fund_requests ], to: [ :release, :allocate ] do
+      if_attribute state: is_in { %w( submitted ) },
+        review_state: is_in { %w( ready ) }
+    end
+    has_permission_on [ :fund_requests ], to: [ :allocate ] do
+      if_attribute state: is_in { %w( released ) },
+        review_state: is_in { %w( ready ) }
     end
 
     has_permission_on [ :fund_items ], :to => [ :request, :review ]
@@ -114,6 +122,10 @@ authorization do
     has_permission_on [ :fulfillments ], :to => :show do
       if_attribute :fulfiller_type => is { 'Organization' }
       if_attribute :fulfiller_type => is { 'User' }, :fulfiller_id => is { user.id }
+    end
+
+    has_permission_on [ :fund_allocations ], to: :show do
+      if_permitted_to :review, :fund_request
     end
 
     has_permission_on [ :fund_items ], :to => :allocate do

@@ -176,7 +176,7 @@ class FundRequest < ActiveRecord::Base
 
   state_machine :initial => :started do
 
-    state :finalized, :released, :tentative
+    state :finalized, :tentative, :released
 
     state :started do
       validate :no_draft_fund_request_exists, on: :create
@@ -193,6 +193,10 @@ class FundRequest < ActiveRecord::Base
     state :submitted do
       validates :fund_queue, presence: true
       validates :fund_queue_id, uniqueness: { scope: [ :fund_grant_id ] }
+    end
+
+    state :allocated do
+      validates :review_state, inclusion: { in: %w( ready ) }
     end
 
     event :approve do
@@ -220,6 +224,10 @@ class FundRequest < ActiveRecord::Base
       transition :submitted => :released, :if => :releasable?
     end
 
+    event :allocate do
+      transition [ :submitted, :released ] => :allocated, :if => :releasable?
+    end
+
     event :reject do
       transition [ :started, :tentative, :finalized, :submitted ] => :rejected
     end
@@ -245,10 +253,10 @@ class FundRequest < ActiveRecord::Base
 
   end
 
-  notifiable_events :started, :tentative, :finalized, :rejected, :submitted,
-    :released, :withdrawn, :if => :require_requestor_recipients!
+  notifiable_events :allocated, :started, :tentative, :finalized, :rejected, :submitted,
+    :released, :withdrawn, if: :require_requestor_recipients!
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
   scope :ordered, joins { [ fund_grant.fund_source, fund_grant.organization ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
