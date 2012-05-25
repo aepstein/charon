@@ -18,8 +18,8 @@
         where { perspective == 'reviewer' }.sum(:amount) %></td>
       <% end %>
       <%= table_row_tag do %>
-        <td>Released allocation (related to items in this request)</td>
-        <td><%=number_to_currency fund_request.fund_allocations.sum(:amount) %></td>
+        <td>Final allocation (additional funds from this request)</td>
+        <td><%=number_to_currency fund_request.fund_allocations.final.sum(:amount) %></td>
       <% end %>
     <% end %>
   </tbody>

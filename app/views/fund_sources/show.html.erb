@@ -70,13 +70,11 @@ Request quantity and amount report:
 </p>
 
 <p>
-  <!-- TODO: Actually distinguish pending and released amounts using discreet_allocations -->
-  <b>Pending allocations amount:</b> <%=number_to_currency @fund_source.fund_allocations.sum(:amount) %>
+  <b>Pending allocations amount:</b> <%=number_to_currency @fund_source.fund_allocations.pending.sum(:amount) %>
 </p>
 
 <p>
-  <!-- TODO: Actually distinguish pending and released amounts using discreet_allocations -->
-  <b>Released allocations amount:</b> <%=number_to_currency @fund_source.fund_allocations.sum(:amount) %>
+  <b>Final allocations amount:</b> <%=number_to_currency @fund_source.fund_allocations.final.sum(:amount) %>
 </p>
 
 <p>
