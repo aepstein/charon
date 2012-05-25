@@ -105,7 +105,6 @@ FactoryGirl.define do
 
   factory :fund_allocation do
     amount 0.0
-    state 'preliminary'
     association :fund_request
     fund_item do
       FactoryGirl.create( :fund_edition, fund_request: fund_request ).fund_item

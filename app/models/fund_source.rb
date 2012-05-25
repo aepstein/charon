@@ -8,6 +8,7 @@ class FundSource < ActiveRecord::Base
   belongs_to :structure, :inverse_of => :fund_sources
   belongs_to :framework, :inverse_of => :fund_sources
   has_many :activity_accounts, :dependent => :destroy, :inverse_of => :fund_source
+  has_many :fund_allocations, through: :fund_requests
   has_many :fund_grants, :dependent => :destroy, :inverse_of => :fund_source do
     def build_for( organization )
       grant = build
@@ -16,7 +17,8 @@ class FundSource < ActiveRecord::Base
     end
     def released_report
       category_sql = proxy_association.owner.structure.categories.map do |c|
-        "(SELECT SUM(fund_items.released_amount) FROM fund_items " +
+        "(SELECT SUM(fund_allocations.amount) FROM fund_items " +
+        "INNER JOIN fund_allocations ON fund_items.id = fund_allocations.fund_item_id " +
         "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
         "WHERE fund_items.fund_grant_id = fund_grants.id AND " +
         "nodes.category_id = #{c.id} )"
@@ -46,7 +48,8 @@ class FundSource < ActiveRecord::Base
         registration_terms.current = 1 AND registrations.organization_id =
         organizations.id LIMIT 1) AS independent, BINARY
         organizations.club_sport, (SELECT
-        SUM(fund_items.released_amount) FROM fund_items WHERE
+        SUM(fund_allocations.amount) FROM fund_items INNER JOIN
+        fund_allocations ON fund_items.id = fund_allocations.fund_item_id WHERE
         fund_items.fund_grant_id = fund_grants.id) AS allocation
         #{category_sql.blank? ? '' : ', ' + category_sql}
         FROM organizations INNER JOIN fund_grants ON organizations.id =
@@ -107,20 +110,6 @@ class FundSource < ActiveRecord::Base
       )
     end
 
-    # TODO: relocate to queue, deduct amounts previously requested where appropriate
-    def amount_for_perspective_and_status(perspective, status)
-      sub = "SELECT fund_items.id FROM fund_items INNER JOIN fund_requests WHERE fund_request_id = fund_requests.id " +
-            "AND fund_source_id = ? AND fund_requests.status = ?"
-      FundEdition.where(:perspective => perspective).
-        where( "fund_item_id IN (#{sub})", @association.owner.id, status ).sum( 'amount' )
-    end
-
-    # TODO: should be calculated through items
-    def fund_item_amount_for_status(status)
-      sub = "SELECT fund_items.id FROM fund_items INNER JOIN fund_requests WHERE fund_request_id = fund_requests.id " +
-            "AND fund_source_id = ? AND fund_requests.status = ?"
-      FundItem.where( "id IN (#{sub})", @association.owner.id, status ).sum( 'amount' )
-    end
   end
   has_many :fund_items, :through => :fund_grants
   has_many :fund_request_types, :through => :fund_queues do

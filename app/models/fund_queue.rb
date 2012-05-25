@@ -5,6 +5,7 @@ class FundQueue < ActiveRecord::Base
 
   belongs_to :fund_source, :inverse_of => :fund_queues
 
+  has_many :fund_allocations, through: :fund_requests
   has_many :fund_requests, :inverse_of => :fund_queue, :dependent => :nullify do
     # Allocate all ready requests associated with this fund source
     # * apply club_sport and other caps according to how organizations are recorded
@@ -20,9 +21,11 @@ class FundQueue < ActiveRecord::Base
     end
     # Returns CSV spreadsheet representing requests assigned to this queue
     def reviews_report
+      # This gives cumulative allocation per category for each request
       category_sql = proxy_association.owner.fund_source.structure.categories.map do |c|
-        "(SELECT SUM(fund_items.released_amount) FROM fund_editions " +
+        "(SELECT SUM(fund_allocations.amount) FROM fund_editions " +
         "INNER JOIN fund_items ON fund_items.id = fund_editions.fund_item_id " +
+        "INNER JOIN fund_allocations ON fund_items.id = fund_allocations.fund_item_id "
         "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
         "WHERE nodes.category_id = #{c.id} AND " +
         "fund_editions.fund_request_id = fund_requests.id AND " +
@@ -57,12 +60,12 @@ class FundQueue < ActiveRecord::Base
         = 'requestor' AND fund_request_id = fund_requests.id ) AS request,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'reviewer' AND fund_request_id = fund_requests.id ) AS review,
-        (SELECT SUM(fund_items.released_amount) FROM fund_items WHERE fund_grant_id =
-        fund_grants.id ) AS cumulative_allocation,
-        (SELECT SUM(fund_items.released_amount) FROM fund_items INNER JOIN
-        fund_editions ON fund_items.id = fund_editions.fund_item_id WHERE
-        fund_editions.perspective = 'requestor' AND
-        fund_editions.fund_request_id = fund_requests.id) AS queue_allocation
+        (SELECT SUM(fund_allocations.amount) FROM fund_items INNER JOIN
+        fund_allocations ON fund_items.id = fund_allocations.fund_item_id
+        WHERE fund_items.fund_grant_id = fund_grants.id ) AS cumulative_allocation,
+        (SELECT SUM(fund_allocations.amount) FROM fund_items INNER JOIN
+        fund_allocations ON fund_items.id = fund_allocations.fund_item_id
+        WHERE fund_allocations.fund_request_id = fund_requests.id) AS queue_allocation
         #{category_sql.empty? ? "" : ", " + category_sql} FROM
         organizations INNER JOIN fund_grants ON organizations.id =
         fund_grants.organization_id INNER JOIN fund_requests ON

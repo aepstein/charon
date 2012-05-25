@@ -2,7 +2,6 @@ class CreateFundAllocations < ActiveRecord::Migration
   def up
     create_table :fund_allocations do |t|
       t.decimal :amount, precision: 10, scale: 2, null: false
-      t.string :state, null: false, default: 'unreleased'
       t.references :fund_item, null: false
       t.references :fund_request, null: false
       t.timestamps

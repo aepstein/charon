@@ -14,11 +14,6 @@ describe FundAllocation do
     fund_allocation.save.should be_false
   end
 
-  it 'should not save without a state' do
-    fund_allocation.state = nil
-    fund_allocation.save.should be_false
-  end
-
   it 'should not save without a fund_item' do
     fund_allocation.fund_item = nil
     fund_allocation.save.should be_false

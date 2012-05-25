@@ -18,7 +18,19 @@ class FundRequest < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
-  has_many :fund_allocations, inverse_of: :fund_request, dependent: :destroy
+  has_many :fund_allocations, inverse_of: :fund_request, dependent: :destroy do
+    def allocate!( fund_item, amount )
+      allocation = find_or_build_by_fund_item(fund_item)
+      allocation.amount = amount
+      allocation.save! if allocation.changed?
+    end
+    def find_or_build_by_fund_item( fund_item )
+      find_by_fund_item( fund_item ) or build( fund_item: fund_item )
+    end
+    def find_by_fund_item( fund_item )
+      select { |a| a.fund_item_id == fund_item.id }.first
+    end
+  end
   has_many :fund_editions, dependent: :destroy, inverse_of: :fund_request do
     def nonzero?
       where { perspective.eq( FundEdition::PERSPECTIVES.first ) }.
@@ -35,7 +47,6 @@ class FundRequest < ActiveRecord::Base
     order: 'fund_items.position ASC' do
 
     # Allocate items according to specified preferences
-    # TODO retrofit for discrete fund_allocations
     # * iterate through items according to specified priority
     # * limit allocations to cap if specified
     # * if request covers only some items, reduce cap by amount currently
@@ -43,9 +54,6 @@ class FundRequest < ActiveRecord::Base
     # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
-        exclusion = proxy_association.owner.fund_grant.fund_items.where(
-            :id.not_in => proxy_association.owner.fund_editions.final.map( &:fund_item_id )
-          ).sum( :amount )
         cap -= exclusion if exclusion
       end
       includes( :fund_editions ).roots.each do |fund_item|
@@ -56,8 +64,7 @@ class FundRequest < ActiveRecord::Base
     end
 
     # Allocate an item and any children for which a final edition is present
-    # TODO retrofit for discrete fund_allocations
-    # * allocate the item if a final edition is present in the request
+    # * allocate the item if a final edition is present in the request (necessary?)
     # * apply cap if one is specified and deduct allocation from cap
     # * recursively call to each child, passing on remaining cap
     def allocate_fund_item!(fund_item, cap = nil)
@@ -66,15 +73,22 @@ class FundRequest < ActiveRecord::Base
         max = ( (fund_edition) ? fund_edition.amount : 0.0 )
         if cap
           min = (cap > 0.0) ? cap : 0.0
-          fund_item.amount = ( ( max > min ) ? min : max )
-          cap -= fund_item.amount
+          amount = ( ( max > min ) ? min : max )
+          cap -= amount
         else
-          fund_item.amount = max
+          amount = max
         end
-        fund_item.save! if fund_item.changed?
+        proxy_association.owner.fund_allocations.allocate! fund_item, amount
       end
       children_of(fund_item).each { |c| cap = allocate_fund_item!(c, cap) }
       cap
+    end
+
+    # Determine amount allocated through other requests, which is the amount
+    # by which to lower the effective cap for allocations to this request
+    def exclusion( force_reload = false )
+      @exclusion ||= proxy_association.owner.fund_grant.fund_allocations.
+        except_for( proxy_association.owner ).sum( :amount )
     end
 
     def appended

@@ -7,7 +7,11 @@ class FundGrant < ActiveRecord::Base
   belongs_to :organization, inverse_of: :fund_grants
   belongs_to :fund_source, inverse_of: :fund_grants
 
-  has_many :fund_allocations, through: :fund_requests
+  has_many :fund_allocations, through: :fund_requests do
+    def except_for( fund_request )
+      where { fund_request_id.not_eq( fund_request.id ) }
+    end
+  end
   has_many :fund_requests, inverse_of: :fund_grant, dependent: :destroy do
     # Builds a first request, inferring request type from those that are
     # allowed for the first in upcoming queues

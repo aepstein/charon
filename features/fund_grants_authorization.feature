@@ -21,7 +21,7 @@ Feature: Manage fund_grants authorization
     And a user: "observer_requestor" exists
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
-
+@wip
   Scenario Outline: Show allocations
     Given a category: "administrative" exists with name: "Administrative"
     And a category: "event" exists with name: "Events"
@@ -38,9 +38,9 @@ Feature: Manage fund_grants authorization
     And I am on the page for the fund_grant
     Then I should <unreleased> the following categories:
       | Category       | Unreleased Amount  | Released Amount |
-      | Administrative | $100.00 | $200.00         |
-      | Events         | $150.00 | $250.00         |
-      | TOTAL          | $250.00 | $450.00         |
+      | Administrative | $100.00            | $200.00         |
+      | Events         | $150.00            | $250.00         |
+      | TOTAL          | $250.00            | $450.00         |
     And I should <released> the following categories:
       | Category       | Released Amount |
       | Administrative | $200.00         |

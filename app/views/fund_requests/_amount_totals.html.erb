@@ -19,9 +19,7 @@
       <% end %>
       <%= table_row_tag do %>
         <td>Released allocation (related to items in this request)</td>
-        <td><%=number_to_currency FundItem.unscoped.where { |i|
-          i.id.in( fund_request.fund_editions.scoped.select { fund_item_id } )
-        }.sum(:released_amount) %></td>
+        <td><%=number_to_currency fund_request.fund_allocations.sum(:amount) %></td>
       <% end %>
     <% end %>
   </tbody>
