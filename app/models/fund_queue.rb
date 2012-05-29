@@ -1,6 +1,6 @@
 class FundQueue < ActiveRecord::Base
   attr_accessible :advertised_submit_at, :submit_at, :release_at,
-    :fund_request_type_ids
+    :fund_request_type_ids, :release_message, :allocate_message
   attr_readonly :fund_source_id
 
   belongs_to :fund_source, :inverse_of => :fund_queues

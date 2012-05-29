@@ -32,24 +32,30 @@ Feature: Manage fund_grants authorization
     And a node: "other" exists with structure: the structure, category: category "other"
     And a fund_source exists with organization: organization "source", structure: the structure
     And a fund_grant exists with organization: organization "applicant", fund_source: the fund_source
-    And a fund_item exists with fund_grant: the fund_grant, node: node "administrative", amount: "100.0", released_amount: "200.0"
-    And a fund_item exists with fund_grant: the fund_grant, node: node "event", amount: "150.0", released_amount: "250.0"
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_request exists with fund_grant: the fund_grant, fund_queue: the fund_queue, state: "<state>", review_state: "ready"
+    And a fund_item exists with fund_grant: the fund_grant, node: node "administrative"
+    And a fund_allocation exists with fund_request: the fund_request, fund_item: the fund_item, amount: "200.0"
+    And a fund_item exists with fund_grant: the fund_grant, node: node "event"
+    And a fund_allocation exists with fund_request: the fund_request, fund_item: the fund_item, amount: "250.0"
     And I log in as user: "<user>"
     And I am on the page for the fund_grant
-    Then I should <unreleased> the following categories:
+    Then I should <full> the following entries in "#categories":
       | Category       | Pending Allocation | Released Allocation |
-      | Administrative | $100.00            | $200.00             |
-      | Events         | $150.00            | $250.00             |
-      | TOTAL          | $250.00            | $450.00             |
-    And I should <released> the following categories:
+      | Administrative | $<ap>.00           | $<ar>.00            |
+      | Events         | $<ep>.00           | $<er>.00            |
+      | TOTAL          | $<tp>.00           | $<tr>.00            |
+    And I should <part> the following entries in "#categories":
       | Category       | Released Allocation |
-      | Administrative | $200.00             |
-      | Events         | $250.00             |
-      | TOTAL          | $450.00             |
+      | Administrative | $<ar>.00            |
+      | Events         | $<er>.00            |
+      | TOTAL          | $<tr>.00            |
     Examples:
-      | user                | unreleased | released |
-      | admin               | see        | not see  |
-      | applicant_requestor | not see    | see      |
+      | user                | full    | part     | state     | ap  | ep  | tp  | ar  | er  |  tr |
+      | admin               | see     | not see  | allocated | 0   | 0   | 0   | 200 | 250 | 450 |
+      | applicant_requestor | not see | see      | allocated |     |     |     | 200 | 250 | 450 |
+      | admin               | see     | not see  | submitted | 200 | 250 | 450 | 0   | 0   | 0   |
+      | applicant_requestor | not see | see      | submitted |     |     |     | 0   | 0   | 0   |
 
   Scenario Outline: Test permissions for fund_grants controller w/o fund_source
     Given a fund_source exists with name: "Annual", organization: organization "source"

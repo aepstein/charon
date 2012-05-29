@@ -96,7 +96,10 @@ Then(/^#{capture_model} should not be (?:in|one of|amongst) the (\w+) of #{captu
   model(owner).send(association).should_not include(model(target))
 end
 
-Then /^I should see the following entries in "(.+)":$/ do |table_id, table|
-  table.diff!( tableish( "#{table_id} > thead,tbody > tr", 'th,td' ) )
+Then /^I should (not )?see the following entries in "(.+)":$/ do |negate, table_id, table|
+  page.should have_selector(table_id)
+  if negate.blank?
+    table.diff!( tableish( "#{table_id} tr", 'th,td' ) )
+  end
 end
 

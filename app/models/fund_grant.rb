@@ -24,17 +24,7 @@ class FundGrant < ActiveRecord::Base
         fund_request_types.upcoming.allowed_for_first.first
     end
   end
-  has_many :fund_items, inverse_of: :fund_grant, dependent: :destroy do
-    def amount_for_category( category )
-      for_category( category ).sum( :amount )
-    end
-    def released_amount_for_category( category )
-      for_category( category ).sum( :released_amount )
-    end
-    def for_category( category )
-      joins { node }.where { node.category_id == category.id }
-    end
-  end
+  has_many :fund_items, inverse_of: :fund_grant, dependent: :destroy
   has_many :fund_editions, through: :fund_items
   has_many :nodes, through: :fund_items
   has_many :categories, through: :nodes
@@ -55,8 +45,6 @@ class FundGrant < ActiveRecord::Base
 
   has_paper_trail class_name: 'SecureVersion'
 
-  notifiable_events :release, if: :require_requestor_recipients!
-
   scope :ordered, includes { [ organization, fund_source ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
   scope :current, lambda { joins(:fund_source).merge( FundSource.unscoped.current ) }
@@ -69,27 +57,14 @@ class FundGrant < ActiveRecord::Base
   scope :fund_source_name_contains, lambda { |name|
     joins { fund_source }.merge FundSource.where( :name.like => name )
   }
-  scope :released, where { id.in( FundRequest.with_state(:released).select { fund_grant_id } ) }
 
   paginates_per 10
 
   validates :organization, :presence => true
   validates :fund_source, :presence => true
   validates :fund_source_id, :uniqueness => { :scope => :organization_id }
-  validates :released_at,
-    :timeliness => { :type => :datetime, :allow_blank => true }
 
   delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_source
-
-  def release_with_notice!
-    release!
-    send_release_notice!
-  end
-
-  def release!
-    fund_items.update_all "released_amount = amount"
-    update_attribute :released_at, Time.zone.now
-  end
 
   def returning?
     fund_source.returning_fund_sources.

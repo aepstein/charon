@@ -297,6 +297,7 @@ class FundRequest < ActiveRecord::Base
       where { fund_request_types.id.eq( fund_requests.fund_request_type_id ) }
     ) }
   }
+  scope :released, lambda { with_state( :released, :allocated ) }
 
   paginates_per 10
 

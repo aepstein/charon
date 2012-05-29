@@ -78,10 +78,16 @@ Request quantity and amount report:
 </p>
 
 <p>
-  <b>Release message:</b> (included in notices sent to requestor members when fund_request is released)
+  <b>Release message:</b> (included in notices sent to requestor members when preliminary determination is released)
 </p>
 
 <%=markdown @fund_source.release_message %>
+
+<p>
+  <b>Allocate message:</b> (included in notices sent to requestor members when allocation is released)
+</p>
+
+<%=markdown @fund_source.allocate_message %>
 
 <% end -%>
 <p>

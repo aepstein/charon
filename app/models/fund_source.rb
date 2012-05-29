@@ -1,15 +1,15 @@
 class FundSource < ActiveRecord::Base
   attr_accessible :name, :framework_id, :structure_id, :contact_name,
     :contact_email, :open_at, :closed_at, :release_message, :contact_web,
-    :fund_queues_attributes, :returning_fund_source_ids
+    :fund_queues_attributes, :returning_fund_source_ids, :allocate_message
   attr_readonly :framework_id, :structure_id
 
-  belongs_to :organization, :inverse_of => :fund_sources
-  belongs_to :structure, :inverse_of => :fund_sources
-  belongs_to :framework, :inverse_of => :fund_sources
-  has_many :activity_accounts, :dependent => :destroy, :inverse_of => :fund_source
+  belongs_to :organization, inverse_of: :fund_sources
+  belongs_to :structure, inverse_of: :fund_sources
+  belongs_to :framework, inverse_of: :fund_sources
+  has_many :activity_accounts, dependent: :destroy, inverse_of: :fund_source
   has_many :fund_allocations, through: :fund_requests
-  has_many :fund_grants, :dependent => :destroy, :inverse_of => :fund_source do
+  has_many :fund_grants, dependent: :destroy, inverse_of: :fund_source do
     def build_for( organization )
       grant = build
       grant.organization = organization
@@ -65,20 +65,20 @@ class FundSource < ActiveRecord::Base
       end
     end
   end
-  has_many :fund_queues, :inverse_of => :fund_source, :dependent => :destroy do
+  has_many :fund_queues, inverse_of: :fund_source, dependent: :destroy do
     def active
       future.first
     end
   end
   # TODO allocation methods need flexible_budgets rework
-  has_many :fund_requests, :through => :fund_grants do
+  has_many :fund_requests, through: :fund_grants do
 
     # Allocate all requests associated with this fund source
     # * apply club_sport and other caps according to how organizations are recorded
     # * TODO: this method should be relocated to the fund_queue with which
     #   allocated requests are associated
     def allocate_with_caps(club_sport, other)
-      with_state( :certified ).includes( :organization, { :fund_items => :fund_editions } ).each do |r|
+      with_state( :certified ).includes( :organization, { fund_items: :fund_editions } ).each do |r|
         if r.organization.club_sport?
           r.fund_items.allocate club_sport
         else
@@ -111,8 +111,8 @@ class FundSource < ActiveRecord::Base
     end
 
   end
-  has_many :fund_items, :through => :fund_grants
-  has_many :fund_request_types, :through => :fund_queues do
+  has_many :fund_items, through: :fund_grants
+  has_many :fund_request_types, through: :fund_queues do
     def upcoming
       scoped.where( FundQueue.arel_table[:submit_at].gt( Time.zone.now ) )
     end
@@ -120,25 +120,25 @@ class FundSource < ActiveRecord::Base
   has_and_belongs_to_many :returning_fund_sources, join_table: :returning_fund_sources,
     association_foreign_key: :returning_fund_source_id, class_name: 'FundSource'
 
-  accepts_nested_attributes_for :fund_queues, :allow_destroy => true,
+  accepts_nested_attributes_for :fund_queues, allow_destroy: true,
     :reject_if => proc { |a|
       %w( submit_at release_at ).all? do |k|
         a[k].blank?
       end
     }
 
-  validates :name, :presence => true, :uniqueness => true
-  validates :organization, :presence => true
-  validates :framework, :presence => true
-  validates :structure, :presence => true
-  validates :contact_name, :presence => true
+  validates :name, presence: true, uniqueness: true
+  validates :organization, presence: true
+  validates :framework, presence: true
+  validates :structure, presence: true
+  validates :contact_name, presence: true
   validates :contact_email,
-    :format => { :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
-  validates :contact_web, :presence => true
-  validates :open_at, :timeliness => { :type => :datetime }
-  validates :closed_at, :timeliness => { :type => :datetime, :after => :open_at }
+    format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
+  validates :contact_web, presence: true
+  validates :open_at, timeliness: { type: :datetime }
+  validates :closed_at, timeliness: { type: :datetime, after: :open_at }
 
-  default_scope :order => 'fund_sources.name ASC'
+  default_scope order: 'fund_sources.name ASC'
   scope :closed, lambda { where( :closed_at.lt => Time.zone.now ) }
   scope :current, lambda {
     where( :open_at.lt => Time.zone.now, :closed_at.gt => Time.zone.now )

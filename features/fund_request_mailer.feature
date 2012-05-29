@@ -14,8 +14,8 @@ Feature: Manage fund_request mailers
     And an organization: "requestor" exists with last_name: "Money Taking Club"
     And an organization: "reviewer" exists with last_name: "Money Giving Club"
     And a structure exists
-    And a fund_source exists with structure: the structure, framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized release message."
-    And a fund_queue exists with fund_source: the fund_source
+    And a fund_source exists with structure: the structure, framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized *release* message.", allocate_message: "A customized *allocate* message."
+    And a fund_queue exists with fund_source: the fund_source, release_message: "A queue-specific *release* message.", allocate_message: "A queue-specific *allocate* message."
     And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
     And the fund_request_type is amongst the fund_request_types of the fund_queue
     And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
@@ -110,16 +110,35 @@ Feature: Manage fund_request mailers
 
   Scenario: Send notice regarding a released fund_request
     Given all emails have been delivered
-    And fund_request: "started" has state: "released"
+    And fund_request: "started" has state: "released", review_state: "ready"
     And a released notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
     And 1 email should be delivered to "treasurer@example.com"
     And 1 email should be delivered to "officer@example.com"
-    And the email subject should contain "You may now review Request of Money Taking Club from Money Taking Fund"
+    And the email subject should contain "Preliminary determination for Request of Money Taking Club from Money Taking Fund"
     And the email parts should contain "Dear Officers of Money Taking Club,"
-    And the email parts should contain "This email is to inform you that your Request of Money Taking Club from Money Taking Fund has been processed and released for you to review."
-    And the email parts should contain "A customized release message."
+    And the email parts should contain "This email is to inform you may now review the preliminary determination for Request of Money Taking Club from Money Taking Fund."
+    And the email text should contain "A customized *release* message."
+    And the email html should contain "A customized <em>release</em> message."
+    And the email text should contain "A queue-specific *release* message."
+    And the email html should contain "A queue-specific <em>release</em> message."
+
+  Scenario: Send notice regarding an allocated fund_request
+    Given all emails have been delivered
+    And fund_request: "started" has state: "allocated", review_state: "ready"
+    And an allocated notice email is sent for fund_request: "started"
+    Then 0 emails should be delivered to "old_president@example.com"
+    And 1 email should be delivered to "president@example.com"
+    And 1 email should be delivered to "treasurer@example.com"
+    And 1 email should be delivered to "officer@example.com"
+    And the email subject should contain "Allocation for Request of Money Taking Club from Money Taking Fund"
+    And the email parts should contain "Dear Officers of Money Taking Club,"
+    And the email parts should contain "This email is to inform you that you may now review the allocation of funds approved in response to Request of Money Taking Club from Money Taking Fund."
+    And the email text should contain "A customized *allocate* message."
+    And the email html should contain "A customized <em>allocate</em> message."
+    And the email text should contain "A queue-specific *allocate* message."
+    And the email html should contain "A queue-specific <em>allocate</em> message."
 
   Scenario: Send notice regarding a withdrawn fund_request
     Given all emails have been delivered

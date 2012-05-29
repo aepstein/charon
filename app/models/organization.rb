@@ -30,7 +30,8 @@ class Organization < ActiveRecord::Base
 
     def released
       FundSource.where { |s| s.id.in( proxy_association.owner.fund_grants.
-        released.select { fund_source_id } ) }
+        where { id.in( FundRequest.unscoped.released.select { fund_grant_id } ) }.
+        select { fund_source_id } ) }
     end
 
     # For what sources has no grant been created for this organization?

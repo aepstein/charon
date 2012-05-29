@@ -18,7 +18,7 @@ Feature: Manage activity accounts
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: the manager_role
     And a user: "regular" exists
-    And a university_account exists with department_code: "A00", subledger_code: "0000", organization: organization "recipient"
+    And a university_account exists with account_code: "A000000", organization: organization "recipient"
     And an activity_account exists with university_account: the university_account
     And I log in as user: "<user>"
     And I am on the new activity_account page for the university_account
@@ -33,7 +33,7 @@ Feature: Manage activity accounts
     Then I should <show> authorized
     And I should <update> "Edit"
     Given I am on the activity_accounts page for organization: "recipient"
-    Then I should <show> "A00"
+    Then I should <show> "A000000"
     And I should <update> "Edit"
     And I should <destroy> "Destroy"
     Given I am on the activity_accounts page for the university_account
@@ -51,8 +51,8 @@ Feature: Manage activity accounts
       | regular           | not see | not see | not see | not see | not see |
 
   Scenario: Create and update activity_accounts
-    Given a university_account: "first" exists with department_code: "A00", subledger_code: "0001"
-    And a university_account: "second" exists with department_code: "B00", subledger_code: "0002"
+    Given a university_account: "first" exists with account_code: "A000001"
+    And a university_account: "second" exists with account_code: "B000002"
     And a fund_source exists with name: "SAFC"
     And a fund_source exists with name: "ISPB"
     And a category exists with name: "SAFC Local Event"

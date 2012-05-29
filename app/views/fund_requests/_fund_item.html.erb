@@ -15,7 +15,8 @@
   <% end %>
   <%= table_row_tag( false ) do %>
     <td>Allocated amount</td>
-    <td><%=number_to_currency fund_item.released_amount %></td>
+    <td><%=number_to_currency fund_request.fund_allocations.final.
+      select { |a| a.fund_item_id == fund_item.id }.first.try :amount %></td>
   <% end %>
 <% end %>
 <% fund_item.fund_editions.for_request( fund_request ).each do |fund_edition| %>
