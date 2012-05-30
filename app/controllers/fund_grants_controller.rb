@@ -45,7 +45,6 @@ class FundGrantsController < ApplicationController
 
     respond_to do |format|
       format.html { render :action => 'index' }
-      format.csv { csv_index }
       format.xml  { render :xml => @fund_grants }
     end
   end
@@ -150,29 +149,6 @@ class FundGrantsController < ApplicationController
       add_breadcrumb @organization.name, url_for( @organization )
       add_breadcrumb 'Fund grants', organization_fund_grants_path( @organization )
     end
-  end
-
-  def csv_index
-    csv_string = ""
-    CSV.generate(csv_string) do |csv|
-      csv << ( ['organizations', 'independent?', 'registered?', 'account(s)','club sport?','state','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
-      @fund_grants_unpaginated.each do |fund_grant|
-        next unless permitted_to?( :show, fund_grant )
-        csv << ( [ fund_grant.organization.name,
-                   ( fund_grant.organization.independent? ? 'Yes' : 'No' ),
-                   ( fund_grant.organization.registered? ? 'Yes' : 'No' ),
-                   fund_grant.organization.university_accounts.map(&:to_s).join(";"),
-                   ( fund_grant.organization.club_sport? ? 'Yes' : 'No' ),
-                   "#{fund_grant.fund_items.sum(:released_amount)}" ] +
-                   Category.all.map do |c|
-                     fund_grant.fund_items.joins { node }.where {
-                       node.category_id == c.id
-                     }.sum(:released_amount).to_s
-                   end
-               )
-      end
-    end
-    send_data csv_string, :disposition => "attachment; filename=fund_grants.csv", :type => 'text/csv'
   end
 
 end

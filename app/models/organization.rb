@@ -1,7 +1,7 @@
 class Organization < ActiveRecord::Base
   SEARCHABLE = [ :name_contains ]
   attr_accessible :organization_profile_attributes
-  attr_accessible :first_name, :last_name, :club_sport,
+  attr_accessible :first_name, :last_name,
     :organization_profile_attributes, :member_sources_attributes, as: :admin
 
   notifiable_events :registration_required

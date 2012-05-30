@@ -1,11 +1,11 @@
 class FundRequestsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index, :duplicate, :inactive, :unqueued ]
-  before_filter :new_fund_request_from_params, :only => [ :new, :create ]
+  before_filter :initialize_index, only: [ :index, :duplicate, :inactive, :unqueued ]
+  before_filter :new_fund_request_from_params, only: [ :new, :create ]
   before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :reject, :do_reject, :destroy,
-    :show, :submit, :withdraw, :reconsider, :attribute_check => true
+    :show, :submit, :withdraw, :reconsider, attribute_check: true
   filter_access_to :documents_report do
     permitted_to! :show, @fund_request
   end
@@ -120,7 +120,6 @@ class FundRequestsController < ApplicationController
 
     respond_to do |format|
       format.html { render :action => 'index' }
-      format.csv { csv_index }
       format.xml  { render :xml => @fund_requests }
     end
   end
@@ -237,24 +236,6 @@ class FundRequestsController < ApplicationController
       add_breadcrumb @organization.name, url_for( @organization )
       add_breadcrumb 'Fund Requests', organization_fund_requests_path( @organization )
     end
-  end
-
-  def csv_index
-    csv_string = ""
-    CSV.generate(csv_string) do |csv|
-      csv << ( ['organizations', 'independent?','club sport?','status','fund_request','review','allocation'] + Category.all.map { |c| "#{c.name} allocation" } )
-      @search.each do |fund_request|
-        next unless permitted_to?( :review, fund_request )
-        csv << ( [ fund_request.fund_grant.organization.name,
-                   ( fund_request.fund_grant.organization.independent? ? 'Yes' : 'No' ),
-                   ( fund_request.fund_grant.organization.club_sport? ? 'Yes' : 'No' ),
-                   fund_request.status,
-                   "#{fund_request.fund_editions.where(:perspective => 'requestor').sum('amount')}",
-                   "#{fund_request.fund_editions.where(:perspective => 'reviewer').sum('amount')}",
-                   "#{fund_request.fund_items.sum('fund_items.amount')}" ] + Category.all.map { |c| "#{fund_request.fund_items.allocation_for_category(c)}" } )
-      end
-    end
-    send_data csv_string, :disposition => "attachment; filename=fund_requests.csv", :type => 'text/csv'
   end
 
 end

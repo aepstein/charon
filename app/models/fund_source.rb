@@ -17,8 +17,8 @@ class FundSource < ActiveRecord::Base
     end
     def released_report
       category_sql = proxy_association.owner.structure.categories.map do |c|
-        "(SELECT SUM(fund_allocations.amount) FROM fund_items " +
-        "INNER JOIN fund_allocations ON fund_items.id = fund_allocations.fund_item_id " +
+        "(SELECT SUM(fund_allocations.amount) FROM fund_allocations " +
+        "INNER JOIN fund_items ON fund_items.id = fund_allocations.fund_item_id " +
         "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
         "WHERE fund_items.fund_grant_id = fund_grants.id AND " +
         "nodes.category_id = #{c.id} )"
@@ -46,8 +46,7 @@ class FundSource < ActiveRecord::Base
         (SELECT independent FROM registrations INNER JOIN registration_terms ON
         registrations.registration_term_id = registration_terms.id WHERE
         registration_terms.current = 1 AND registrations.organization_id =
-        organizations.id LIMIT 1) AS independent, BINARY
-        organizations.club_sport, (SELECT
+        organizations.id LIMIT 1) AS independent, (SELECT
         SUM(fund_allocations.amount) FROM fund_items INNER JOIN
         fund_allocations ON fund_items.id = fund_allocations.fund_item_id WHERE
         fund_items.fund_grant_id = fund_grants.id) AS allocation
@@ -59,7 +58,9 @@ class FundSource < ActiveRecord::Base
       SQL
       CSV.generate do |csv|
         csv << (
-          %w( organization account subaccount active? returning? registered? independent? club_sport? allocation ) + proxy_association.owner.structure.categories.map(&:name)
+          %w( organization account subaccount active? returning? registered?
+            independent? allocation ) + proxy_association.owner.structure.
+            categories.map(&:name)
         )
         rows.each { |row| csv << row }
       end
@@ -70,23 +71,8 @@ class FundSource < ActiveRecord::Base
       future.first
     end
   end
-  # TODO allocation methods need flexible_budgets rework
+
   has_many :fund_requests, through: :fund_grants do
-
-    # Allocate all requests associated with this fund source
-    # * apply club_sport and other caps according to how organizations are recorded
-    # * TODO: this method should be relocated to the fund_queue with which
-    #   allocated requests are associated
-    def allocate_with_caps(club_sport, other)
-      with_state( :certified ).includes( :organization, { fund_items: :fund_editions } ).each do |r|
-        if r.organization.club_sport?
-          r.fund_items.allocate club_sport
-        else
-          r.fund_items.allocate other
-        end
-      end
-    end
-
     # Returns an array with rows representing different request states.
     # For each row, contents are:
     # * state name
