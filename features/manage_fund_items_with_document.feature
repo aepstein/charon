@@ -25,7 +25,7 @@ Feature: Manage fund_items with document
     When I press "Create"
     Then I should see "Fund item was successfully created."
     When I follow "Show" for the 1st fund_item for fund_request: "focus"
-    Then I should see the following documents:
+    Then I should see the following entries in "#documents":
       | Type        |
       | price quote |
     When I follow "Edit"
@@ -34,7 +34,7 @@ Feature: Manage fund_items with document
     When I press "Update"
     Then I should see "Fund item was successfully updated."
     When I follow "Show" for the 1st fund_item for fund_request: "focus"
-    Then I should see the following documents:
+    Then I should see the following entries in "#documents":
       | Type        |
       | price quote |
     When I follow "Edit"

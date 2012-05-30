@@ -1,5 +1,5 @@
 class FundAllocation < ActiveRecord::Base
-  attr_accessible :amount, :fund_item
+  attr_accessible :amount, :fund_item, :fund_request_id
   attr_readonly :fund_item_id, :fund_request_id
 
   belongs_to :fund_item, inverse_of: :fund_allocations

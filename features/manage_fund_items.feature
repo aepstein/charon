@@ -5,7 +5,7 @@ Feature: Manage fund_items
 
   Background:
     Given a user: "admin" exists with admin: true, first_name: "Head", last_name: "Honcho", net_id: "hh001"
-@wip
+
   Scenario Outline: Test permissions for fund_items controller
     Given an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"

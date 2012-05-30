@@ -91,7 +91,8 @@ class FundItem < ActiveRecord::Base
   has_ancestry orphan_strategy: :destroy
 
   accepts_nested_attributes_for :fund_editions
-  accepts_nested_attributes_for :fund_allocations
+  accepts_nested_attributes_for :fund_allocations,
+    reject_if: proc { |a| a['amount'].blank? }
 
   scope :ordered, order { position }
 
