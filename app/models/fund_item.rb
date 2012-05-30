@@ -1,10 +1,25 @@
 class FundItem < ActiveRecord::Base
-  attr_accessible :node_id, :parent_id, :amount, :fund_editions_attributes
+  attr_accessible :node_id, :parent_id, :amount, :fund_editions_attributes,
+    :fund_allocations_attributes
   attr_readonly :fund_request_id, :node_id, :ancestry, :parent_id
 
   belongs_to :node, inverse_of: :fund_items
   belongs_to :fund_grant, touch: true, inverse_of: :fund_items
-  has_many :fund_allocations, inverse_of: :fund_item, dependent: :destroy
+  has_many :fund_allocations, inverse_of: :fund_item, dependent: :destroy do
+    def find_or_build_for_fund_request( fund_request )
+      fund_allocation = for_request( fund_request )
+      return fund_allocation unless fund_allocation.blank?
+      build_for_fund_request fund_request
+    end
+    def build_for_fund_request( fund_request )
+      fund_allocation = build
+      fund_allocation.fund_request = fund_request
+      fund_allocation
+    end
+    def for_request(  fund_request )
+      select { |a| a.fund_request == fund_request }
+    end
+  end
   has_many :fund_editions, inverse_of: :fund_item, dependent: :destroy do
 
     # Editions associated with a specific request
@@ -32,7 +47,7 @@ class FundItem < ActiveRecord::Base
     # * skips build if an existing new record exists or if the last perspective
     #   is present
     def populate_for_fund_request( request )
-      return if @association.owner.node.blank?
+      return if proxy_association.owner.node.blank?
       last = for_request( request ).last
       if last.blank? || ( last.persisted? && last.perspective != FundEdition::PERSPECTIVES.last )
         next_edition = build_next_for_fund_request( request )
@@ -76,6 +91,7 @@ class FundItem < ActiveRecord::Base
   has_ancestry orphan_strategy: :destroy
 
   accepts_nested_attributes_for :fund_editions
+  accepts_nested_attributes_for :fund_allocations
 
   scope :ordered, order { position }
 

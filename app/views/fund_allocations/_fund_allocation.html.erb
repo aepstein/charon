@@ -1,0 +1,9 @@
+<% fund_item ||= false %>
+<%= table_row_tag do %>
+  <% unless fund_item %>
+  <td><%= fund_allocation.fund_item %></td>
+  <% end %>
+  <td><%= fund_allocation.fund_request %></td>
+  <td><%= fund_allocation.amount %></td>
+<% end %>
+

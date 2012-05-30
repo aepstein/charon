@@ -21,7 +21,7 @@ Feature: Manage fund_grants authorization
     And a user: "observer_requestor" exists
     And a membership exists with user: user "observer_requestor", organization: organization "observer", role: role "requestor"
     And a user: "regular" exists
-@wip
+
   Scenario Outline: Show allocations
     Given a category: "administrative" exists with name: "Administrative"
     And a category: "event" exists with name: "Events"

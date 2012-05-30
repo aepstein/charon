@@ -12,10 +12,9 @@ class CreateFundAllocations < ActiveRecord::Migration
       unique: true
     say 'Populating initial fund_allocations...'
     execute <<-SQL
-      INSERT INTO fund_allocations ( amount, state, fund_item_id,
+      INSERT INTO fund_allocations ( amount, fund_item_id,
       fund_request_id, created_at, updated_at ) SELECT
       IF(fund_grants.released_at IS NOT NULL,released_amount,amount),
-      IF(fund_grants.released_at IS NOT NULL,'released','unreleased'),
       fund_items.id, fund_requests.id, fund_items.updated_at, fund_items.updated_at
       FROM fund_requests INNER JOIN fund_grants ON
       fund_requests.fund_grant_id = fund_grants.id INNER JOIN fund_items ON

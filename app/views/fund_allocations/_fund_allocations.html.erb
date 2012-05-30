@@ -1,0 +1,17 @@
+<% fund_item ||= false %>
+<table class="fund_allocations">
+  <thead>
+    <tr>
+      <% unless fund_item %>
+      <th>Item</th>
+      <% end %>
+      <th>Request</th>
+      <th>Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%=render partial: 'fund_allocations/fund_allocation',
+      collection: fund_allocations, fund_item: fund_item %>
+  </tbody>
+</table>
+
