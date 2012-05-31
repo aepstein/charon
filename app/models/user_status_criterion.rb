@@ -3,8 +3,8 @@ class UserStatusCriterion < ActiveRecord::Base
 
   is_fulfillable
 
-  validates :statuses_mask, :uniqueness => true,
-    :numericality => { :only_integer => true, :greater_than => 0 }
+  validates :statuses_mask, uniqueness: true,
+    numericality: { only_integer: true, greater_than: 0 }
 
   def statuses=(statuses)
     self.statuses_mask = (statuses & User::STATUSES).map { |s| 2**User::STATUSES.index(s) }.sum

@@ -2,21 +2,21 @@ class Document < ActiveRecord::Base
   attr_accessible :document_type_id, :original, :original_cache
   attr_readonly :document_type_id
 
-  belongs_to :fund_edition, :inverse_of => :documents
-  belongs_to :document_type, :inverse_of => :documents
+  belongs_to :fund_edition, inverse_of: :documents
+  belongs_to :document_type, inverse_of: :documents
 
   mount_uploader :original, PdfUploader
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  validates :original, :presence => true, :integrity => true,
-    :file_size => { :maximum => :max_size }
-  validates :fund_edition, :presence => true
-  validates :document_type, :presence => true
-  validates :document_type_id, :uniqueness => { :scope => [ :fund_edition_id ] }
+  validates :original, presence: true, integrity: true,
+    file_size: { maximum: :max_size }
+  validates :fund_edition, presence: true
+  validates :document_type, presence: true
+  validates :document_type_id, uniqueness: { scope: [ :fund_edition_id ] }
   validate :document_type_must_be_allowed_by_fund_edition
 
-  default_scope includes( :document_type ).order( 'document_types.name ASC' )
+  scope :ordered, joins { document_type }.order { document_types.name }
 
   def max_size; return document_type.max_size if document_type; end
 

@@ -7,9 +7,8 @@ class Approval < ActiveRecord::Base
   belongs_to :approvable, polymorphic: true
   belongs_to :user, inverse_of: :approvals
 
-  default_scope includes( :user ).
-    order( 'users.last_name ASC, users.first_name ASC, users.middle_name ASC' )
-
+  scope :ordered, joins { user }.
+    order { [ users.last_name, users.first_name, users.middle_name ] }
   scope :agreements, where( :approvable_type => 'Agreement' )
   scope :fund_requests, where( :approvable_type => 'FundRequest' )
   scope :at_or_after, lambda { |time| where { |a| a.created_at.gte( time ) } }

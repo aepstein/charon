@@ -26,8 +26,8 @@ class FundEdition < ActiveRecord::Base
     end
 
     def populate
-      return if @association.owner.fund_item.blank? || @association.owner.fund_item.node.blank?
-      @association.owner.fund_item.node.document_types.each do |type|
+      return if proxy_association.owner.fund_item.blank? || proxy_association.owner.fund_item.node.blank?
+      proxy_association.owner.fund_item.node.document_types.each do |type|
         build_for_type( type ) unless self.map(&:document_type).include? type
       end
     end

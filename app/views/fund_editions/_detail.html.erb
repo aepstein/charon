@@ -22,6 +22,6 @@
 <% end %>
 
 <% unless detail.documents.empty? %>
-  <%= render :partial => 'documents/documents', :object => detail.documents %>
+  <%= render :partial => 'documents/documents', :object => detail.documents.ordered %>
 <% end %>
 

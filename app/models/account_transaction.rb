@@ -16,7 +16,7 @@ class AccountTransaction < ActiveRecord::Base
   end
   has_many :activity_accounts, :through => :adjustments do
     def allowed
-      ActivityAccount.organization_id_in( @association.owner.organization_ids )
+      ActivityAccount.organization_id_in( proxy_association.owner.organization_ids )
     end
   end
 

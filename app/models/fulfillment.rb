@@ -6,14 +6,14 @@ class Fulfillment < ActiveRecord::Base
 
   attr_accessible :fulfiller, :fulfillable
 
-  belongs_to :fulfiller, :polymorphic => true
-  belongs_to :fulfillable, :polymorphic => true
+  belongs_to :fulfiller, polymorphic: true
+  belongs_to :fulfillable, polymorphic: true
 
-  validates :fulfiller_type, :inclusion => { :in => FULFILLABLE_TYPES.keys }
-  validates :fulfiller, :presence => true
-  validates :fulfillable, :presence => true
+  validates :fulfiller_type, inclusion: { in: FULFILLABLE_TYPES.keys }
+  validates :fulfiller, presence: true
+  validates :fulfillable, presence: true
   validates :fulfillable_id,
-    :uniqueness => { :scope => [ :fulfillable_type, :fulfiller_id, :fulfiller_type ] }
+    uniqueness: { scope: [ :fulfillable_type, :fulfiller_id, :fulfiller_type ] }
   validate :fulfillable_must_be_for_fulfiller
 
   protected

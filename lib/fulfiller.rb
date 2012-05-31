@@ -3,12 +3,12 @@ module Fulfiller
   module ClassMethods
 
     def is_fulfiller
-      has_many :fulfillments, :as => :fulfiller, :dependent => :delete_all do
+      has_many :fulfillments, as: :fulfiller, dependent: :delete_all do
         # Register fulfillment for all the criteria met by this actor
         def fulfill!
-          Fulfillment::FULFILLABLE_TYPES[ @association.owner.class.to_s ].each do |fulfillable_type|
+          Fulfillment::FULFILLABLE_TYPES[ proxy_association.owner.class.to_s ].each do |fulfillable_type|
             current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
-            @association.owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
+            proxy_association.owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
               unless current.include?( criterion.id )
                 #TODO: Since Rails 3.1.1 had to force fulfiller (if bug fixed, can drop fulfiller)
                 create!( :fulfillable => criterion )
@@ -19,8 +19,8 @@ module Fulfiller
 
         # Remove fulfillments for all criteria no longer met by this actor
         def unfulfill!
-          Fulfillment::FULFILLABLE_TYPES[ @association.owner.class.to_s ].each do |fulfillable_type|
-            current = @association.owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
+          Fulfillment::FULFILLABLE_TYPES[ proxy_association.owner.class.to_s ].each do |fulfillable_type|
+            current = proxy_association.owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
             delete where( :fulfillable_type => fulfillable_type ).
               reject { |f| current.include? f.fulfillable_id }
           end

@@ -87,6 +87,7 @@ class ApprovalsController < ApplicationController
     @approvals = @approvals.where( :user_id => @user.id ) if @user
     # Kludge to get index behavior correct without using with_permissions_to scope
     @approvals = @approvals.where( :user_id => current_user.id ) if @approvable.class == Agreement && !current_user.role_symbols.include?( :admin )
+    @approvals = @approvals.ordered
   end
 
   def new_approval_from_params

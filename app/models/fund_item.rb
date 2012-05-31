@@ -70,7 +70,7 @@ class FundItem < ActiveRecord::Base
       end
 
       next_edition = build( attributes )
-      next_edition.build_requestable if @association.owner.node.requestable_type?
+      next_edition.build_requestable if proxy_association.owner.node.requestable_type?
       if last_edition
         next_edition.attributes = last_edition.attributes
         if last_edition.requestable

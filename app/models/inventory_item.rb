@@ -8,11 +8,8 @@ class InventoryItem < ActiveRecord::Base
 
   has_paper_trail class_name: 'SecureVersion'
 
-  default_scope includes(:organization).
-    order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
-    'inventory_items.identifier ASC, inventory_items.acquired_on ASC, ' +
-    'inventory_items.description ASC' )
-
+  scope :ordered, joins { organization }.order { [ organizations.last_name,
+    organizations.first_name, identifier, acquired_on, description ] }
   scope :active, where( :retired_on => nil)
   scope :retired, where { retired_on != nil }
   scope :organization_name_contains, lambda { |name|
