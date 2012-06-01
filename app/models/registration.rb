@@ -3,23 +3,23 @@ class Registration < ActiveRecord::Base
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
   SEARCHABLE = [ :named ]
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  belongs_to :organization, :inverse_of => :registrations
-  belongs_to :registration_term, :inverse_of => :registrations
-  has_many :memberships, :dependent => :destroy, :inverse_of => :registration do
+  belongs_to :organization, inverse_of: :registrations
+  belongs_to :registration_term, inverse_of: :registrations
+  has_many :memberships, dependent: :destroy, inverse_of: :registration do
     def users
       self.map { |membership| [ membership.role, membership.user ] }
     end
   end
-  has_many :users, :through => :memberships, :uniq => true
+  has_many :users, through: :memberships, uniq: true
 
-  default_scope :order => "registrations.name ASC"
+  default_scope order { name }
 
   scope :active, joins { registration_term }.where { registration_terms.current.eq( true ) }
   scope :inactive, joins { registration_term }.where { registration_terms.current.eq( false ) |
     registration_terms.current.eq( nil ) }
-  scope :registered, where { registered.eq( true) }
+  scope :registered, where { registered.eq( true ) }
   scope :unmatched, where( :organization_id => nil )
   scope :named, lambda { |name| where { registrations.name.like( "%#{name}%" ) } }
   scope :min_percent_members_of_type, lambda { |percent, type|
