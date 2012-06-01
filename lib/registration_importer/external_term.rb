@@ -14,19 +14,19 @@ module RegistrationImporter
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
     self.table_name = "terms"
-    self.primary_key = :term_id
-    default_scope :select => MAP.keys.join(', ')
+    self.primary_key = "term_id"
+    default_scope select( MAP.keys )
 
-    has_many :registrations, :class_name => 'ExternalRegistration', :foreign_key => :term_id do
+    has_many :registrations, class_name: 'ExternalRegistration', foreign_key: :term_id do
       def latest
         latest = Registration.unscoped.
-        where( :external_term_id => @association.owner.term_id ).
-        where( Registration.arel_table[:when_updated].not_eq( nil ) ).
+        where { |r| r.external_term_id.eq( proxy_association.owner.term_id ) }.
+        where { when_updated.not_eq( nil ) }.
         maximum(:when_updated)
         if latest
-          return where( :updated_time.gt => latest )
+          return where { |e| e.updated_time.gt( latest ) }
         end
-        ExternalRegistration.where( "orgs.term_id = #{@association.owner.term_id}" )
+        ExternalRegistration.where { |e| e.term_id.eq( proxy_association.owner.term_id ) }
       end
     end
 
@@ -46,16 +46,16 @@ module RegistrationImporter
 
     def self.import
       adds, changes, starts = 0, 0, Time.now
-      ExternalTerm.all.each do |source|
+      scoped.reset.all.each do |source|
         destination = RegistrationTerm.find_or_initialize_by_external_id( source.term_id )
         destination.attributes = source.import_attributes( REGISTRATION_TERM_ATTRIBUTES )
         adds += 1 if destination.new_record?
         changes += 1 if destination.changed?
-        destination.save if destination.changed?
+        destination.save! if destination.changed?
       end
       d = RegistrationTerm.unscoped
-      if ExternalTerm.all.length > 0
-        d = d.where( 'external_id NOT IN (?)', ExternalTerm.all.map(&:term_id) )
+      if count > 0
+        d = d.where( 'external_id NOT IN (?)', all.map(&:term_id) )
       end
       deletes = d.map(&:destroy).length
       [adds, (changes - adds), deletes, ( Time.now - starts )]

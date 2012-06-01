@@ -1,5 +1,5 @@
-ActiveRecord::Base
-require 'composite_primary_keys'
+#ActiveRecord::Base
+#require 'composite_primary_keys'
 
 module RegistrationImporter
   module ClassMethods

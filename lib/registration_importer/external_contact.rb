@@ -24,25 +24,19 @@ module RegistrationImporter
     }
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
-    self.table_name = "orgs_contacts"
-    self.primary_keys = [ :org_id, :term_id, :contacttype ]
-    default_scope select( MAP.keys.join(', ') )
+    self.table_name = "charon_orgs_contacts"
+    self.primary_key = "id"
+#    self.primary_keys = [ :org_id, :term_id, :contacttype ]
+    default_scope order { [ term_id, org_id, contacttype ] }.
+      select( MAP.keys + [ :id ] )
 
-    belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
+    belongs_to :term, class_name: 'ExternalTerm', foreign_key: :term_id
+    belongs_to :registration, class_name: 'ExternalRegistration',
+      foreign_key: :full_org_id
 
-    def registration=(new_registration)
-      self.org_id = new_registration.org_id
-      self.term_id = new_registration.term_id
-      @registration = new_registration
-    end
-
-    def registration
-      return @registration = nil unless org_id? && term_id?
-      @registration ||= ExternalRegistration.find(org_id, term_id)
-    end
-
-    def users
-      net_ids.inject([]) do |memo, net_id|
+    def users(reset = false)
+      @users = nil if reset
+      @users ||= net_ids.inject([]) do |memo, net_id|
         user = User.find_or_initialize_by_net_id( net_id )
         user.attributes = import_attributes( USER_ATTRIBUTES )
         user.save!

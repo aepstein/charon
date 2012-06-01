@@ -11,7 +11,7 @@ module Charon
     config.autoload_paths += %W(#{::Rails.root}/lib)
     config.encoding = "utf-8"
     config.time_zone = 'Eastern Time (US & Canada)'
-    config.action_mailer.default_url_options = { :host => "assembly.cornell.edu/charon", :protocol => 'https' }
+    config.action_mailer.default_url_options = { host: "assembly.cornell.edu/charon", protocol: 'https' }
     config.active_record.identity_map = true
     config.assets.enabled = true
     config.assets.version = '1.0'

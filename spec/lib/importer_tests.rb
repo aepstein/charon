@@ -4,8 +4,8 @@ module SpecImporterTests
 
   def clean_external_registrations_db
     RegistrationImporter::ExternalTerm.delete_all
-    RegistrationImporter::ExternalRegistration.delete_all
-    RegistrationImporter::ExternalContact.delete_all
+    RegistrationImporter::WritableExternalRegistration.delete_all
+    RegistrationImporter::WritableExternalContact.delete_all
   end
 
   def getter_tests(object,tests)

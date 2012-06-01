@@ -4,7 +4,7 @@ class RegistrationTerm < ActiveRecord::Base
 
   scope :current, where( :current => true )
 
-  has_many :registrations, :dependent => :nullify, :inverse_of => :registration_term do
+  has_many :registrations, dependent: :nullify, inverse_of: :registration_term do
     # Update registrations:
     # * dissociate registrations that do not have a non-matching external term id
     # * associate registrations that have a matching external term id
@@ -22,7 +22,7 @@ class RegistrationTerm < ActiveRecord::Base
       proxy_association.reset
     end
   end
-  has_many :memberships, :through => :registrations do
+  has_many :memberships, through: :registrations do
     # Sets memberships' activation status to match registration setting
     def activate!
       ids = proxy_association.owner.registration_ids

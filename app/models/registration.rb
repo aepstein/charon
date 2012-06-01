@@ -3,6 +3,8 @@ class Registration < ActiveRecord::Base
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
   SEARCHABLE = [ :named ]
 
+  attr_readonly :external_term_id, :external_id
+
   has_paper_trail class_name: 'SecureVersion'
 
   belongs_to :organization, inverse_of: :registrations
@@ -118,9 +120,12 @@ class Registration < ActiveRecord::Base
   # by checking if another organization is matched by the same external id
   def adopt_organization
     if external_id? && organization.blank?
-      self.organization = Organization.joins { registrations }.merge(
-        Registration.unscoped.where( :external_id => external_id ) ).
-        readonly(false).first
+      self.organization = Organization.where { |o| o.id.in(
+        Registration.unscoped.where( :external_id => external_id ).
+        select { organization_id } ) }.first
+#      self.organization = Organization.joins { registrations }.merge(
+#        Registration.unscoped.where( :external_id => external_id ) ).
+#        readonly(false).first
     end
     true
   end
