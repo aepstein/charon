@@ -1,9 +1,13 @@
 require 'registration_importer'
 
 module RegistrationImporter
-  class WritableExternalRegistration < ExternalRegistration
+  class WritableExternalRegistration < ActiveRecord::Base
+    establish_connection "external_registrations_#{::Rails.env}".to_sym
     self.table_name = "orgs"
-    self.primary_key = :fake_id
+    self.primary_key = "fake_id"
+
+    belongs_to :term, class_name: 'ExternalTerm', foreign_key: :term_id,
+      primary_key: :term_id
 
     def id
       return nil if term_id.blank? || org_id.blank?
@@ -11,9 +15,10 @@ module RegistrationImporter
     end
   end
 
-  class WritableExternalContact < ExternalContact
+  class WritableExternalContact < ActiveRecord::Base
+    establish_connection "external_registrations_#{::Rails.env}".to_sym
     self.table_name = "orgs_contacts"
-    self.primary_key = :fake_id
+    self.primary_key = "fake_id"
 
 #    def registration=(registration)
 #      self.full_org_id = registration.id

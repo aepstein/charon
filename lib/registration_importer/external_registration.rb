@@ -46,10 +46,10 @@ module RegistrationImporter
     belongs_to :term, class_name: 'ExternalTerm', foreign_key: :term_id
     has_many :contacts, class_name: 'ExternalContact', foreign_key: :full_org_id
 
-    def contacts(reset=false)
-      @contacts = nil if reset
-      @contacts ||= ExternalContact.where( :org_id => org_id, :term_id => term_id )
-    end
+#    def contacts(reset=false)
+#      @contacts = nil if reset
+#      @contacts ||= ExternalContact.where( :org_id => org_id, :term_id => term_id )
+#    end
 
     def contacts_users(reset=false)
       @contacts_users = nil if reset
