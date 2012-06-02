@@ -39,7 +39,7 @@ describe Organization do
     @registered_organization.registrations.first.registered?.should be_true
     @registered_organization.registrations.count.should eql 1
     Registration.active.count.should eql 1
-    @registered_organization.registrations.current.should_not be_nil
+    @registered_organization.current_registration.should_not be_blank
     @registered_organization.registered?.should be_true
     create(:organization).registered?.should be_false
   end

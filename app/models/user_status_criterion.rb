@@ -3,6 +3,10 @@ class UserStatusCriterion < ActiveRecord::Base
 
   is_fulfillable
 
+  scope :with_status, lambda { |status|
+    where "statuses_mask & #{2**User::STATUSES.index(status)} > 0"
+  }
+
   validates :statuses_mask, uniqueness: true,
     numericality: { only_integer: true, greater_than: 0 }
 

@@ -11,7 +11,7 @@ module Fulfiller
             proxy_association.owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
               unless current.include?( criterion.id )
                 #TODO: Since Rails 3.1.1 had to force fulfiller (if bug fixed, can drop fulfiller)
-                create!( :fulfillable => criterion )
+                create!( fulfillable: criterion )
               end
             end
           end
@@ -21,7 +21,7 @@ module Fulfiller
         def unfulfill!
           Fulfillment::FULFILLABLE_TYPES[ proxy_association.owner.class.to_s ].each do |fulfillable_type|
             current = proxy_association.owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
-            delete where( :fulfillable_type => fulfillable_type ).
+            delete where( fulfillable_type: fulfillable_type ).
               reject { |f| current.include? f.fulfillable_id }
           end
         end

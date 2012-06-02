@@ -54,6 +54,7 @@ describe Approval do
     user = create(:user)
     agreement = create(:agreement)
     approval = create(:approval, :user => user, :approvable => agreement)
+    user.association(:fulfillments).proxy.reset
     user.fulfillments.size.should eql 1
     user.fulfillments.first.fulfillable.should eql agreement
     approval.destroy

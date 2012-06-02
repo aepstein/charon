@@ -3,6 +3,24 @@ class RegistrationCriterion < ActiveRecord::Base
 
   is_fulfillable
 
+  scope :minimal_percentage_fulfilled_by, lambda { |registration|
+    where { |r|
+      Registration::MEMBER_TYPES.map { |type|
+        r.type_of_member.eq( type ) & ( r.minimal_percentage.lte( registration.percent_members_of_type( type ) ) )
+      }.inject(:|)
+    }
+  }
+  scope :must_register_fulfilled_by, lambda { |registration|
+    if registration.registered?
+      scoped
+    else
+      where { must_register.not_eq( true ) }
+    end
+  }
+  scope :fulfilled_by, lambda { |registration|
+    minimal_percentage_fulfilled_by(registration).must_register_fulfilled_by(registration)
+  }
+
   validates :minimal_percentage, :numericality => { :integer_only => true,
     :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100,
     :allow_blank => true }

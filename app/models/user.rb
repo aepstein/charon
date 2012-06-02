@@ -29,20 +29,11 @@ class User < ActiveRecord::Base
   is_fulfiller
   is_authenticable
 
-  has_many :approvals, inverse_of: :user do
-    def agreements
-      self.select { |approval| approval.approvable_type == 'Agreement' }
-    end
-    def fund_requests
-      self.select { |approval| approval.approvable_type == 'FundRequest' }
-    end
-    def agreement_ids
-      self.agreements.map(&:approvable_id)
-    end
-    def fund_request_ids
-      self.fund_requests.map(&:approvable_id)
-    end
-  end
+  has_many :approvals, inverse_of: :user
+  has_many :approved_agreements, through: :approvals, source: :approvable,
+    source_type: 'Agreement'
+  has_many :approved_fund_requests, through: :approvals, source: :approvable,
+    source_type: 'FundRequest'
   has_many :memberships, dependent: :destroy, inverse_of: :user
   has_many :roles, through: :memberships, conditions: [ 'memberships.active = ?', true ] do
     def in(organizations)
@@ -111,15 +102,13 @@ class User < ActiveRecord::Base
 
   # Returns the user status criterions that the user presently fulfills
   def user_status_criterions
-    UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
+    UserStatusCriterion.with_status status
   end
 
   # Returns the agreements (and therefore agreement criteria) that the user
   # presently fulfills
   def agreements
-    Agreement.find( approvals.where( approvable_type: 'Agreement' ).map { |approval|
-      approval.approvable_id
-    } )
+    approved_agreements
   end
 
   # What frameworks is the user eligible for?
