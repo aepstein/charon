@@ -48,7 +48,7 @@ class Registration < ActiveRecord::Base
   # * can only fulfill criterions if the registration is current
   def registration_criterions
     return [] unless active?
-    RegistrationCriterion.all.inject([]) do |memo, criterion|
+    RegistrationCriterion.scoped.reset.all.inject([]) do |memo, criterion|
       fulfills?( criterion ) ? memo << criterion : memo
     end
   end

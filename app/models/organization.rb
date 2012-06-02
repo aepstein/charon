@@ -42,11 +42,13 @@ class Organization < ActiveRecord::Base
   has_many :inventory_items, dependent: :destroy, inverse_of: :organization
   has_many :memberships, dependent: :destroy, inverse_of: :organization
   has_many :member_sources, inverse_of: :organization
-  has_many :registrations, dependent: :nullify, inverse_of: :organization do
-    def current
-      select { |registration| registration.current? }.first
-    end
-  end
+  has_many :registrations, dependent: :nullify, inverse_of: :organization
+  has_one :current_registration, class_name: 'Registration',
+    conditions: [ "registrations.registration_term_id IN (SELECT " +
+      "registration_term_id FROM registration_terms WHERE current = ?)", true ]
+  # TODO: registration fulfillment of criterions should be handled directly between
+  # the two
+#  has_many :registration_criterions, through: :current_registration
   has_many :roles, through: :memberships do
     def user_id_equals( id )
       scoped.where( 'memberships.user_id = ?', id )
@@ -104,8 +106,8 @@ class Organization < ActiveRecord::Base
 
   #search_methods :name_contains
 
-  validates :last_name, :presence => true,
-    :uniqueness => { :scope => [ :first_name ] }
+  validates :last_name, presence: true,
+    uniqueness: { scope: [ :first_name ] }
 
   def frameworks( perspective, user = nil )
     return super( perspective ) if user.blank?
@@ -113,17 +115,16 @@ class Organization < ActiveRecord::Base
   end
 
   def registration_criterions
-    return [] unless registrations.current
-    registrations.current.registration_criterions
+    return [] unless current_registration
+    current_registration.registration_criterions
   end
 
   def registration_criterion_ids
-    registration_criterions.map( &:id )
+    registration_criterions.map &:id
   end
 
   def registered?
-    return false if registrations.current.blank?
-    registrations.current.registered?
+    current_registration && current_registration.registered?
   end
 
   # Checks whether requestor recipients are present as active members
@@ -137,7 +138,7 @@ class Organization < ActiveRecord::Base
   end
 
   def independent?
-    return registrations.current.independent? unless registrations.current.blank?
+    return current_registration.independent? unless current_registration.blank?
     return registrations.joins { registration_term }.last(:order => 'registration_terms.starts_at ASC').independent? unless registrations.empty?
     false
   end

@@ -30,13 +30,13 @@ the <%=link_to 'Student Activities Office', 'http://sao.cornell.edu/SO/' %>.
   <b>Registered?</b> <%= @organization.registered? ? 'Yes' : 'No' %>
 </p>
 
-<% if @organization.registrations.current %>
+<% if @organization.current_registration %>
 <p>
-  <b>Percent Undergrad:</b> <%= @organization.registrations.current.percent_members_of_type 'undergrads' %>%
+  <b>Percent Undergrad:</b> <%= @organization.current_registration.percent_members_of_type 'undergrads' %>%
 </p>
 
 <p>
-  <b>Percent Grad:</b> <%= @organization.registrations.current.percent_members_of_type 'grads' %>%
+  <b>Percent Grad:</b> <%= @organization.current_registration.percent_members_of_type 'grads' %>%
 </p>
 <% end %>
 

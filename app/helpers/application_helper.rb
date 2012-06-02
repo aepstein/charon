@@ -18,8 +18,8 @@ module ApplicationHelper
   end
 
   def link_to_external_registration(organization)
-    return organization.name unless organization.registrations.current && organization.registrations.current.external_id
-    link_to organization.name, "http://sao.cornell.edu/SO/search.php?igroup=#{organization.registrations.current.external_id}"
+    return organization.name unless organization.current_registration && organization.current_registration.external_id
+    link_to organization.name, "http://sao.cornell.edu/SO/search.php?igroup=#{organization.current_registration.external_id}"
   end
 
   def link_to_directory(user)
