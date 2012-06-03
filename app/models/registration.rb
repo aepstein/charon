@@ -29,6 +29,11 @@ class Registration < ActiveRecord::Base
         "number_of_undergrads + number_of_grads + number_of_staff + number_of_faculty + " +
         "number_of_others ) )", percent.to_i )
   }
+  scope :fulfill_registration_criterion, lambda { |criterion|
+    ( criterion.minimal_percentage_of_type? ? min_percent_members_of_type(
+      criterion.minimal_percentage, criterion.type_of_member ) : scoped ).
+    send( ( criterion.must_register? ? :registered : :scoped ) )
+  }
 
   before_save :adopt_registration_term, :adopt_organization
   after_save :update_memberships, :update_organization, :update_peers

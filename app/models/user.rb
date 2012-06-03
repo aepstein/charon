@@ -7,8 +7,18 @@ class User < ActiveRecord::Base
     :as => [ :admin, :default ]
   attr_accessible :admin, :net_id, :status, as: :admin
 
-  default_scope order( 'users.last_name ASC, users.first_name ASC, ' +
-    'users.middle_name ASC, users.net_id ASC' )
+  default_scope order { [ last_name, first_name, middle_name, net_id ] }
+  scope :fulfill_user_status_criterion, lambda { |criterion|
+    where { |u| u.status.in(
+      (0..User::STATUSES.length).select { |i| ( 2**i & criterion.statuses_mask ) > 0 }.
+      map { |i| User::STATUSES[i] }
+    ) }
+  }
+  scope :fulfill_agreement, lambda { |agreement|
+    where { id.in( Approval.unscoped.where { approvable_id.eq( agreement.id ) &
+      approvable_type.eq( 'Agreement' ) }.select { user_id } ) }
+  }
+
   scope :approved, lambda { |approvable|
     joins( :approvals ).
     where( 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',

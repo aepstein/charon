@@ -4,7 +4,14 @@ class UserStatusCriterion < ActiveRecord::Base
   is_fulfillable
 
   scope :with_status, lambda { |status|
-    where "statuses_mask & #{2**User::STATUSES.index(status)} > 0"
+    unless status.blank? || User::STATUSES.index(status).blank?
+      where "statuses_mask & #{2**User::STATUSES.index(status)} > 0"
+    else
+      where { id.eq( nil ) }
+    end
+  }
+  scope :fulfilled_by, lambda { |user|
+    with_status( user.status )
   }
 
   validates :statuses_mask, uniqueness: true,

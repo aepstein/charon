@@ -29,6 +29,11 @@ class RegistrationCriterion < ActiveRecord::Base
   validates :must_register, :uniqueness => { :scope =>
     [ :type_of_member, :minimal_percentage ] }
 
+
+  def minimal_percentage_of_type?
+    minimal_percentage? && type_of_member?
+  end
+
   def organization_ids
     organizations.map(&:id)
   end

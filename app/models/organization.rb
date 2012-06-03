@@ -45,7 +45,7 @@ class Organization < ActiveRecord::Base
   has_many :registrations, dependent: :nullify, inverse_of: :organization
   has_one :current_registration, class_name: 'Registration',
     conditions: [ "registrations.registration_term_id IN (SELECT " +
-      "registration_term_id FROM registration_terms WHERE current = ?)", true ]
+      "id FROM registration_terms WHERE current = ?)", true ]
   # TODO: registration fulfillment of criterions should be handled directly between
   # the two
 #  has_many :registration_criterions, through: :current_registration
@@ -102,6 +102,10 @@ class Organization < ActiveRecord::Base
       memo << "organizations.#{field} LIKE :name"
     end
     where( sql.join(' OR '), :name => "%#{name}%" )
+  }
+  scope :fulfill_registration_criterion, lambda { |criterion|
+    joins { current_registration }.where { registrations.id.in(
+      Registration.fulfill_registration_criterion( criterion ).select { id } ) }
   }
 
   #search_methods :name_contains
