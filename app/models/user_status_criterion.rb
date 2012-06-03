@@ -25,13 +25,13 @@ class UserStatusCriterion < ActiveRecord::Base
     User::STATUSES.reject { |s| ((statuses_mask || 0) & 2**User::STATUSES.index(s)).zero? }
   end
 
-  def user_ids
-    status_list = statuses.map { |s| connection.quote s }.join ", "
-    connection.select_values(
-      "SELECT users.id FROM users WHERE users.status " +
-      "IN (#{status_list})"
-    )
-  end
+#  def user_ids
+#    status_list = statuses.map { |s| connection.quote s }.join ", "
+#    connection.select_values(
+#      "SELECT users.id FROM users WHERE users.status " +
+#      "IN (#{status_list})"
+#    )
+#  end
 
   def to_s(format = nil)
     case format

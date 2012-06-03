@@ -4,9 +4,12 @@ class Agreement < ActiveRecord::Base
   is_fulfillable
 
   default_scope order( 'agreements.name ASC' )
+  scope :fulfilled_by, lambda { |user|
+    where { |a| a.id.in( user.approved_agreements.scoped.select { id } ) }
+  }
 
-  has_many :approvals, :as => :approvable, :dependent => :delete_all
-  has_many :users, :through => :approvals
+  has_many :approvals, as: :approvable, dependent: :delete_all
+  has_many :users, through: :approvals
 
   has_paper_trail :class_name => 'SecureVersion'
 

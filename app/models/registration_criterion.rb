@@ -21,44 +21,44 @@ class RegistrationCriterion < ActiveRecord::Base
     minimal_percentage_fulfilled_by(registration).must_register_fulfilled_by(registration)
   }
 
-  validates :minimal_percentage, :numericality => { :integer_only => true,
-    :greater_than_or_equal_to => 0, :less_than_or_equal_to => 100,
-    :allow_blank => true }
-  validates :type_of_member, :inclusion => { :in => Registration::MEMBER_TYPES,
-    :allow_blank => true }
-  validates :must_register, :uniqueness => { :scope =>
-    [ :type_of_member, :minimal_percentage ] }
+  validates :minimal_percentage, numericality: { integer_only: true,
+    greater_than_or_equal_to: 0, less_than_or_equal_to: 100,
+    allow_blank: true }
+  validates :type_of_member, inclusion: { in: Registration::MEMBER_TYPES,
+    allow_blank: true }
+  validates :must_register,
+    uniqueness: { scope: [ :type_of_member, :minimal_percentage ] }
 
 
   def minimal_percentage_of_type?
     minimal_percentage? && type_of_member?
   end
 
-  def organization_ids
-    organizations.map(&:id)
-  end
+#  def organization_ids
+#    organizations.map(&:id)
+#  end
 
-  # Returns organizations with fulfilling registrations
-  def organizations
-    Organization.where { id.in(
-      my { registrations.except(:order).select { organization_id } }
-    ) }
-  end
+#  # Returns organizations with fulfilling registrations
+#  def organizations
+#    Organization.where { id.in(
+#      my { registrations.except(:order).select { organization_id } }
+#    ) }
+#  end
 
-  # Returns registrations fulfilling this criterion
-  # * only active registrations
-  # * match member composition component, if present
-  # * match registration status component, if present
-  def registrations
-    scope = Registration.scoped.active
-    if minimal_percentage && type_of_member
-      scope = scope.min_percent_members_of_type minimal_percentage, type_of_member
-    end
-    if must_register
-      scope = scope.registered
-    end
-    scope
-  end
+#  # Returns registrations fulfilling this criterion
+#  # * only active registrations
+#  # * match member composition component, if present
+#  # * match registration status component, if present
+#  def registrations
+#    scope = Registration.scoped.active
+#    if minimal_percentage && type_of_member
+#      scope = scope.min_percent_members_of_type minimal_percentage, type_of_member
+#    end
+#    if must_register
+#      scope = scope.registered
+#    end
+#    scope
+#  end
 
   def to_s(format = nil)
     case format
