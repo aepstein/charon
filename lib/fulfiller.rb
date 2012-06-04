@@ -13,7 +13,7 @@ module Fulfiller
             proxy_association.reset
           end
           def fulfill_type!(fulfillable_type)
-            proxy_association.owner.send(fulfillable_type.underscore.pluralize).
+            proxy_association.owner.send("fulfillable_#{fulfillable_type.underscore.pluralize}").
             addable.each do |fulfillable|
               create! fulfillable: fulfillable
             end
@@ -24,7 +24,8 @@ module Fulfiller
               proxy_association.owner.class.fulfillable_types : fulfillable_types )
             # Remove all fulfillments in single query
             deletes = fulfillable_types.map { |fulfillable_type|
-              proxy_association.owner.send(fulfillable_type.underscore.pluralize).
+              proxy_association.owner.
+              send("fulfillable_#{fulfillable_type.underscore.pluralize}").
               deletable.map { |f| [f.class.to_s, f.id] }
             }.inject(:+)
             scoped.where { |f| deletes.map { |i|
@@ -35,7 +36,7 @@ module Fulfiller
           end
           def reset_fulfillable_type(fulfillable_type)
             proxy_association.owner.
-            send(:association, fulfillable_type.underscore.pluralize.to_sym).
+            send(:association, "fulfillable_#{fulfillable_type.underscore.pluralize}".to_sym).
             proxy.reset
           end
         end
@@ -44,7 +45,7 @@ module Fulfiller
 
       fulfillable_types.each do |fulfillable_type|
         class_eval <<-RUBY
-          has_many :#{fulfillable_type.underscore.pluralize},
+          has_many :fulfillable_#{fulfillable_type.underscore.pluralize},
           through: :fulfillments, source: :fulfillable,
           source_type: "#{fulfillable_type}" do
             def qualifying
@@ -95,8 +96,8 @@ module Fulfiller
 #      self.quoted_fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ].
 #        map { |type| connection.quote type }.join ','
 
-      after_save { |fulfiller| fulfiller.fulfillments.fulfill! }
-      after_update { |fulfiller| fulfiller.fulfillments.unfulfill! }
+#      after_save { |fulfiller| fulfiller.fulfillments.fulfill! }
+#      after_update { |fulfiller| fulfiller.fulfillments.unfulfill! }
 
       send :include, InstanceMethods
     end

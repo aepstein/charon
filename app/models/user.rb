@@ -101,10 +101,9 @@ class User < ActiveRecord::Base
   before_validation :extract_email, :initialize_addresses, on: :create
   before_validation :import_simple_ldap_attributes
   after_save :import_complex_ldap_attributes
-
-  def fund_requests; FundRequest.organization_id_equals_any( organization_ids ); end
-
-  def fund_request_ids; fund_requests.map(&:id); end
+  after_create 'fulfillments.fulfill! "UserStatusCriterion"'
+  after_update 'fulfillments.fulfill! "UserStatusCriterion" if status_changed?; ' +
+    'fulfillments.unfulfill! "UserStatusCriterion" if status_changed?'
 
   def organization_ids
     organizations.select( "DISTINCT organizations.*" ).map(&:id)

@@ -37,8 +37,16 @@ class Registration < ActiveRecord::Base
 
   before_save :adopt_registration_term, :adopt_organization
   after_save :update_memberships, :update_organization, :update_peers
+  after_destroy 'organization.fulfillments.unfulfill! if current? && organization'
 
   attr_accessor :skip_update_peers
+
+  def number_of_members_changed?
+    MEMBER_TYPES.each do |type|
+      return true if send "number_of_#{type}_changed?"
+    end
+    false
+  end
 
   # Assures the external term id is populated when the registration term is set
   def registration_term_id=( id )
@@ -126,9 +134,6 @@ class Registration < ActiveRecord::Base
       self.organization = Organization.where { |o| o.id.in(
         Registration.unscoped.where( :external_id => external_id ).
         select { organization_id } ) }.first
-#      self.organization = Organization.joins { registrations }.merge(
-#        Registration.unscoped.where( :external_id => external_id ) ).
-#        readonly(false).first
     end
     true
   end
@@ -152,17 +157,23 @@ class Registration < ActiveRecord::Base
   # * fulfill and unfulfill organization as appropriate
   # * fail silently if the organization name update fails
   def update_organization
-    return true unless organization
-    organization.association(:registrations).reset if organization
-    if current?
-      if organization.last_current_registration != self
-        organization.last_current_registration = self
-        organization.save!
+    if organization_id_changed?
+      unless organization_id_was.blank?
+        Organization.find( organization_id_was ).fulfillments.unfulfill!
       end
-      organization.update_attributes name.to_organization_name_attributes, :as => :admin
-      organization.fulfillments.fulfill!
+      if organization
+        organization.association(:registrations).reset
+        organization.association(:current_registration).reset
+      end
     end
-    organization.fulfillments.unfulfill!
+    return true unless organization && current?
+    organization.last_current_registration = self
+    organization.update_attributes name.to_organization_name_attributes, as: :admin
+    organization.save! if organization.changed?
+    if organization_id_changed? || number_of_members_changed?
+      organization.fulfillments.fulfill!
+      organization.fulfillments.unfulfill!
+    end
     true
   end
 
@@ -176,9 +187,8 @@ class Registration < ActiveRecord::Base
       self.skip_update_peers = false
       return true
     end
-    peers.where( peers.arel_table[:organization_id].eq(nil).
-      or( peers.arel_table[:organization_id].not_eq( organization_id ) )
-    ).each do |registration|
+    peers.where { |p| p.organization_id.eq(nil) |
+      p.organization_id.not_eq( organization_id ) }.each do |registration|
       registration.skip_update_peers = true
       organization.registrations << registration
     end

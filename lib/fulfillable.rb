@@ -9,31 +9,33 @@ module Fulfillable
 
         has_many :fulfillments, as: :fulfillable, dependent: :delete_all do
           def fulfill!
-            values = [ "#{self}", proxy_association.owner.id, "#{fulfiller_type}" ]
+            values = [ "#{self}", proxy_association.owner.id, Time.zone.now,
+              "#{fulfiller_type}" ]
             values.map! { |v| connection.quote v }
-            select_sql = proxy_association.owner.#{fulfiller_type.underscore.pluralize}.
-              addable.select( values.join( ', ' ) +
+            select_sql = proxy_association.owner.fulfiller_#{fulfiller_type.underscore.pluralize}.
+              addable.except(:select).select( values.join( ', ' ) +
               ", `#{fulfiller_type.underscore.pluralize}`.`id`" ).to_sql
-            connection.insert <<-SQL
-              INSERT INTO fulfillments ( fulfillable_type, fulfillable_id,
-              created_at, fulfiller_type, fulfiller_id )
-              \#{select_sql}
-            SQL
+            connection.insert(
+              "INSERT INTO fulfillments ( fulfillable_type, fulfillable_id, " +
+              "created_at, fulfiller_type, fulfiller_id ) \#{select_sql}"
+            )
             proxy_association.reset
-            proxy_association.owner.association(:#{fulfiller_type.underscore.pluralize}).proxy.reset
+            proxy_association.owner.association(
+              :fulfiller_#{fulfiller_type.underscore.pluralize} ).proxy.reset
           end
 
           def unfulfill!
             where { fulfiller_type.eq( '#{fulfiller_type}' ) }.
             where { |f| f.fulfiller_id.not_in( proxy_association.owner.
-              #{fulfiller_type.underscore.pluralize}.qualified.
+              fulfiller_#{fulfiller_type.underscore.pluralize}.qualifying.
               select { id } ) }.delete_all
             proxy_association.reset
-            proxy_association.owner.association(:#{fulfiller_type.underscore.pluralize}).proxy.reset
+            proxy_association.owner.association(
+              :fulfiller_#{fulfiller_type.underscore.pluralize} ).proxy.reset
           end
         end
 
-        has_many :#{fulfiller_type.underscore.pluralize},
+        has_many :fulfiller_#{fulfiller_type.underscore.pluralize},
           through: :fulfillments, source: :fulfiller,
           source_type: "#{fulfiller_type}" do
             # Which fulfillers qualify
