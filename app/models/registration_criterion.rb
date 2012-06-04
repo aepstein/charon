@@ -1,7 +1,7 @@
 class RegistrationCriterion < ActiveRecord::Base
   attr_accessible :must_register, :minimal_percentage, :type_of_member
 
-  is_fulfillable
+  is_fulfillable 'Organization'
 
   scope :minimal_percentage_fulfilled_by, lambda { |registration|
     where { |r|

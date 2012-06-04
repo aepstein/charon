@@ -1,7 +1,7 @@
 class UserStatusCriterion < ActiveRecord::Base
   attr_accessible :statuses
 
-  is_fulfillable
+  is_fulfillable 'User'
 
   scope :with_status, lambda { |status|
     unless status.blank? || User::STATUSES.index(status).blank?

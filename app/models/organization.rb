@@ -5,7 +5,7 @@ class Organization < ActiveRecord::Base
     :organization_profile_attributes, :member_sources_attributes, as: :admin
 
   notifiable_events :registration_required
-  is_fulfiller
+  is_fulfiller 'RegistrationCriterion'
 
   has_one :organization_profile, inverse_of: :organization,
     dependent: :destroy

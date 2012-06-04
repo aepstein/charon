@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
     where( sql.join(' OR '), name: "%#{name}%" )
   }
 
-  is_fulfiller
+  is_fulfiller 'UserStatusCriterion', 'Agreement'
   is_authenticable
 
   has_many :approvals, inverse_of: :user

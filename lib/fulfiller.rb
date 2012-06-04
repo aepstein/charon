@@ -2,37 +2,97 @@ module Fulfiller
 
   module ClassMethods
 
-    def is_fulfiller
-      has_many :fulfillments, as: :fulfiller, dependent: :delete_all do
-        # Register fulfillment for all the criteria met by this actor
-        def fulfill!
-          Fulfillment::FULFILLABLE_TYPES[ proxy_association.owner.class.to_s ].each do |fulfillable_type|
-            current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
-            proxy_association.owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
-              unless current.include?( criterion.id )
-                #TODO: Since Rails 3.1.1 had to force fulfiller (if bug fixed, can drop fulfiller)
-                create!( fulfillable: criterion )
-              end
+    def is_fulfiller(*fulfillable_types)
+      unless defined? fulfillments
+        cattr_accessor :fulfillable_types
+        has_many :fulfillments, as: :fulfiller, dependent: :delete_all do
+          def fulfill!(*fulfillable_types)
+            fulfillable_types = fulfillable_types.empty? ? proxy_association.owner.class.fulfillable_types : fulfillable_types
+            fulfillable_types.each { |t| fulfill_type! t }
+            proxy_association.reset
+          end
+          def fulfill_type!(fulfillable_type)
+            proxy_association.owner.send(fulfillable_type.underscore.pluralize).addable.each do |fulfillable|
+              create! fulfillable: fulfillable
+            end
+            reset_fulfillable_type fulfillable_type
+          end
+          def unfulfill!(*fulfillable_types)
+            fulfillable_types = fulfillable_types.empty? ? proxy_association.owner.class.fulfillable_types : fulfillable_types
+            # Remove all fulfillments in single query
+            deletes = fulfillable_types.map { |fulfillable_type|
+              proxy_association.owner.send(fulfillable_type.underscore.pluralize).deletable.map { |f| [f.class.to_s, f.id] }
+            }.inject(:+)
+            scoped.where { |f| deletes.map { |i|
+              f.fulfillable_type.eq( i.first ) & f.fulfillable_id.eq( i.last ) }.
+            inject(&:|) }.delete_all
+            fulfillable_types.each { |t| reset_fulfillable_type t }
+            proxy_association.reset
+          end
+          def unfulfill_type!(fulfillable_type)
+            proxy_association.owner.send(fulfillable_type.underscore.pluralize).deletable.each do |fulfillable|
+              create! fulfillable: fulfillable
             end
           end
-        end
-
-        # Remove fulfillments for all criteria no longer met by this actor
-        def unfulfill!
-          Fulfillment::FULFILLABLE_TYPES[ proxy_association.owner.class.to_s ].each do |fulfillable_type|
-            current = proxy_association.owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
-            delete where( fulfillable_type: fulfillable_type ).
-              reject { |f| current.include? f.fulfillable_id }
+          def reset_fulfillable_type(fulfillable_type)
+            proxy_association.owner.send(:association, fulfillable_type.underscore.pluralize.to_sym).proxy.reset
           end
         end
+        self.fulfillable_types = []
       end
 
-      cattr_accessor :fulfillable_types
-      self.fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ]
+      fulfillable_types.each do |fulfillable_type|
+        class_eval <<-RUBY
+          has_many :#{fulfillable_type.underscore.pluralize},
+          through: :fulfillments, source: :fulfillable,
+          source_type: "#{fulfillable_type}" do
+            def qualifying
+              #{fulfillable_type}.unscoped.fulfilled_by proxy_association.owner
+            end
 
-      cattr_accessor :quoted_fulfillable_types
-      self.quoted_fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ].
-        map { |type| connection.quote type }.join ','
+            def addable
+              qualifying.where { |f| f.id.not_in( scoped.select { id } ) }
+            end
+
+            def deletable
+              scoped.where { |f| f.id.not_in( qualifying.select { id } ) }
+            end
+          end
+        RUBY
+      end
+
+      self.fulfillable_types += fulfillable_types
+
+#      has_many :fulfillments, as: :fulfiller, dependent: :delete_all do
+#        # Register fulfillment for all the criteria met by this actor
+#        def fulfill!
+#          Fulfillment::FULFILLABLE_TYPES[ proxy_association.owner.class.to_s ].each do |fulfillable_type|
+#            current = where( :fulfillable_type => fulfillable_type ).map(&:fulfillable_id)
+#            proxy_association.owner.send(fulfillable_type.underscore.pluralize).each do |criterion|
+#              unless current.include?( criterion.id )
+#                #TODO: Since Rails 3.1.1 had to force fulfiller (if bug fixed, can drop fulfiller)
+#                create!( fulfillable: criterion )
+#              end
+#            end
+#          end
+#        end
+
+#        # Remove fulfillments for all criteria no longer met by this actor
+#        def unfulfill!
+#          Fulfillment::FULFILLABLE_TYPES[ proxy_association.owner.class.to_s ].each do |fulfillable_type|
+#            current = proxy_association.owner.send( fulfillable_type.underscore.pluralize ).map( &:id )
+#            delete where( fulfillable_type: fulfillable_type ).
+#              reject { |f| current.include? f.fulfillable_id }
+#          end
+#        end
+#      end
+
+#      cattr_accessor :fulfillable_types
+#      self.fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ]
+
+#      cattr_accessor :quoted_fulfillable_types
+#      self.quoted_fulfillable_types = Fulfillment::FULFILLABLE_TYPES[ to_s ].
+#        map { |type| connection.quote type }.join ','
 
       after_save { |fulfiller| fulfiller.fulfillments.fulfill! }
       after_update { |fulfiller| fulfiller.fulfillments.unfulfill! }
