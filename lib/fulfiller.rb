@@ -15,7 +15,7 @@ module Fulfiller
           def fulfill_type!(fulfillable_type)
             proxy_association.owner.send("fulfillable_#{fulfillable_type.underscore.pluralize}").
             addable.each do |fulfillable|
-              create! fulfillable: fulfillable
+              self.create! fulfillable: fulfillable
             end
             reset_fulfillable_type fulfillable_type
           end
@@ -28,16 +28,19 @@ module Fulfiller
               send("fulfillable_#{fulfillable_type.underscore.pluralize}").
               deletable.map { |f| [f.class.to_s, f.id] }
             }.inject(:+)
-            scoped.where { |f| deletes.map { |i|
-              f.fulfillable_type.eq( i.first ) & f.fulfillable_id.eq( i.last ) }.
-            inject(&:|) }.delete_all
-            fulfillable_types.each { |t| reset_fulfillable_type t }
-            proxy_association.reset
+            if deletes.any?
+              scoped.where { |f| deletes.map { |i|
+                f.fulfillable_type.eq( i.first ) & f.fulfillable_id.eq( i.last ) }.
+              inject(&:|) }.delete_all
+              fulfillable_types.each { |t| reset_fulfillable_type t }
+              proxy_association.reset
+            end
           end
           def reset_fulfillable_type(fulfillable_type)
             proxy_association.owner.
-            send(:association, "fulfillable_#{fulfillable_type.underscore.pluralize}".to_sym).
-            proxy.reset
+            send(:association,
+              "fulfillable_#{fulfillable_type.underscore.pluralize}".to_sym).
+            reset
           end
         end
         self.fulfillable_types = []

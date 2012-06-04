@@ -24,16 +24,16 @@ describe Registration do
   end
 
   it 'should fulfill/unfulfill related organizations on create/update' do
-    criterion1 = create(:registration_criterion, :minimal_percentage => 50,
-      :type_of_member => 'undergrads', :must_register => true)
-    criterion2 = create(:registration_criterion, :minimal_percentage => 50,
-      :type_of_member => 'undergrads', :must_register => false)
+    criterion1 = create(:registration_criterion, minimal_percentage: 50,
+      type_of_member: 'undergrads', must_register: true)
+    criterion2 = create(:registration_criterion, minimal_percentage: 50,
+      type_of_member: 'undergrads', must_register: false)
     criterion3 = create(:registration_criterion, :minimal_percentage => 50,
-      :type_of_member => 'others', :must_register => false)
-    registration = create(:current_registration,
+      type_of_member: 'others', must_register: false)
+    organization = create(:current_registration,
       :organization => create(:organization), :number_of_undergrads => 10,
-      :registered => true )
-    registration.organization.association(:fulfillments).proxy.reset
+      :registered => true ).organization
+    registration = organization.current_registration
     fulfillables = registration.organization.fulfillments.map(&:fulfillable)
     fulfillables.size.should eql 2
     fulfillables.should include criterion1

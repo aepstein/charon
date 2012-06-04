@@ -156,23 +156,24 @@ class Registration < ActiveRecord::Base
   # * set last_current_registration to this if this is the current registration
   # * fulfill and unfulfill organization as appropriate
   # * fail silently if the organization name update fails
+  # * reload organization.current_registration before fulfillment to assure changes just
+  #   saved are reflected in fulfillment
   def update_organization
     if organization_id_changed?
       unless organization_id_was.blank?
-        Organization.find( organization_id_was ).fulfillments.unfulfill!
-      end
-      if organization
-        organization.association(:registrations).reset
-        organization.association(:current_registration).reset
+        old_organization = Organization.find( organization_id_was )
+        old_organization.current_registration true if current?
+        old_organization.fulfillments.unfulfill! 'RegistrationCriterion'
       end
     end
     return true unless organization && current?
     organization.last_current_registration = self
     organization.update_attributes name.to_organization_name_attributes, as: :admin
     organization.save! if organization.changed?
-    if organization_id_changed? || number_of_members_changed?
-      organization.fulfillments.fulfill!
-      organization.fulfillments.unfulfill!
+    if organization_id_changed? || registered_changed? || number_of_members_changed?
+      organization.current_registration true
+      organization.fulfillments.fulfill! 'RegistrationCriterion'
+      organization.fulfillments.unfulfill! 'RegistrationCriterion' unless id_changed?
     end
     true
   end
