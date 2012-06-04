@@ -118,14 +118,14 @@ class Organization < ActiveRecord::Base
     Framework.fulfilled_for perspective, self, user
   end
 
-  def registration_criterions
-    return [] unless current_registration
-    current_registration.registration_criterions
-  end
+#  def registration_criterions
+#    return [] unless current_registration
+#    current_registration.registration_criterions
+#  end
 
-  def registration_criterion_ids
-    registration_criterions.map &:id
-  end
+#  def registration_criterion_ids
+#    registration_criterions.map &:id
+#  end
 
   def registered?
     current_registration && current_registration.registered?
