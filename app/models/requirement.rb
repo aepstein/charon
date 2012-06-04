@@ -2,16 +2,16 @@ class Requirement < ActiveRecord::Base
   attr_accessible :fulfillable_name, :perspectives, :role_id
   attr_readonly :framework_id
 
-  belongs_to :framework, :inverse_of => :requirements
-  belongs_to :fulfillable, :polymorphic => true
-  belongs_to :role, :inverse_of => :requirements
+  belongs_to :framework, inverse_of: :requirements
+  belongs_to :fulfillable, polymorphic: true
+  belongs_to :role, inverse_of: :requirements
 
-  validates :framework, :presence => true
-  validates :fulfillable, :presence => true
-  validates :framework_id, :uniqueness =>
-   { :scope => [ :fulfillable_id, :fulfillable_type, :role_id ] }
-  validates :fulfillable_type, :inclusion =>
-   { :in => Fulfillment::FULFILLABLE_TYPES.values.flatten }
+  validates :framework, presence: true
+  validates :fulfillable, presence: true
+  validates :framework_id, uniqueness: { scope: [ :fulfillable_id,
+    :fulfillable_type, :role_id ] }
+  validates :fulfillable_type, inclusion:
+   { in: Fulfillment::FULFILLABLE_TYPES.values.flatten }
 
   scope :with_inner_fulfillments, lambda {
     f = Fulfillment.arel_table

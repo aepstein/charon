@@ -37,36 +37,9 @@ class RegistrationCriterion < ActiveRecord::Base
   validates :must_register,
     uniqueness: { scope: [ :type_of_member, :minimal_percentage ] }
 
-
   def minimal_percentage_of_type?
     minimal_percentage? && type_of_member?
   end
-
-#  def organization_ids
-#    organizations.map(&:id)
-#  end
-
-#  # Returns organizations with fulfilling registrations
-#  def organizations
-#    Organization.where { id.in(
-#      my { registrations.except(:order).select { organization_id } }
-#    ) }
-#  end
-
-#  # Returns registrations fulfilling this criterion
-#  # * only active registrations
-#  # * match member composition component, if present
-#  # * match registration status component, if present
-#  def registrations
-#    scope = Registration.scoped.active
-#    if minimal_percentage && type_of_member
-#      scope = scope.min_percent_members_of_type minimal_percentage, type_of_member
-#    end
-#    if must_register
-#      scope = scope.registered
-#    end
-#    scope
-#  end
 
   def to_s(format = nil)
     case format

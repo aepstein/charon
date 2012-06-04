@@ -19,11 +19,7 @@ class Agreement < ActiveRecord::Base
   validates :contact_email,
     format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
 
-#  after_update :destroy_approvals_if_content_changes
-
-  def destroy_approvals_if_content_changes
-    approvals.clear if content_changed?
-  end
+  after_update 'approvals.clear if content_changed?'
 
   def approve
     true

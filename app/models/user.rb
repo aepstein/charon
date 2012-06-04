@@ -105,6 +105,10 @@ class User < ActiveRecord::Base
   after_update 'fulfillments.fulfill! "UserStatusCriterion" if status_changed?; ' +
     'fulfillments.unfulfill! "UserStatusCriterion" if status_changed?'
 
+  def unapproved_agreements
+    Agreement.where { |a| a.id.not_in( approved_agreements.select { id } ) }
+  end
+
   def organization_ids
     organizations.select( "DISTINCT organizations.*" ).map(&:id)
   end

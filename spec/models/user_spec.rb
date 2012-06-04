@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe User do
   before(:each) do
-    @admin = create(:user, :admin => true)
+    @admin = create(:user, admin: true)
     @regular = create(:user)
   end
 

@@ -49,19 +49,19 @@ browser if this is incorrect or you wish to log out.  You may
   <p>You have approved the following agreements:</p>
 
   <ul>
-  <% current_user.approved_agreements.map(&:approvable).each do |agreement| %>
+  <% current_user.approved_agreements.each do |agreement| %>
   <li><%= agreement %></li>
   <% end %>
   </ul>
 <% end %>
 
-<% unless (Agreement.all - current_user.approved_agreements.map(&:approvable)).empty?  %>
+<% if current_user.unapproved_agreements.any?  %>
   <h3>Your Unapproved Agreements</h3>
 
   <p>You have not yet approved the following agreements (click to read and approve any agreements as needed):</p>
 
   <ul>
-  <% (Agreement.all - current_user.approved_agreements.map(&:approvable)).each do |agreement| %>
+  <% current_user.unapproved_agreements.each do |agreement| %>
   <li><%=link_to h(agreement), new_polymorphic_path([agreement,:approval]) %></li>
   <% end %>
   </ul>

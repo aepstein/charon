@@ -2,7 +2,7 @@ class Approval < ActiveRecord::Base
   attr_accessible :as_of
   attr_readonly :user_id, :approvable_id, :approvable_type
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
   belongs_to :approvable, polymorphic: true
   belongs_to :user, inverse_of: :approvals
