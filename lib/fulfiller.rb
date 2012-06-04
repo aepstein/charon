@@ -7,21 +7,25 @@ module Fulfiller
         cattr_accessor :fulfillable_types
         has_many :fulfillments, as: :fulfiller, dependent: :delete_all do
           def fulfill!(*fulfillable_types)
-            fulfillable_types = fulfillable_types.empty? ? proxy_association.owner.class.fulfillable_types : fulfillable_types
+            fulfillable_types = ( fulfillable_types.empty? ?
+              proxy_association.owner.class.fulfillable_types : fulfillable_types )
             fulfillable_types.each { |t| fulfill_type! t }
             proxy_association.reset
           end
           def fulfill_type!(fulfillable_type)
-            proxy_association.owner.send(fulfillable_type.underscore.pluralize).addable.each do |fulfillable|
+            proxy_association.owner.send(fulfillable_type.underscore.pluralize).
+            addable.each do |fulfillable|
               create! fulfillable: fulfillable
             end
             reset_fulfillable_type fulfillable_type
           end
           def unfulfill!(*fulfillable_types)
-            fulfillable_types = fulfillable_types.empty? ? proxy_association.owner.class.fulfillable_types : fulfillable_types
+            fulfillable_types = ( fulfillable_types.empty? ?
+              proxy_association.owner.class.fulfillable_types : fulfillable_types )
             # Remove all fulfillments in single query
             deletes = fulfillable_types.map { |fulfillable_type|
-              proxy_association.owner.send(fulfillable_type.underscore.pluralize).deletable.map { |f| [f.class.to_s, f.id] }
+              proxy_association.owner.send(fulfillable_type.underscore.pluralize).
+              deletable.map { |f| [f.class.to_s, f.id] }
             }.inject(:+)
             scoped.where { |f| deletes.map { |i|
               f.fulfillable_type.eq( i.first ) & f.fulfillable_id.eq( i.last ) }.
@@ -29,13 +33,10 @@ module Fulfiller
             fulfillable_types.each { |t| reset_fulfillable_type t }
             proxy_association.reset
           end
-          def unfulfill_type!(fulfillable_type)
-            proxy_association.owner.send(fulfillable_type.underscore.pluralize).deletable.each do |fulfillable|
-              create! fulfillable: fulfillable
-            end
-          end
           def reset_fulfillable_type(fulfillable_type)
-            proxy_association.owner.send(:association, fulfillable_type.underscore.pluralize.to_sym).proxy.reset
+            proxy_association.owner.
+            send(:association, fulfillable_type.underscore.pluralize.to_sym).
+            proxy.reset
           end
         end
         self.fulfillable_types = []
