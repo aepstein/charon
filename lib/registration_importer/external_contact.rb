@@ -24,7 +24,7 @@ module RegistrationImporter
     }
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
-    self.table_name = "charon_orgs_contacts"
+    self.table_name = "view_safc_orgs_contacts"
     self.primary_key = "id"
 #    self.primary_keys = [ :org_id, :term_id, :contacttype ]
     default_scope order { [ term_id, org_id, contacttype ] }.

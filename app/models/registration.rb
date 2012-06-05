@@ -162,7 +162,7 @@ class Registration < ActiveRecord::Base
     if organization_id_changed?
       unless organization_id_was.blank?
         old_organization = Organization.find( organization_id_was )
-        old_organization.current_registration true if current?
+        old_organization.association(:current_registration).reset if current?
         old_organization.fulfillments.unfulfill! 'RegistrationCriterion'
       end
     end
@@ -171,7 +171,7 @@ class Registration < ActiveRecord::Base
     organization.update_attributes name.to_organization_name_attributes, as: :admin
     organization.save! if organization.changed?
     if organization_id_changed? || registered_changed? || number_of_members_changed?
-      organization.current_registration true
+      organization.association(:current_registration).reset
       organization.fulfillments.fulfill! 'RegistrationCriterion'
       organization.fulfillments.unfulfill! 'RegistrationCriterion' unless id_changed?
     end

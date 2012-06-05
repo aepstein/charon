@@ -52,16 +52,16 @@ describe Agreement do
     new_name = 'new name'
     new_content = 'new content'
     agreement = create(:agreement)
-    agreement.name.should_not == new_name
-    agreement.content.should_not == new_content
-    agreement.approvals.create( :user => create(:user), :as_of => agreement.updated_at ).id.should_not be_nil
-    agreement.approvals.size.should == 1
+    agreement.name.should_not eql new_name
+    agreement.content.should_not eql new_content
+    create( :approval, approvable: agreement )
+    agreement.approvals.reset
     agreement.name = new_name
-    agreement.save.should == true
-    agreement.approvals.size.should == 1
+    agreement.save!
+    agreement.approvals.count.should eql 1
     agreement.content = new_content
-    agreement.save.should == true
-    agreement.approvals(true).should be_empty
+    agreement.save!
+    agreement.approvals.should be_empty
   end
 end
 

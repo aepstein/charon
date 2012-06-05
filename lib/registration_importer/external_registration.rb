@@ -26,7 +26,7 @@ module RegistrationImporter
       :membership_staff, :membership_alumni, :membership_noncornell, :updated_time ]
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
-    self.table_name = "charon_orgs"
+    self.table_name = "view_safc_orgs"
     self.primary_key = "id"
 #    self.primary_keys = [ :org_id, :term_id ]
     default_scope order { updated_time }.select( MAP.keys + [ :id ] )
