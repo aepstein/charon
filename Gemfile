@@ -21,14 +21,10 @@ gem 'cornell_ldap', '>= 1.3.1'
 gem 'formtastic'
 gem 'cocoon', '~> 1.0.10'
 gem 'declarative_authorization', '>= 0.5'
-#gem 'composite_primary_keys', '~> 5.0', require: false # Require on demand
 gem 'cornell-assemblies-rails',
-  :git => 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
-#gem 'rails3-jquery-autocomplete'
+  git: 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
 gem 'escape_utils'
 gem 'ancestry'
-#gem 'acts_as_list', '~> 0.1.4'
-#gem 'acts_as_list', git: 'git://github.com/swanandp/acts_as_list.git'
 group :assets do
   gem 'sass-rails', "~> 3.1"
   gem 'coffee-rails', "~> 3.1"
@@ -49,7 +45,7 @@ group :test do
   gem 'database_cleaner'
   gem 'capybara'
   gem 'spork', '~> 0.9.0'
-  gem 'factory_girl', '~> 2.0', :require => false
+  gem 'factory_girl', '~> 2.0', require: false
   gem 'factory_girl_rails', '~> 1.1'
   gem 'pickle', '~> 0.4.8'
   gem 'email_spec'
