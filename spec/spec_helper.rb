@@ -13,6 +13,9 @@ Spork.prefork do
     config.include FactoryGirl::Syntax::Methods
     config.before(:each) do
       DatabaseCleaner.strategy = :truncation
+      DatabaseCleaner[:active_record,
+        { connection: "external_registrations_#{::Rails.env}" }].
+        strategy = :truncation
       DatabaseCleaner.clean
     end
   end

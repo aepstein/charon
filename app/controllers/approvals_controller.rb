@@ -13,7 +13,7 @@ class ApprovalsController < ApplicationController
   # GET /:approvable_class/:approvable_id/approvals.xml
   def index
     @search = @approvals.search( params[:search] )
-    @approvals = @search.result.page(params[:page])
+    @approvals = @search.result.ordered.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
@@ -87,7 +87,7 @@ class ApprovalsController < ApplicationController
     @approvals = @approvals.where( :user_id => @user.id ) if @user
     # Kludge to get index behavior correct without using with_permissions_to scope
     @approvals = @approvals.where( :user_id => current_user.id ) if @approvable.class == Agreement && !current_user.role_symbols.include?( :admin )
-    @approvals = @approvals.ordered
+    @approvals = @approvals
   end
 
   def new_approval_from_params

@@ -40,6 +40,9 @@ Spork.each_run do
   # For some databases (like MongoDB and CouchDB) you may need to use :truncation instead.
   begin
     DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner[:active_record,
+      { connection: "external_registrations_#{::Rails.env}" }].
+      strategy = :truncation
   rescue NameError
     raise "You need to add database_cleaner to your Gemfile (in the :test group) if you wish to use it."
   end

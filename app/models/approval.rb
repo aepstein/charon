@@ -9,8 +9,8 @@ class Approval < ActiveRecord::Base
 
   scope :ordered, joins { user }.
     order { [ users.last_name, users.first_name, users.middle_name ] }
-  scope :agreements, where( :approvable_type => 'Agreement' )
-  scope :fund_requests, where( :approvable_type => 'FundRequest' )
+  scope :agreements, where( approvable_type: 'Agreement' )
+  scope :fund_requests, where( approvable_type: 'FundRequest' )
   scope :at_or_after, lambda { |time| where { |a| a.created_at.gte( time ) } }
 
   validates :as_of, timeliness: { type: :datetime }
