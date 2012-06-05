@@ -14,7 +14,7 @@ gem 'squeel'
 gem 'ransack'
 gem 'paper_trail'
 gem 'state_machine'
-gem 'whenever', :require => false
+gem 'whenever', require: false
 gem 'bluecloth'
 gem 'cornell_netid'
 gem 'cornell_ldap', '>= 1.3.1'
@@ -27,7 +27,7 @@ gem 'cornell-assemblies-rails',
 #gem 'rails3-jquery-autocomplete'
 gem 'escape_utils'
 gem 'ancestry'
-gem 'acts_as_list', '~> 0.1.4'
+#gem 'acts_as_list', '~> 0.1.4'
 #gem 'acts_as_list', git: 'git://github.com/swanandp/acts_as_list.git'
 group :assets do
   gem 'sass-rails', "~> 3.1"
