@@ -59,7 +59,8 @@ Feature: Manage document_types
     And a document_type exists with name: "document type 1"
     And I log in as user: "admin"
     When I follow "Destroy" for the 3rd document_type
-    Then I should see the following document_types:
+    Then I should see "Document type was successfully destroyed."
+    And I should see the following document_types:
       | Name           |
       | document type 1|
       | document type 2|

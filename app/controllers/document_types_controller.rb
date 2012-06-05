@@ -8,8 +8,6 @@ class DocumentTypesController < ApplicationController
   # GET /document_types
   # GET /document_types.xml
   def index
-    @document_types = DocumentType.all
-
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @document_types }
@@ -75,9 +73,10 @@ class DocumentTypesController < ApplicationController
   # DELETE /document_types/1.xml
   def destroy
     @document_type.destroy
+    flash[:notice] = 'Document type was successfully destroyed.'
 
     respond_to do |format|
-      format.html { redirect_to(document_types_url) }
+      format.html { redirect_to document_types_url }
       format.xml  { head :ok }
     end
   end
@@ -90,7 +89,9 @@ class DocumentTypesController < ApplicationController
   end
 
   def initialize_index
-    @document_types = DocumentType
+    # TODO reset call is needed because of some adverse testing bug
+#    @document_types = DocumentType.scoped
+    @document_types = DocumentType.scoped.reset
   end
 
   def new_document_type_from_params

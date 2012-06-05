@@ -4,14 +4,14 @@ class DocumentType < ActiveRecord::Base
   attr_accessible :name, :max_size_quantity, :max_size_unit
 
   has_and_belongs_to_many :nodes
-  has_many :documents, :inverse_of => :document_type
+  has_many :documents, inverse_of: :document_type, dependent: :destroy
 
-  validates :name, :presence => true, :uniqueness => true
+  validates :name, presence: true, uniqueness: true
   validates :max_size_quantity,
-    :numericality => { :greater_than => 0, :only_integer => true }
-  validates :max_size_unit, :inclusion => { :in => UNITS }
+    numericality: { greater_than: 0, only_integer: true }
+  validates :max_size_unit, inclusion: { in: UNITS }
 
-  default_scope order( 'document_types.name ASC' )
+  default_scope order { name }
 
   def max_size
     return nil unless max_size_quantity? && max_size_unit?
