@@ -11,7 +11,7 @@ class DocumentType < ActiveRecord::Base
     numericality: { greater_than: 0, only_integer: true }
   validates :max_size_unit, inclusion: { in: UNITS }
 
-  default_scope order { name }
+  scope :ordered, order { name }
 
   def max_size
     return nil unless max_size_quantity? && max_size_unit?

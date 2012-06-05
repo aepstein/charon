@@ -89,9 +89,7 @@ class DocumentTypesController < ApplicationController
   end
 
   def initialize_index
-    # TODO reset call is needed because of some adverse testing bug
-#    @document_types = DocumentType.scoped
-    @document_types = DocumentType.scoped.reset
+    @document_types = DocumentType.scoped.ordered
   end
 
   def new_document_type_from_params

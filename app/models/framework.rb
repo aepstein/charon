@@ -1,17 +1,17 @@
 class Framework < ActiveRecord::Base
   attr_accessible :name, :requirements_attributes
 
-  has_many :approvers, :inverse_of => :framework
-  has_many :requirements, :inverse_of => :framework
-  has_many :fund_sources, :inverse_of => :framework
+  has_many :approvers, inverse_of: :framework
+  has_many :requirements, inverse_of: :framework
+  has_many :fund_sources, inverse_of: :framework
 
-  validates :name, :presence => true, :uniqueness => true
+  validates :name, presence: true, uniqueness: true
 
   accepts_nested_attributes_for :requirements,
-    :reject_if => proc { |attributes| attributes['fulfillable_name'].blank? },
-    :allow_destroy => true
+    reject_if: proc { |attributes| attributes['fulfillable_name'].blank? },
+    allow_destroy: true
 
-  default_scope order( 'frameworks.name ASC' )
+  scope :ordered, order { name }
 
   # Includes only frameworks for which requirements are fulfilled for
   # given perspective and subject(s)
