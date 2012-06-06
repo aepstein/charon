@@ -3,20 +3,20 @@ class SpeakerExpense < ActiveRecord::Base
     :engagement_fee, :dignitary
   attr_readonly :fund_edition_id
 
-  belongs_to :fund_edition, :inverse_of => :speaker_expense
+  belongs_to :fund_edition, inverse_of: :speaker_expense
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  validates :fund_edition, :presence => true
-  validates :title, :presence => true
+  validates :fund_edition, presence: true
+  validates :title, presence: true
   validates :distance,
-    :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :number_of_travelers,
-    :numericality => { :only_integer => true, :greater_than => 0 }
+    numericality: { only_integer: true, greater_than: 0 }
   validates :nights_of_lodging,
-    :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :engagement_fee,
-    :numericality => { :greater_than_or_equal_to => 0 }
+    numericality: { greater_than_or_equal_to: 0 }
 
   def travel_cost
     return 0.0 unless distance && number_of_travelers

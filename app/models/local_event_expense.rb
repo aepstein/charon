@@ -4,25 +4,25 @@ class LocalEventExpense < ActiveRecord::Base
     :uup_required, :accessibility_considered
   attr_readonly :fund_edition_id
 
-  belongs_to :fund_edition, :inverse_of => :local_event_expense
+  belongs_to :fund_edition, inverse_of: :local_event_expense
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  validates :fund_edition, :presence => true
-	validates :start_date, :timeliness => { :type => :date }
-	validates :end_date, :timeliness => { :type => :date,
-	  :greater_than_or_equal_to => :start_date }
-	validates :title, :presence => true
-	validates :location, :presence => true
-	validates :purpose, :presence => true
+  validates :fund_edition, presence: true
+	validates :start_date, timeliness: { type: :date }
+	validates :end_date, timeliness: { type: :date,
+	  greater_than_or_equal_to: :start_date }
+	validates :title, presence: true
+	validates :location, presence: true
+	validates :purpose, presence: true
 	validates :number_of_attendees,
-	  :numericality => { :greater_than => 0, :only_integer => true }
+	  numericality: { greater_than: 0, only_integer: true }
 	validates :price_per_attendee,
-	  :numericality => { :greater_than_or_equal_to => 0 }
+	  numericality: { greater_than_or_equal_to: 0 }
   validates :copies_quantity,
-    :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
 
-  delegate :fund_request, :to => :fund_edition
+  delegate :fund_request, to: :fund_edition
 
   def copies_cost
     return 0.0 unless copies_quantity
