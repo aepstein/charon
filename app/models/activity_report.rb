@@ -5,7 +5,7 @@ class ActivityReport < ActiveRecord::Base
     :description, :starts_on, :ends_on
   attr_readonly :organization_id
 
-  belongs_to :organization, :inverse_of => :activity_reports
+  belongs_to :organization, inverse_of: :activity_reports
 
   scope :ordered, includes { organization }.
     order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
@@ -23,18 +23,18 @@ class ActivityReport < ActiveRecord::Base
     where { |activity_reports| activity_reports.description =~ "%#{content}%" }
   }
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  validates :organization, :presence => true
-  validates :description, :presence => true
-  validates :number_of_others, :numericality => { :integer_only => true,
-    :greater_than_or_equal_to => 0 }
-  validates :number_of_undergrads, :numericality => { :integer_only => true,
-    :greater_than_or_equal_to => 0 }
-  validates :number_of_grads, :numericality => { :integer_only => true,
-    :greater_than_or_equal_to => 0 }
-  validates :starts_on, :timeliness => { :type => :date }
-  validates :ends_on, :timeliness => { :type => :date,
-    :on_or_after => :starts_on }
+  validates :organization, presence: true
+  validates :description, presence: true
+  validates :number_of_others, numericality: { integer_only: true,
+    greater_than_or_equal_to: 0 }
+  validates :number_of_undergrads, numericality: { integer_only: true,
+    greater_than_or_equal_to: 0 }
+  validates :number_of_grads, numericality: { integer_only: true,
+    greater_than_or_equal_to: 0 }
+  validates :starts_on, timeliness: { type: :date }
+  validates :ends_on, timeliness: { type: :date,
+    on_or_after: :starts_on }
 end
 

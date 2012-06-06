@@ -10,7 +10,7 @@ class InventoryItem < ActiveRecord::Base
 
   scope :ordered, joins { organization }.order { [ organizations.last_name,
     organizations.first_name, identifier, acquired_on, description ] }
-  scope :active, where( :retired_on => nil)
+  scope :active, where( retired_on: nil)
   scope :retired, where { retired_on != nil }
   scope :organization_name_contains, lambda { |name|
     scoped.merge( Organization.name_contains( name ) )

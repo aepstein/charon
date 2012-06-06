@@ -11,16 +11,16 @@ class Membership < ActiveRecord::Base
   scope :active, where( :active => true )
   scope :inactive, where( 'memberships.active IS NULL or memberships.active = ?', false )
 
-  belongs_to :user, :inverse_of => :memberships
-  belongs_to :role, :inverse_of => :memberships
-  belongs_to :registration, :inverse_of => :memberships
-  belongs_to :organization, :inverse_of => :memberships
-  belongs_to :member_source, :inverse_of => :memberships
+  belongs_to :user, inverse_of: :memberships
+  belongs_to :role, inverse_of: :memberships
+  belongs_to :registration, inverse_of: :memberships
+  belongs_to :organization, inverse_of: :memberships
+  belongs_to :member_source, inverse_of: :memberships
 
   before_validation :set_organization_from_registration, :set_from_member_source
 
-  validates :user, :presence => true
-  validates :role, :presence => true
+  validates :user, presence: true
+  validates :role, presence: true
   validate :must_have_registration_or_organization
 
   def set_organization_from_registration

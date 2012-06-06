@@ -10,8 +10,8 @@ class FundEdition < ActiveRecord::Base
 
   attr_accessor :displace_item
 
-  belongs_to :fund_item, :inverse_of => :fund_editions
-  belongs_to :fund_request, :inverse_of => :fund_editions
+  belongs_to :fund_item, inverse_of: :fund_editions
+  belongs_to :fund_request, inverse_of: :fund_editions
 
   has_one :administrative_expense, inverse_of: :fund_edition, dependent: :destroy
   has_one :durable_good_expense, inverse_of: :fund_edition, dependent: :destroy
@@ -40,7 +40,7 @@ class FundEdition < ActiveRecord::Base
       document
     end
   end
-  has_many :fund_editions, :through => :fund_item
+  has_many :fund_editions, through: :fund_item
 
   accepts_nested_attributes_for :administrative_expense
   accepts_nested_attributes_for :local_event_expense
@@ -48,12 +48,14 @@ class FundEdition < ActiveRecord::Base
   accepts_nested_attributes_for :travel_event_expense
   accepts_nested_attributes_for :durable_good_expense
   accepts_nested_attributes_for :publication_expense
-  accepts_nested_attributes_for :documents, :reject_if => proc { |attributes| attributes['original'].blank? || attributes['original'].original_filename.blank? }
+  accepts_nested_attributes_for :documents, reject_if: proc { |attributes|
+    attributes['original'].blank? || attributes['original'].original_filename.blank?
+  }
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  scope :initial, where( :perspective => PERSPECTIVES.first )
-  scope :final, where( :perspective => PERSPECTIVES.last )
+  scope :initial, where( perspective: PERSPECTIVES.first )
+  scope :final, where( perspective: PERSPECTIVES.last )
   # Extends query to include any prior actionable editions:
   # * belonging to actionable request created prior to that of the edition
   scope :with_priors, joins { fund_request }.

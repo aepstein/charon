@@ -4,29 +4,29 @@ class TravelEventExpense < ActiveRecord::Base
     :per_person_fees, :per_group_fees
   attr_readonly :fund_edition_id
 
-  belongs_to :fund_edition, :inverse_of => :travel_event_expense
+  belongs_to :fund_edition, inverse_of: :travel_event_expense
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  validates :fund_edition, :presence => true
-  validates :start_date, :timeliness => { :type => :date }
-  validates :end_date, :timeliness => { :type => :date,
-	  :greater_than_or_equal_to => :start_date }
-  validates :title, :presence => true
-  validates :location, :presence => true
-  validates :purpose, :presence => true
+  validates :fund_edition, presence: true
+  validates :start_date, timeliness: { type: :date }
+  validates :end_date, timeliness: { type: :date,
+	  greater_than_or_equal_to: :start_date }
+  validates :title, presence: true
+  validates :location, presence: true
+  validates :purpose, presence: true
   validates :travelers_per_group,
-    :numericality => { :only_integer => true, :greater_than => 0 }
+    numericality: { only_integer: true, greater_than: 0 }
   validates :number_of_groups,
-    :numericality => { :only_integer => true, :greater_than => 0 }
+    numericality: { only_integer: true, greater_than: 0 }
   validates :distance,
-    :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :nights_of_lodging,
-    :numericality => { :only_integer => true, :greater_than_or_equal_to => 0 }
+    numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :per_person_fees,
-    :numericality => { :greater_than_or_equal_to => 0 }
+    numericality: { greater_than_or_equal_to: 0 }
   validates :per_group_fees,
-    :numericality => { :greater_than_or_equal_to => 0 }
+    numericality: { greater_than_or_equal_to: 0 }
 
   def participants
     return 0 unless travelers_per_group && number_of_groups
