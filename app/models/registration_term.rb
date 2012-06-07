@@ -38,6 +38,18 @@ class RegistrationTerm < ActiveRecord::Base
 
   def to_s; description; end
 
+  # Because of excessive TimeWithZone precision, we need to do a fuzzy comparison
+  # on time attributes
+  def changed_significantly?
+    return false unless changed?
+    %w( starts_at ends_at ).each do |attribute|
+      if send "#{attribute}_changed?"
+        return true if changes[attribute].first.to_i != changes[attribute].last.to_i
+      end
+    end
+    false
+  end
+
   private
 
   # Update dependent entities if registration's 'current' status is changed

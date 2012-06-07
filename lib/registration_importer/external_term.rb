@@ -46,16 +46,16 @@ module RegistrationImporter
 
     def self.import
       adds, changes, starts = 0, 0, Time.now
-      scoped.reset.all.each do |source|
+      all.each do |source|
         destination = RegistrationTerm.find_or_initialize_by_external_id( source.term_id )
         destination.attributes = source.import_attributes( REGISTRATION_TERM_ATTRIBUTES )
         adds += 1 if destination.new_record?
-        changes += 1 if destination.changed?
-        destination.save! if destination.changed?
+        changes += 1 if destination.changed_significantly?
+        destination.save! if destination.changed_significantly?
       end
       d = RegistrationTerm.unscoped
       if count > 0
-        d = d.where( 'external_id NOT IN (?)', all.map(&:term_id) )
+        d = d.where { |r| r.external_id.not_in( all.map(&:term_id) ) }
       end
       deletes = d.map(&:destroy).length
       [adds, (changes - adds), deletes, ( Time.now - starts )]
