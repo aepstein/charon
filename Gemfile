@@ -19,7 +19,7 @@ gem 'bluecloth'
 gem 'cornell_netid'
 gem 'cornell_ldap', '>= 1.3.1'
 gem 'formtastic'
-gem 'cocoon', '~> 1.0.10'
+gem 'cocoon', '~> 1.0'
 gem 'declarative_authorization', '>= 0.5'
 gem 'cornell-assemblies-rails',
   git: 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'

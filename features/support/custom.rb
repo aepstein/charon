@@ -11,5 +11,10 @@ Spork.each_run do
       FileUtils.rm_rf data_directory
     end
   end
+
+  AfterStep('@pause') do
+    print "Press Return to continue ..."
+    STDIN.getc
+  end
 end
 

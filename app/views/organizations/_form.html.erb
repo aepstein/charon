@@ -1,4 +1,4 @@
-<%= render "shared/error_messages", :target => form.object %>
+<%= render "shared/error_messages", target: form.object %>
 <%= form.inputs do %>
   <% if permitted_to? :manage, form.object %>
     <%= form.input :first_name %>
@@ -8,9 +8,19 @@
 
 <%= form.semantic_fields_for :organization_profile do |subform| %>
   <%= subform.inputs do %>
-    <%= render :partial => 'organization_profiles/form', :object => subform %>
+    <%= render partial: 'organization_profiles/form', object: subform %>
   <% end %>
 <% end %>
+
+<%= form.semantic_fields_for :fund_tiers do |tier| %>
+  <%= render partial: 'fund_tier_fields', f: tier %>
+<% end %>
+
+<div class='links'>
+<p>
+<%= link_to_add_association 'add fund tier', form, :fund_tiers %>
+</p>
+</div>
 
 <%= form.actions %>
 

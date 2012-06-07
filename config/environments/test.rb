@@ -8,8 +8,9 @@ Charon::Application.configure do
   config.action_mailer.delivery_method = :test
   config.active_support.deprecation = :stderr
   config.serve_static_assets = true
+  config.assets.debug = true
   config.static_cache_control = "public, max-age=3600"
-  config.assets.allow_debugging = true
+#  config.assets.allow_debugging = true
 #  config.active_record.mass_assignment_sanitizer = :strict
 end
 

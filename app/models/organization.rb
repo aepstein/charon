@@ -1,7 +1,7 @@
 class Organization < ActiveRecord::Base
   SEARCHABLE = [ :name_contains ]
   attr_accessible :organization_profile_attributes
-  attr_accessible :first_name, :last_name,
+  attr_accessible :first_name, :last_name, :fund_tiers_attributes,
     :organization_profile_attributes, :member_sources_attributes, as: :admin
 
   notifiable_events :registration_required
@@ -13,7 +13,7 @@ class Organization < ActiveRecord::Base
   has_many :activity_accounts, through: :university_accounts
   has_many :fund_grants, dependent: :destroy, inverse_of: :organization
   has_many :fund_requests, through: :fund_grants
-  has_many :fund_tiers, inverse_of: :organization
+  has_many :fund_tiers, inverse_of: :organization, dependent: :destroy
   has_many :fund_sources, inverse_of: :organization do
     #  What fund sources is this organization eligible to start a grant for?
     # * must have an open deadline (submit_at is in the future)
@@ -90,6 +90,8 @@ class Organization < ActiveRecord::Base
   has_many :last_current_users, through: :last_current_registration,
     source: :users
 
+  accepts_nested_attributes_for :fund_tiers, allow_destroy: true,
+    reject_if: :all_blank
   accepts_nested_attributes_for :organization_profile, update_only: true
   accepts_nested_attributes_for :member_sources, allow_destroy: true,
     reject_if: :all_blank

@@ -72,6 +72,11 @@ Given /^the (.+) records? changes?$/ do |type|
   type.constantize.all.each { |o| o.touch }
 end
 
+Given /^I pause$/ do
+  print "Press Return to continue ..."
+  STDIN.getc
+end
+
 # set up a many to many association
 Given(/^#{capture_model} is (?:in|one of|amongst) the (\w+) of #{capture_model}$/) do |target, association, owner|
   model(owner).send(association) << model(target)
