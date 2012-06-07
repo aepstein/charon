@@ -8,6 +8,7 @@ class FundRequest < ActiveRecord::Base
   attr_accessible :reject_message, as: :rejector
   attr_readonly :fund_grant_id, :fund_request_type_id
 
+  belongs_to :fund_tier, inverse_of: :fund_requests
   belongs_to :fund_grant, inverse_of: :fund_requests
   belongs_to :fund_queue, inverse_of: :fund_requests
   belongs_to :fund_request_type, inverse_of: :fund_requests

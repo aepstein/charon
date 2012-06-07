@@ -245,6 +245,11 @@ FactoryGirl.define do
     end
   end
 
+  factory :fund_tier do
+    association :organization
+    sequence(:maximum_allocation) { |n| n * 1000.0 }
+  end
+
   factory :inventory_item do
     association :organization
     sequence(:identifier) { |n| "id##{n}" }

@@ -105,6 +105,7 @@ class FundSource < ActiveRecord::Base
   end
   has_and_belongs_to_many :returning_fund_sources, join_table: :returning_fund_sources,
     association_foreign_key: :returning_fund_source_id, class_name: 'FundSource'
+  has_and_belongs_to_many :fund_tiers
 
   accepts_nested_attributes_for :fund_queues, allow_destroy: true,
     :reject_if => proc { |a|

@@ -13,6 +13,7 @@ class Organization < ActiveRecord::Base
   has_many :activity_accounts, through: :university_accounts
   has_many :fund_grants, dependent: :destroy, inverse_of: :organization
   has_many :fund_requests, through: :fund_grants
+  has_many :fund_tiers, inverse_of: :organization
   has_many :fund_sources, inverse_of: :organization do
     #  What fund sources is this organization eligible to start a grant for?
     # * must have an open deadline (submit_at is in the future)
