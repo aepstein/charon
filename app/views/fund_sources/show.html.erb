@@ -47,7 +47,12 @@
 <%=render :partial => 'fund_queues/fund_queues',
           :object => @fund_source.fund_queues %>
 
+<h3>Fund tiers</h3>
+
+<%= render partial: 'fund_tiers/fund_tiers', object: @fund_source.fund_tiers %>
+
 <% if permitted_to? :review, @fund_source  -%>
+
 <h3>Reviewer information</h3>
 
 <p>

@@ -1,4 +1,8 @@
+<% if @organization %>
 <h2>Listing fund sources for <%=h @organization %></h2>
+<% else %>
+<h2>Listing all fund sources</h2>
+<% end %>
 
 <%= paginate @fund_sources %>
 
@@ -8,7 +12,9 @@
 
 <br />
 
+<% if @organization %>
 <p>
 <%= link_to( 'New fund_source', new_organization_fund_source_path( @organization ) ) if permitted_to?( :create, @organization.fund_sources.build ) %>
 </p>
+<% end %>
 

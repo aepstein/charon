@@ -13,13 +13,21 @@
     <%= form.input :returning_fund_sources, :as => :check_boxes %>
     <%= form.input :release_message %>
     <%= form.input :allocate_message %>
+    <%= form.input :fund_tiers, collection: form.object.allowed_fund_tiers,
+      hint: 'What fund tiers may be used in conjunction with this source?',
+      as: :check_boxes %>
   <% end %>
 
-  <%= form.inputs :name => 'Fund queues' do %>
-    <%= form.semantic_fields_for :fund_queues do |subform| %>
-      <%= render :partial => 'fund_queues/form', :object => subform %>
-    <% end %>
+  <%= form.inputs for: :fund_queues, name: 'Fund Queues' do |subform| %>
+    <%= render partial: 'fund_queues/fund_queue_fields', locals: { f: subform } %>
   <% end %>
+
+  <div class='links'>
+    <p>
+      <%= link_to_add_association 'add queue', form, :fund_queues,
+        partial: 'fund_queues/fund_queue_fields' %>
+    </p>
+  </div>
 
   <%= form.actions %>
 

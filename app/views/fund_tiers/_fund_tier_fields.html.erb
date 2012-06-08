@@ -2,7 +2,9 @@
   <%= f.inputs do %>
     <%= f.input :maximum_allocation,
       hint: 'What is the maximum aggregate funding to give organizations assigned to this tier from the associated funding source?' %>
-    <%= link_to_remove_association 'remove tier', f %>
   <% end %>
+  <p>
+  <%= link_to_remove_association 'remove tier', f %>
+  </p>
 </div>
 

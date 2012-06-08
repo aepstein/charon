@@ -14,5 +14,7 @@ class FundTier < ActiveRecord::Base
   validates :maximum_allocation, presence: true,
     uniqueness: { scope: :organization_id },
     numericality: { greater_than_or_equal_to: 0.0 }
+
+  def to_s; maximum_allocation? ? maximum_allocation.currencify : super; end
 end
 
