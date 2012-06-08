@@ -47,8 +47,8 @@ class FundGrant < ActiveRecord::Base
 
   has_paper_trail class_name: 'SecureVersion'
 
-  scope :ordered, includes { [ organization, fund_source ] }.
-    order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
+  scope :ordered, joins { [ organization, fund_source ] }.
+    order { [ fund_sources.name, organizations.last_name, organizations.first_name ] }
   scope :current, lambda { joins(:fund_source).merge( FundSource.unscoped.current ) }
   scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }
   scope :no_draft_fund_request, where { id.not_in(
@@ -62,11 +62,12 @@ class FundGrant < ActiveRecord::Base
 
   paginates_per 10
 
-  validates :organization, :presence => true
-  validates :fund_source, :presence => true
-  validates :fund_source_id, :uniqueness => { :scope => :organization_id }
+  validates :organization, presence: true
+  validates :fund_source, presence: true
+  validates :fund_source_id, uniqueness: { scope: :organization_id }
 
-  delegate :contact_name, :contact_email, :contact_to_email, :to => :fund_source
+  delegate :contact_name, :contact_email, :contact_to_email, to: :fund_source
+  delegate :require_requestor_recipients!, to: :organization
 
   def returning?
     fund_source.returning_fund_sources.
@@ -123,8 +124,6 @@ class FundGrant < ActiveRecord::Base
     end
     nil
   end
-
-  delegate :require_requestor_recipients!, :to => :organization
 
   def to_s
     "Fund grant to #{organization} from #{fund_source}"

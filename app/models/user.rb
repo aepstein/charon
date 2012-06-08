@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
       self.in( [organization] ).select { |r| names.include? r.name }.map(&:id)
     end
   end
-  has_many :organizations, through: :memberships,
+  has_many :organizations, through: :memberships, uniq: true,
     conditions: [ 'memberships.active = ?', true ]
   has_many :registrations, through: :memberships
   has_many :addresses, as: :addressable, dependent: :destroy do
@@ -109,20 +109,11 @@ class User < ActiveRecord::Base
     Agreement.where { |a| a.id.not_in( approved_agreements.select { id } ) }
   end
 
-  def organization_ids
-    organizations.select( "DISTINCT organizations.*" ).map(&:id)
-  end
-
   # Returns the user status criterions that the user presently fulfills
-  def user_status_criterions
-    UserStatusCriterion.with_status status
-  end
+  def user_status_criterions; UserStatusCriterion.with_status status; end
 
-  # Returns the agreements (and therefore agreement criteria) that the user
-  # presently fulfills
-  def agreements
-    approved_agreements
-  end
+  alias :agreements :approved_agreements
+  alias :agreement_ids :approved_agreement_ids
 
   # What frameworks is the user eligible for?
   # * perspective: the perspective from which user is approaching

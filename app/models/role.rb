@@ -17,6 +17,9 @@ class Role < ActiveRecord::Base
       memberships.active.eq( true )
     }
   }
+  scope :requestor, where { name.in( Role::REQUESTOR ) }
+  scope :reviewer, where { name.in( Role::REVIEWER ) }
+  scope :manager, where { name.in( Role::MANAGER ) }
 
   validates :name, presence: true, uniqueness: true
 
