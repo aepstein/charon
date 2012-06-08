@@ -110,6 +110,7 @@ Feature: Manage organizations
       | page                              | not see    |
       | page for the current_registration | see        |
 
+  @javascript
   Scenario Outline: Restricted update rights for user
     Given an organization exists
     And an organization_profile exists with organization: the organization
@@ -120,11 +121,14 @@ Feature: Manage organizations
     When I fill in "First name" with "Kung"
     And I fill in "Last name" with "Fu"
     And I fill in "Anticipated expenses" with "100.0"
+    And I follow "add tier"
+    And I fill in "Maximum allocation" with "1000"
     And user: "admin" has admin: <admin>
     And I press "Update"
     Then I should see "Organization was successfully updated."
     And I should <see> "First name: Kung"
     And I should <see> "Last name: Fu"
+    And I should <see> "$1,000.00"
     And I should see "Anticipated expenses: $100.00"
     Examples:
       | admin | see     |
