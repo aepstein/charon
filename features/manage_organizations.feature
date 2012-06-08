@@ -48,7 +48,7 @@ Feature: Manage organizations
       | reviewer  | not see | not see | not see | see  | see       |
       | regular   | not see | not see | not see | see  | not see   |
 
-@wip @javascript
+  @javascript
   Scenario Outline: Register a new organization and edit
     Given a current_registration exists with name: "Cornell Club", registered: true
     And a framework exists with name: "Fund Requests"
@@ -65,7 +65,7 @@ Feature: Manage organizations
     And I fill in "Anticipated income" with "0.10"
     And I fill in "Current liabilities" with "1.0"
     And I fill in "Current assets" with "10.0"
-    And I follow "add fund tier"
+    And I follow "add tier"
     And I fill in "Maximum allocation" with "1000.0"
     And I press "Create"
     Then I should see "Organization was successfully created."
@@ -86,8 +86,8 @@ Feature: Manage organizations
     And I fill in "Anticipated income" with "0.20"
     And I fill in "Current liabilities" with "2.0"
     And I fill in "Current assets" with "20.0"
-    And I follow "remove fund tier"
-    And I follow "add fund tier"
+    And I follow "remove tier"
+    And I follow "add tier"
     And I fill in "Maximum allocation" with "2000.0"
     And I press "Update"
     Then I should see "Organization was successfully updated."

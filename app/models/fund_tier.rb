@@ -8,6 +8,8 @@ class FundTier < ActiveRecord::Base
 
   belongs_to :organization, inverse_of: :fund_tiers
 
+  default_scope order { [ organization_id, maximum_allocation ] }
+
   validates :organization, presence: true
   validates :maximum_allocation, presence: true,
     uniqueness: { scope: :organization_id },
