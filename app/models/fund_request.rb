@@ -6,6 +6,7 @@ class FundRequest < ActiveRecord::Base
 
   attr_accessible :fund_request_type_id
   attr_accessible :reject_message, as: :rejector
+  attr_accessible :fund_tier_id, as: :reviewer
   attr_readonly :fund_grant_id, :fund_request_type_id
 
   belongs_to :fund_tier, inverse_of: :fund_requests
@@ -19,6 +20,7 @@ class FundRequest < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
+  delegate :allowed_fund_tiers, to: :fund_grant
   has_many :fund_allocations, inverse_of: :fund_request, dependent: :destroy do
     def allocate!( fund_item, amount )
       allocation = find_or_build_by_fund_item(fund_item)

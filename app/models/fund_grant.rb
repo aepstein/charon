@@ -8,6 +8,7 @@ class FundGrant < ActiveRecord::Base
   belongs_to :fund_source, inverse_of: :fund_grants
   belongs_to :fund_tier, inverse_of: :fund_grants
 
+  has_many :allowed_fund_tiers, through: :fund_source, source: :fund_tiers
   has_many :fund_allocations, through: :fund_requests do
     def except_for( fund_request )
       where { fund_request_id.not_eq( fund_request.id ) }
