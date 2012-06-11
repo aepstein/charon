@@ -98,13 +98,21 @@ class Organization < ActiveRecord::Base
 
   before_validation :format_name
 
-  default_scope order( 'organizations.last_name ASC, organizations.first_name ASC' )
+  default_scope order { [ last_name, first_name ] }
 
   scope :name_contains, lambda { |name|
     sql = %w( first_name last_name ).inject([]) do |memo, field|
       memo << "organizations.#{field} LIKE :name"
     end
     where( sql.join(' OR '), :name => "%#{name}%" )
+  }
+  scope :fulfill, lambda { |criterion|
+    case criterion.class.to_s
+    when 'RegistrationCriterion'
+      fulfill_registration_criterion criterion
+    else
+      raise ArgumentError, 'Invalid criterion for Organization'
+    end
   }
   scope :fulfill_registration_criterion, lambda { |criterion|
     joins { current_registration }.where { registrations.id.in(

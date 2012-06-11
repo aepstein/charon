@@ -13,6 +13,26 @@ class Requirement < ActiveRecord::Base
   validates :fulfillable_type, inclusion:
    { in: Fulfillment::FULFILLABLE_TYPES.values.flatten }
 
+
+  scope :all_roles, where( role_id: nil )
+  scope :single_role, where { role_id.not_eq( nil ) }
+  # Find all requirements a membership fulfills
+  # * include role-specific requirements that don't apply to this membership
+  scope :fulfilled_by, lambda { |membership|
+    where { |r|
+      ( r.role_id.not_eq( nil ) & r.role_id.not_eq( membership.role_id ) ) |
+      ( r.fulfillable_type.eq( 'UserStatusCriterion' ) &
+      r.fulfillable_id.in( UserStatusCriterion.fulfilled_by( membership.user ).select { id } ) ) |
+      ( r.fulfillable_type.eq( 'Agreement' ) &
+      r.fulfillable_id.in( Agreement.fulfilled_by( membership.user ).select { id } ) ) |
+      ( r.fulfillable_type.eq('RegistrationCriterion' ) &
+      r.fulfillable_id.in( RegistrationCriterion.fulfilled_by( membership.organization ).select { id } ) )
+    }
+  }
+  scope :unfulfilled_by, lambda { |membership|
+    where { |r| r.id.not_in( Requirement.fulfilled_by( membership ).select { id } ) }
+  }
+
   scope :with_inner_fulfillments, lambda {
     f = Fulfillment.arel_table
     joins('INNER JOIN fulfillments').
@@ -99,6 +119,17 @@ class Requirement < ActiveRecord::Base
         member.constantize.all.each { |m| memo["#{m}"] = "#{m.class}##{m.id}" }
       end
       memo
+    end
+  end
+
+  def fulfillment_criterion( memberships )
+    case fulfillable.class.fulfiller_type
+    when 'User'
+      memberships.user_id.in( User.unscoped.
+        send( :fulfill, fulfillable ).select { id } )
+    else
+      memberships.organization_id.in( Organization.unscoped.
+        send( :fulfill, fulfillable ).select { id } )
     end
   end
 

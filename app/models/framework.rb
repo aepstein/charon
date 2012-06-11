@@ -4,6 +4,8 @@ class Framework < ActiveRecord::Base
   has_many :approvers, inverse_of: :framework
   has_many :requirements, inverse_of: :framework
   has_many :fund_sources, inverse_of: :framework
+  has_many :requirement_roles, through: :requirements, source: :role,
+    uniq: true
 
   validates :name, presence: true, uniqueness: true
 
@@ -12,6 +14,12 @@ class Framework < ActiveRecord::Base
     allow_destroy: true
 
   scope :ordered, order { name }
+  # Find all fulfillables the membership fulfills
+  scope :fulfilled_by, lambda { |membership|
+    where { |f|
+      f.id.not_in( Requirement.unfulfilled_by( membership ).select { framework_id } )
+    }
+  }
 
   # Includes only frameworks for which requirements are fulfilled for
   # given perspective and subject(s)

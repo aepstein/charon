@@ -8,6 +8,16 @@ class User < ActiveRecord::Base
   attr_accessible :admin, :net_id, :status, as: :admin
 
   default_scope order { [ last_name, first_name, middle_name, net_id ] }
+  scope :fulfill, lambda { |criterion|
+    case criterion.class.to_s
+    when 'UserStatusCriterion'
+      fulfill_user_status_criterion criterion
+    when 'Agreement'
+      fulfill_agreement criterion
+    else
+      raise ArgumentError, 'Invalid criterion for User'
+    end
+  }
   scope :fulfill_user_status_criterion, lambda { |criterion|
     where { |u| u.status.in(
       (0..User::STATUSES.length).select { |i| ( 2**i & criterion.statuses_mask ) > 0 }.
