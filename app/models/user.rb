@@ -111,9 +111,7 @@ class User < ActiveRecord::Base
   before_validation :extract_email, :initialize_addresses, on: :create
   before_validation :import_simple_ldap_attributes
   after_save :import_complex_ldap_attributes
-  after_create 'fulfillments.fulfill! "UserStatusCriterion"'
-  after_update 'fulfillments.fulfill! "UserStatusCriterion" if status_changed?; ' +
-    'fulfillments.unfulfill! "UserStatusCriterion" if status_changed?'
+  after_update 'update_frameworks if status_changed?'
 
   def unapproved_agreements
     Agreement.where { |a| a.id.not_in( approved_agreements.select { id } ) }
@@ -197,5 +195,6 @@ class User < ActiveRecord::Base
   def initialize_addresses
     addresses.each { |address| address.addressable = self }
   end
+
 end
 

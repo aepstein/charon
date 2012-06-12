@@ -101,27 +101,31 @@ module RegistrationImporter
     end
 
     # Returns array of information about records affected by update
+    # Skips updating member/framework assignments on assumption this will be
+    # done once at the end
     def self.import( set = :latest )
-      adds, changes, deletes, starts = 0, 0, 0, Time.now
-      ExternalTerm.scoped.reset.all.each do |term|
-        registrations = case set
-        when :latest
-          term.registrations.latest
-        else
-          term.registrations
+      Framework.without_update_frameworks do
+        adds, changes, deletes, starts = 0, 0, 0, Time.now
+        ExternalTerm.scoped.reset.all.each do |term|
+          registrations = case set
+          when :latest
+            term.registrations.latest
+          else
+            term.registrations
+          end
+          registrations.all.each do |source|
+            r = source.import
+            adds += r.first
+            changes += r.last
+          end
+          d = Registration.unscoped.where( :external_term_id => term.term_id )
+          if term.registrations.length > 0
+            d = d.where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) )
+          end
+          deletes = d.all.map(&:destroy).length
         end
-        registrations.all.each do |source|
-          r = source.import
-          adds += r.first
-          changes += r.last
-        end
-        d = Registration.unscoped.where( :external_term_id => term.term_id )
-        if term.registrations.length > 0
-          d = d.where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) )
-        end
-        deletes = d.all.map(&:destroy).length
+        [adds, (changes - adds), deletes, ( Time.now - starts )]
       end
-      [adds, (changes - adds), deletes, ( Time.now - starts )]
     end
 
   end

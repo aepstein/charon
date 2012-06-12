@@ -5,11 +5,13 @@ class Membership < ActiveRecord::Base
   attr_accessible :role_id, :active, :user_name, :organization_name
   attr_readonly :registration_id, :member_source_id
 
+  attr_accessor :skip_update_frameworks
+
   scope :ordered, includes( :user, :organization ).
     order( 'organizations.last_name, organizations.first_name, users.last_name, ' +
       'users.first_name, users.net_id' )
   scope :active, where( active: true )
-  scope :inactive, where( 'memberships.active IS NULL or memberships.active = ?', false )
+  scope :inactive, where { active.not_eq( true ) }
   # Find all memberships which fulfill a framework
   # * not subject to role-specified or meets all role-specified
   # * meets all organizational
@@ -37,9 +39,14 @@ class Membership < ActiveRecord::Base
   belongs_to :registration, inverse_of: :memberships
   belongs_to :organization, inverse_of: :memberships
   belongs_to :member_source, inverse_of: :memberships
-  has_and_belongs_to_many :frameworks
+  has_and_belongs_to_many :frameworks do
+    def update!
+      proxy_association.send :frameworks=, Framework.fulfill( proxy_association.owner )
+    end
+  end
 
   before_validation :set_organization_from_registration, :set_from_member_source
+  after_save 'frameworks.update! unless skip_update_frameworks'
 
   validates :user, presence: true
   validates :role, presence: true

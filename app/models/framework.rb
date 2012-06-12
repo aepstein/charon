@@ -1,4 +1,5 @@
 class Framework < ActiveRecord::Base
+  cattr_accessor :skip_update_frameworks
   attr_accessible :name, :requirements_attributes
 
   has_many :approvers, inverse_of: :framework
@@ -6,6 +7,11 @@ class Framework < ActiveRecord::Base
   has_many :fund_sources, inverse_of: :framework
   has_many :requirement_roles, through: :requirements, source: :role,
     uniq: true
+  has_and_belongs_to_many :memberships do
+    def update!
+      proxy_association.send :memberships=, Membership.fulfill( proxy_association.owner )
+    end
+  end
 
   validates :name, presence: true, uniqueness: true
 
@@ -21,22 +27,16 @@ class Framework < ActiveRecord::Base
     }
   }
 
-  # Includes only frameworks for which requirements are fulfilled for
-  # given perspective and subject(s)
-  scope :fulfilled_for, lambda { |perspective, *subjects|
-    unfulfilled_requirements = Requirement.unscoped.
-      unfulfilled_for( perspective, subjects ).select { framework_id }
-    where { id.not_in( unfulfilled_requirements ) }
-  }
-  # Includes only frameworks for which requirements are not fulfilled for
-  # given perspective and subject(s)
-  scope :unfulfilled_for, lambda { |perspective, *subjects|
-    unfulfilled_requirements = Requirement.unscoped.
-      unfulfilled_for( perspective, subjects ).select { framework_id }
-    where { id.in( unfulfilled_requirements ) }
-  }
+  after_save 'memberships.update!'
 
   def to_s; name; end
+
+  def self.without_update_frameworks(&:block)
+    old = skip_update_frameworks
+    self.skip_update_frameworks = true
+    yield
+    self.skip_update_frameworks = old
+  end
 
 end
 

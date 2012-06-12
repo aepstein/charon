@@ -37,9 +37,8 @@ class Approval < ActiveRecord::Base
     end
   end
 
-  after_create :approve_approvable, :deliver_approval_notice, :fulfill_user
-  after_destroy :unapprove_approvable, :deliver_unapproval_notice, :unfulfill_user
-
+  after_create :approve_approvable, :deliver_approval_notice, :update_frameworks
+  after_destroy :unapprove_approvable, :deliver_unapproval_notice, :update_frameworks
   def as_of=(datetime)
     @as_of=datetime.to_s
   end
@@ -87,14 +86,9 @@ class Approval < ActiveRecord::Base
     end
   end
 
-  def fulfill_user
-    user.association(:approvals).reset
-    user.fulfillments.fulfill! 'Agreement' if approvable_type == "Agreement"
+  def update_frameworks
+    user.update_frameworks if approvable.class.to_s == 'Agreement'
   end
 
-  def unfulfill_user
-    user.association(:approvals).reset
-    user.fulfillments.unfulfill! 'Agreement' if approvable_type == "Agreement"
-  end
 end
 

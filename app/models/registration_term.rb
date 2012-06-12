@@ -53,15 +53,15 @@ class RegistrationTerm < ActiveRecord::Base
   private
 
   # Update dependent entities if registration's 'current' status is changed
-  # * Update fulfillments for registration criterions
   # * Update activation status for memberships
+  # * Update fulfillments for associated memberships when appropriate
   def update_dependencies
     return true unless current_changed?
-    RegistrationCriterion.all.each do |criterion|
-      criterion.fulfill
-      criterion.unfulfill
-    end
     memberships.activate!
+    Framework.where { id.in( Requirement.where { must_register.eq( true ) }.
+      select { framework_id } ) }.each do |framework|
+      framework.memberships.update!
+    end
     true
   end
 

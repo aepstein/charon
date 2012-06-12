@@ -3,6 +3,8 @@ class Registration < ActiveRecord::Base
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
   SEARCHABLE = [ :named ]
 
+  attr_accessor :skip_frameworks_update
+
   attr_readonly :external_term_id, :external_id
 
   has_paper_trail class_name: 'SecureVersion'
@@ -163,7 +165,7 @@ class Registration < ActiveRecord::Base
       unless organization_id_was.blank?
         old_organization = Organization.find( organization_id_was )
         old_organization.association(:current_registration).reset if current?
-        old_organization.fulfillments.unfulfill! 'RegistrationCriterion'
+        old_organization.update_frameworks
       end
     end
     return true unless organization && current?
@@ -172,8 +174,7 @@ class Registration < ActiveRecord::Base
     organization.save! if organization.changed?
     if organization_id_changed? || registered_changed? || number_of_members_changed?
       organization.association(:current_registration).reset
-      organization.fulfillments.fulfill! 'RegistrationCriterion'
-      organization.fulfillments.unfulfill! 'RegistrationCriterion' unless id_changed?
+      organization.update_frameworks
     end
     true
   end

@@ -119,24 +119,8 @@ class Organization < ActiveRecord::Base
       Registration.fulfill_registration_criterion( criterion ).select { id } ) }
   }
 
-  #search_methods :name_contains
-
   validates :last_name, presence: true,
     uniqueness: { scope: [ :first_name ] }
-
-  def frameworks( perspective, user = nil )
-    return super( perspective ) if user.blank?
-    Framework.fulfilled_for perspective, self, user
-  end
-
-#  def registration_criterions
-#    return [] unless current_registration
-#    current_registration.registration_criterions
-#  end
-
-#  def registration_criterion_ids
-#    registration_criterions.map &:id
-#  end
 
   def registered?
     current_registration && current_registration.registered?

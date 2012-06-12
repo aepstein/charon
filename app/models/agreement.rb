@@ -1,9 +1,7 @@
 class Agreement < ActiveRecord::Base
   attr_accessible :name, :contact_name, :contact_email, :purpose, :content
 
-  is_fulfillable 'User'
-
-  default_scope order( 'agreements.name ASC' )
+  default_scope order { name }
   scope :fulfilled_by, lambda { |user|
     where { |a| a.id.in( user.approved_agreements.scoped.select { id } ) }
   }
@@ -20,6 +18,7 @@ class Agreement < ActiveRecord::Base
     format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i }
 
   after_update 'approvals.clear if content_changed?'
+  is_fulfillable 'User'
 
   def approve
     true
