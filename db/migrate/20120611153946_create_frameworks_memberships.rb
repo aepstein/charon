@@ -9,18 +9,30 @@ class CreateFrameworksMemberships < ActiveRecord::Migration
     say 'Converting existing fulfillments in to framework fulfillments for memberships... (this may take a while)'
     execute <<-SQL
       INSERT INTO frameworks_memberships ( framework_id, membership_id )
-      SELECT frameworks.id, memberships.id FROM frameworks, memberships
-      WHERE memberships.active = 1 AND
+      SELECT frameworks.id, memberships.id FROM frameworks, memberships, roles
+      WHERE memberships.active = 1 AND roles.id = memberships.role_id AND
       (SELECT COUNT(*) FROM requirements WHERE framework_id = frameworks.id AND
-      (requirements.role_id IS NULL OR requirements.role_id = memberships.role_id))
+      (requirements.role_id IS NULL OR requirements.role_id = memberships.role_id) AND
+      fulfillable_type IN ('RegistrationCriterion'))
       =
       (SELECT COUNT(*) FROM requirements INNER JOIN fulfillments
       WHERE framework_id = frameworks.id AND requirements.fulfillable_type =
       fulfillments.fulfillable_type AND requirements.fulfillable_id =
       fulfillments.fulfillable_id AND
-      (( fulfiller_type = 'User' AND fulfiller_id = memberships.user_id ) OR
-      ( fulfiller_type = 'Organization' AND fulfiller_id = memberships.organization_id )) AND
-      (requirements.role_id IS NULL OR requirements.role_id = memberships.role_id))
+      fulfiller_type = 'Organization' AND fulfiller_id = memberships.organization_id AND
+      (requirements.role_id IS NULL OR requirements.role_id = memberships.role_id) AND
+      requirements.fulfillable_type IN ('RegistrationCriterion')) AND
+      (SELECT COUNT(*) FROM requirements WHERE framework_id = frameworks.id AND
+      (requirements.role_id IS NULL OR requirements.role_id = memberships.role_id) AND
+      fulfillable_type IN ('UserStatusCriterion','Agreement'))
+      =
+      (SELECT COUNT(*) FROM requirements INNER JOIN fulfillments
+      WHERE framework_id = frameworks.id AND requirements.fulfillable_type =
+      fulfillments.fulfillable_type AND requirements.fulfillable_id =
+      fulfillments.fulfillable_id AND
+      fulfiller_type = 'User' AND fulfiller_id = memberships.user_id AND
+      (requirements.role_id IS NULL OR requirements.role_id = memberships.role_id) AND
+      requirements.fulfillable_type IN ('UserStatusCriterion','Agreement'))
     SQL
   end
 
