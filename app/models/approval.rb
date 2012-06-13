@@ -11,6 +11,12 @@ class Approval < ActiveRecord::Base
     order { [ users.last_name, users.first_name, users.middle_name ] }
   scope :agreements, where( approvable_type: 'Agreement' )
   scope :fund_requests, where( approvable_type: 'FundRequest' )
+  scope :with_approvable, lambda { |approvable|
+    where { |a|
+      a.approvable_type.eq( approvable.class.to_s ) &
+      a.approvable_id.eq( approvable.id )
+    }
+  }
   scope :at_or_after, lambda { |time| where { |a| a.created_at.gte( time ) } }
 
   validates :as_of, timeliness: { type: :datetime }

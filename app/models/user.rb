@@ -8,42 +8,27 @@ class User < ActiveRecord::Base
   attr_accessible :admin, :net_id, :status, as: :admin
 
   default_scope order { [ last_name, first_name, middle_name, net_id ] }
-  scope :fulfill, lambda { |criterion|
-    case criterion.class.to_s
-    when 'UserStatusCriterion'
-      fulfill_user_status_criterion criterion
-    when 'Agreement'
-      fulfill_agreement criterion
-    else
-      raise ArgumentError, 'Invalid criterion for User'
-    end
-  }
   scope :fulfill_user_status_criterion, lambda { |criterion|
     where { |u| u.status.in(
       (0..User::STATUSES.length).select { |i| ( 2**i & criterion.statuses_mask ) > 0 }.
       map { |i| User::STATUSES[i] }
     ) }
   }
-  scope :fulfill_agreement, lambda { |agreement|
-    where { id.in( Approval.unscoped.where { approvable_id.eq( agreement.id ) &
-      approvable_type.eq( 'Agreement' ) }.select { user_id } ) }
-  }
+  scope :fulfill_agreement, lambda { |agreement| approved( agreement ) }
 
   scope :approved, lambda { |approvable|
-    joins( :approvals ).
-    where( 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',
-      approvable.class.to_s, approvable.id )
+    where { |u| u.id.in(
+      Approval.unscoped.with_approvable(approvable).select { user_id } ) }
   }
   scope :not_approved, lambda { |approvable|
-    where( "users.id NOT IN ( SELECT user_id FROM approvals WHERE " +
-      "approvable_type = ? AND approvable_id = ? )", approvable.class.to_s,
-      approvable.id )
+    where { id.not_in(
+      Approval.unscoped.with_approvable(approvable).select { user_id } ) }
   }
   scope :name_contains, lambda { |name|
-    sql = %w( first_name middle_name last_name net_id ).map do |field|
-      "users.#{field} LIKE :name"
-    end
-    where( sql.join(' OR '), name: "%#{name}%" )
+    where {
+      %w( first_name middle_name last_name net_id ).
+      map { |f| instance_eval(f).like( "%#{name}%" ) }.inject(&:|) |
+      CONCAT(first_name,' ',last_name).like( "%#{name}%" ) }
   }
 
   is_fulfiller 'UserStatusCriterion', 'Agreement'
@@ -55,7 +40,8 @@ class User < ActiveRecord::Base
   has_many :approved_fund_requests, through: :approvals, source: :approvable,
     source_type: 'FundRequest'
   has_many :memberships, dependent: :destroy, inverse_of: :user
-  has_many :roles, through: :memberships, conditions: [ 'memberships.active = ?', true ] do
+  has_many :roles, through: :memberships,
+    conditions: [ 'memberships.active = ?', true ] do
     def in(organizations)
       Membership.where( :user_id => proxy_association.owner.id,
         :organization_id.in => organizations.map(&:id) ).active.map(&:role)
@@ -115,20 +101,6 @@ class User < ActiveRecord::Base
 
   def unapproved_agreements
     Agreement.where { |a| a.id.not_in( approved_agreements.select { id } ) }
-  end
-
-  # Returns the user status criterions that the user presently fulfills
-  def user_status_criterions; UserStatusCriterion.with_status status; end
-
-  alias :agreements :approved_agreements
-  alias :agreement_ids :approved_agreement_ids
-
-  # What frameworks is the user eligible for?
-  # * perspective: the perspective from which user is approaching
-  # * organization: the organization on behalf of which the user is acting
-  def frameworks( perspective, organization = nil )
-    return super( perspective ) if organization.blank?
-    Framework.fulfilled_for( perspective, organization, self )
   end
 
   def full_name

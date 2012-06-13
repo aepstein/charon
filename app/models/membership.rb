@@ -41,7 +41,8 @@ class Membership < ActiveRecord::Base
   belongs_to :member_source, inverse_of: :memberships
   has_and_belongs_to_many :frameworks do
     def update!
-      proxy_association.send :frameworks=, Framework.fulfill( proxy_association.owner )
+      proxy_association.owner.send :frameworks=,
+        Framework.fulfilled_by( proxy_association.owner )
     end
   end
 

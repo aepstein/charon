@@ -9,7 +9,8 @@ class Framework < ActiveRecord::Base
     uniq: true
   has_and_belongs_to_many :memberships do
     def update!
-      proxy_association.send :memberships=, Membership.fulfill( proxy_association.owner )
+      proxy_association.owner.send :memberships=,
+        Membership.fulfill( proxy_association.owner )
     end
   end
 
