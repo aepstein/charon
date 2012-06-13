@@ -30,7 +30,7 @@ describe RegistrationCriterion do
     duplicate.save.should be_false
   end
 
-  context 'fulfiller scopes' do
+  context 'fulfillment scopes' do
 
     let (:conforming_registration) { create :registration, number_of_undergrads: 10, registered: true }
     let (:nonconforming_registration) { create :registration, number_of_undergrads: 0, registered: false }

@@ -11,6 +11,9 @@ class UserStatusCriterion < ActiveRecord::Base
     end
   }
   scope :fulfilled_by, lambda { |user|
+    unless user.class.to_s == 'User'
+      raise ArgumentError, "received #{user.class} instead of User"
+    end
     with_status( user.status )
   }
 
