@@ -3,6 +3,9 @@ class Agreement < ActiveRecord::Base
 
   default_scope order { name }
   scope :fulfilled_by, lambda { |user|
+    unless user.class.to_s == 'User'
+      raise ArgumentError, "received #{user.class} instead of User"
+    end
     where { |a| a.id.in( user.approved_agreements.scoped.select { id } ) }
   }
 
@@ -19,18 +22,6 @@ class Agreement < ActiveRecord::Base
 
   after_update 'approvals.clear if content_changed?'
   is_fulfillable 'User'
-
-  def approve
-    true
-  end
-
-  def unapprove
-    true
-  end
-
-  def approvals_fulfilled?
-    true
-  end
 
   def to_s(format = nil)
     case format

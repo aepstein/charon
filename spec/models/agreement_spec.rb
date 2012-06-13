@@ -1,67 +1,72 @@
 require 'spec_helper'
 
 describe Agreement do
-  before(:each) do
-    @agreement = build(:agreement)
+
+  let( :agreement ) { build :agreement }
+
+  context 'validation' do
+
+    it "should create a new instance given valid attributes" do
+      agreement.save!
+    end
+
+    it "should not save without a name" do
+      agreement.name = nil
+      agreement.save.should be_false
+    end
+
+    it "should not save with a duplicate name" do
+      agreement.save!
+      duplicate = build(:agreement, :name => agreement.name)
+      duplicate.save.should be_false
+    end
+
+    it "should not save without content" do
+      agreement.content = nil
+      agreement.save.should be_false
+    end
+
   end
 
-  it "should create a new instance given valid attributes" do
-    @agreement.save!
+  context 'callbacks' do
+
+    it "should delete associated approvals if content is changed" do
+      new_name = 'new name'
+      new_content = 'new content'
+      agreement.name.should_not eql new_name
+      agreement.content.should_not eql new_content
+      agreement.save!
+      create( :approval, approvable: agreement )
+      agreement.approvals.reset
+      agreement.name = new_name
+      agreement.save!
+      agreement.approvals.count.should eql 1
+      agreement.content = new_content
+      agreement.save!
+      agreement.approvals.should be_empty
+    end
+
   end
 
-  it "should not save without a name" do
-    @agreement.name = nil
-    @agreement.save.should be_false
-  end
+  context 'fulfillment scopes' do
 
-  it "should not save with a duplicate name" do
-    @agreement.save!
-    duplicate = build(:agreement, :name => @agreement.name)
-    duplicate.save.should be_false
-  end
+    let( :agreement ) { create :agreement }
+    let( :conforming_user ) { create( :approval, approvable: agreement ).user }
+    let( :nonconforming_user ) { create :user }
 
-  it "should not save without content" do
-    @agreement.content = nil
-    @agreement.save.should be_false
-  end
+    it "should have fulfilled_by scope" do
+      result = Agreement.fulfilled_by( conforming_user )
+      result.length.should eql 1
+      result.should include agreement
+      result = Agreement.fulfilled_by( nonconforming_user )
+      result.length.should eql 0
+    end
 
-  it "should have authorization methods for approvable" do
-    @agreement.approve.should eql true
-    @agreement.unapprove.should eql true
-  end
+    it "should have a fulfilled_by scope that only accepts a User" do
+      expect { Agreement.fulfilled_by agreement }.
+        to raise_error ArgumentError, "received Agreement instead of User"
+    end
 
-  it "should record fulfillment on approval" do
-    @agreement.save!
-    approval = create(:approval, :approvable => @agreement)
-    @agreement.fulfillments.size.should eql 1
-    @agreement.fulfillments.first.fulfiller.should eql approval.user
-  end
-
-  it "should have unapprove method the removes fulfillment" do
-    @agreement.save!
-    approval = create(:approval, :approvable => @agreement)
-    approval.destroy
-    approval.user.fulfillments.size.should eql 0
-  end
-
-  it 'should return a fulfiller_type of "User"' do
-    Agreement.fulfiller_type.should eql 'User'
-  end
-
-  it "should delete associated approvals if content is changed" do
-    new_name = 'new name'
-    new_content = 'new content'
-    agreement = create(:agreement)
-    agreement.name.should_not eql new_name
-    agreement.content.should_not eql new_content
-    create( :approval, approvable: agreement )
-    agreement.approvals.reset
-    agreement.name = new_name
-    agreement.save!
-    agreement.approvals.count.should eql 1
-    agreement.content = new_content
-    agreement.save!
-    agreement.approvals.should be_empty
   end
 end
 

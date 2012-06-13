@@ -11,7 +11,7 @@ module Fulfillable
       has_many :requirements, as: :fulfillable, dependent: :destroy
       has_many :frameworks, through: :requirements, uniq: true do
         def update!
-          frameworks.each { |framework| framework.memberships.update! }
+          each { |framework| framework.memberships.update! }
         end
       end
 
