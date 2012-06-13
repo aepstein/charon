@@ -22,6 +22,9 @@ class RegistrationCriterion < ActiveRecord::Base
     minimal_percentage_fulfilled_by(registration).must_register_fulfilled_by(registration)
   }
   scope :fulfilled_by, lambda { |organization|
+    unless organization.class.to_s == 'Organization'
+      raise ArgumentError, "received #{organization.class} instead of Organization"
+    end
     if organization.current_registration
       fulfilled_by_registration organization.current_registration
     else

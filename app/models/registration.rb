@@ -43,11 +43,23 @@ class Registration < ActiveRecord::Base
 
   attr_accessor :skip_update_peers
 
+  # Checks if any number_of_ attributes have changed
   def number_of_members_changed?
     MEMBER_TYPES.each do |type|
       return true if send "number_of_#{type}_changed?"
     end
     false
+  end
+
+  # Checks if any number_of_members attributes were set
+  def number_of_members?; member_types.any?; end
+
+  # Member types for which value is set
+  def member_types; MEMBER_TYPES.select { |type| send "number_of_#{type}?" }; end
+
+  # Number of members
+  def number_of_members
+    member_types.map { |type| send "number_of_#{type}" }.inject(0,&:+)
   end
 
   # Assures the external term id is populated when the registration term is set
@@ -73,8 +85,8 @@ class Registration < ActiveRecord::Base
   end
 
   def percent_members_of_type(type)
-    ( send('number_of_' + type) * 100.0 ) / ( number_of_undergrads +
-      number_of_grads + number_of_staff + number_of_faculty + number_of_others )
+    return 0.0 unless ( number_of_members > 0 ) && send( "number_of_#{type}?" )
+    ( send("number_of_#{type}") * 100.0 ) / ( number_of_members )
   end
 
   def funding_sources
@@ -91,11 +103,6 @@ class Registration < ActiveRecord::Base
   end
 
   alias :current? :active?
-
-  def percent_members_of_type(type)
-    self.send("number_of_#{type.to_s}") * 100.0 / ( number_of_undergrads +
-      number_of_grads + number_of_staff + number_of_faculty + number_of_others )
-  end
 
   def find_or_create_organization( params={}, options={} )
     find_or_build_organization( params, options ).save if organization.nil? || organization.new_record?

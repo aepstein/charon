@@ -6,13 +6,6 @@ module Fulfiller
       unless defined? fulfillments
         attr_accessor :skip_update_frameworks
         cattr_accessor :fulfillable_types
-          def reset_fulfillable_type(fulfillable_type)
-            proxy_association.owner.
-            send(:association,
-              "fulfillable_#{fulfillable_type.underscore.pluralize}".to_sym).
-            reset
-          end
-        end
         self.fulfillable_types = []
       end
 

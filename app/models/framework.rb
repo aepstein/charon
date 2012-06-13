@@ -31,7 +31,7 @@ class Framework < ActiveRecord::Base
 
   def to_s; name; end
 
-  def self.without_update_frameworks(&:block)
+  def self.without_update_frameworks(&block)
     old = skip_update_frameworks
     self.skip_update_frameworks = true
     yield
