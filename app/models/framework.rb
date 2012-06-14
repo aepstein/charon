@@ -7,12 +7,7 @@ class Framework < ActiveRecord::Base
   has_many :fund_sources, inverse_of: :framework
   has_many :requirement_roles, through: :requirements, source: :role,
     uniq: true
-  has_and_belongs_to_many :memberships do
-    def update!
-      proxy_association.owner.send :memberships=,
-        Membership.fulfill( proxy_association.owner )
-    end
-  end
+  has_and_belongs_to_many :memberships
 
   validates :name, presence: true, uniqueness: true
 
@@ -28,10 +23,15 @@ class Framework < ActiveRecord::Base
     }
   }
 
-  after_save 'memberships.update!'
+  after_save :update_memberships
+
+  def update_memberships; self.memberships =  Membership.fulfill self; end
 
   def to_s; name; end
 
+  # Disables update_frameworks for memberships within block
+  # * this is useful for bulk operations where frameworks can be updated
+  #   in a single action at the end
   def self.without_update_frameworks(&block)
     old = skip_update_frameworks
     self.skip_update_frameworks = true

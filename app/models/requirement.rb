@@ -5,7 +5,7 @@
 class Requirement < ActiveRecord::Base
   FULFILLABLE_TYPES = {
     'User' => %w( Agreement UserStatusCriterion ),
-    'Organization' => %w( RegistrationCriterion )
+    'Registration' => %w( RegistrationCriterion )
   }
 
   attr_accessible :fulfillable_name, :perspectives, :role_id
@@ -35,7 +35,7 @@ class Requirement < ActiveRecord::Base
       ( r.fulfillable_type.eq( 'Agreement' ) &
       r.fulfillable_id.in( Agreement.fulfilled_by( membership.user ).select { id } ) ) |
       ( r.fulfillable_type.eq('RegistrationCriterion' ) &
-      r.fulfillable_id.in( RegistrationCriterion.fulfilled_by( membership.organization ).select { id } ) )
+      r.fulfillable_id.in( RegistrationCriterion.fulfilled_by( membership.registration ).select { id } ) )
     }
   }
   scope :unfulfilled_by, lambda { |membership|

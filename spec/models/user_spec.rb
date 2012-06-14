@@ -47,6 +47,7 @@ describe User do
       result = User.send(scope, unfulfilled_criterion)
       result.length.should eql 0
     end
+
   end
 
 #  it 'should automatically fulfill user status criterions on create and update' do

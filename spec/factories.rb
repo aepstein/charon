@@ -275,10 +275,9 @@ FactoryGirl.define do
   factory :registration do
     sequence(:name) { |n| "Registered Organization #{n}" }
     sequence(:external_id) { |i| i }
-    number_of_undergrads 1
 
     factory :current_registration do
-      association :registration_term, :factory => :current_registration_term
+      association :registration_term, factory: :current_registration_term
 
       factory :eligible_registration do
         registered true

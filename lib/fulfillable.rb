@@ -9,15 +9,14 @@ module Fulfillable
        RUBY
 
       has_many :requirements, as: :fulfillable, dependent: :destroy
-      has_many :frameworks, through: :requirements, uniq: true do
-        def update!
-          each { |framework| framework.memberships.update! }
-        end
+      has_many :frameworks, through: :requirements, uniq: true
+
+      after_update :update_frameworks
+      after_destroy :update_frameworks
+
+      def update_frameworks
+        frameworks.each { |framework| framework.memberships.update! }
       end
-
-      after_update 'frameworks.update!'
-      after_destroy 'frameworks.update!'
-
 
       class << self
       end

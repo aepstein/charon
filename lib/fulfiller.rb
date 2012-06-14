@@ -4,7 +4,6 @@ module Fulfiller
 
     def is_fulfiller(*fulfillable_types)
       unless defined? fulfillments
-        attr_accessor :skip_update_frameworks
         cattr_accessor :fulfillable_types
         self.fulfillable_types = []
         send :include, InstanceMethods
@@ -30,9 +29,8 @@ module Fulfiller
   module InstanceMethods
 
     def update_frameworks
-      return true if skip_update_frameworks || Framework.skip_update_frameworks
-      memberships.each { |membership| membership.frameworks.update! }
-      true
+      return true if Framework.skip_update_frameworks
+      memberships.each { |membership| membership.update_frameworks }
     end
 
   end

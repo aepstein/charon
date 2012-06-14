@@ -1,7 +1,7 @@
 class RegistrationCriterion < ActiveRecord::Base
   attr_accessible :must_register, :minimal_percentage, :type_of_member
 
-  is_fulfillable 'Organization'
+  is_fulfillable 'Registration'
 
   scope :minimal_percentage_fulfilled_by, lambda { |registration|
     where { |r|
@@ -21,15 +21,12 @@ class RegistrationCriterion < ActiveRecord::Base
   scope :fulfilled_by_registration, lambda { |registration|
     minimal_percentage_fulfilled_by(registration).must_register_fulfilled_by(registration)
   }
-  scope :fulfilled_by, lambda { |organization|
-    unless organization.class.to_s == 'Organization'
-      raise ArgumentError, "received #{organization.class} instead of Organization"
+  scope :fulfilled_by, lambda { |registration|
+    return where( id: nil ) if registration.blank?
+    unless registration.class.to_s == 'Registration'
+      raise ArgumentError, "received #{registration.class} instead of Registration"
     end
-    if organization.current_registration
-      fulfilled_by_registration organization.current_registration
-    else
-      where id: nil
-    end
+    fulfilled_by_registration registration
   }
 
   validates :minimal_percentage, numericality: { integer_only: true,

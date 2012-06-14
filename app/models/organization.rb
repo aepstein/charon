@@ -5,7 +5,6 @@ class Organization < ActiveRecord::Base
     :organization_profile_attributes, :member_sources_attributes, as: :admin
 
   notifiable_events :registration_required
-  is_fulfiller 'RegistrationCriterion'
 
   has_one :organization_profile, inverse_of: :organization,
     dependent: :destroy
@@ -41,15 +40,19 @@ class Organization < ActiveRecord::Base
     end
   end
   has_many :inventory_items, dependent: :destroy, inverse_of: :organization
-  has_many :memberships, dependent: :destroy, inverse_of: :organization
+  # These are memberships that must be destroyed if the organization is destroyed
+  has_many :dependent_memberships, dependent: :destroy, class_name: 'Membership',
+    conditions: { registration_id: nil }
+  # These are memberships that should only be nullified if the organization is destroyed
+  has_many :independent_memberships, dependent: :nullify, class_name: 'Membership',
+    conditions: 'memberships.registration_id IS NOT NULL'
+  # This is the relationship through which memberships should be accessed and manipulated
+  has_many :memberships, inverse_of: :organization
   has_many :member_sources, inverse_of: :organization
   has_many :registrations, dependent: :nullify, inverse_of: :organization
   has_one :current_registration, class_name: 'Registration',
     conditions: [ "registrations.registration_term_id IN (SELECT " +
       "id FROM registration_terms WHERE current = ?)", true ]
-  # TODO: registration fulfillment of criterions should be handled directly between
-  # the two
-#  has_many :registration_criterions, through: :current_registration
   has_many :roles, through: :memberships do
     def user_id_equals( id )
       scoped.where( 'memberships.user_id = ?', id )

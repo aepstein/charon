@@ -74,12 +74,16 @@ describe RegistrationCriterion do
       organization = create :organization, registrations: [ create(:current_registration) ]
       RegistrationCriterion.should_receive(:fulfilled_by_registration).
         with organization.current_registration
-      RegistrationCriterion.fulfilled_by organization
+      RegistrationCriterion.fulfilled_by organization.current_registration
     end
 
     it "should have a fulfilled_by scope that raises ArgumentError on non-registration" do
       expect { RegistrationCriterion.fulfilled_by criterion }.
-        to raise_error ArgumentError, "received RegistrationCriterion instead of Organization"
+        to raise_error ArgumentError, "received RegistrationCriterion instead of Registration"
+    end
+
+    it "should have a fulfilled_by scope that accepts null argument (since membership may not always have a registration)" do
+      RegistrationCriterion.fulfilled_by( nil ).should be_empty
     end
 
     def test_scope(scope)

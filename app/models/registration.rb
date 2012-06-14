@@ -3,11 +3,11 @@ class Registration < ActiveRecord::Base
   FUNDING_SOURCES = %w( safc gpsafc sabyline gpsabyline cudept fundraising alumni )
   SEARCHABLE = [ :named ]
 
-  attr_accessor :skip_frameworks_update
-
   attr_readonly :external_term_id, :external_id
+  attr_accessor :skip_update_peers
 
   has_paper_trail class_name: 'SecureVersion'
+  is_fulfiller 'RegistrationCriterion'
 
   belongs_to :organization, inverse_of: :registrations
   belongs_to :registration_term, inverse_of: :registrations
@@ -20,7 +20,7 @@ class Registration < ActiveRecord::Base
 
   default_scope order { name }
 
-  scope :active, joins { registration_term }.where { registration_terms.current.eq( true ) }
+  scope :current, joins { registration_term }.where { registration_terms.current.eq( true ) }
   scope :inactive, joins { registration_term }.where { registration_terms.current.eq( false ) |
     registration_terms.current.eq( nil ) }
   scope :registered, where { registered.eq( true ) }
@@ -39,9 +39,6 @@ class Registration < ActiveRecord::Base
 
   before_save :adopt_registration_term, :adopt_organization
   after_save :update_memberships, :update_organization, :update_peers
-  after_destroy 'organization.fulfillments.unfulfill! if current? && organization'
-
-  attr_accessor :skip_update_peers
 
   # Checks if any number_of_ attributes have changed
   def number_of_members_changed?
@@ -71,20 +68,8 @@ class Registration < ActiveRecord::Base
     id
   end
 
-  # Return criterions fulfilled by this registration
-  # * can only fulfill criterions if the registration is current
-  def registration_criterions
-    return [] unless active?
-    RegistrationCriterion.fulfilled_by( self )
-  end
-
-  def fulfills?(criterion)
-    return false if criterion.must_register? && !registered?
-    return true unless criterion.minimal_percentage? && criterion.type_of_member?
-    percent_members_of_type(criterion.type_of_member) >= criterion.minimal_percentage
-  end
-
   def percent_members_of_type(type)
+    raise ArgumentError, "#{type} is not a valid member type" unless MEMBER_TYPES.include? type
     return 0.0 unless ( number_of_members > 0 ) && send( "number_of_#{type}?" )
     ( send("number_of_#{type}") * 100.0 ) / ( number_of_members )
   end
@@ -97,12 +82,10 @@ class Registration < ActiveRecord::Base
     self.funding_sources_mask = (FUNDING_SOURCES & sources).map { |s| 2**FUNDING_SOURCES.index(s) }.sum
   end
 
-  def active?
+  def current?
     return false unless registration_term
     registration_term.current?
   end
-
-  alias :current? :active?
 
   def find_or_create_organization( params={}, options={} )
     find_or_build_organization( params, options ).save if organization.nil? || organization.new_record?
@@ -120,9 +103,9 @@ class Registration < ActiveRecord::Base
   def to_s; name; end
 
   def peers
-    return Registration.unscoped.where( :id => nil ) unless external_id? && persisted?
-    Registration.unscoped.where { external_id == my { external_id } }.
-      where { id != my { id } }
+    return Registration.unscoped.where( id: nil ) unless external_id? && persisted?
+    Registration.unscoped.where { |r|
+      r.external_id.eq( external_id ) & r.id.not_eq( id ) }
   end
 
   private
@@ -149,30 +132,34 @@ class Registration < ActiveRecord::Base
 
   # Update memberships to point to the organization
   # Optional force argument forces update regardless of whether organization changed
+  # * updates membership framework fulfillments
+  # * associates memberships with new organization, if set
+  # * dissociates memberships from old organization, if new organization is nil
   def update_memberships(force = false)
-    if organization && ( force || organization_id_changed? )
-      organization.memberships << memberships.where(
-        memberships.arel_table[:organization_id].eq(nil).
-        or( memberships.arel_table[:organization_id].not_eq( organization_id ) ) )
+    if force || organization_id_changed?
+      if organization
+        organization.memberships << memberships.where { |m|
+          m.organization_id.eq( nil ) | m.organization_id.not_eq( organization_id )
+        }
+      else
+        memberships.update_all( organization_id: nil )
+      end
     end
+    update_frameworks if force || number_of_members_changed? || registered_changed?
     true
   end
 
   # Update organization:
-  # * reset registrations collection so saved changes are reloaded in the collection
-  # ** this reset assures fulfill and unfulfill will work off of updated registration
   # * synchronize name if it has changed and this is the current registration
   # * set last_current_registration to this if this is the current registration
-  # * fulfill and unfulfill organization as appropriate
   # * fail silently if the organization name update fails
-  # * reload organization.current_registration before fulfillment to assure changes just
-  #   saved are reflected in fulfillment
+  # * reset organization.current_registration before fulfillment to assure
+  #   current status is reflected in organization
   def update_organization
     if organization_id_changed?
       unless organization_id_was.blank?
         old_organization = Organization.find( organization_id_was )
         old_organization.association(:current_registration).reset if current?
-        old_organization.update_frameworks
       end
     end
     return true unless organization && current?
@@ -181,7 +168,6 @@ class Registration < ActiveRecord::Base
     organization.save! if organization.changed?
     if organization_id_changed? || registered_changed? || number_of_members_changed?
       organization.association(:current_registration).reset
-      organization.update_frameworks
     end
     true
   end
