@@ -20,7 +20,7 @@ describe Organization do
       "An Club" => %w( An Club ),
       "The Club" => %w( The Club ),
       "Cornell Club" => %w( Cornell Club ),
-      "The Cornell Club" => %w( The Cornell Club ),
+      "The Cornell Club" => [ "The Cornell", "Club" ],
       "club" => [ "", "club" ]
     }
     parameters.each do |last_name, results|
@@ -33,13 +33,34 @@ describe Organization do
   end
 
   it "should have a registered? method that checks whether the current registration is approved" do
+    registered_organization.save!
     registered_organization.registrations.first.current?.should be_true
     registered_organization.registrations.first.registered?.should be_true
     registered_organization.registrations.count.should eql 1
-    Registration.active.count.should eql 1
+    Registration.current.count.should eql 1
     registered_organization.current_registration.should_not be_blank
     registered_organization.registered?.should be_true
     create(:organization).registered?.should be_false
+  end
+
+  context 'memberships' do
+
+    it "should destroy associated memberships without registration on destroy" do
+      membership = create(:membership)
+      membership.organization.destroy
+      Membership.all.should_not include membership
+    end
+
+    it "should nullify associated memberships with registration on destroy" do
+      registered_organization.save!
+      membership = create( :membership, organization: registered_organization,
+        registration: registered_organization.registrations.first,
+        active: true )
+      registered_organization.destroy
+      Membership.all.should include membership
+      Membership.where { organization_id.eq( nil ) }.should include membership
+    end
+
   end
 
   context 'require_requestor_recipients!' do

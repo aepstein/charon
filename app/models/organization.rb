@@ -109,21 +109,8 @@ class Organization < ActiveRecord::Base
     end
     where( sql.join(' OR '), :name => "%#{name}%" )
   }
-  scope :fulfill, lambda { |criterion|
-    case criterion.class.to_s
-    when 'RegistrationCriterion'
-      fulfill_registration_criterion criterion
-    else
-      raise ArgumentError, 'Invalid criterion for Organization'
-    end
-  }
-  scope :fulfill_registration_criterion, lambda { |criterion|
-    joins { current_registration }.where { registrations.id.in(
-      Registration.fulfill_registration_criterion( criterion ).select { id } ) }
-  }
 
-  validates :last_name, presence: true,
-    uniqueness: { scope: [ :first_name ] }
+  validates :last_name, presence: true, uniqueness: { scope: [ :first_name ] }
 
   def registered?
     current_registration && current_registration.registered?
