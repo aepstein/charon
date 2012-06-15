@@ -25,10 +25,19 @@ shared_examples 'fulfiller update_frameworks' do
   end
 
   it "should fulfill a framework it fulfills if it has a membership" do
+    # TODO does this test really belong here? The behavior is in membership.
     fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
     unfulfiller.memberships << build( :membership, fulfiller_underscore => nil )
     framework.send(fulfiller_table).should include fulfiller
     framework.send(fulfiller_table).should_not include unfulfiller
+  end
+
+  it "should not fulfill a framework it fulfills if in a skip_update_frameworks block" do
+    Framework.skip_update_frameworks do
+      fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
+      unfulfiller.memberships << build( :membership, fulfiller_underscore => nil )
+    end
+    framework.send(fulfiller_table).should_not include fulfiller
   end
 
   it "should fulfill a framework if it fulfills after update" do
@@ -39,12 +48,32 @@ shared_examples 'fulfiller update_frameworks' do
     framework.send(fulfiller_table).should include unfulfiller
   end
 
+  it "should not fulfill a framework if it fulfills after update but is in skip_update_frameworks block" do
+    create :membership, { fulfiller_underscore => unfulfiller }
+    framework.send(fulfiller_table).should_not include unfulfiller
+    Framework.skip_update_frameworks do
+      fulfill unfulfiller
+    end
+    framework.association(fulfiller_table).reset
+    framework.send(fulfiller_table).should_not include unfulfiller
+  end
+
   it "should unfulfill a framework if it no longer fulfills on update" do
     fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
     framework.send(fulfiller_table).should include fulfiller
     unfulfill fulfiller
     framework.association(fulfiller_table).reset
     framework.send(fulfiller_table).should_not include fulfiller
+  end
+
+  it "should not unfulfill a framework if it no longer fulfills on update but is in skip_update_frameworks block" do
+    fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
+    framework.send(fulfiller_table).should include fulfiller
+    Framework.skip_update_frameworks do
+      unfulfill fulfiller
+    end
+    framework.association(fulfiller_table).reset
+    framework.send(fulfiller_table).should include fulfiller
   end
 
 end
@@ -70,45 +99,6 @@ shared_examples 'fulfiller module' do
   it "should have a memberships relation" do
     described_class.new.association(:memberships).should_not be_nil
   end
-
-#  it 'should automatically fulfill user status criterions on create and update' do
-#    criterion = create(:user_status_criterion, :statuses => %w( staff faculty ) )
-#    criterion2 = create(:user_status_criterion, :statuses => %w( temporary ) )
-#    user = create(:user, :status => 'staff')
-#    user.fulfillments.size.should eql 1
-#    user.fulfillments.first.fulfillable.should eql criterion
-#    user.status = 'temporary'
-#    user.save.should be_true
-#    user.fulfillments.size.should eql 1
-#    user.fulfillments.first.fulfillable.should eql criterion2
-#  end
-
-#  it 'should fulfill/unfulfill related organizations on create/update' do
-#    criterion1 = create(:registration_criterion, minimal_percentage: 50,
-#      type_of_member: 'undergrads', must_register: true)
-#    criterion2 = create(:registration_criterion, minimal_percentage: 50,
-#      type_of_member: 'undergrads', must_register: false)
-#    criterion3 = create(:registration_criterion, :minimal_percentage => 50,
-#      type_of_member: 'others', must_register: false)
-#    organization = create(:current_registration,
-#      :organization => create(:organization), :number_of_undergrads => 10,
-#      :registered => true ).organization
-#    registration = organization.current_registration
-#    fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-#    fulfillables.size.should eql 2
-#    fulfillables.should include criterion1
-#    fulfillables.should include criterion2
-#    registration.registered = false
-#    registration.save!
-#    fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-#    fulfillables.length.should eql 1
-#    fulfillables.should include criterion2
-#    registration.number_of_others = 11
-#    registration.save!
-#    fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-#    fulfillables.length.should eql 1
-#    fulfillables.should include criterion3
-#  end
 
 end
 
