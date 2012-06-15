@@ -45,7 +45,7 @@ module RegistrationImporter
     end
 
     def self.import
-      Framework.without_update_frameworks do
+      Framework.skip_update_frameworks do
         adds, changes, starts = 0, 0, Time.now
         all.each do |source|
           destination = RegistrationTerm.find_or_initialize_by_external_id( source.term_id )

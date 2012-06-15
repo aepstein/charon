@@ -104,7 +104,7 @@ module RegistrationImporter
     # Skips updating member/framework assignments on assumption this will be
     # done once at the end
     def self.import( set = :latest )
-      Framework.without_update_frameworks do
+      Framework.skip_update_frameworks do
         adds, changes, deletes, starts = 0, 0, 0, Time.now
         ExternalTerm.scoped.reset.all.each do |term|
           registrations = case set

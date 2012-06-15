@@ -1,5 +1,5 @@
 class Framework < ActiveRecord::Base
-  cattr_accessor :skip_update_frameworks
+  cattr_writer :skip_update_frameworks
   attr_accessible :name, :requirements_attributes
 
   has_many :approvers, inverse_of: :framework
@@ -35,7 +35,8 @@ class Framework < ActiveRecord::Base
   # Disables update_frameworks for memberships within block
   # * this is useful for bulk operations where frameworks can be updated
   #   in a single action at the end
-  def self.without_update_frameworks(&block)
+  def self.skip_update_frameworks(&block)
+    return @@skip_update_frameworks if block.blank?
     old = skip_update_frameworks
     self.skip_update_frameworks = true
     yield
