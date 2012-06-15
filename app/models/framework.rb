@@ -9,6 +9,9 @@ class Framework < ActiveRecord::Base
     uniq: true
   has_and_belongs_to_many :memberships
 
+  has_many :users, through: :memberships
+  has_many :registrations, through: :memberships
+
   validates :name, presence: true, uniqueness: true
 
   accepts_nested_attributes_for :requirements,

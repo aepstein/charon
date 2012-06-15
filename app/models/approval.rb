@@ -45,6 +45,7 @@ class Approval < ActiveRecord::Base
 
   after_create :approve_approvable, :deliver_approval_notice, :update_frameworks
   after_destroy :unapprove_approvable, :deliver_unapproval_notice, :update_frameworks
+
   def as_of=(datetime)
     @as_of=datetime.to_s
   end
@@ -93,7 +94,10 @@ class Approval < ActiveRecord::Base
   end
 
   def update_frameworks
-    user.update_frameworks if approvable.class.to_s == 'Agreement'
+    unless approvable_type != 'Agreement' || Framework.skip_update_frameworks
+      user.update_frameworks
+    end
+    true
   end
 
 end

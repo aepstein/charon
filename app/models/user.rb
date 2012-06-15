@@ -34,7 +34,7 @@ class User < ActiveRecord::Base
   is_fulfiller 'UserStatusCriterion', 'Agreement'
   is_authenticable
 
-  has_many :approvals, inverse_of: :user
+  has_many :approvals, inverse_of: :user, dependent: :destroy
   has_many :approved_agreements, through: :approvals, source: :approvable,
     source_type: 'Agreement'
   has_many :approved_fund_requests, through: :approvals, source: :approvable,

@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'shared_examples/fulfiller_examples'
 
 describe User do
 
@@ -50,17 +51,40 @@ describe User do
 
   end
 
-#  it 'should automatically fulfill user status criterions on create and update' do
-#    criterion = create(:user_status_criterion, :statuses => %w( staff faculty ) )
-#    criterion2 = create(:user_status_criterion, :statuses => %w( temporary ) )
-#    user = create(:user, :status => 'staff')
-#    user.fulfillments.size.should eql 1
-#    user.fulfillments.first.fulfillable.should eql criterion
-#    user.status = 'temporary'
-#    user.save.should be_true
-#    user.fulfillments.size.should eql 1
-#    user.fulfillments.first.fulfillable.should eql criterion2
-#  end
+  context 'fulfiller' do
+    let(:fulfillable_types) { %w( UserStatusCriterion Agreement ) }
+    include_examples 'fulfiller module'
+  end
+
+  context 'user_status_criterion fulfiller' do
+    include_examples 'fulfiller update_frameworks'
+
+    let(:framework) { create :framework,
+      requirements: [ build( :requirement,
+        fulfillable: create( :user_status_criterion, statuses: %w( undergrad )
+    ) ) ] }
+    let(:fulfiller) { create :user, status: 'undergrad' }
+    let(:unfulfiller) { create :user, status: 'temporary' }
+
+    def fulfill(f); f.status = 'undergrad'; f.save!; end
+    def unfulfill(f); f.status = 'temporary'; f.save!; end
+  end
+
+  context 'agreement fulfiller' do
+    include_examples 'fulfiller update_frameworks'
+
+    let(:fulfillable) { create :agreement }
+    let(:framework) { create :framework,
+      requirements: [ build( :requirement,
+        fulfillable: fulfillable ) ] }
+    let(:fulfiller) { create( :approval, approvable: fulfillable ).user }
+    let(:unfulfiller) { create :user }
+
+    def fulfill(f)
+      create( :approval, approvable: fulfillable, user: f )
+    end
+    def unfulfill(f); f.approvals.clear; end
+  end
 
 end
 

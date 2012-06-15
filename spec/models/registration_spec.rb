@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'shared_examples/fulfiller_examples'
 
 describe Registration do
 
@@ -161,7 +162,7 @@ describe Registration do
 
   end
 
-  context "registration criterions" do
+  context "registration criterions scope" do
 
     let( :registration ) { create :registration }
     let( :conforming_registration ) { create :registration, number_of_undergrads: 10,
@@ -213,33 +214,39 @@ describe Registration do
 
   end
 
-#  it 'should fulfill/unfulfill related organizations on create/update' do
-#    criterion1 = create(:registration_criterion, minimal_percentage: 50,
-#      type_of_member: 'undergrads', must_register: true)
-#    criterion2 = create(:registration_criterion, minimal_percentage: 50,
-#      type_of_member: 'undergrads', must_register: false)
-#    criterion3 = create(:registration_criterion, :minimal_percentage => 50,
-#      type_of_member: 'others', must_register: false)
-#    organization = create(:current_registration,
-#      :organization => create(:organization), :number_of_undergrads => 10,
-#      :registered => true ).organization
-#    registration = organization.current_registration
-#    fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-#    fulfillables.size.should eql 2
-#    fulfillables.should include criterion1
-#    fulfillables.should include criterion2
-#    registration.registered = false
-#    registration.save!
-#    fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-#    fulfillables.length.should eql 1
-#    fulfillables.should include criterion2
-#    registration.number_of_others = 11
-#    registration.save!
-#    fulfillables = registration.organization.fulfillments.map(&:fulfillable)
-#    fulfillables.length.should eql 1
-#    fulfillables.should include criterion3
-#  end
+  context 'fulfiller' do
+    let(:fulfillable_types) { %w( RegistrationCriterion ) }
+    include_examples 'fulfiller module'
+  end
 
+  context 'registration_criterion fulfiller with registered' do
+    include_examples 'fulfiller update_frameworks'
+
+    let(:framework) { create :framework,
+      requirements: [ build( :requirement,
+        fulfillable: create( :registration_criterion, must_register: true
+    ) ) ] }
+    let(:fulfiller) { create :registration, registered: true }
+    let(:unfulfiller) { create :registration, registered: false }
+
+    def fulfill(f); f.registered = true; f.save!; end
+    def unfulfill(f); f.registered = false; f.save!; end
+  end
+
+  context 'registration_criterion fulfiller with composition' do
+    include_examples 'fulfiller update_frameworks'
+
+    let(:framework) { create :framework,
+      requirements: [ build( :requirement,
+        fulfillable: create( :registration_criterion, must_register: false,
+          minimal_percentage: 50, type_of_member: 'undergrads'
+    ) ) ] }
+    let(:fulfiller) { create :registration, number_of_undergrads: 50 }
+    let(:unfulfiller) { create :registration }
+
+    def fulfill(f); f.number_of_undergrads = 50; f.save!; end
+    def unfulfill(f); f.number_of_undergrads = 0; f.save!; end
+  end
 
 end
 
