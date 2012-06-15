@@ -4,7 +4,7 @@ module Fulfiller
 
     def is_fulfiller(*fulfillable_types)
       unless defined? fulfillments
-        cattr_accessor :fulfillable_types { [] }
+        cattr_accessor( :fulfillable_types ) { [] }
         send :include, InstanceMethods
       end
 

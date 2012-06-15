@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'shared_examples/fulfillable_examples'
 
 describe UserStatusCriterion do
 
@@ -62,23 +63,13 @@ describe UserStatusCriterion do
 
   end
 
-# TODO move these to shared example
-#  it 'should correctly fulfill users on create and update' do
-#    fulfilled = user_with_status 'grad'
-#    unfulfilled = user_with_status 'temporary'
-#    fulfilled.status.should_not eql unfulfilled.status
-#    criterion = create(:user_status_criterion, :statuses => [fulfilled.status])
-#    criterion.fulfillments.size.should eql 1
-#    criterion.fulfillments.first.fulfiller_id.should eql fulfilled.id
-#    criterion.statuses = [unfulfilled.status]
-#    criterion.save.should eql true
-#    criterion.fulfillments.size.should eql 1
-#    criterion.fulfillments.first.fulfiller_id.should eql unfulfilled.id
-#  end
-
-#  it 'should return a fulfiller_type of "User"' do
-#    UserStatusCriterion.fulfiller_type.should eql 'User'
-#  end
+  context "fulfillable module" do
+    include_examples 'fulfillable module'
+    let(:fulfiller_class) { User }
+    def touch(f)
+      f.statuses = %w( undergrad grad )
+    end
+  end
 
 end
 

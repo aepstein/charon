@@ -12,11 +12,7 @@ module Fulfillable
       has_many :frameworks, through: :requirements, uniq: true
 
       after_update :update_frameworks
-      after_destroy :update_frameworks
-
-      def update_frameworks
-        frameworks.each { |framework| framework.memberships.update! }
-      end
+      around_destroy :update_frameworks
 
       class << self
       end
@@ -27,6 +23,15 @@ module Fulfillable
   end
 
   module InstanceMethods
+    def update_frameworks(&block)
+      if block
+        frameworks = self.frameworks.all
+        yield
+      else
+        frameworks = self.frameworks
+      end
+      frameworks.each { |framework| framework.update_memberships }
+    end
   end
 
   def self.included(receiver)
