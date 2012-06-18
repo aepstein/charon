@@ -39,8 +39,9 @@ class Framework < ActiveRecord::Base
     return @@skip_update_frameworks if block.blank?
     old = skip_update_frameworks
     self.skip_update_frameworks = true
-    yield
+    result = yield
     self.skip_update_frameworks = old
+    result
   end
 
 end

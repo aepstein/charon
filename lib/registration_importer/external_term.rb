@@ -51,8 +51,9 @@ module RegistrationImporter
           destination = RegistrationTerm.find_or_initialize_by_external_id( source.term_id )
           destination.attributes = source.import_attributes( REGISTRATION_TERM_ATTRIBUTES )
           adds += 1 if destination.new_record?
-          changes += 1 if destination.changed_significantly?
-          destination.save! if destination.changed_significantly?
+          if destination.new_record? || destination.changed_significantly?
+            changes += 1; destination.save!
+          end
         end
         d = RegistrationTerm.unscoped
         if count > 0
