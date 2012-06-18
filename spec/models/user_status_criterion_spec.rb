@@ -71,5 +71,12 @@ describe UserStatusCriterion do
     end
   end
 
+  context "fulfillable scopes and requirements" do
+    include_examples 'fulfillable scopes and requirements'
+    let(:membership) { create :membership, user: create( :user, status: 'undergrad' ) }
+    let(:fulfillable) { create :user_status_criterion, statuses: %w( undergrad ) }
+    let(:unfulfillable) { create :user_status_criterion, statuses: %w( grad temporary ) }
+  end
+
 end
 

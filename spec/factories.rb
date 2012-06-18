@@ -341,15 +341,15 @@ FactoryGirl.define do
     sequence(:name) { |n| "role #{n}" }
 
     factory :requestor_role do
-      name { Role::REQUESTOR.first }
+      sequence(:name, 0) { |n| Role::REQUESTOR[n] }
     end
 
     factory :reviewer_role do
-      name { Role::REVIEWER.first }
+      sequence(:name, 0) { |n| Role::REVIEWER[n] }
     end
 
     factory :manager_role do
-      name { Role::MANAGER.first }
+      sequence(:name, 0) { |n| Role::MANAGER[n] }
     end
   end
 
