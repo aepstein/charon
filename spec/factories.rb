@@ -312,7 +312,7 @@ FactoryGirl.define do
 
   factory :requirement do
     association :framework
-    association :fulfillable, :factory => :agreement
+    association :fulfillable, factory: :agreement
 
     factory :requestor_requirement do
       perspectives [ FundEdition::PERSPECTIVES.first ]

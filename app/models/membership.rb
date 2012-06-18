@@ -10,26 +10,29 @@ class Membership < ActiveRecord::Base
     users.last_name, users.first_name, users.net_id ] }
   scope :active, where( active: true )
   scope :inactive, where { active.not_eq( true ) }
+  scope :fulfill_single_role, lambda { |framework|
+    return scoped unless framework.requirements.select(&:role_id).any?
+    where { |m|
+      m.role_id.not_in( framework.requirements.single_role.scoped.select { role_id } ) |
+      framework.requirement_roles.map { |role|
+        m.role_id.eq( role.id ) &
+        framework.requirements.single_role.select { |r| r.role_id == role.id }.
+        map { |requirement| requirement.fulfillment_criterion m }.inject(:&)
+      }.inject(:|)
+    }
+  }
+  scope :fulfill_all_role, lambda { |framework|
+    return scoped unless framework.requirements.reject(&:role_id).any?
+    where { |m|
+        framework.requirements.all_roles.
+        map { |requirement| requirement.fulfillment_criterion m }.inject(:&)
+    }
+  }
   # Find all memberships which fulfill a framework
   # * not subject to role-specified or meets all role-specified
   # * meets all organizational
   scope :fulfill, lambda { |framework|
-    if framework.requirements.single_role.any?
-      where { |m|
-        m.role_id.not_in( framework.requirements.single_role.scoped.select { role_id } ) |
-        framework.requirement_roles.map { |role|
-          m.role_id.eq( role.id ) &
-          framework.requirements.single_role.select { |r| r.role_id == role.id }.
-          map { |requirement| requirement.fulfillment_criterion m }.inject(:&)
-        }.inject(:|)
-      }.
-      where { |m|
-        framework.requirements.all_roles.
-        map { |requirement| requirement.fulfillment_criterion m }.inject(:&)
-      }
-    else
-      scoped
-    end
+    fulfill_single_role( framework ).fulfill_all_role( framework )
   }
 
   belongs_to :user, inverse_of: :memberships

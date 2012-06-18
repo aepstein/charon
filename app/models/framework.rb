@@ -28,7 +28,7 @@ class Framework < ActiveRecord::Base
 
   after_save :update_memberships
 
-  def update_memberships; self.memberships =  Membership.fulfill self; end
+  def update_memberships; self.memberships = Membership.fulfill self; end
 
   def to_s; name; end
 

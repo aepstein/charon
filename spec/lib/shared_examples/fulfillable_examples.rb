@@ -1,10 +1,7 @@
 shared_examples 'fulfillable scopes and requirements' do
-  let(:fulfillable) { raise NotImplementedError }
-  let(:unfulfillable) { raise NotImplementedError }
-
   let(:framework) { create :framework }
-  let(:fulfillable_requirement) { create :requirement, framework: framework, fulfillable: fulfillable }
-  let(:unfulfillable_requirement) { create :requirement, framework: framework, fulfillable: unfulfillable }
+  let(:fulfillable_requirement) { framework.requirements << build( :requirement, framework: nil, fulfillable: fulfillable ); framework.requirements.last }
+  let(:unfulfillable_requirement) { framework.requirements << build( :requirement, framework: nil, fulfillable: unfulfillable ); framework.requirements.last }
 
   before(:each) { membership; fulfillable_requirement; unfulfillable_requirement }
 
@@ -49,6 +46,8 @@ shared_examples 'fulfillable scopes and requirements' do
     Requirement.unfulfilled_by( membership ).should include unfulfillable_requirement
   end
   def fulfillment_specs
+    framework.reload; framework.update_memberships
+    membership.association(:frameworks).reset
     membership.frameworks.should_not include unfulfillable_requirement.framework
     unfulfillable_requirement.destroy
     unfulfillable_requirement.framework.save!
@@ -74,23 +73,5 @@ shared_examples 'fulfillable module' do
     touch( fulfillable )
     fulfillable.save!
   end
-# TODO move these to shared example
-#  it 'should correctly fulfill users on create and update' do
-#    fulfilled = user_with_status 'grad'
-#    unfulfilled = user_with_status 'temporary'
-#    fulfilled.status.should_not eql unfulfilled.status
-#    criterion = create(:user_status_criterion, :statuses => [fulfilled.status])
-#    criterion.fulfillments.size.should eql 1
-#    criterion.fulfillments.first.fulfiller_id.should eql fulfilled.id
-#    criterion.statuses = [unfulfilled.status]
-#    criterion.save.should eql true
-#    criterion.fulfillments.size.should eql 1
-#    criterion.fulfillments.first.fulfiller_id.should eql unfulfilled.id
-#  end
-
-#  it 'should return a fulfiller_type of "User"' do
-#    UserStatusCriterion.fulfiller_type.should eql 'User'
-#  end
-
 end
 

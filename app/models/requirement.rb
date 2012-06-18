@@ -57,7 +57,7 @@ class Requirement < ActiveRecord::Base
       memberships.user_id.in( User.unscoped.
         send( :fulfill, fulfillable ).select { id } )
     else
-      memberships.organization_id.in( Organization.unscoped.
+      memberships.registration_id.in( Registration.unscoped.
         send( :fulfill, fulfillable ).select { id } )
     end
   end
