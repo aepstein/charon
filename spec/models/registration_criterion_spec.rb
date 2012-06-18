@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'shared_examples/fulfillable_examples'
 
 describe RegistrationCriterion do
 
@@ -95,29 +96,31 @@ describe RegistrationCriterion do
     end
   end
 
-# TODO implement in shared example groups
-#  it 'should correctly fulfill organizations on create and update' do
-#    members_and_registration_ok = create(:current_registration, :organization => create(:organization), :number_of_others => 50, :registered => true )
-#    members_only_ok = create(:current_registration, :organization => create(:organization), :number_of_others => 50 )
-#    neither_ok = create(:current_registration, :organization => create(:organization), :number_of_undergrads => 50 )
-#    criterion = create(:registration_criterion, :minimal_percentage => 50, :type_of_member => 'others', :must_register => true)
-#    criterion.fulfillments.size.should eql 1
-#    criterion.fulfillments.first.fulfiller_id.should eql members_and_registration_ok.organization_id
-#    criterion.must_register = false
-#    criterion.save.should be_true
-#    criterion.fulfillments.size.should eql 2
-#    criterion.fulfillments.first.fulfiller_id.should eql members_and_registration_ok.organization_id
-#    criterion.fulfillments.last.fulfiller_id.should eql members_only_ok.organization_id
-#    criterion.type_of_member = 'undergrads'
-#    criterion.save.should be_true
-#    criterion.fulfillments.size.should eql 1
-#    criterion.fulfillments.first.fulfiller_id.should eql neither_ok.organization_id
-#  end
+  context "fulfillable module" do
+    include_examples 'fulfillable module'
+    let(:fulfiller_class) { Registration }
+    def touch(f)
+      f.type_of_member = 'others'
+    end
+  end
 
-# TODO: part of fulfillable shared example group
-#  it 'should return a fulfiller_type of "Organization"' do
-#    RegistrationCriterion.fulfiller_type.should eql 'Organization'
-#  end
+  context "fulfillable scopes and requirements (must register)" do
+    include_examples 'fulfillable scopes and requirements'
+    let(:membership) { create :registered_membership,
+      registration: create( :registration, registered: false ) }
+    let(:fulfillable) { create :registration_criterion, must_register: false }
+    let(:unfulfillable) { create :registration_criterion, must_register: true }
+  end
+
+  context "fulfillable scopes and requirements (must register)" do
+    include_examples 'fulfillable scopes and requirements'
+    let(:membership) { create :registered_membership,
+      registration: create( :registration, number_of_undergrads: 10 ) }
+    let(:fulfillable) { create :registration_criterion, minimal_percentage: 50,
+      type_of_member: 'undergrads', must_register: false }
+    let(:unfulfillable) { create :registration_criterion, minimal_percentage: 50,
+      type_of_member: 'grads', must_register: false }
+  end
 
 end
 

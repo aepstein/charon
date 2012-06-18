@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'shared_examples/fulfillable_examples'
 
 describe Agreement do
 
@@ -68,5 +69,22 @@ describe Agreement do
     end
 
   end
+
+  context "fulfillable module" do
+    include_examples 'fulfillable module'
+    let(:fulfiller_class) { User }
+    def touch(f)
+      f.name += 'addendum'
+    end
+  end
+
+  context "fulfillable scopes and requirements" do
+    include_examples 'fulfillable scopes and requirements'
+    let(:membership) { create :membership, user: create( :user,
+      approvals: [ build( :approval, user: nil, approvable: fulfillable ) ] ) }
+    let(:fulfillable) { create :agreement }
+    let(:unfulfillable) { create :agreement }
+  end
+
 end
 
