@@ -31,6 +31,15 @@ shared_examples 'fulfillable scopes and requirements' do
     Requirement.unfulfilled_by( membership ).should_not include unfulfillable_requirement
   end
 
+  it "should fulfill the membership once unfulfillable global requirement is removed" do
+    fulfillment_specs
+  end
+
+  it "should fulfill the membership once unfulfillable matching role requirement is removed" do
+    requirements.each { |r| r.update_attribute :role_id, membership.role_id }
+    fulfillment_specs
+  end
+
   def requirements; [ fulfillable_requirement, unfulfillable_requirement ]; end
   def fulfiller; membership.send described_class.fulfiller_type.underscore.to_sym; end
   def requirement_specs
@@ -38,6 +47,13 @@ shared_examples 'fulfillable scopes and requirements' do
     Requirement.fulfilled_by( membership ).should_not include unfulfillable_requirement
     Requirement.unfulfilled_by( membership ).should_not include fulfillable_requirement
     Requirement.unfulfilled_by( membership ).should include unfulfillable_requirement
+  end
+  def fulfillment_specs
+    membership.frameworks.should_not include unfulfillable_requirement.framework
+    unfulfillable_requirement.destroy
+    unfulfillable_requirement.framework.save!
+    membership.association(:frameworks).reset
+    membership.frameworks.should include unfulfillable_requirement.framework
   end
 end
 
