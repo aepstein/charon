@@ -1,7 +1,7 @@
 class FundEditionsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  filter_access_to :destroy, :attribute_check => true
+  filter_access_to :destroy, attribute_check: true
 
   # DELETE /fund_items/1
   # DELETE /fund_items/1.xml

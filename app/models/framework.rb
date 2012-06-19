@@ -25,6 +25,14 @@ class Framework < ActiveRecord::Base
       f.id.not_in( Requirement.unfulfilled_by( membership ).select { framework_id } )
     }
   }
+  scope :fulfilled_for_memberships, lambda { |memberships_scope|
+    Framework.joins { memberships }.where { |f| f.memberships.id.in(
+      memberships_scope.scoped.select { id } ) }
+  }
+  scope :unfulfilled_for_memberships, lambda { |memberships_scope|
+    Framework.joins { memberships.outer }.where { |f| f.memberships.id.not_in(
+      memberships_scope.scoped.select { id } ) }
+  }
 
   after_save :update_memberships
 

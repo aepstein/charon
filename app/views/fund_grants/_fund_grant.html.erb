@@ -9,7 +9,10 @@
   <td><%= fund_grant.organization %></td>
   <% end %>
   <td><%= link_to 'Show', fund_grant %></td>
-  <td><%= link_to( 'Edit', edit_fund_grant_path(fund_grant) ) if permitted_to? :edit, fund_grant %></td>
-  <td><%= link_to( 'Destroy', fund_grant, :confirm => 'Are you sure you wish to destroy?', :method => :delete) if permitted_to? :destroy, fund_grant %></td>
+  <td><%= link_to( 'Edit', edit_fund_grant_path(fund_grant)
+    ) if permitted_to? :edit, fund_grant %></td>
+  <td><%= link_to( 'Destroy', fund_grant,
+      data: { confirm: 'Are you sure you wish to destroy?' }, method: :delete
+    ) if permitted_to? :destroy, fund_grant %></td>
 <% end %>
 

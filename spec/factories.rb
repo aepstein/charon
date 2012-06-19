@@ -98,11 +98,6 @@ FactoryGirl.define do
     end
   end
 
-  factory :fulfillment do
-    fulfiller { |r| r.association(:user) }
-    fulfillable { |r| r.association(:agreement) }
-  end
-
   factory :fund_allocation do
     amount 0.0
     association :fund_request

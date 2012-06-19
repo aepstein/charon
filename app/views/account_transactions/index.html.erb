@@ -15,7 +15,8 @@
     <td><%= account_transaction.effective_on %></td>
     <td><%= link_to 'Show', account_transaction %></td>
     <td><%= link_to 'Edit', edit_account_transaction_path(account_transaction) %></td>
-    <td><%= link_to 'Destroy', account_transaction, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Destroy', account_transaction, data: { confirm: 'Are you sure?' },
+      method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -23,3 +24,4 @@
 <br />
 
 <%= link_to 'New Account transaction', new_account_transaction_path %>
+

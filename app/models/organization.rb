@@ -19,13 +19,19 @@ class Organization < ActiveRecord::Base
     # * must fulfill criteria for user
     # * must not have a prior grant created
     def allowed_for( user )
-      no_fund_grant.open_deadline_for_first.
-        fulfilled_for( FundEdition::PERSPECTIVES.first, proxy_association.owner, user )
+      startable.fulfilled_for_memberships(
+          proxy_association.owner.memberships.requestor.where {
+            user_id.eq( user.id )
+          }
+      )
     end
 
     def unfulfilled_for( user )
-      no_fund_grant.open_deadline_for_first.
-        unfulfilled_for( FundEdition::PERSPECTIVES.first, proxy_association.owner, user )
+      startable.unfulfilled_for_memberships(
+          proxy_association.owner.memberships.requestor.where {
+            user_id.eq( user.id )
+          }
+      )
     end
 
     def released
@@ -33,6 +39,9 @@ class Organization < ActiveRecord::Base
         where { id.in( FundRequest.unscoped.released.select { fund_grant_id } ) }.
         select { fund_source_id } ) }
     end
+
+    # Startable
+    def startable; no_fund_grant.open_deadline_for_first; end
 
     # For what sources has no grant been created for this organization?
     def no_fund_grant

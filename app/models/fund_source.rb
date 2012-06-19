@@ -146,13 +146,13 @@ class FundSource < ActiveRecord::Base
       select { fund_source_id }
     ) }
   }
-  scope :fulfilled_for, lambda { |perspective, *subjects|
-    FundSource.joins { framework }.
-    merge( Framework.unscoped.fulfilled_for( perspective, subjects ) )
+  scope :fulfilled_for_memberships, lambda { |memberships|
+    FundSource.where { framework_id.in(
+      Framework.fulfilled_for_memberships( memberships ).select { id } ) }
   }
-  scope :unfulfilled_for, lambda { |perspective, *subjects|
-    FundSource.joins { framework }.
-    merge( Framework.unscoped.unfulfilled_for( perspective, subjects ) )
+  scope :unfulfilled_for_memberships, lambda { |memberships|
+    FundSource.where { framework_id.in(
+      Framework.unfulfilled_for_memberships( memberships ).select { id } ) }
   }
 
   def contact_to_email; "#{contact_name} <#{contact_email}>"; end

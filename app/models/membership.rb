@@ -10,6 +10,15 @@ class Membership < ActiveRecord::Base
     users.last_name, users.first_name, users.net_id ] }
   scope :active, where( active: true )
   scope :inactive, where { active.not_eq( true ) }
+  scope :requestor, lambda {
+    active.where { role_id.in( Role.requestor.select { id } ) }
+  }
+  scope :reviewer, lambda {
+    active.where { role_id.in( Role.reviewer.select { id } ) }
+  }
+  scope :manager, lambda {
+    active.where { role_id.in( Role.manager.select { id } ) }
+  }
   scope :fulfill_single_role, lambda { |framework|
     return scoped unless framework.requirements.select(&:role_id).any?
     where { |m|

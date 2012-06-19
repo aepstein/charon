@@ -2,6 +2,7 @@
     <td><%=h structure.name %></td>
     <td><%= link_to 'Show', structure %></td>
     <td><%= link_to( 'Edit', edit_structure_path(structure) ) if permitted_to? :edit, structure %></td>
-    <td><%= link_to( 'Destroy', structure, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, structure %></td>
+    <td><%= link_to( 'Destroy', structure, data: { confirm: 'Are you sure?' },
+      method: :delete ) if permitted_to? :destroy, structure %></td>
   <% end %>
 

@@ -8,6 +8,7 @@
   <td><%= activity_report.ends_on.to_formatted_s :rfc822 %></td>
   <td><%= link_to 'Show', activity_report %></td>
   <td><%= link_to( 'Edit', [:edit, activity_report] ) if permitted_to? :edit, activity_report %></td>
-  <td><%= link_to( 'Destroy', activity_report, :confirm => 'Are you sure?', :method => :delete) if permitted_to? :destroy, activity_report %></td>
+  <td><%= link_to( 'Destroy', activity_report, data: { confirm: 'Are you sure?' },
+    method: :delete) if permitted_to? :destroy, activity_report %></td>
 <% end %>
 

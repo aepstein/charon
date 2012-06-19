@@ -7,6 +7,7 @@
     <td><%= node.parent_id %></td>
     <td><%= link_to 'Show', node %></td>
     <td><%= link_to( 'Edit', edit_node_path(node) ) if permitted_to? :edit, node %></td>
-    <td><%= link_to( 'Destroy', node, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, node %></td>
+    <td><%= link_to( 'Destroy', node, data: { confirm: 'Are you sure?' },
+      method: :delete ) if permitted_to? :destroy, node %></td>
   <% end %>
 

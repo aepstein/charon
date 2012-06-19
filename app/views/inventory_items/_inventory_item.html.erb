@@ -15,7 +15,8 @@
     <td><%= link_to 'Show', inventory_item %></td>
     <td><%= link_to( 'Edit', edit_inventory_item_path( inventory_item )
       ) if permitted_to?( :edit, inventory_item ) %></td>
-    <td><%= link_to( 'Destroy', inventory_item, :confirm => 'Are you sure?',
-      :method => :delete ) if permitted_to?( :destroy, inventory_item ) %></td>
+    <td><%= link_to( 'Destroy', inventory_item,
+        data: { confirm: 'Are you sure?' }, method: :delete
+      ) if permitted_to?( :destroy, inventory_item ) %></td>
   <% end %>
 

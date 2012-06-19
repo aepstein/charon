@@ -2,6 +2,7 @@
     <td><%=h category.name %></td>
     <td><%= link_to 'Show', category %></td>
     <td><%= link_to( 'Edit', edit_category_path(category) ) if permitted_to?( :edit, category ) %></td>
-    <td><%= link_to( 'Destroy', category, :confirm => 'Are you sure?', :method => :delete ) if permitted_to?( :destroy, category ) %></td>
+    <td><%= link_to( 'Destroy', category, data: { confirm: 'Are you sure?' },
+      method: :delete ) if permitted_to?( :destroy, category ) %></td>
   <% end %>
 
