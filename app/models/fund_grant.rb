@@ -85,32 +85,52 @@ class FundGrant < ActiveRecord::Base
   # Organization associated with this grant in reviewer perspective
   def reviewer; fund_source ? fund_source.organization : nil; end
 
+  # Fetch all unfulfilled requirements
+  def unfulfilled_requirements(reset=false)
+    @unfulfilled_requirements = nil if reset
+    @unfulfilled_requirements ||= requestor_memberships.requestor.inject({}) { |memo, membership|
+      fund_source.framework.requirements.unfulfilled_by(membership) do |requirement|
+        target = membership.send( requirement.fulfiller_type.underscore.to_sym )
+        memo[ target ] ||= []
+        memo[ target ] << requirement
+      end
+      memo
+    }
+  end
+
+  def unfulfilled_requirements_for(*fulfillers)
+    fulfillers.flatten.inject({}) do |memo, fulfiller|
+      memo[ fulfiller ] = unfulfilled_requirements[ fulfiller ]
+      memo
+    end
+  end
+
   # Return unfulfilled requirements for the grant that pertain to users
   # * must supply users
   # * considers only requirements for first perspective in which user has roles
   # * returns hash { organization => [ req1, req2 ], user => [ req3 ] }
-  def unfulfilled_requirements_for(*users)
-    users.flatten.inject({}) do |memo, user|
-      FundEdition::PERSPECTIVES.each do |perspective|
-        organization = send(perspective)
-        requirements = fund_source.framework.requirements.unfulfilled_for( perspective,
-          organization, user )
-        if requirements.length > 0
-          requirements.each do |requirement|
-            fulfiller = if User.fulfillable_types.include? requirement.fulfillable_type
-              user
-            else
-              organization
-            end
-            memo[fulfiller] ||= Array.new
-            memo[fulfiller] << requirement
-          end
-          break
-        end
-      end
-      memo
-    end.each { |k, v| v.uniq! }
-  end
+#  def unfulfilled_requirements_for(*users)
+#    users.flatten.inject({}) do |memo, user|
+#      FundEdition::PERSPECTIVES.each do |perspective|
+#        organization = send(perspective)
+#        requirements = fund_source.framework.requirements.unfulfilled_for( perspective,
+#          organization, user )
+#        if requirements.length > 0
+#          requirements.each do |requirement|
+#            fulfiller = if User.fulfillable_types.include? requirement.fulfillable_type
+#              user
+#            else
+#              organization
+#            end
+#            memo[fulfiller] ||= Array.new
+#            memo[fulfiller] << requirement
+#          end
+#          break
+#        end
+#      end
+#      memo
+#    end.each { |k, v| v.uniq! }
+#  end
 
   # What is the perspective of the user or organization with respect to this
   # grant?
