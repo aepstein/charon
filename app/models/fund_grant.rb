@@ -30,6 +30,10 @@ class FundGrant < ActiveRecord::Base
   has_many :fund_editions, through: :fund_items
   has_many :nodes, through: :fund_items
   has_many :categories, through: :nodes
+  has_many :requestor_memberships, through: :organization, source: :active_memberships
+  has_many :reviewer_memberships, through: :fund_source, source: :memberships
+  has_many :requestors, through: :requestor_memberships, source: :user
+  has_many :reviewers, through: :reviewer_memberships, source: :user
   has_many :users, through: :organization do
     # Retrieves users associated with a perspective for the grant
     def for_perspective( perspective )

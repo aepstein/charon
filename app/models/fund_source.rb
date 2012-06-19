@@ -72,7 +72,6 @@ class FundSource < ActiveRecord::Base
       future.first
     end
   end
-
   has_many :fund_requests, through: :fund_grants do
     # Returns an array with rows representing different request states.
     # For each row, contents are:
@@ -96,7 +95,6 @@ class FundSource < ActiveRecord::Base
         "GROUP BY fund_requests.state ORDER BY fund_requests.state"
       )
     end
-
   end
   has_many :fund_items, through: :fund_grants
   has_many :fund_request_types, through: :fund_queues do
@@ -108,6 +106,7 @@ class FundSource < ActiveRecord::Base
     association_foreign_key: :returning_fund_source_id, class_name: 'FundSource'
   has_and_belongs_to_many :fund_tiers
   has_many :allowed_fund_tiers, through: :organization, source: :fund_tiers
+  has_many :memberships, through: :organization, source: :active_memberships
 
   accepts_nested_attributes_for :fund_queues, allow_destroy: true,
     :reject_if => proc { |a|

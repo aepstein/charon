@@ -46,6 +46,8 @@ class Organization < ActiveRecord::Base
   # These are memberships that should only be nullified if the organization is destroyed
   has_many :independent_memberships, dependent: :nullify, class_name: 'Membership',
     conditions: 'memberships.registration_id IS NOT NULL'
+  # Pull only active memberships
+  has_many :active_memberships, conditions: { active: true }, class_name: 'Membership'
   # This is the relationship through which memberships should be accessed and manipulated
   has_many :memberships, inverse_of: :organization
   has_many :member_sources, inverse_of: :organization

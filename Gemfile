@@ -38,6 +38,7 @@ end
 group :development do
   gem 'thin'
   gem 'ruby-graphviz', require: 'graphviz'
+  gem 'ruby_parser', require: false
 end
 group :test do
   gem 'test-unit'
