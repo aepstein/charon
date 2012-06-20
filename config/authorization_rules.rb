@@ -6,9 +6,9 @@ authorization do
       :agreements, :approvers, :fund_sources, :categories, :document_types,
       :fund_allocations, :fund_editions, :fund_grants, :fund_items, :fund_queues,
       :fund_request_types, :fund_requests, :fund_sources, :frameworks,
-      :fulfillments, :inventory_items, :nodes, :organizations,
-      :registration_criterions, :registrations, :registration_terms, :roles,
-      :structures, :university_accounts, :users, :user_status_criterions ],
+      :inventory_items, :nodes, :organizations, :registration_criterions,
+      :registrations, :registration_terms, :roles, :structures,
+      :university_accounts, :users, :user_status_criterions ],
       to: [ :show, :manage ]
 
     has_permission_on [ :approvals ], to: [ :show, :destroy ]
