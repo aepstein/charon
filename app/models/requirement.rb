@@ -83,7 +83,7 @@ class Requirement < ActiveRecord::Base
     when :condition
       fulfillable.to_s :requirement
     else
-      "#{fulfillable} required for #{role ? role : 'everyone'} in organization"
+      "#{fulfillable} required for #{role ? role : 'everyone'}"
     end
   end
 

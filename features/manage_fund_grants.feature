@@ -20,7 +20,7 @@ Feature: Manage fund_grants
     And an agreement exists with name: "Key Agreement"
     And a user_status_criterion exists
     And a registration_criterion exists with must_register: true, minimal_percentage: 15, type_of_member: "undergrads"
-    And a requirement exists with framework: the framework, perspectives: nil, perspective: "<perspective>", role: the <perspective>_role, fulfillable: the <fulfillable>
+    And a requirement exists with framework: the framework, role: the <perspective>_role, fulfillable: the <fulfillable>
     And a fund_source exists with organization: organization "reviewer", framework: the framework
     And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
     And I log in as user: "<user>"
