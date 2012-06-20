@@ -98,55 +98,12 @@ class FundGrant < ActiveRecord::Base
     }
   end
 
+  # Fetch unfulfilled requirements for specific fulfillers
   def unfulfilled_requirements_for(*fulfillers)
     fulfillers.flatten.inject({}) do |memo, fulfiller|
-      memo[ fulfiller ] = unfulfilled_requirements[ fulfiller ]
+      memo[ fulfiller ] = unfulfilled_requirements[ fulfiller ] unless unfulfilled_requirements[ fulfiller ].blank?
       memo
     end
-  end
-
-  # Return unfulfilled requirements for the grant that pertain to users
-  # * must supply users
-  # * considers only requirements for first perspective in which user has roles
-  # * returns hash { organization => [ req1, req2 ], user => [ req3 ] }
-#  def unfulfilled_requirements_for(*users)
-#    users.flatten.inject({}) do |memo, user|
-#      FundEdition::PERSPECTIVES.each do |perspective|
-#        organization = send(perspective)
-#        requirements = fund_source.framework.requirements.unfulfilled_for( perspective,
-#          organization, user )
-#        if requirements.length > 0
-#          requirements.each do |requirement|
-#            fulfiller = if User.fulfillable_types.include? requirement.fulfillable_type
-#              user
-#            else
-#              organization
-#            end
-#            memo[fulfiller] ||= Array.new
-#            memo[fulfiller] << requirement
-#          end
-#          break
-#        end
-#      end
-#      memo
-#    end.each { |k, v| v.uniq! }
-#  end
-
-  # What is the perspective of the user or organization with respect to this
-  # grant?
-  # * fulfiller must be a User or Organization
-  def perspective_for( fulfiller )
-    case fulfiller.class.to_s.to_sym
-    when :User
-      return 'requestor' if fulfiller.roles.requestor_in? organization
-      return 'reviewer' if fulfiller.roles.reviewer_in? fund_source.organization
-    when :Organization
-      return 'requestor' if fulfiller == requestor
-      return 'reviewer' if fulfiller == reviewer
-    else
-      raise ArgumentError, "argument cannot be of class #{fulfiller.class}"
-    end
-    nil
   end
 
   def to_s
