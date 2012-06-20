@@ -5,7 +5,7 @@ class FundGrantsController < ApplicationController
   before_filter :new_fund_grant_from_params, :only => [ :new, :create ]
   before_filter :setup_breadcrumbs
   filter_access_to :new, :create, :edit, :update, :destroy, :show,
-    :attribute_check => true
+    attribute_check: true
   filter_access_to :index do
     permitted_to!( :show, @organization ) if @organization
     permitted_to!( :show, @fund_source ) if @fund_source
@@ -20,8 +20,8 @@ class FundGrantsController < ApplicationController
     respond_to do |format|
       format.csv do
         send_data @fund_source.fund_grants.released_report,
-          :filename => "fund_source_#{@fund_source.id}_released_report.csv",
-          :type => :csv, :disposition => 'attachment'
+          filename: "fund_source_#{@fund_source.id}_released_report.csv",
+          type: :csv, disposition: 'attachment'
       end
     end
   end

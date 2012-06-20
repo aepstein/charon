@@ -5,7 +5,7 @@ class FundRequestMailer < ActionMailer::Base
   def started_notice(fund_request)
     @fund_request = fund_request
     mail(
-      to: fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      to: fund_request.requestors.requestor.map(&:to_email),
       from: fund_request.contact_to_email,
       subject: "#{fund_request} needs attention"
     )
@@ -23,7 +23,7 @@ class FundRequestMailer < ActionMailer::Base
   def finalized_notice( fund_request )
     @fund_request = fund_request
     mail(
-      to: fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      to: fund_request.requestors.requestor.map(&:to_email),
       from: fund_request.contact_to_email,
       subject: "#{fund_request} is finalized, but not submitted"
     )
@@ -32,7 +32,7 @@ class FundRequestMailer < ActionMailer::Base
   def submitted_notice( fund_request )
     @fund_request = fund_request
     message = mail(
-      to: fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      to: fund_request.requestors.requestor.map(&:to_email),
       from: fund_request.contact_to_email,
       subject: "#{fund_request} has been accepted for review"
     )
@@ -46,7 +46,7 @@ class FundRequestMailer < ActionMailer::Base
   def released_notice(fund_request)
     @fund_request = fund_request
     mail(
-      to: fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      to: fund_request.requestors.requestor.map(&:to_email),
       from: fund_request.contact_to_email,
       subject: "Preliminary determination for #{fund_request}"
     )
@@ -55,7 +55,7 @@ class FundRequestMailer < ActionMailer::Base
   def allocated_notice(fund_request)
     @fund_request = fund_request
     mail(
-      to: fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      to: fund_request.requestors.requestor.map(&:to_email),
       from: fund_request.contact_to_email,
       subject: "Allocation for #{fund_request}"
     )
@@ -64,7 +64,7 @@ class FundRequestMailer < ActionMailer::Base
   def rejected_notice(fund_request)
     @fund_request = fund_request
     mail(
-      to: fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      to: fund_request.requestors.requestor.map(&:to_email),
       from: fund_request.contact_to_email,
       subject: "#{fund_request} has been rejected"
     )
@@ -73,7 +73,7 @@ class FundRequestMailer < ActionMailer::Base
   def withdrawn_notice(fund_request)
     @fund_request = fund_request
     mail(
-      to: fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
+      to: fund_request.requestors.requestor.map(&:to_email),
       from: fund_request.contact_to_email,
       subject: "#{fund_request} has been withdrawn"
     )

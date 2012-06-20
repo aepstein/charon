@@ -328,7 +328,8 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  delegate :require_requestor_recipients!, :returning?, to: :fund_grant
+  delegate :require_requestor_recipients!, :returning?, :requestors, :reviewers,
+    to: :fund_grant
 
   # Is the request actionable?
   def actionable?; UNACTIONABLE_STATES.map(&:to_s).all? { |s| s != state }; end

@@ -87,14 +87,14 @@ Feature: Manage approvals
       |requestor|finalized|unreviewed  |owner              |not see|not see|see    |
       |requestor|finalized|unreviewed  |observer_requestor |not see|not see|not see|
       |requestor|finalized|unreviewed  |regular            |not see|not see|not see|
-      |requestor|submitted|unreviewed  |admin              |see    |see    |see    |
+      |requestor|submitted|unreviewed  |admin              |not see|see    |see    |
       |requestor|submitted|unreviewed  |source_manager     |not see|see    |see    |
       |requestor|submitted|unreviewed  |source_reviewer    |see    |not see|see    |
       |requestor|submitted|unreviewed  |applicant_requestor|not see|not see|see    |
       |requestor|submitted|unreviewed  |owner              |not see|not see|see    |
       |requestor|submitted|unreviewed  |observer_requestor |not see|not see|not see|
       |requestor|submitted|unreviewed  |regular            |not see|not see|not see|
-      |requestor|submitted|tentative   |admin              |see    |see    |see    |
+      |requestor|submitted|tentative   |admin              |not see|see    |see    |
       |requestor|submitted|tentative   |source_manager     |not see|see    |see    |
       |requestor|submitted|tentative   |source_reviewer    |see    |not see|see    |
       |requestor|submitted|tentative   |applicant_requestor|not see|not see|see    |

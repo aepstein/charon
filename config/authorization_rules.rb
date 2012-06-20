@@ -107,7 +107,7 @@ authorization do
       if_permitted_to :manage, :approvable
     end
     has_permission_on [ :approvals ], to: [ :show ] do
-      if_attribute :user_id => is { user.id }
+      if_attribute user_id: is { user.id }
     end
     has_permission_on [ :approvals ], to: [ :show ], join_by: :and do
       if_permitted_to :show, :approvable
