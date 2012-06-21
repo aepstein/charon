@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'shared_examples/fulfiller_examples'
 
 describe Organization do
 
@@ -80,6 +81,50 @@ describe Organization do
       organization.should_receive :send_registration_required_notice!
       organization.require_requestor_recipients!.should be_false
     end
+  end
+
+  context 'fulfiller' do
+    let(:fulfillable_types) { %w( RegistrationCriterion ) }
+    include_examples 'fulfiller module'
+  end
+
+  context 'registration_criterion fulfiller with registered' do
+    include_examples 'fulfiller update_frameworks'
+
+    let(:framework) { create :framework,
+      requirements: [ build( :requirement,
+        fulfillable: create( :registration_criterion, must_register: true
+    ) ) ] }
+    let(:fulfiller) { create( :current_registration, registered: true,
+      organization: create( :organization ) ).organization }
+    let(:unfulfiller) { create( :current_registration, registered: false,
+      organization: create( :organization ) ).organization }
+
+    def fulfill(f); f.current_registration.registered = true; f.current_registration.save!; end
+    def unfulfill(f); f.current_registration.registered = false; f.current_registration.save!; end
+    def fulfiller_to_membership(f); f.current_registration; end
+    def fulfiller_to_reflection(f); f.current_registration.organization; end
+    def build_membership; build :registered_membership; end
+  end
+
+  context 'registration_criterion fulfiller with composition' do
+    include_examples 'fulfiller update_frameworks'
+
+    let(:framework) { create :framework,
+      requirements: [ build( :requirement,
+        fulfillable: create( :registration_criterion, must_register: false,
+          minimal_percentage: 50, type_of_member: 'undergrads'
+    ) ) ] }
+    let(:fulfiller) { create( :current_registration, number_of_undergrads: 50,
+      organization: create( :organization ) ).organization }
+    let(:unfulfiller) { create( :current_registration,
+      organization: create( :organization ) ).organization }
+
+    def fulfill(f); f.current_registration.number_of_undergrads = 50; f.current_registration.save!; end
+    def unfulfill(f); f.current_registration.number_of_undergrads = 0; f.current_registration.save!; end
+    def fulfiller_to_membership(f); f.current_registration; end
+    def fulfiller_to_reflection(f); f.current_registration.organization; end
+    def build_membership; build :registered_membership; end
   end
 
 end

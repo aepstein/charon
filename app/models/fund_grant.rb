@@ -71,7 +71,7 @@ class FundGrant < ActiveRecord::Base
   validates :fund_source_id, uniqueness: { scope: :organization_id }
 
   delegate :contact_name, :contact_email, :contact_to_email, to: :fund_source
-  delegate :require_requestor_recipients!, to: :organization
+  delegate :require_requestor_recipients!, :current_registration, to: :organization
 
   def returning?
     fund_source.returning_fund_sources.
@@ -88,20 +88,22 @@ class FundGrant < ActiveRecord::Base
   # Fetch all unfulfilled requirements
   def unfulfilled_requirements(reset=false)
     @unfulfilled_requirements = nil if reset
-    @unfulfilled_requirements ||= requestor_memberships.requestor.inject({}) { |memo, membership|
-      fund_source.framework.requirements.unfulfilled_by(membership) do |requirement|
+    @unfulfilled_requirements ||= requestor_memberships(reset).requestor.inject({}) { |memo, membership|
+      fund_source.framework.requirements.unfulfilled_by(membership).each do |requirement|
         target = membership.send( requirement.fulfiller_type.underscore.to_sym )
         memo[ target ] ||= []
         memo[ target ] << requirement
       end
       memo
-    }
+    }.each { |k,v| v.uniq! }
   end
 
   # Fetch unfulfilled requirements for specific fulfillers
   def unfulfilled_requirements_for(*fulfillers)
     fulfillers.flatten.inject({}) do |memo, fulfiller|
-      memo[ fulfiller ] = unfulfilled_requirements[ fulfiller ] unless unfulfilled_requirements[ fulfiller ].blank?
+      unless unfulfilled_requirements[ fulfiller ].blank?
+        memo[ fulfiller ] = unfulfilled_requirements[ fulfiller ]
+      end
       memo
     end
   end

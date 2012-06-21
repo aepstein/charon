@@ -33,8 +33,12 @@ describe RegistrationCriterion do
 
   context 'fulfillment scopes' do
 
-    let (:conforming_registration) { create :registration, number_of_undergrads: 10, registered: true }
-    let (:nonconforming_registration) { create :registration, number_of_undergrads: 0, registered: false }
+    let (:conforming) { create :organization }
+    let (:nonforming) { create :organization }
+    let (:conforming_registration) { create :registration,
+      number_of_undergrads: 10, registered: true, organization: conforming }
+    let (:nonconforming_registration) { create :registration,
+      number_of_undergrads: 0, registered: false, organization: nonforming }
     let (:permissive_criterion) { create :registration_criterion, must_register: false }
 
     before(:each) do
@@ -71,20 +75,17 @@ describe RegistrationCriterion do
       test_scope :fulfilled_by_registration
     end
 
-    it "should have fulfilled_by scope that calls fulfilled_by_registration for registration" do
+    it "should have fulfilled_by scope that calls fulfilled_by_registration for " +
+      "organization.current_registration" do
       organization = create :organization, registrations: [ create(:current_registration) ]
       RegistrationCriterion.should_receive(:fulfilled_by_registration).
         with organization.current_registration
-      RegistrationCriterion.fulfilled_by organization.current_registration
+      RegistrationCriterion.fulfilled_by organization
     end
 
-    it "should have a fulfilled_by scope that raises ArgumentError on non-registration" do
+    it "should have a fulfilled_by scope that raises ArgumentError on non-Organization" do
       expect { RegistrationCriterion.fulfilled_by criterion }.
-        to raise_error ArgumentError, "received RegistrationCriterion instead of Registration"
-    end
-
-    it "should have a fulfilled_by scope that accepts null argument (since membership may not always have a registration)" do
-      RegistrationCriterion.fulfilled_by( nil ).should be_empty
+        to raise_error ArgumentError, "received RegistrationCriterion instead of Organization"
     end
 
     def test_scope(scope)
@@ -98,7 +99,7 @@ describe RegistrationCriterion do
 
   context "fulfillable module" do
     include_examples 'fulfillable module'
-    let(:fulfiller_class) { Registration }
+    let(:fulfiller_class) { Organization }
     def touch(f)
       f.type_of_member = 'others'
     end
@@ -107,15 +108,17 @@ describe RegistrationCriterion do
   context "fulfillable scopes and requirements (must register)" do
     include_examples 'fulfillable scopes and requirements'
     let(:membership) { create :registered_membership,
-      registration: create( :registration, registered: false ) }
+      registration: create( :current_registration, registered: false,
+      organization: create(:organization) ) }
     let(:fulfillable) { create :registration_criterion, must_register: false }
     let(:unfulfillable) { create :registration_criterion, must_register: true }
   end
 
-  context "fulfillable scopes and requirements (must register)" do
+  context "fulfillable scopes and requirements (composition)" do
     include_examples 'fulfillable scopes and requirements'
     let(:membership) { create :registered_membership,
-      registration: create( :registration, number_of_undergrads: 10 ) }
+      registration: create( :current_registration, number_of_undergrads: 10,
+      organization: create(:organization) ) }
     let(:fulfillable) { create :registration_criterion, minimal_percentage: 50,
       type_of_member: 'undergrads', must_register: false }
     let(:unfulfillable) { create :registration_criterion, minimal_percentage: 50,

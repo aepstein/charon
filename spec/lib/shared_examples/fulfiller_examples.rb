@@ -7,41 +7,46 @@ shared_examples 'fulfiller update_frameworks' do
   let(:fulfiller) { raise NotImplementedError }
   let(:unfulfiller) { raise NotImplementedError }
 
+
   def fulfill(f); raise NotImplementedError; end
   def unfulfill(f); raise NotImplementedError; end
 
-  def fulfiller_underscore; described_class.to_s.underscore.to_sym; end
   def fulfiller_table; described_class.to_s.underscore.pluralize.to_sym; end
+
+  def fulfiller_to_membership(f); f; end
+  def fulfiller_to_reflection(f); f; end
+  def build_membership; build :membership; end
 
   it "should not fulfill a framework if it has no membership" do
     framework.send(fulfiller_table).should_not include fulfiller
   end
 
   it "should call update_frameworks if fulfillment change occurs" do
-    fulfiller.should_receive(:update_frameworks)
+    fulfiller_to_reflection( fulfiller ).should_receive(:update_frameworks)
     unfulfill fulfiller
-    unfulfiller.should_receive(:update_frameworks)
+    fulfiller_to_reflection( unfulfiller ).should_receive(:update_frameworks)
     fulfill unfulfiller
   end
 
   it "should fulfill a framework it fulfills if it has a membership" do
     # TODO does this test really belong here? The behavior is in membership.
-    fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
-    unfulfiller.memberships << build( :membership, fulfiller_underscore => nil )
+    fulfiller_to_membership( fulfiller ).memberships << build_membership
+    fulfiller_to_membership( unfulfiller ).memberships << build_membership
     framework.send(fulfiller_table).should include fulfiller
     framework.send(fulfiller_table).should_not include unfulfiller
   end
 
   it "should not fulfill a framework it fulfills if in a skip_update_frameworks block" do
     Framework.skip_update_frameworks do
-      fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
-      unfulfiller.memberships << build( :membership, fulfiller_underscore => nil )
+      fulfiller_to_membership( fulfiller ).memberships << build_membership
+      fulfiller_to_membership( unfulfiller ).memberships << build_membership
     end
     framework.send(fulfiller_table).should_not include fulfiller
   end
 
   it "should fulfill a framework if it fulfills after update" do
-    create :membership, { fulfiller_underscore => unfulfiller }
+#    create :membership, { fulfiller_underscore => fulfiller_to_membership( unfulfiller ) }
+    fulfiller_to_membership( unfulfiller ).memberships << build_membership
     framework.send(fulfiller_table).should_not include unfulfiller
     fulfill unfulfiller
     framework.association(fulfiller_table).reset
@@ -49,7 +54,8 @@ shared_examples 'fulfiller update_frameworks' do
   end
 
   it "should not fulfill a framework if it fulfills after update but is in skip_update_frameworks block" do
-    create :membership, { fulfiller_underscore => unfulfiller }
+#    create :membership, { fulfiller_underscore => fulfiller_to_membership( unfulfiller ) }
+    fulfiller_to_membership( unfulfiller ).memberships << build_membership
     framework.send(fulfiller_table).should_not include unfulfiller
     Framework.skip_update_frameworks do
       fulfill unfulfiller
@@ -59,7 +65,7 @@ shared_examples 'fulfiller update_frameworks' do
   end
 
   it "should unfulfill a framework if it no longer fulfills on update" do
-    fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
+    fulfiller_to_membership( fulfiller ).memberships << build_membership
     framework.send(fulfiller_table).should include fulfiller
     unfulfill fulfiller
     framework.association(fulfiller_table).reset
@@ -67,7 +73,7 @@ shared_examples 'fulfiller update_frameworks' do
   end
 
   it "should not unfulfill a framework if it no longer fulfills on update but is in skip_update_frameworks block" do
-    fulfiller.memberships << build( :membership, fulfiller_underscore => nil )
+    fulfiller_to_membership( fulfiller ).memberships << build_membership
     framework.send(fulfiller_table).should include fulfiller
     Framework.skip_update_frameworks do
       unfulfill fulfiller

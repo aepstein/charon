@@ -5,6 +5,7 @@ class Organization < ActiveRecord::Base
     :organization_profile_attributes, :member_sources_attributes, as: :admin
 
   notifiable_events :registration_required
+  is_fulfiller 'RegistrationCriterion'
 
   has_one :organization_profile, inverse_of: :organization,
     dependent: :destroy
@@ -73,33 +74,7 @@ class Organization < ActiveRecord::Base
     end
   end
   has_many :university_accounts, dependent: :destroy, inverse_of: :organization
-  has_many :users, through: :memberships,
-    conditions: { memberships: { active: true } } do
-    # What users do not fulfill the set of requirements?
-    def unfulfilled_for( requirements )
-      m = Membership.arel_table
-      r = requirements.arel_table
-      f = Fulfillment.arel_table
-      scoped.group( m[:user_id] ).joins("INNER JOIN requirements").merge(
-        requirements.with_fulfillments.unfulfilled.
-        joins( "AND " + f[:fulfiller_id].eq( m[:user_id] ).
-          and(  f[:fulfiller_type].eq( 'User' ) ).to_sql )
-      ).
-      where( m[:role_id].eq( r[:role_id] ).to_sql )
-    end
-    # What users do fulfill requirements?
-    def fulfilled_for( requirements )
-      m = Membership.arel_table
-      r = requirements.arel_table
-      f = Fulfillment.arel_table
-      scoped.group( m[:user_id] ).joins("LEFT JOIN requirements ON " +
-        m[:role_id].eq( r[:role_id] ).to_sql ).merge(
-        requirements.with_fulfillments.fulfilled.
-        joins( "AND " + f[:fulfiller_id].eq( m[:user_id] ).
-          and(  f[:fulfiller_type].eq( 'User' ) ).to_sql )
-      )
-    end
-  end
+  has_many :users, through: :memberships, conditions: { memberships: { active: true } }
   belongs_to :last_current_registration, class_name: 'Registration'
   has_many :last_current_users, through: :last_current_registration,
     source: :users
@@ -120,6 +95,10 @@ class Organization < ActiveRecord::Base
     end
     where( sql.join(' OR '), :name => "%#{name}%" )
   }
+  scope :fulfill_registration_criterion, lambda { |criterion|
+    joins { current_registration.outer }.
+    merge( Registration.unscoped.fulfill_registration_criterion criterion )
+  }
 
   validates :last_name, presence: true, uniqueness: { scope: [ :first_name ] }
 
@@ -131,15 +110,15 @@ class Organization < ActiveRecord::Base
   # If at least one active membership is present in requestor perspective, true
   # Else: send registration_required_notice for requestor organization
   def require_requestor_recipients!
-    return true if users.where( 'memberships.role_id IN ( SELECT id FROM roles ' +
-      'WHERE name IN (?) )', Role::REQUESTOR ).any?
+    return true if active_memberships.requestor.any?
     send_registration_required_notice!
     false
   end
 
   def independent?
     return current_registration.independent? unless current_registration.blank?
-    return registrations.joins { registration_term }.last(:order => 'registration_terms.starts_at ASC').independent? unless registrations.empty?
+    return registrations.joins { registration_term }.
+      order { registration_terms.starts_at }.last.independent? unless registrations.empty?
     false
   end
 

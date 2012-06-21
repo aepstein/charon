@@ -10,7 +10,7 @@ class Framework < ActiveRecord::Base
   has_and_belongs_to_many :memberships
 
   has_many :users, through: :memberships
-  has_many :registrations, through: :memberships
+  has_many :organizations, through: :memberships
 
   validates :name, presence: true, uniqueness: true
 

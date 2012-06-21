@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/fulfiller_examples'
 
 describe Registration do
 
@@ -212,40 +211,6 @@ describe Registration do
       result.should include registration, conforming_registration
     end
 
-  end
-
-  context 'fulfiller' do
-    let(:fulfillable_types) { %w( RegistrationCriterion ) }
-    include_examples 'fulfiller module'
-  end
-
-  context 'registration_criterion fulfiller with registered' do
-    include_examples 'fulfiller update_frameworks'
-
-    let(:framework) { create :framework,
-      requirements: [ build( :requirement,
-        fulfillable: create( :registration_criterion, must_register: true
-    ) ) ] }
-    let(:fulfiller) { create :registration, registered: true }
-    let(:unfulfiller) { create :registration, registered: false }
-
-    def fulfill(f); f.registered = true; f.save!; end
-    def unfulfill(f); f.registered = false; f.save!; end
-  end
-
-  context 'registration_criterion fulfiller with composition' do
-    include_examples 'fulfiller update_frameworks'
-
-    let(:framework) { create :framework,
-      requirements: [ build( :requirement,
-        fulfillable: create( :registration_criterion, must_register: false,
-          minimal_percentage: 50, type_of_member: 'undergrads'
-    ) ) ] }
-    let(:fulfiller) { create :registration, number_of_undergrads: 50 }
-    let(:unfulfiller) { create :registration }
-
-    def fulfill(f); f.number_of_undergrads = 50; f.save!; end
-    def unfulfill(f); f.number_of_undergrads = 0; f.save!; end
   end
 
 end

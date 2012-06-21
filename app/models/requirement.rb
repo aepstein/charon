@@ -5,7 +5,7 @@
 class Requirement < ActiveRecord::Base
   FULFILLABLE_TYPES = {
     'User' => %w( Agreement UserStatusCriterion ),
-    'Registration' => %w( RegistrationCriterion )
+    'Organization' => %w( RegistrationCriterion )
   }
 
   attr_accessible :fulfillable_name, :perspectives, :role_id
@@ -31,15 +31,32 @@ class Requirement < ActiveRecord::Base
     where { |r|
       ( r.role_id.not_eq( nil ) & r.role_id.not_eq( membership.role_id ) ) |
       ( r.fulfillable_type.eq( 'UserStatusCriterion' ) &
-      r.fulfillable_id.in( UserStatusCriterion.fulfilled_by( membership.user ).select { id } ) ) |
+        r.fulfillable_id.in( UserStatusCriterion.
+        fulfilled_by( membership.user ).select { id } ) ) |
       ( r.fulfillable_type.eq( 'Agreement' ) &
-      r.fulfillable_id.in( Agreement.fulfilled_by( membership.user ).select { id } ) ) |
+        r.fulfillable_id.in( Agreement.
+        fulfilled_by( membership.user ).select { id } ) ) |
       ( r.fulfillable_type.eq('RegistrationCriterion' ) &
-      r.fulfillable_id.in( RegistrationCriterion.fulfilled_by( membership.registration ).select { id } ) )
+        r.fulfillable_id.in( RegistrationCriterion.
+        fulfilled_by( membership.organization ).select { id } ) )
     }
   }
+  # Find all requirements a membership does not fulfill
+  # * exclude requirements not applicable to membership
   scope :unfulfilled_by, lambda { |membership|
-    where { |r| r.id.not_in( Requirement.fulfilled_by( membership ).select { id } ) }
+    where { |r|
+      ( r.role_id.eq( nil ) | r.role_id.eq( membership.role_id ) ) & (
+        ( r.fulfillable_type.eq( 'UserStatusCriterion' ) &
+        r.fulfillable_id.not_in( UserStatusCriterion.
+          fulfilled_by( membership.user ).select { id } ) ) |
+        ( r.fulfillable_type.eq( 'Agreement' ) &
+        r.fulfillable_id.not_in( Agreement.
+          fulfilled_by( membership.user ).select { id } ) ) |
+        ( r.fulfillable_type.eq('RegistrationCriterion' ) &
+        r.fulfillable_id.not_in( RegistrationCriterion.
+          fulfilled_by( membership.organization ).select { id } ) )
+      )
+    }
   }
 
   def self.fulfillable_names
@@ -57,7 +74,7 @@ class Requirement < ActiveRecord::Base
       memberships.user_id.in( User.unscoped.
         send( :fulfill, fulfillable ).select { id } )
     else
-      memberships.registration_id.in( Registration.unscoped.
+      memberships.organization_id.in( Organization.unscoped.
         send( :fulfill, fulfillable ).select { id } )
     end
   end

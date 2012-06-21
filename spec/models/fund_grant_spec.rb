@@ -38,28 +38,6 @@ describe FundGrant do
     end
   end
 
-  context 'users proxy' do
-    it 'should have a perspective_for method that identifies a user\'s perspective' do
-      requestor_role = create(:requestor_role)
-      reviewer_role = create(:reviewer_role)
-      requestor_organization = create(:organization)
-      reviewer_organization = create(:organization)
-      requestor = create(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
-      conflictor = create(:membership, :role => requestor_role, :active => true, :organization => requestor_organization).user
-      create(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization, :user => conflictor)
-      reviewer = create(:membership, :role => reviewer_role, :active => true, :organization => reviewer_organization).user
-      fund_source = create(:fund_source, :organization => reviewer_organization)
-      fund_grant = create(:fund_grant, :fund_source => fund_source,
-        :organization => requestor_organization)
-      [
-        [ requestor, 'requestor' ], [ conflictor, 'requestor' ], [ reviewer, 'reviewer' ],
-        [ requestor_organization, 'requestor' ], [ reviewer_organization, 'reviewer' ]
-      ].each do |scenario|
-        fund_grant.perspective_for( scenario.first ).should eql scenario.last
-      end
-    end
-  end
-
   context 'scopes' do
     it 'should have a closed scope' do
       generate_non_current_fund_grants

@@ -7,7 +7,6 @@ class Registration < ActiveRecord::Base
   attr_accessor :skip_update_peers
 
   has_paper_trail class_name: 'SecureVersion'
-  is_fulfiller 'RegistrationCriterion'
 
   belongs_to :organization, inverse_of: :registrations
   belongs_to :registration_term, inverse_of: :registrations
@@ -145,7 +144,6 @@ class Registration < ActiveRecord::Base
         memberships.update_all( organization_id: nil )
       end
     end
-    update_frameworks if force || number_of_members_changed? || registered_changed?
     true
   end
 
@@ -160,14 +158,18 @@ class Registration < ActiveRecord::Base
       unless organization_id_was.blank?
         old_organization = Organization.find( organization_id_was )
         old_organization.association(:current_registration).reset if current?
+        old_organization.update_frameworks
       end
     end
     return true unless organization && current?
     organization.last_current_registration = self
     organization.update_attributes name.to_organization_name_attributes, as: :admin
-    organization.save! if organization.changed?
+    if organization.changed?
+      organization.save!
+      organization.association(:current_registration).reset if current?
+    end
     if organization_id_changed? || registered_changed? || number_of_members_changed?
-      organization.association(:current_registration).reset
+      organization.update_frameworks
     end
     true
   end
