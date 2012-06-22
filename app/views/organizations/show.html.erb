@@ -13,7 +13,7 @@
   <p>
   The organization is authorized to request funds under the following permissions frameworks.
   </p>
-  <% @organization.frameworks( FundEdition::PERSPECTIVES.first ).each do |framework| %>
+  <% Framework.fulfilled_for_memberships( @organization.memberships.requestor ).each do |framework| %>
   <li><%=h framework %></li>
   <% end %>
   </ul>
