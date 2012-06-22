@@ -2,7 +2,8 @@
 Certain requirements must be fulfilled before you may request funds from <%= unfulfilled_fund_grant.fund_source %> on behalf of <%= unfulfilled_fund_grant.organization %>.
 </p>
 
-<% unfulfilled_fund_grant.unfulfilled_requirements_for( current_user ).each do |fulfiller, requirements| %>
+<% unfulfilled_fund_grant.unfulfilled_requirements_for(
+    current_user, unfulfilled_fund_grant.organization ).each do |fulfiller, requirements| %>
   <p><%= fulfiller == current_user ? 'You' : fulfiller.to_s %>:</p>
   <ul>
     <% requirements.each do |requirement| %>

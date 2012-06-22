@@ -46,7 +46,10 @@ Feature: Manage fund_grants
     And a fund_source exists with name: "Semester Budget"
     And a fund_queue exists with fund_source: the fund_source
     And an organization exists with last_name: "Spending Club"
-    And I log in as user: "admin"
+    And a user exists
+    And a requestor_role exists
+    And a membership exists with user: the user, organization: the organization, role: the requestor_role
+    And I log in as the user
     And I am on the new fund_grant page for the organization
     When I select "Annual Budget" from "Fund source"
     And I press "Create"
@@ -121,8 +124,8 @@ Feature: Manage fund_grants
     And a framework: "other" exists
     And a registration_criterion exists with must_register: true
     And an agreement exists with name: "Ethical Conduct Statement"
-    And a requestor_requirement exists with framework: framework "<o_requirement>", fulfillable: the registration_criterion
-    And a requestor_requirement exists with framework: framework "<u_requirement>", fulfillable: the agreement
+    And a requirement exists with framework: framework "<o_requirement>", fulfillable: the registration_criterion
+    And a requirement exists with framework: framework "<u_requirement>", fulfillable: the agreement
     And a fund_source exists with name: "Annual Budget", framework: framework "focus"
     And a fund_queue exists with fund_source: the fund_source
     And a fund_request_type exists

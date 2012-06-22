@@ -310,11 +310,11 @@ FactoryGirl.define do
     association :fulfillable, factory: :agreement
 
     factory :requestor_requirement do
-      perspectives [ FundEdition::PERSPECTIVES.first ]
+      association :role, factory: :requestor_role
     end
 
     factory :reviewer_requirement do
-      perspectives [ FundEdition::PERSPECTIVES.last ]
+      association :role, factory: :reviewer_role
     end
   end
 

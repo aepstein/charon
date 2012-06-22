@@ -126,10 +126,10 @@ class FundSource < ActiveRecord::Base
   validates :open_at, timeliness: { type: :datetime }
   validates :closed_at, timeliness: { type: :datetime, after: :open_at }
 
-  default_scope order: 'fund_sources.name ASC'
-  scope :closed, lambda { where( :closed_at.lt => Time.zone.now ) }
+  default_scope order { name }
+  scope :closed, lambda { where { closed_at.lt( Time.zone.now ) } }
   scope :current, lambda {
-    where( :open_at.lt => Time.zone.now, :closed_at.gt => Time.zone.now )
+    where { open_at.lt( Time.zone.now ) & closed_at.gt( Time.zone.now ) }
   }
   scope :open_deadline, lambda {
     current.joins { fund_queues }.
@@ -137,9 +137,9 @@ class FundSource < ActiveRecord::Base
   }
   scope :open_deadline_for_first, lambda {
     open_deadline.joins { fund_queues.fund_request_types }.
-    where { fund_queues.fund_request_types.allowed_for_first == true }
+    where { fund_queues.fund_request_types.allowed_for_first.eq( true ) }
   }
-  scope :upcoming, lambda { where( 'open_at > ?', Time.zone.now ) }
+  scope :upcoming, lambda { where { open_at.gt( Time.zone.now ) } }
   scope :no_fund_grant_for, lambda { |organization|
     where { id.not_in( FundGrant.unscoped.
       where { organization_id.eq( my { organization.id } ) }.
