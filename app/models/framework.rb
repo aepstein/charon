@@ -30,8 +30,8 @@ class Framework < ActiveRecord::Base
       memberships_scope.scoped.select { id } ) }
   }
   scope :unfulfilled_for_memberships, lambda { |memberships_scope|
-    Framework.joins { memberships.outer }.where { |f| f.memberships.id.not_in(
-      memberships_scope.scoped.select { id } ) }
+    Framework.where { |f| f.id.not_in( memberships_scope.
+      joins { frameworks }.select { frameworks.id } ) }
   }
 
   after_save :update_memberships

@@ -11,9 +11,8 @@
   </p>
 
   <% @fund_grant.organization.fund_sources.unfulfilled_for( current_user ).each do |fund_source| %>
-    <%= render :partial => "shared/unfulfilled_fund_grant",
-      :object => @fund_grant.organization.fund_grants.
-        build( :fund_source_id => fund_source.id ) %>
+    <%= render partial: "shared/unfulfilled_fund_grant",
+      object: @fund_grant.organization.fund_grants.build( fund_source_id: fund_source.id ) %>
   <% end %>
 <% end %>
 
