@@ -158,11 +158,11 @@ authorization do
     has_permission_on [ :fund_editions ], to: :manage, join_by: :and do
       if_permitted_to :allocate, :fund_item
     end
-    has_permission_on [ :fund_editions ], to: :show, join_by: :and do
+    has_permission_on [ :fund_editions ], to: [ :show, :review ], join_by: :and do
       if_permitted_to :show, :fund_request
       if_attribute perspective: is { FundEdition::PERSPECTIVES.first }
     end
-    has_permission_on [ :fund_editions ], to: :show, join_by: :and do
+    has_permission_on [ :fund_editions ], to: [ :show, :review ], join_by: :and do
       if_permitted_to :review, :fund_request
     end
     has_permission_on [ :fund_editions ], to: :show, join_by: :and do

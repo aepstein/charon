@@ -1,5 +1,5 @@
 <%= table_row_tag false do %>
-  <td colspan="2"><%= fund_edition.perspective.capitalize %><% if permitted_to?( :review, fund_edition.fund_request ) && fund_edition.originator %> (<%= User.find( fund_edition.originator ).name( :net_id ) %>)<% end %>:</td>
+  <td colspan="2"><%= fund_edition.perspective.capitalize %><% if permitted_to?( :review, fund_edition ) && fund_edition.originator %> (<%= User.find( fund_edition.originator ).name( :net_id ) %>)<% end %>:</td>
 <% end %>
 
 <%= table_row_tag false do %>
