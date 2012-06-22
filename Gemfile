@@ -43,7 +43,7 @@ end
 group :test do
   gem 'test-unit'
   gem 'cucumber-rails'
-  gem 'database_cleaner'
+  gem 'database_cleaner', require: false
   gem 'capybara'
   gem 'spork', '~> 0.9.0'
   gem 'factory_girl', '~> 2.0', require: false

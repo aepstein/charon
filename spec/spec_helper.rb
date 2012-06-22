@@ -11,11 +11,16 @@ Spork.prefork do
     config.use_transactional_fixtures = false
     config.include ActionDispatch::TestProcess
     config.include FactoryGirl::Syntax::Methods
-    config.before(:each) do
+    config.before(:suite) do
       DatabaseCleaner.strategy = :truncation
       DatabaseCleaner[:active_record,
         { connection: "external_registrations_#{::Rails.env}" }].
         strategy = :truncation
+    end
+    config.before(:each) do
+      DatabaseCleaner.start
+    end
+    config.after(:each) do
       DatabaseCleaner.clean
     end
   end
