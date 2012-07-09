@@ -74,11 +74,10 @@ authorization do
     end
 
     has_permission_on [ :activity_accounts ], to: :manage do
-      if_permitted_to :manage, :fund_source
+      if_permitted_to :manage, :fund_grant
     end
     has_permission_on [ :activity_accounts ], to: :show do
-      if_permitted_to :request, :university_account
-      if_permitted_to :manage, :university_account
+      if_permitted_to :show, :fund_grant
     end
 
     has_permission_on [ :activity_reports ], to: :manage do
@@ -182,11 +181,6 @@ authorization do
         user: is { user },
         frameworks: contains { object.fund_source.framework }
       }
-#      if_attribute :fund_source => {
-#          :framework_id => is_in { user.frameworks( FundEdition::PERSPECTIVES.first,
-#            object.organization ).map(&:id)
-#          }
-#        }
     end
     has_permission_on [ :fund_grants ], to: [ :show, :review_framework ],
       join_by: :and do
@@ -201,11 +195,6 @@ authorization do
         user: is { user },
         frameworks: contains { object.fund_source.framework }
       }
-#      if_attribute :fund_source => {
-#          :framework_id => is_in { user.frameworks( FundEdition::PERSPECTIVES.last,
-#            object.fund_source.organization ).map(&:id)
-#          }
-#        }
     end
     has_permission_on [ :fund_grants ], to: [ :create ], join_by: :and do
       if_permitted_to :request, :organization
@@ -336,7 +325,6 @@ authorization do
 
     has_permission_on [ :university_accounts ], to: :manage do
       if_permitted_to :manage, :organization
-      if_permitted_to :manage, :activity_accounts
     end
 
     has_permission_on [ :users ], to: [ :show, :edit, :update ] do

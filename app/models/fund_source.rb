@@ -8,7 +8,7 @@ class FundSource < ActiveRecord::Base
   belongs_to :organization, inverse_of: :fund_sources
   belongs_to :structure, inverse_of: :fund_sources
   belongs_to :framework, inverse_of: :fund_sources
-  has_many :activity_accounts, dependent: :destroy, inverse_of: :fund_source
+  has_many :activity_accounts, through: :fund_grants
   has_many :fund_allocations, through: :fund_requests
   has_many :fund_grants, dependent: :destroy, inverse_of: :fund_source do
     def build_for( organization )

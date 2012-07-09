@@ -10,7 +10,7 @@ class Organization < ActiveRecord::Base
   has_one :organization_profile, inverse_of: :organization,
     dependent: :destroy
   has_many :activity_reports, dependent: :destroy, inverse_of: :organization
-  has_many :activity_accounts, through: :university_accounts
+  has_many :activity_accounts, through: :fund_grants
   has_many :fund_grants, dependent: :destroy, inverse_of: :organization
   has_many :fund_requests, through: :fund_grants
   has_many :fund_tiers, inverse_of: :organization, dependent: :destroy

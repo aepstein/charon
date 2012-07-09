@@ -19,6 +19,7 @@ Charon::Application.routes.draw do
     resources :approvers, :only => [ :index, :create, :new ]
   end
   resources :fund_grants, :except => [ :create, :new, :index ] do
+    resources :activity_accounts, :only => [ :index, :new, :create ]
     resources :fund_requests, :only => [ :create, :new, :index ]
   end
   resources :fund_editions, :only => [ :destroy ]
@@ -117,7 +118,6 @@ Charon::Application.routes.draw do
       get :activate
       put :do_activate
     end
-    resources :activity_accounts, :only => [ :index, :new, :create ]
   end
   resources :user_status_criterions do
     resources :fulfillments, :only => [:index]

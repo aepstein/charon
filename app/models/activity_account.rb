@@ -36,6 +36,7 @@ class ActivityAccount < ActiveRecord::Base
       `IFNULL( (#{sum_adjustments_sql}), 0.0 )`.as(sum_adjustments) ]
   }
   scope :current, joins { fund_grant }.merge( FundGrant.unscoped.current )
+  scope :closed, joins { fund_grant }.merge( FundGrant.unscoped.closed )
 
   validates :fund_grant, presence: true
   validates :category, presence: true

@@ -73,8 +73,9 @@ You may <%=link_to 'prepare a new fund request', new_fund_grant_fund_request_pat
 <% end %>
 
 <p>
+<%= link_to 'List activity accounts', fund_grant_activity_accounts_path(@fund_grant) %>
 <% if permitted_to? :edit, @fund_grant %>
-<%= link_to 'Edit', edit_fund_grant_path( @fund_grant ) %>
+ | <%= link_to 'Edit', edit_fund_grant_path( @fund_grant ) %>
 <% end %>
 </p>
 

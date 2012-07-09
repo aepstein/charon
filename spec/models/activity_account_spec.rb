@@ -31,5 +31,22 @@ describe ActivityAccount do
 
   end
 
+  context "temporal scopes" do
+
+    let(:activity_account) { create :activity_account }
+    let(:closed_activity_account) { create :closed_activity_account }
+
+    it "should have a current scope that returns only current" do
+      ActivityAccount.current.should include activity_account
+      ActivityAccount.current.should_not include closed_activity_account
+    end
+
+    it "should have a closed scope that returns only closed" do
+      ActivityAccount.closed.should_not include activity_account
+      ActivityAccount.closed.should include closed_activity_account
+    end
+
+  end
+
 end
 
