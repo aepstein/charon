@@ -17,7 +17,8 @@ FactoryGirl.define do
   end
 
   factory :activity_account do
-    association :university_account
+    association :fund_grant
+    association :category
   end
 
   factory :activity_report do

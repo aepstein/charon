@@ -42,6 +42,7 @@ class FundGrant < ActiveRecord::Base
     autosave: false do
     def reviewer; scoped.merge( Membership.unscoped.reviewer ); end
   end
+  has_many :activity_accounts, inverse_of: :fund_grant, dependent: :destroy
 #  has_many :users, through: :organization do
 #    # Retrieves users associated with a perspective for the grant
 #    def for_perspective( perspective )
@@ -53,8 +54,8 @@ class FundGrant < ActiveRecord::Base
 
   scope :ordered, joins { [ organization, fund_source ] }.
     order { [ fund_sources.name, organizations.last_name, organizations.first_name ] }
-  scope :current, lambda { joins(:fund_source).merge( FundSource.unscoped.current ) }
-  scope :closed, lambda { joins(:fund_source).merge( FundSource.unscoped.closed ) }
+  scope :current, lambda { joins { fund_source }.merge( FundSource.unscoped.current ) }
+  scope :closed, lambda { joins { fund_source }.merge( FundSource.unscoped.closed ) }
   scope :no_draft_fund_request, where { id.not_in(
     FundRequest.unscoped.draft.select { fund_grant_id } ) }
   scope :organization_name_contains, lambda { |name|

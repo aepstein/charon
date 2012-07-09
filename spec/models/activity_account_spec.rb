@@ -1,27 +1,35 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 
 describe ActivityAccount do
-  before(:each) do
-    @account = create(:activity_account)
+
+  let(:activity_account) { build :activity_account }
+
+  context 'validation' do
+
+    it 'should save with valid properties' do
+      activity_account.save!
+    end
+
+    it 'should not save without a fund_grant' do
+      activity_account.fund_grant = nil
+      activity_account.save.should be_false
+    end
+
+    it "should not save without a category" do
+      activity_account.category = nil
+      activity_account.save.should be_false
+    end
+
+    it 'should not save with a duplicate university account for given fund_source and category' do
+      activity_account.fund_grant = create(:fund_grant)
+      activity_account.category = create(:category)
+      activity_account.save!
+      duplicate = build( :activity_account, fund_grant: activity_account.fund_grant,
+        category: activity_account.category )
+      duplicate.save.should be_false
+    end
+
   end
 
-  it 'should save with valid properties' do
-    @account.id.should_not be_nil
-  end
-
-  it 'should not save without a university account' do
-    @account.university_account = nil
-    @account.save.should be_false
-  end
-
-  it 'should not save with a duplicate university account for given fund_source and category' do
-    @account.fund_source = create(:fund_source)
-    @account.category = create(:category)
-    @account.save!
-    duplicate = build( :activity_account, :fund_source => @account.fund_source,
-      :university_account => @account.university_account,
-      :category => @account.category )
-    duplicate.save.should be_false
-  end
 end
 
