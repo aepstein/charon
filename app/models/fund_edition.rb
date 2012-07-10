@@ -150,8 +150,9 @@ class FundEdition < ActiveRecord::Base
   # * must be associated with the request of the edition
   def displaceable_items
     return [] unless fund_item && fund_request
-    fund_item.siblings.
-    select { |i| fund_request.fund_editions.map(&:fund_item).include? i }
+#    fund_item.siblings.
+#    select { |i| fund_request.fund_editions.map(&:fund_item).include? i }
+    fund_item.siblings.where { |i| i.id.in fund_request.fund_editions.scoped.select { fund_item_id } }
   end
 
   def displace_item_id=(i)

@@ -27,11 +27,11 @@ class Framework < ActiveRecord::Base
   }
   scope :fulfilled_for_memberships, lambda { |memberships_scope|
     Framework.joins { memberships }.where { |f| f.memberships.id.in(
-      memberships_scope.scoped.select { id } ) }
+      memberships_scope.scoped.select { id } ) }.uniq
   }
   scope :unfulfilled_for_memberships, lambda { |memberships_scope|
     Framework.where { |f| f.id.not_in( memberships_scope.
-      joins { frameworks }.select { frameworks.id } ) }
+      joins { frameworks }.select { frameworks.id } ) }.uniq
   }
 
   after_save :update_memberships

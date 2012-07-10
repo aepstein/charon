@@ -10,10 +10,10 @@ class FundAllocation < ActiveRecord::Base
   validates :fund_item, presence: true
   validates :fund_request, presence: true
 
-  scope :final, lambda { where { fund_request_id.in(
-    FundRequest.unscoped.with_state(:allocated).select { id } ) } }
-  scope :pending, lambda { where { fund_request_id.not_in(
-    FundRequest.unscoped.with_state(:allocated).select { id } ) } }
+  scope :final, lambda { joins { fund_request }.
+    merge( FundRequest.unscoped.with_state( :allocated ) ) }
+  scope :pending, lambda { joins { fund_request }.
+    merge( FundRequest.unscoped.without_state( :allocated ) ) }
   scope :for_category, lambda { |category| joins { fund_item }.
     where { |i| i.fund_item.node_id.in( Node.unscoped.select { id }.
       where { |n| n.category_id.eq( category.id ) } ) } }

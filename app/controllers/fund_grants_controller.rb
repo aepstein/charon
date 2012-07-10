@@ -130,10 +130,12 @@ class FundGrantsController < ApplicationController
 
   def initialize_index
     @fund_grants = FundGrant.scoped
-    @fund_grants = @fund_grants.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
-    @fund_grants = @fund_grants.scoped( :conditions => { :fund_source_id => @fund_source.id }) if @fund_source
-    @fund_grants = @fund_grants.with_permissions_to(:show).ordered.
-      includes { [ fund_source.organization.memberships, fund_source.framework ] }
+    @fund_grants = @organization.fund_grants if @organization
+    @fund_grants = @fund_source.fund_grants if @fund_source
+    @fund_grants = @fund_grants.includes { organization } unless @organization
+    @fund_grants = @fund_grants.includes { fund_source } unless @fund_source
+    @fund_grants = @fund_grants.ordered
+#    @fund_grants = @fund_grants.with_permissions_to(:show)
   end
 
   def new_fund_grant_from_params

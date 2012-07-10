@@ -22,8 +22,8 @@
 
 <%= form.inputs do %>
   <% if form.object.new_record? -%>
-    <%= form.input :node_id, :as => :hidden %>
-    <%= form.input :parent_id, :as => :hidden %>
+    <%= form.input :node_id, as: :hidden %>
+    <%= form.input :parent_id, as: :hidden %>
   <% else -%>
     <%= form.semantic_fields_for :fund_allocations do |fund_allocation_form| %>
       <% if permitted_to?( :allocate, form.object ) -%>
