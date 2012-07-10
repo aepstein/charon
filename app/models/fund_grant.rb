@@ -51,7 +51,8 @@ class FundGrant < ActiveRecord::Base
   has_many :activity_accounts, inverse_of: :fund_grant, dependent: :destroy do
     def populate!
       proxy_association.owner.categories.without_activity_account.each do |category|
-        create( category_id: category.id )
+        create! category_id: category.id
+        proxy_association.owner.association(:activity_account_categories).reset
       end
     end
   end
