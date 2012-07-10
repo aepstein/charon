@@ -3,7 +3,7 @@ class ActivityAccountsController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index, :past, :current, :future ]
   before_filter :new_activity_account_from_params, :only => [ :new, :create ]
-  filter_access_to :new, :create, :edit, :update, :destroy, :show, :attribute_check => true
+  filter_access_to :new, :create, :edit, :update, :destroy, :show, attribute_check: true
   filter_access_to :index do
     permitted_to!( :show, @context ) if @context
     true
@@ -76,7 +76,7 @@ class ActivityAccountsController < ApplicationController
     @activity_account.destroy
 
     respond_to do |format|
-      format.html { redirect_to university_account_activity_accounts_url( @activity_account.university_account ) }
+      format.html { redirect_to fund_grant_activity_accounts_url( @activity_account.fund_grant ) }
       format.xml  { head :ok }
     end
   end
@@ -85,23 +85,23 @@ class ActivityAccountsController < ApplicationController
 
   def initialize_context
     @activity_account = ActivityAccount.find( params[:id] ) if params[:id]
-    @university_account = UniversityAccount.find( params[:university_account_id] ) if params[:university_account_id]
+    @fund_grant = FundGrant.find( params[ :fund_grant_id ] ) if params[:fund_grant_id]
     @organization = Organization.find( params[:organization_id] ) if params[:organization_id]
-    @context = @university_account || @organization
+    @context = @fund_grant || @organization
     add_breadcrumb @organization.name, organization_path( @organization ) if @organization
-    add_breadcrumb @university_account, university_account_path( @university_account ) if @university_account
+    add_breadcrumb @fund_grant, fund_grant_path( @fund_grant ) if @fund_grant
   end
 
   def initialize_index
     @activity_accounts = ActivityAccount.scoped
     @activity_accounts = @activity_accounts.organization_id_equals( @organization.id ) if @organization
     @activity_accounts = @activity_accounts.where(
-      :university_account_id => @university_account.id ) if @university_account
-    @activity_accounts = @activity_accounts.with_permissions_to(:show)
+      fund_grant_id: @fund_grant.id ) if @fund_grant
+    @activity_accounts = @activity_accounts.with_permissions_to(:show).with_balances
   end
 
   def new_activity_account_from_params
-    @activity_account = @university_account.activity_accounts.build( params[:activity_account] )
+    @activity_account = @fund_grant.activity_accounts.build( params[:activity_account] )
   end
 
 end

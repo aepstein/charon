@@ -8,6 +8,18 @@
   <b>Submit at:</b> <%= @fund_queue.submit_at %>
 </p>
 
+<p>
+  <b>Release message:</b>
+</p>
+
+<%=markdown @fund_queue.release_message %>
+
+<p>
+  <b>Allocate message:</b>
+</p>
+
+<%=markdown @fund_queue.allocate_message %>
+
 <h3>Statistics</h3>
 
 <p>

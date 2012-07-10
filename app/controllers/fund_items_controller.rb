@@ -4,6 +4,7 @@ class FundItemsController < ApplicationController
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_fund_item_from_fund_request, :only => [ :new, :create ]
   before_filter :populate_fund_editions, :only => [ :new, :edit ]
+  before_filter :populate_fund_allocations, :only => [ :edit ]
   before_filter :attach_fund_request_to_new_fund_editions, :only => [ :create, :update ]
   filter_access_to :show, :destroy, :attribute_check => true
   # The following checks are necessary to assure the user has permission to
@@ -22,6 +23,8 @@ class FundItemsController < ApplicationController
     permitted_to! :create, @fund_item
     @fund_item.fund_editions.for_request( @fund_request ).
       each { |fund_edition| permitted_to! :create, fund_edition }
+    @fund_item.fund_allocations.for_request( @fund_request ).
+      each { |fund_allocation| permitted_to! :create, fund_allocation }
   end
   filter_access_to :update do
     # TODO: Additional constraints for changing items here
@@ -33,6 +36,13 @@ class FundItemsController < ApplicationController
         permitted_to! :create, fund_edition
       else
         permitted_to! :update, fund_edition
+      end
+    end
+    @fund_item.fund_allocations.for_request( @fund_request ).each do |fund_allocation|
+      if fund_allocation.new_record?
+        permitted_to! :create, fund_allocation
+      else
+        permitted_to! :update, fund_allocation
       end
     end
   end
@@ -152,6 +162,10 @@ class FundItemsController < ApplicationController
         fund_edition.documents.populate
       end
     }
+  end
+
+  def populate_fund_allocations
+    @fund_item.fund_allocations.find_or_build_for_fund_request @fund_request
   end
 
   def attach_fund_request_to_new_fund_editions

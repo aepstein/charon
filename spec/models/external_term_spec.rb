@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'spec_helper'
 require 'importer_tests'
 
 describe RegistrationImporter::ExternalTerm do
@@ -26,10 +26,9 @@ describe RegistrationImporter::ExternalTerm do
 
   it 'should import a new record successfully' do
     RegistrationImporter::ExternalTerm.import[0,3].should eql [ 1, 0, 0 ]
-    @term.current = 'NO'
-    @term.current_changed?.should be_true
-    @term.save
-    RegistrationImporter::ExternalTerm.import[0,3].should eql [ 0, 1, 0 ]
+    @term.update_attribute :current, 'NO'
+    @term.current.should be_false
+    r = RegistrationImporter::ExternalTerm.import[0,3].should eql [ 0, 1, 0 ]
     @term.destroy
     RegistrationImporter::ExternalTerm.import[0,3].should eql [ 0, 0, 1 ]
   end

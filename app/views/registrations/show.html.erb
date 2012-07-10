@@ -14,7 +14,7 @@
   <dd><%=h @registration.funding_sources.join ', ' %></dd>
 
   <dt>Active?</dt>
-  <dd><%=h @registration.active? ? 'Yes' : 'No' %></dd>
+  <dd><%=h @registration.current? ? 'Yes' : 'No' %></dd>
 
   <dt>Independent?</dt>
   <dd><%= @registration.independent? ? 'Yes' : 'No' %></dd>

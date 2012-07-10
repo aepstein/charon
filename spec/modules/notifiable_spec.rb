@@ -48,12 +48,14 @@ end
 describe FundRequest do
   it_behaves_like 'notifiable' do
     before(:each) do
+      notifiable.fund_queue = notifiable.fund_grant.fund_source.fund_queues.first
+      notifiable.save!
       notifiable.stub(:require_requestor_recipients!).and_return(true)
     end
 
     let( :notifiable ) { create( :fund_request, :withdrawn_at => Time.zone.now ) }
-    let( :events ) { [ :started, :tentative, :finalized, :rejected, :submitted,
-      :released, :withdrawn ] }
+    let( :events ) { [ :started, :tentative, :finalized, :submitted,
+      :released, :allocated, :rejected, :withdrawn ] }
   end
 
   it_behaves_like 'notifiable_with_condition' do

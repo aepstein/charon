@@ -1,9 +1,19 @@
+<% organization ||= false %>
+<% with_balances ||= false %>
   <%= table_row_tag do %>
-    <td><%= activity_account.university_account %></td>
-    <td><%= activity_account.fund_source %></td>
+    <% unless organization %>
+    <td><%= activity_account.fund_grant.organization %></td>
+    <% end %>
+    <td><%= activity_account.fund_grant.fund_source %></td>
     <td><%= activity_account.category %></td>
+    <% if with_balances %>
+    <td><%=number_to_currency activity_account.sum_allocations %></td>
+    <td><%=number_to_currency activity_account.sum_adjustments %></td>
+    <td><%=number_to_currency activity_account.sum_available %></td>
+    <% end %>
     <td><%= link_to 'Show', activity_account %></td>
     <td><%= link_to 'Edit', edit_activity_account_path(activity_account) if permitted_to? :edit, activity_account %></td>
-    <td><%= link_to( 'Destroy', activity_account, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, activity_account %></td>
+    <td><%= link_to( 'Destroy', activity_account, data: { confirm: 'Are you sure?' },
+      method: :delete ) if permitted_to? :destroy, activity_account %></td>
   <% end %>
 

@@ -9,15 +9,12 @@
 </p>
 
 <p>
-  <b>Club sport?</b> <%= @organization.club_sport? ? 'Yes' : 'No' %>
-</p>
-
-<p>
   <b><%= FundEdition::PERSPECTIVES.first.capitalize %> frameworks:</b>
   <p>
   The organization is authorized to request funds under the following permissions frameworks.
   </p>
-  <% @organization.frameworks( FundEdition::PERSPECTIVES.first ).each do |framework| %>
+  <ul>
+  <% Framework.fulfilled_for_memberships( @organization.memberships.requestor ).each do |framework| %>
   <li><%=h framework %></li>
   <% end %>
   </ul>
@@ -34,13 +31,13 @@ the <%=link_to 'Student Activities Office', 'http://sao.cornell.edu/SO/' %>.
   <b>Registered?</b> <%= @organization.registered? ? 'Yes' : 'No' %>
 </p>
 
-<% if @organization.registrations.current %>
+<% if @organization.current_registration %>
 <p>
-  <b>Percent Undergrad:</b> <%= @organization.registrations.current.percent_members_of_type 'undergrads' %>%
+  <b>Percent Undergrad:</b> <%= @organization.current_registration.percent_members_of_type 'undergrads' %>%
 </p>
 
 <p>
-  <b>Percent Grad:</b> <%= @organization.registrations.current.percent_members_of_type 'grads' %>%
+  <b>Percent Grad:</b> <%= @organization.current_registration.percent_members_of_type 'grads' %>%
 </p>
 <% end %>
 
@@ -53,6 +50,12 @@ the <%=link_to 'Student Activities Office', 'http://sao.cornell.edu/SO/' %>.
 The organization has not supplied additional profile information.
 </p>
 <% end %>
+
+<h3>Fund tiers</h3>
+<p>
+The organization manages the following fund tiers:
+</p>
+<%=render partial: 'fund_tiers/fund_tiers', object: @organization.fund_tiers %>
 
 <p>
 <% if permitted_to? :edit, @organization -%>

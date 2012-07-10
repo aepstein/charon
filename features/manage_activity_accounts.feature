@@ -18,12 +18,14 @@ Feature: Manage activity accounts
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: the manager_role
     And a user: "regular" exists
-    And a university_account exists with department_code: "A00", subledger_code: "0000", organization: organization "recipient"
-    And an activity_account exists with university_account: the university_account
+    And a fund_source exists with organization: organization "source", name: "Annual Budget"
+    And a fund_grant exists with organization: organization "recipient", fund_source: the fund_source
+#    And a university_account exists with account_code: "A000000", organization: organization "recipient"
+    And an activity_account exists with fund_grant: the fund_grant
     And I log in as user: "<user>"
-    And I am on the new activity_account page for the university_account
+    And I am on the new activity_account page for the fund_grant
     Then I should <create> authorized
-    Given I post on the activity_accounts page for the university_account
+    Given I post on the activity_accounts page for the fund_grant
     Then I should <create> authorized
     And I am on the edit page for the activity_account
     Then I should <update> authorized
@@ -33,48 +35,43 @@ Feature: Manage activity accounts
     Then I should <show> authorized
     And I should <update> "Edit"
     Given I am on the activity_accounts page for organization: "recipient"
-    Then I should <show> "A00"
+    Then I should <show> "Annual Budget"
     And I should <update> "Edit"
     And I should <destroy> "Destroy"
-    Given I am on the activity_accounts page for the university_account
-    Then I should <show_ua> authorized
+    Given I am on the activity_accounts page for the fund_grant
+    Then I should <show> authorized
     And I should <create> "New activity account"
     Given I delete on the page for the activity_account
     Then I should <destroy> authorized
     Examples:
-      | user              | create  | update  | show    | destroy | show_ua |
-      | admin             | see     | see     | see     | see     | see     |
-# TODO: source manager tests should utilize fund_source rather than university account as context
-#      | source_manager    | not see | see     | see     | see     | see     |
-      | recipient_manager | not see | not see | see     | not see | see     |
-      | member            | not see | not see | see     | not see | not see |
-      | regular           | not see | not see | not see | not see | not see |
+      | user              | create  | update  | show    | destroy |
+      | admin             | see     | see     | see     | see     |
+      | source_manager    | see     | see     | see     | see     |
+      | member            | not see | not see | see     | not see |
+      | regular           | not see | not see | not see | not see |
 
   Scenario: Create and update activity_accounts
-    Given a university_account: "first" exists with department_code: "A00", subledger_code: "0001"
-    And a university_account: "second" exists with department_code: "B00", subledger_code: "0002"
-    And a fund_source exists with name: "SAFC"
-    And a fund_source exists with name: "ISPB"
+    Given a fund_source exists with name: "SAFC"
+    And an organization exists with last_name: "Recipient"
     And a category exists with name: "SAFC Local Event"
     And a category exists with name: "ISPB Food"
+    And a fund_grant exists with fund_source: the fund_source, organization: the organization
     And I log in as user: "admin"
-    And I am on the new activity_account page for university_account: "first"
-    When I select "SAFC" from "Fund source"
-    And I select "SAFC Local Event" from "Category"
+    And I am on the new activity_account page for the fund_grant
+    When I select "SAFC Local Event" from "Category"
+    And I fill in "Comments" with "This is *important*"
     And I press "Create"
     Then I should see "Activity account was successfully created."
-    And I should see "University account: A000001-00000"
-    And I should see "FundSource: SAFC"
+    And I should see "Grant: Fund grant to Recipient from SAFC"
     And I should see "Category: SAFC Local Event"
+    And I should see "This is important"
     When I follow "Edit"
-    And I select "B000002-00000" from "University account"
-    And I select "ISPB" from "Fund source"
     And I select "ISPB Food" from "Category"
+    And I fill in "Comments" with "This is not so important"
     And I press "Update"
     Then I should see "Activity account was successfully updated."
-    And I should see "University account: B000002-00000"
-    And I should see "FundSource: ISPB"
     And I should see "Category: ISPB Food"
+    And I should see "This is not so important"
 
 #  Scenario: List and delete university accounts
 #TODO

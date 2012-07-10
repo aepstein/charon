@@ -13,7 +13,7 @@ Then(/^#{capture_email} (text|html|parts) should( not)? contain "(.*)"$/) do |em
     end
   else
     part = email(email_ref).send("#{alternative}_part").body
-    negative.blank? ? part.should =~ /#{text}/ : part.should_not =~ /#{text}/
+    negative.blank? ? part.should =~ /#{Regexp.escape(text)}/ : part.should_not =~ /#{Regexp.escape(text)}/
   end
 end
 

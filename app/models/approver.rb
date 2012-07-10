@@ -2,17 +2,17 @@ class Approver < ActiveRecord::Base
   attr_accessible :role_id, :state, :perspective, :quantity
   attr_readonly :framework_id
 
-  belongs_to :framework, :inverse_of => :approvers
-  belongs_to :role, :inverse_of => :approvers
+  belongs_to :framework, inverse_of: :approvers
+  belongs_to :role, inverse_of: :approvers
 
-  validates :framework, :presence => true
-  validates :role, :presence => true
+  validates :framework, presence: true
+  validates :role, presence: true
   validates :perspective,
-    :inclusion => { :in => FundEdition::PERSPECTIVES }
+    inclusion: { in: FundEdition::PERSPECTIVES }
   validates :role_id,
-    :uniqueness => { :scope => [ :framework_id, :perspective ] }
+    uniqueness: { scope: [ :framework_id, :perspective ] }
 
-  scope :ordered, includes( :role ).order( 'roles.name ASC' )
+  scope :ordered, joins { role }.order { roles.name }
   scope :with_memberships_for, lambda { |fund_request|
     joins( "LEFT JOIN memberships ON approvers.role_id = memberships.role_id " +
       "AND memberships.active = #{connection.quote true} " +
@@ -47,6 +47,6 @@ class Approver < ActiveRecord::Base
     unsatisfied.with_approvals_for( fund_request )
   }
   scope :quantified, where { quantity != nil }
-  scope :unquantified, where( :quantity => nil )
+  scope :unquantified, where( quantity: nil )
 end
 

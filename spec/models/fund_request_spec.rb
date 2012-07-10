@@ -126,14 +126,14 @@ describe FundRequest do
     @fund_request.fund_items.length.should eql 2
     @fund_request.fund_editions.length.should eql 4
     @fund_request.fund_items.allocate!(150.0)
-    @fund_request.fund_items.first.amount.should eql 100
-    @fund_request.fund_items.last.amount.should eql 50
+    @fund_request.fund_items.first.fund_allocations.first.amount.should eql 100
+    @fund_request.fund_items.last.fund_allocations.first.amount.should eql 50
     @fund_request.fund_items.allocate!
-    @fund_request.fund_items.first.amount.should eql 100
-    @fund_request.fund_items.last.amount.should eql 100
+    @fund_request.fund_items.first.fund_allocations.first.amount.should eql 100
+    @fund_request.fund_items.last.fund_allocations.first.amount.should eql 100
     @fund_request.fund_items.allocate!(0.0)
-    @fund_request.fund_items.first.amount.should eql 0
-    @fund_request.fund_items.last.amount.should eql 0
+    @fund_request.fund_items.first.fund_allocations.first.amount.should eql 0
+    @fund_request.fund_items.last.fund_allocations.first.amount.should eql 0
   end
 
   it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do

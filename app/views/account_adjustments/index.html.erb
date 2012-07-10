@@ -15,7 +15,8 @@
     <td><%= account_adjustment.amount %></td>
     <td><%= link_to 'Show', account_adjustment %></td>
     <td><%= link_to 'Edit', edit_account_adjustment_path(account_adjustment) %></td>
-    <td><%= link_to 'Destroy', account_adjustment, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Destroy', account_adjustment,
+      data: { confirm => 'Are you sure?' }, method: :delete %></td>
   </tr>
 <% end %>
 </table>
@@ -23,3 +24,4 @@
 <br />
 
 <%= link_to 'New Account adjustment', new_account_adjustment_path %>
+

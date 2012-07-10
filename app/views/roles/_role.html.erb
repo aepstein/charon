@@ -2,6 +2,7 @@
     <td><%=h role.name %></td>
     <td><%= link_to 'Show', role %></td>
     <td><%= link_to( 'Edit', edit_role_path(role) ) if permitted_to? :edit, role %></td>
-    <td><%= link_to( 'Destroy', role, :confirm => 'Are you sure?', :method => :delete ) if permitted_to? :destroy, role %></td>
+    <td><%= link_to( 'Destroy', role, data: { confirm: 'Are you sure?' },
+      method: :delete ) if permitted_to? :destroy, role %></td>
   <% end %>
 

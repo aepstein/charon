@@ -16,7 +16,8 @@ class ApplicationController < ActionController::Base
         permitted_to?( :request_framework, @fund_grant ) ||
         permitted_to?( :review_framework, @fund_grant )
       )
-      flash[:error] += " " + unfulfilled_requirements_for_fund_grant(@fund_grant, current_user)
+      flash[:error] += " " + unfulfilled_requirements_for_fund_grant(
+        @fund_grant, current_user, @fund_grant.organization )
       end
     end
     redirect_to profile_url
@@ -24,10 +25,15 @@ class ApplicationController < ActionController::Base
 
   # Prepares a concise explanation of unfulfilled requirements pertinent to a
   # fund grant
-  def unfulfilled_requirements_for_fund_grant(fund_grant, *users)
-    fund_grant.unfulfilled_requirements_for( users ).inject([]) do |memo, (fulfiller, requirements)|
-      memo << ( "#{fulfiller == current_user ? 'You' : fulfiller} " +
-      requirements.map { |r| r.to_s :condition }.join(',') + '.' )
+  def unfulfilled_requirements_for_fund_grant(fund_grant, *fulfillers)
+    fund_grant.unfulfilled_requirements_for( fulfillers ).inject([]) do |memo, (fulfiller, requirements)|
+      fulfiller_str = case fulfiller
+      when current_user
+        'You'
+      else
+        fund_grant.organization.to_s
+      end
+      memo << ( fulfiller_str + " " + requirements.map { |r| r.to_s :condition }.join(',') + '.' )
     end.join(' ')
   end
 

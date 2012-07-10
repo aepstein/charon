@@ -1,32 +1,26 @@
 class FundQueue < ActiveRecord::Base
   attr_accessible :advertised_submit_at, :submit_at, :release_at,
-    :fund_request_type_ids
+    :fund_request_type_ids, :release_message, :allocate_message
   attr_readonly :fund_source_id
 
-  belongs_to :fund_source, :inverse_of => :fund_queues
+  belongs_to :fund_source, inverse_of: :fund_queues
 
-  has_many :fund_requests, :inverse_of => :fund_queue, :dependent => :nullify do
+  has_many :fund_allocations, through: :fund_requests
+  has_many :fund_requests, inverse_of: :fund_queue, dependent: :nullify do
     # Allocate all ready requests associated with this fund source
-    # * apply club_sport and other caps according to how organizations are recorded
-    def allocate_with_caps(club_sport, other)
+    def allocate_with_caps(cap)
       with_review_state( :ready ).includes { [ fund_editions.fund_item,
-        fund_grant.organization ] }.each do |r|
-        if r.fund_grant.organization.club_sport?
-          r.fund_items.allocate! club_sport
-        else
-          r.fund_items.allocate! other
-        end
-      end
+        fund_grant.organization ] }.each { |r| r.fund_items.allocate! cap }
     end
     # Returns CSV spreadsheet representing requests assigned to this queue
     def reviews_report
+      # This gives cumulative allocation per category for each request
       category_sql = proxy_association.owner.fund_source.structure.categories.map do |c|
-        "(SELECT SUM(fund_items.released_amount) FROM fund_editions " +
-        "INNER JOIN fund_items ON fund_items.id = fund_editions.fund_item_id " +
+        "(SELECT SUM(fund_allocations.amount) FROM fund_allocations " +
+        "INNER JOIN fund_items ON fund_items.id = fund_allocations.fund_item_id " +
         "INNER JOIN nodes ON fund_items.node_id = nodes.id " +
         "WHERE nodes.category_id = #{c.id} AND " +
-        "fund_editions.fund_request_id = fund_requests.id AND " +
-        "fund_editions.perspective = 'requestor') AS category#{c.id}"
+        "fund_allocations.fund_request_id = fund_requests.id) AS category#{c.id}"
       end.join(", ")
       rows = connection.select_rows <<-SQL
         SELECT TRIM(CONCAT(organizations.first_name, " ", organizations.last_name))
@@ -52,17 +46,17 @@ class FundQueue < ActiveRecord::Base
         registration_terms ON registrations.registration_term_id =
         registration_terms.id WHERE registration_terms.current = 1 AND
         registrations.organization_id = organizations.id LIMIT 1) AS
-        independent, BINARY organizations.club_sport, fund_requests.state,
+        independent, fund_requests.state,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'requestor' AND fund_request_id = fund_requests.id ) AS request,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'reviewer' AND fund_request_id = fund_requests.id ) AS review,
-        (SELECT SUM(fund_items.released_amount) FROM fund_items WHERE fund_grant_id =
-        fund_grants.id ) AS cumulative_allocation,
-        (SELECT SUM(fund_items.released_amount) FROM fund_items INNER JOIN
-        fund_editions ON fund_items.id = fund_editions.fund_item_id WHERE
-        fund_editions.perspective = 'requestor' AND
-        fund_editions.fund_request_id = fund_requests.id) AS queue_allocation
+        (SELECT SUM(fund_allocations.amount) FROM fund_items INNER JOIN
+        fund_allocations ON fund_items.id = fund_allocations.fund_item_id
+        WHERE fund_items.fund_grant_id = fund_grants.id ) AS cumulative_allocation,
+        (SELECT SUM(fund_allocations.amount) FROM fund_items INNER JOIN
+        fund_allocations ON fund_items.id = fund_allocations.fund_item_id
+        WHERE fund_allocations.fund_request_id = fund_requests.id) AS queue_allocation
         #{category_sql.empty? ? "" : ", " + category_sql} FROM
         organizations INNER JOIN fund_grants ON organizations.id =
         fund_grants.organization_id INNER JOIN fund_requests ON
@@ -71,8 +65,10 @@ class FundQueue < ActiveRecord::Base
         ORDER BY organizations.last_name, organizations.first_name
       SQL
       CSV.generate do |csv|
-        csv << ( %w( organization account subaccount active? returning? registered? independent? club_sport? state request review cumulative_allocation queue_allocation ) + proxy_association.owner.fund_source.
-        structure.categories.map(&:name) )
+        csv << ( %w( organization account subaccount active? returning?
+          registered? independent? state request review cumulative_allocation
+          queue_allocation ) + proxy_association.owner.fund_source.
+          structure.categories.map(&:name) )
         rows.each { |row| csv << row }
       end
     end
@@ -101,9 +97,10 @@ class FundQueue < ActiveRecord::Base
     end
 
   end
-  has_many :fund_editions, :through => :fund_requests, :uniq => true
-  has_many :fund_items, :through => :fund_requests, :uniq => true do
+  has_many :fund_editions, through: :fund_requests, uniq: true
+  has_many :fund_items, through: :fund_requests, uniq: true do
     # Allocate all ready requests associate with this fund queue
+    # TODO: this does not work with discrete_allocations
     # * apply flat percentage cuts to reviewer amounts approved
     def allocate_with_cuts(percentage)
       where( "fund_requests.review_state = ?", 'ready' ).
@@ -111,7 +108,7 @@ class FundQueue < ActiveRecord::Base
       update_all "fund_items.amount = fund_editions.amount*(#{percentage}/100)"
     end
   end
-  has_many :fund_grants, :through => :fund_requests, :uniq => true do
+  has_many :fund_grants, through: :fund_requests, uniq: true do
     def ready
       where( "fund_requests.review_state = ?", 'ready' )
     end

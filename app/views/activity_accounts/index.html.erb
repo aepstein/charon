@@ -2,15 +2,16 @@
 
 <%= paginate @activity_accounts %>
 
-<%= render :partial => "activity_accounts", :object => @activity_accounts %>
+<%= render partial: "activity_accounts", object: @activity_accounts,
+  locals: { organization: @organization, with_balances: true } %>
 
 <%= paginate @activity_accounts %>
 
 <br />
 
 <p>
-<% if @university_account && permitted_to?( :create, @university_account.activity_accounts.build ) %>
-<%= link_to 'New activity account', new_university_account_activity_account_path( @university_account ) %>
+<% if @fund_grant && permitted_to?( :create, @fund_grant.activity_accounts.build ) %>
+<%= link_to 'New activity account', new_fund_grant_activity_account_path( @fund_grant ) %>
 <% end %>
 </p>
 

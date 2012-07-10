@@ -1,14 +1,12 @@
-<%= form.input :fulfillable_name, :label => 'Criterion', :as => :select,
-  :collection => Requirement.fulfillable_names,
-  :hint => 'What criterion must be fulfilled?',
-  :input_html => { :allow_blank => true } %>
-<%= form.input :perspectives, :as => :check_boxes, :collection => FundEdition::PERSPECTIVES,
-  :hint => 'To which organization perspectives does this apply?' %>
-<%= form.input :role,
-  :input_html => { :allow_blank => true },
-  :hint => 'If criterion is user-based, should this be restricted to a particular role?' %>
+<%= form.input :fulfillable_name, label: 'Criterion', as: :select,
+  collection: Requirement.fulfillable_names,
+  hint: 'What criterion must be fulfilled?',
+  input_html: { allow_blank: true } %>
+<%= form.input :role, input_html: { allow_blank: true },
+  hint: 'If criterion is user-based, should this be restricted to a particular role?' %>
+
 <% unless form.object.new_record? -%>
-<%= form.input :_destroy, :as => :radio, :label => 'Destroy?',
-  :hint => 'Answer yes to remove this requirement.' %>
+  <%= form.input :_destroy, as: :radio, label: 'Destroy?',
+    hint: 'Answer yes to remove this requirement.' %>
 <% end -%>
 

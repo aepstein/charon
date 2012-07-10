@@ -17,7 +17,12 @@ FactoryGirl.define do
   end
 
   factory :activity_account do
-    association :university_account
+    association :fund_grant
+    association :category
+
+    factory :closed_activity_account do
+      association :fund_grant, factory: :closed_fund_grant
+    end
   end
 
   factory :activity_report do
@@ -98,9 +103,12 @@ FactoryGirl.define do
     end
   end
 
-  factory :fulfillment do
-    fulfiller { |r| r.association(:user) }
-    fulfillable { |r| r.association(:agreement) }
+  factory :fund_allocation do
+    amount 0.0
+    association :fund_request
+    fund_item do
+      FactoryGirl.create( :fund_edition, fund_request: fund_request ).fund_item
+    end
   end
 
   factory :fund_edition do
@@ -237,6 +245,11 @@ FactoryGirl.define do
     end
   end
 
+  factory :fund_tier do
+    association :organization
+    sequence(:maximum_allocation) { |n| n * 1000.0 }
+  end
+
   factory :inventory_item do
     association :organization
     sequence(:identifier) { |n| "id##{n}" }
@@ -262,10 +275,9 @@ FactoryGirl.define do
   factory :registration do
     sequence(:name) { |n| "Registered Organization #{n}" }
     sequence(:external_id) { |i| i }
-    number_of_undergrads 1
 
     factory :current_registration do
-      association :registration_term, :factory => :current_registration_term
+      association :registration_term, factory: :current_registration_term
 
       factory :eligible_registration do
         registered true
@@ -300,14 +312,14 @@ FactoryGirl.define do
 
   factory :requirement do
     association :framework
-    association :fulfillable, :factory => :agreement
+    association :fulfillable, factory: :agreement
 
     factory :requestor_requirement do
-      perspectives [ FundEdition::PERSPECTIVES.first ]
+      association :role, factory: :requestor_role
     end
 
     factory :reviewer_requirement do
-      perspectives [ FundEdition::PERSPECTIVES.last ]
+      association :role, factory: :reviewer_role
     end
   end
 
@@ -329,15 +341,15 @@ FactoryGirl.define do
     sequence(:name) { |n| "role #{n}" }
 
     factory :requestor_role do
-      name { Role::REQUESTOR.first }
+      sequence(:name, 0) { |n| Role::REQUESTOR[n % Role::REQUESTOR.length] }
     end
 
     factory :reviewer_role do
-      name { Role::REVIEWER.first }
+      sequence(:name, 0) { |n| Role::REVIEWER[n % Role::REVIEWER.length] }
     end
 
     factory :manager_role do
-      name { Role::MANAGER.first }
+      sequence(:name, 0) { |n| Role::MANAGER[n % Role::MANAGER.length] }
     end
   end
 

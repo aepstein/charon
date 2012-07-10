@@ -4,35 +4,24 @@ shared_examples 'fulfillable' do
 
   let( :fulfillable ) { create( described_class.to_s.underscore ) }
 
-  context 'fulfillments' do
-    it 'should have a fulfill! method' do
-      fulfillable.fulfillments.clear
-      fulfillable.fulfillments.fulfill!
-      fulfillers = fulfillable.fulfillments.map(&:fulfiller)
-      fulfillers.length.should eql 1
-      fulfillers.should include fulfilled_fulfiller
+  context 'class methods' do
+    it "should have fulfiller_type" do
+      fulfillable.class.fulfiller_type.should eql fulfiller_type
     end
 
-    it 'should have an unfulfill! method' do
-      create( :fulfillment, :fulfillable => fulfillable,
-        :fulfiller => unfulfilled_fulfiller )
-      fulfillable.fulfillments.reset
-      fulfillable.fulfillments.map(&:fulfiller).should include unfulfilled_fulfiller
-      fulfillable.fulfillments.unfulfill!
-      fulfillers = fulfillable.fulfillments.map(&:fulfiller).uniq
-      fulfillers.length.should eql 1
-      fulfillers.should_not include unfulfilled_fulfiller
+    it "should have fulfiller_class" do
+      fulfillable.class.fulfiller_class.should eql fulfiller_class
     end
   end
 
   context 'callbacks' do
-    xit 'should call fulfillments.fulfill! on save' do
-      fulfillable.fulfillments.should_receive :fulfill!
+    it 'should call frameworks.update! on save' do
+      fulfillable.association(:frameworks).should_receive :update!
       fulfillable.save!
     end
-    xit 'should call fulfillments.fulfill! on update' do
-      fulfillable.fulfillments.should_receive :unfulfill!
-      fulfillable.save!
+    it 'should call frameworks.update! on destroy' do
+      fulfillable.association(:frameworks).should_receive :update!
+      fulfillable.destroy!
     end
   end
 end
@@ -43,6 +32,8 @@ describe RegistrationCriterion do
   end
 
   it_behaves_like 'fulfillable' do
+    let( :fulfiller_type ) { 'Organization' }
+    let( :fulfiller_class ) { Organization }
     let( :fulfilled_fulfiller ) { create( :organization ) }
     let( :unfulfilled_fulfiller ) { create( :organization ) }
   end
@@ -54,6 +45,8 @@ describe Agreement do
   end
 
   it_behaves_like 'fulfillable' do
+    let( :fulfiller_type ) { 'User' }
+    let( :fulfiller_class ) { User }
     let( :fulfilled_fulfiller ) { create( :user ) }
     let( :unfulfilled_fulfiller ) { create( :user ) }
   end

@@ -1,0 +1,17 @@
+<% if fund_tiers.any? %>
+<table id='fund-tiers'>
+  <thead>
+    <tr>
+      <th>Maximum Allocation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%=render partial: 'fund_tiers/fund_tier', collection: fund_tiers %>
+  </tbody>
+</table>
+<% else %>
+<p>
+  No fund tiers.
+</p>
+<% end %>
+

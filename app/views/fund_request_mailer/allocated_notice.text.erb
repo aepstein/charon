@@ -1,0 +1,8 @@
+Dear Officers of <%= @fund_request.fund_grant.organization %>,
+
+This email is to inform you that you may now review the allocation of funds approved in response to <%= @fund_request %>.  To see it, please go to: <<%= fund_grant_url @fund_request.fund_grant %>>.
+
+<%= @fund_request.fund_grant.fund_source.allocate_message %>
+
+<%= @fund_request.fund_queue.allocate_message %>
+

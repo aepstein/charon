@@ -1,17 +1,27 @@
-<%= render "shared/error_messages", :target => form.object %>
+<%= render "shared/error_messages", target: form.object %>
 <%= form.inputs do %>
   <% if permitted_to? :manage, form.object %>
     <%= form.input :first_name %>
     <%= form.input :last_name %>
-    <%= form.input :club_sport, :as => :radio %>
   <% end %>
 <% end %>
 
 <%= form.semantic_fields_for :organization_profile do |subform| %>
   <%= subform.inputs do %>
-    <%= render :partial => 'organization_profiles/form', :object => subform %>
+    <%= render partial: 'organization_profiles/form', object: subform %>
   <% end %>
 <% end %>
+
+<%= form.inputs for: :fund_tiers, name: 'Fund Tiers' do |tier| %>
+  <%= render partial: 'fund_tiers/fund_tier_fields', locals: { f: tier } %>
+<% end %>
+
+<div class='links'>
+  <p>
+    <%= link_to_add_association 'add tier', form, :fund_tiers,
+      partial: 'fund_tiers/fund_tier_fields' %>
+  </p>
+</div>
 
 <%= form.actions %>
 

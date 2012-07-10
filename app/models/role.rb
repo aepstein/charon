@@ -5,7 +5,7 @@ class Role < ActiveRecord::Base
 
   attr_accessible :name
 
-  default_scope :order => 'roles.name ASC'
+  default_scope order { name }
   # Returns the roles a user has associated with an organization and perspective
   # * examines only active memberships
   scope :for_perspective, lambda { |perspective, organization, user|
@@ -17,13 +17,16 @@ class Role < ActiveRecord::Base
       memberships.active.eq( true )
     }
   }
+  scope :requestor, where { name.in( Role::REQUESTOR ) }
+  scope :reviewer, where { name.in( Role::REVIEWER ) }
+  scope :manager, where { name.in( Role::MANAGER ) }
 
-  validates :name, :presence => true, :uniqueness => true
+  validates :name, presence: true, uniqueness: true
 
-  has_many :memberships, :dependent => :destroy, :inverse_of => :role
-  has_many :member_sources, :dependent => :destroy, :inverse_of => :role
-  has_many :requirements, :dependent => :destroy, :inverse_of => :role
-  has_many :approvers, :dependent => :destroy, :inverse_of => :role
+  has_many :memberships, dependent: :destroy, inverse_of: :role
+  has_many :member_sources, dependent: :destroy, inverse_of: :role
+  has_many :requirements, dependent: :destroy, inverse_of: :role
+  has_many :approvers, dependent: :destroy, inverse_of: :role
 
   def self.names_for_perspective( perspective )
     case perspective.to_sym

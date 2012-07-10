@@ -72,6 +72,11 @@ Given /^the (.+) records? changes?$/ do |type|
   type.constantize.all.each { |o| o.touch }
 end
 
+Given /^I pause$/ do
+  print "Press Return to continue ..."
+  STDIN.getc
+end
+
 # set up a many to many association
 Given(/^#{capture_model} is (?:in|one of|amongst) the (\w+) of #{capture_model}$/) do |target, association, owner|
   model(owner).send(association) << model(target)
@@ -96,7 +101,10 @@ Then(/^#{capture_model} should not be (?:in|one of|amongst) the (\w+) of #{captu
   model(owner).send(association).should_not include(model(target))
 end
 
-Then /^I should see the following entries in "(.+)":$/ do |table_id, table|
-  table.diff!( tableish( "#{table_id} > thead,tbody > tr", 'th,td' ) )
+Then /^I should (not )?see the following entries in "(.+)":$/ do |negate, table_id, table|
+  page.should have_selector(table_id)
+  if negate.blank?
+    table.diff!( tableish( "#{table_id} tr", 'th,td' ) )
+  end
 end
 

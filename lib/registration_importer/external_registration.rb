@@ -26,27 +26,30 @@ module RegistrationImporter
       :membership_staff, :membership_alumni, :membership_noncornell, :updated_time ]
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
-    self.table_name = "orgs"
-    self.primary_keys = [ :org_id, :term_id ]
-    default_scope select( MAP.keys.join(', ') ).order( 'orgs.updated_time ASC' )
+    self.table_name = "view_safc_orgs"
+    self.primary_key = "id"
+#    self.primary_keys = [ :org_id, :term_id ]
+    default_scope order { updated_time }.select( MAP.keys + [ :id ] )
 
     scope :importable, lambda {
       max_registration = Registration.unscoped.
-        where( Registration.arel_table[:when_updated].not_eq( nil ) ).
+        where { when_updated.not_eq( nil ) }.
+#        where( Registration.arel_table[:when_updated].not_eq( nil ) ).
         maximum(:when_updated)
       if max_registration then
-        where( :updated_time.gt => max_registration )
+        where { |e| e.updated_time.gt( max_registration ) }
       else
         scoped
       end
     }
 
-    belongs_to :term, :class_name => 'ExternalTerm', :foreign_key => :term_id
+    belongs_to :term, class_name: 'ExternalTerm', foreign_key: :term_id
+    has_many :contacts, class_name: 'ExternalContact', foreign_key: :full_org_id
 
-    def contacts(reset=false)
-      @contacts = nil if reset
-      @contacts ||= ExternalContact.where( :org_id => org_id, :term_id => term_id )
-    end
+#    def contacts(reset=false)
+#      @contacts = nil if reset
+#      @contacts ||= ExternalContact.where( :org_id => org_id, :term_id => term_id )
+#    end
 
     def contacts_users(reset=false)
       @contacts_users = nil if reset
@@ -98,27 +101,31 @@ module RegistrationImporter
     end
 
     # Returns array of information about records affected by update
+    # Skips updating member/framework assignments on assumption this will be
+    # done once at the end
     def self.import( set = :latest )
-      adds, changes, deletes, starts = 0, 0, 0, Time.now
-      ExternalTerm.all.each do |term|
-        registrations = case set
-        when :latest
-          term.registrations.latest
-        else
-          term.registrations
+      Framework.skip_update_frameworks do
+        adds, changes, deletes, starts = 0, 0, 0, Time.now
+        ExternalTerm.scoped.reset.all.each do |term|
+          registrations = case set
+          when :latest
+            term.registrations.latest
+          else
+            term.registrations
+          end
+          registrations.all.each do |source|
+            r = source.import
+            adds += r.first
+            changes += r.last
+          end
+          d = Registration.unscoped.where( :external_term_id => term.term_id )
+          if term.registrations.length > 0
+            d = d.where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) )
+          end
+          deletes = d.all.map(&:destroy).length
         end
-        registrations.all.each do |source|
-          r = source.import
-          adds += r.first
-          changes += r.last
-        end
-        d = Registration.unscoped.where( :external_term_id => term.term_id )
-        if term.registrations.length > 0
-          d = d.where( 'registrations.external_id NOT IN (?)', term.registrations.map(&:org_id) )
-        end
-        deletes = d.all.map(&:destroy).length
+        [adds, (changes - adds), deletes, ( Time.now - starts )]
       end
-      [adds, (changes - adds), deletes, ( Time.now - starts )]
     end
 
   end

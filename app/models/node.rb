@@ -13,23 +13,23 @@ class Node < ActiveRecord::Base
     :instruction
   attr_readonly :structure_id
 
-  belongs_to :structure, :inverse_of => :nodes
-  belongs_to :category, :inverse_of => :nodes
+  belongs_to :structure, inverse_of: :nodes
+  belongs_to :category, inverse_of: :nodes
   has_and_belongs_to_many :document_types
-  has_many :fund_items, :inverse_of => :node
+  has_many :fund_items, inverse_of: :node
 
   has_ancestry
 
-  validates :name, :presence => true,
-    :uniqueness => { :scope => [ :structure_id ] }
-  validates :structure, :presence => true
+  validates :name, presence: true,
+    uniqueness: { scope: :structure_id }
+  validates :structure, presence: true
   validates :requestable_type,
-    :inclusion => { :in => Node::ALLOWED_TYPES.values, :allow_blank => true }
-  validates :category, :presence => true
-  validates :item_quantity_limit, :presence => true,
-    :numericality => { :integer_only => true }
+    inclusion: { in: Node::ALLOWED_TYPES.values, allow_blank: true }
+  validates :category, presence: true
+  validates :item_quantity_limit, presence: true,
+    numericality: { integer_only: true }
 
-  default_scope :order => 'nodes.name ASC'
+  default_scope order { name }
 
   # Outer joins to fund_items that are children of the fund_item
   # * excludes

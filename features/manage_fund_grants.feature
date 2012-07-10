@@ -10,17 +10,19 @@ Feature: Manage fund_grants
   Scenario Outline: Test how permissions failures are reported to the user
     Given an organization: "reviewer" exists with last_name: "Funding Source"
     And an organization: "requestor" exists with last_name: "Applicant"
+    And a current_registration exists with organization: <organization>, name: "Applicant"
     And a requestor_role exists
     And a reviewer_role exists
     And a user: "requestor" exists with status: "grad"
     And a user: "reviewer" exists with status: "grad"
+    And a registered_membership exists with role: the requestor_role, active: true, registration: the current_registration, user: user "requestor"
     And a membership exists with role: the requestor_role, active: true, organization: organization "requestor", user: user "requestor"
     And a membership exists with role: the reviewer_role, active: true, organization: organization "reviewer", user: user "reviewer"
     And a framework exists with name: "Annual"
     And an agreement exists with name: "Key Agreement"
     And a user_status_criterion exists
     And a registration_criterion exists with must_register: true, minimal_percentage: 15, type_of_member: "undergrads"
-    And a requirement exists with framework: the framework, perspectives: nil, perspective: "<perspective>", role: the <perspective>_role, fulfillable: the <fulfillable>
+    And a requirement exists with framework: the framework, role: the requestor_role, fulfillable: the <fulfillable>
     And a fund_source exists with organization: organization "reviewer", framework: the framework
     And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
     And I log in as user: "<user>"
@@ -30,11 +32,12 @@ Feature: Manage fund_grants
     And I should <agreement> "You must approve the Key Agreement."
     And I should <registration> "Applicant must have a current registration with at least 15 percent undergrads and an approved status."
     Examples:
-      | user      | perspective | fulfillable            | edit    | status  | agreement | registration |
-      | admin     | requestor   | user_status_criterion  | see     | not see | not see   | not see      |
-      | requestor | requestor   | user_status_criterion  | not see | see     | not see   | not see      |
-      | requestor | requestor   | agreement              | not see | not see | see       | not see      |
-      | requestor | requestor   | registration_criterion | not see | not see | not see   | see          |
+      |user     |organization            |fulfillable           |edit   |status |agreement|registration|
+      |admin    |organization "requestor"|user_status_criterion |see    |not see|not see  |not see     |
+      |requestor|organization "requestor"|user_status_criterion |not see|see    |not see  |not see     |
+      |requestor|organization "requestor"|agreement             |not see|not see|see      |not see     |
+      |requestor|organization "requestor"|registration_criterion|not see|not see|not see  |see         |
+      |requestor|nil                     |registration_criterion|not see|not see|not see  |see         |
 
   Scenario: Create and update fund_grants
     Given a fund_source exists with name: "Annual Budget"
@@ -43,7 +46,10 @@ Feature: Manage fund_grants
     And a fund_source exists with name: "Semester Budget"
     And a fund_queue exists with fund_source: the fund_source
     And an organization exists with last_name: "Spending Club"
-    And I log in as user: "admin"
+    And a user exists
+    And a requestor_role exists
+    And a membership exists with user: the user, organization: the organization, role: the requestor_role
+    And I log in as the user
     And I am on the new fund_grant page for the organization
     When I select "Annual Budget" from "Fund source"
     And I press "Create"
@@ -118,8 +124,8 @@ Feature: Manage fund_grants
     And a framework: "other" exists
     And a registration_criterion exists with must_register: true
     And an agreement exists with name: "Ethical Conduct Statement"
-    And a requestor_requirement exists with framework: framework "<o_requirement>", fulfillable: the registration_criterion
-    And a requestor_requirement exists with framework: framework "<u_requirement>", fulfillable: the agreement
+    And a requirement exists with framework: framework "<o_requirement>", fulfillable: the registration_criterion
+    And a requirement exists with framework: framework "<u_requirement>", fulfillable: the agreement
     And a fund_source exists with name: "Annual Budget", framework: framework "focus"
     And a fund_queue exists with fund_source: the fund_source
     And a fund_request_type exists

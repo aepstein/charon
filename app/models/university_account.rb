@@ -3,11 +3,9 @@ class UniversityAccount < ActiveRecord::Base
 
   attr_accessible :account_code, :subaccount_code, :organization_name, :active
 
-  has_many :activity_accounts, inverse_of: :university_account, dependent: :destroy
   belongs_to :organization, inverse_of: :university_accounts
 
-  default_scope order( 'university_accounts.account_code ASC, ' +
-    'university_accounts.subaccount_code ASC' )
+  default_scope order { [ account_code, subaccount_code ] }
 
   scope :organization_name_contains, lambda { |name|
     joins { organization }.merge( Organization.unscoped.name_contains( name ) )

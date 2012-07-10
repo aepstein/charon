@@ -5,36 +5,36 @@ class FundRequestMailer < ActionMailer::Base
   def started_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
-      :from => fund_request.contact_to_email,
-      :subject => "#{fund_request} needs attention"
+      to: fund_request.requestors.requestor.map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "#{fund_request} needs attention"
     )
   end
 
   def tentative_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.users.unfulfilled( Approver.where( :quantity => nil ) ).map(&:to_email),
-      :from => fund_request.contact_to_email,
-      :subject => "#{fund_request} needs your approval"
+      to: fund_request.users.unfulfilled( Approver.where( :quantity => nil ) ).map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "#{fund_request} needs your approval"
     )
   end
 
   def finalized_notice( fund_request )
     @fund_request = fund_request
     mail(
-      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
-      :from => fund_request.contact_to_email,
-      :subject => "#{fund_request} is finalized, but not submitted"
+      to: fund_request.requestors.requestor.map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "#{fund_request} is finalized, but not submitted"
     )
   end
 
   def submitted_notice( fund_request )
     @fund_request = fund_request
     message = mail(
-      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
-      :from => fund_request.contact_to_email,
-      :subject => "#{fund_request} has been accepted for review"
+      to: fund_request.requestors.requestor.map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "#{fund_request} has been accepted for review"
     )
     if fund_request.fund_items.documentable.any?
       filename = "#{fund_request.fund_grant.organization.to_s :file}-checklist.pdf"
@@ -46,27 +46,36 @@ class FundRequestMailer < ActionMailer::Base
   def released_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
-      :from => fund_request.contact_to_email,
-      :subject => "You may now review #{fund_request}"
+      to: fund_request.requestors.requestor.map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "Preliminary determination for #{fund_request}"
+    )
+  end
+
+  def allocated_notice(fund_request)
+    @fund_request = fund_request
+    mail(
+      to: fund_request.requestors.requestor.map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "Allocation for #{fund_request}"
     )
   end
 
   def rejected_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
-      :from => fund_request.contact_to_email,
-      :subject => "#{fund_request} has been rejected"
+      to: fund_request.requestors.requestor.map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "#{fund_request} has been rejected"
     )
   end
 
   def withdrawn_notice(fund_request)
     @fund_request = fund_request
     mail(
-      :to => fund_request.fund_grant.users.for_perspective(FundEdition::PERSPECTIVES.first).map(&:to_email),
-      :from => fund_request.contact_to_email,
-      :subject => "#{fund_request} has been withdrawn"
+      to: fund_request.requestors.requestor.map(&:to_email),
+      from: fund_request.contact_to_email,
+      subject: "#{fund_request} has been withdrawn"
     )
   end
 

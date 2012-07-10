@@ -5,48 +5,45 @@ class User < ActiveRecord::Base
   attr_accessible :password, :password_confirmation, :email, :first_name,
     :middle_name, :last_name, :date_of_birth, :addresses_attributes,
     :as => [ :admin, :default ]
-  attr_accessible :admin, :net_id, :status, :as => :admin
+  attr_accessible :admin, :net_id, :status, as: :admin
 
-  default_scope order( 'users.last_name ASC, users.first_name ASC, ' +
-    'users.middle_name ASC, users.net_id ASC' )
+  default_scope order { [ last_name, first_name, middle_name, net_id ] }
+  scope :fulfill_user_status_criterion, lambda { |criterion|
+    where { |u| u.status.in(
+      (0..User::STATUSES.length).select { |i| ( 2**i & criterion.statuses_mask ) > 0 }.
+      map { |i| User::STATUSES[i] }
+    ) }
+  }
+  scope :fulfill_agreement, lambda { |agreement| approved( agreement ) }
+
   scope :approved, lambda { |approvable|
-    joins( :approvals ).
-    where( 'approvals.user_id = users.id AND approvable_type = ? AND approvable_id = ?',
-      approvable.class.to_s, approvable.id )
+    where { |u| u.id.in(
+      Approval.unscoped.with_approvable(approvable).select { user_id } ) }
   }
   scope :not_approved, lambda { |approvable|
-    where( "users.id NOT IN ( SELECT user_id FROM approvals WHERE " +
-      "approvable_type = ? AND approvable_id = ? )", approvable.class.to_s,
-      approvable.id )
+    where { id.not_in(
+      Approval.unscoped.with_approvable(approvable).select { user_id } ) }
   }
   scope :name_contains, lambda { |name|
-    sql = %w( first_name middle_name last_name net_id ).map do |field|
-      "users.#{field} LIKE :name"
-    end
-    where( sql.join(' OR '), :name => "%#{name}%" )
+    where {
+      %w( first_name middle_name last_name net_id ).
+      map { |f| instance_eval(f).like( "%#{name}%" ) }.inject(&:|) |
+      CONCAT(first_name,' ',last_name).like( "%#{name}%" ) }
   }
 
-  is_fulfiller
+  is_fulfiller 'UserStatusCriterion', 'Agreement'
   is_authenticable
 
-  has_many :approvals, :inverse_of => :user do
-    def agreements
-      self.select { |approval| approval.approvable_type == 'Agreement' }
-    end
-    def fund_requests
-      self.select { |approval| approval.approvable_type == 'FundRequest' }
-    end
-    def agreement_ids
-      self.agreements.map(&:approvable_id)
-    end
-    def fund_request_ids
-      self.fund_requests.map(&:approvable_id)
-    end
-  end
-  has_many :memberships, :dependent => :destroy, :inverse_of => :user
-  has_many :roles, :through => :memberships, :conditions => [ 'memberships.active = ?', true ] do
+  has_many :approvals, inverse_of: :user, dependent: :destroy
+  has_many :approved_agreements, through: :approvals, source: :approvable,
+    source_type: 'Agreement'
+  has_many :approved_fund_requests, through: :approvals, source: :approvable,
+    source_type: 'FundRequest'
+  has_many :memberships, dependent: :destroy, inverse_of: :user
+  has_many :roles, through: :memberships,
+    conditions: [ 'memberships.active = ?', true ] do
     def in(organizations)
-      Membership.where( :user_id => @association.owner.id,
+      Membership.where( :user_id => proxy_association.owner.id,
         :organization_id.in => organizations.map(&:id) ).active.map(&:role)
     end
     def requestor_in?(organization)
@@ -73,9 +70,10 @@ class User < ActiveRecord::Base
       self.in( [organization] ).select { |r| names.include? r.name }.map(&:id)
     end
   end
-  has_many :organizations, :through => :memberships, :conditions => [ 'memberships.active = ?', true ]
-  has_many :registrations, :through => :memberships
-  has_many :addresses, :as => :addressable, :dependent => :destroy do
+  has_many :organizations, through: :memberships, uniq: true,
+    conditions: [ 'memberships.active = ?', true ]
+  has_many :registrations, through: :memberships
+  has_many :addresses, as: :addressable, dependent: :destroy do
     def by_label(label)
       self.select { |a| a.label == label}[0]
     end
@@ -89,44 +87,20 @@ class User < ActiveRecord::Base
     end
   end
 
-  accepts_nested_attributes_for :addresses, :allow_destroy => true,
-     :reject_if => proc { |address| address['street'].blank? }
+  accepts_nested_attributes_for :addresses, allow_destroy: true,
+     reject_if: proc { |address| address['street'].blank? }
 
-  validates :net_id, :presence => true, :uniqueness => true
-  validates :email, :presence => true
+  validates :net_id, presence: true, uniqueness: true
+  validates :email, presence: true
   validates :status, inclusion: { in: STATUSES, allow_blank: true }
 
-  before_validation :extract_email, :initialize_addresses, :on => :create
+  before_validation :extract_email, :initialize_addresses, on: :create
   before_validation :import_simple_ldap_attributes
   after_save :import_complex_ldap_attributes
+  after_update 'update_frameworks if status_changed?'
 
-  def fund_requests; FundRequest.organization_id_equals_any( organization_ids ); end
-
-  def fund_request_ids; fund_requests.map(&:id); end
-
-  def organization_ids
-    organizations.select( "DISTINCT organizations.*" ).map(&:id)
-  end
-
-  # Returns the user status criterions that the user presently fulfills
-  def user_status_criterions
-    UserStatusCriterion.all.select { |criterion| criterion.statuses.include? status }
-  end
-
-  # Returns the agreements (and therefore agreement criteria) that the user
-  # presently fulfills
-  def agreements
-    Agreement.find( approvals.where( :approvable_type => 'Agreement' ).map { |approval|
-      approval.approvable_id
-    } )
-  end
-
-  # What frameworks is the user eligible for?
-  # * perspective: the perspective from which user is approaching
-  # * organization: the organization on behalf of which the user is acting
-  def frameworks( perspective, organization = nil )
-    return super( perspective ) if organization.blank?
-    Framework.fulfilled_for( perspective, organization, self )
+  def unapproved_agreements
+    Agreement.where { |a| a.id.not_in( approved_agreements.select { id } ) }
   end
 
   def full_name
@@ -186,12 +160,13 @@ class User < ActiveRecord::Base
     { 'campus' => ldap_entry.campus_address,
       'local' => ldap_entry.local_address,
       'home' => ldap_entry.home_address }.each do |label, address|
-      addresses.create_or_update_from_attributes address.merge({:label => label}) if address
+      addresses.create_or_update_from_attributes address.merge({label: label}) if address
     end
   end
 
   def initialize_addresses
     addresses.each { |address| address.addressable = self }
   end
+
 end
 

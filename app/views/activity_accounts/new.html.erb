@@ -1,13 +1,13 @@
 <h2>New activity account</h2>
 
 <%= semantic_form_for(@activity_account,
-  :url => university_account_activity_accounts_path( @activity_account.university_account ) ) do |f| %>
+  :url => fund_grant_activity_accounts_path( @activity_account.fund_grant ) ) do |f| %>
   <% render :partial => 'activity_accounts/form', :object => f %>
 <% end %>
 
 <p>
-<% if @university_account %>
-<%= link_to 'Back', university_account_activity_accounts_path( @university_account ) %>
+<% if @fund_grant %>
+<%= link_to 'Back', fund_grant_activity_accounts_path( @fund_grant ) %>
 <% end %>
 </p>
 

@@ -119,8 +119,8 @@ class OrganizationsController < ApplicationController
   end
 
   def new_organization_from_params
-    @organization = @registration.find_or_build_organization( params[:organization], :as => :admin ) if @registration
-    @organization ||= Organization.new( params[:organization], :as => :admin )
+    @organization = @registration.find_or_build_organization( params[:organization], as: :admin ) if @registration
+    @organization ||= Organization.new( params[:organization], as: :admin )
   end
 
 end

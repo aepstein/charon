@@ -6,8 +6,10 @@ class FundRequest < ActiveRecord::Base
 
   attr_accessible :fund_request_type_id
   attr_accessible :reject_message, as: :rejector
+  attr_accessible :fund_tier_id, as: :reviewer
   attr_readonly :fund_grant_id, :fund_request_type_id
 
+  belongs_to :fund_tier, inverse_of: :fund_requests
   belongs_to :fund_grant, inverse_of: :fund_requests
   belongs_to :fund_queue, inverse_of: :fund_requests
   belongs_to :fund_request_type, inverse_of: :fund_requests
@@ -16,6 +18,20 @@ class FundRequest < ActiveRecord::Base
   has_many :approvals, dependent: :delete_all, as: :approvable do
     def existing
       self.reject { |approval| approval.new_record? }
+    end
+  end
+  delegate :allowed_fund_tiers, to: :fund_grant
+  has_many :fund_allocations, inverse_of: :fund_request, dependent: :destroy do
+    def allocate!( fund_item, amount )
+      allocation = find_or_build_by_fund_item(fund_item)
+      allocation.amount = amount
+      allocation.save! if allocation.changed?
+    end
+    def find_or_build_by_fund_item( fund_item )
+      find_by_fund_item( fund_item ) or build( fund_item: fund_item )
+    end
+    def find_by_fund_item( fund_item )
+      select { |a| a.fund_item_id == fund_item.id }.first
     end
   end
   has_many :fund_editions, dependent: :destroy, inverse_of: :fund_request do
@@ -41,9 +57,6 @@ class FundRequest < ActiveRecord::Base
     # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
-        exclusion = proxy_association.owner.fund_grant.fund_items.where(
-            :id.not_in => proxy_association.owner.fund_editions.final.map( &:fund_item_id )
-          ).sum( :amount )
         cap -= exclusion if exclusion
       end
       includes( :fund_editions ).roots.each do |fund_item|
@@ -54,7 +67,7 @@ class FundRequest < ActiveRecord::Base
     end
 
     # Allocate an item and any children for which a final edition is present
-    # * allocate the item if a final edition is present in the request
+    # * allocate the item if a final edition is present in the request (necessary?)
     # * apply cap if one is specified and deduct allocation from cap
     # * recursively call to each child, passing on remaining cap
     def allocate_fund_item!(fund_item, cap = nil)
@@ -63,15 +76,22 @@ class FundRequest < ActiveRecord::Base
         max = ( (fund_edition) ? fund_edition.amount : 0.0 )
         if cap
           min = (cap > 0.0) ? cap : 0.0
-          fund_item.amount = ( ( max > min ) ? min : max )
-          cap -= fund_item.amount
+          amount = ( ( max > min ) ? min : max )
+          cap -= amount
         else
-          fund_item.amount = max
+          amount = max
         end
-        fund_item.save! if fund_item.changed?
+        proxy_association.owner.fund_allocations.allocate! fund_item, amount
       end
       children_of(fund_item).each { |c| cap = allocate_fund_item!(c, cap) }
       cap
+    end
+
+    # Determine amount allocated through other requests, which is the amount
+    # by which to lower the effective cap for allocations to this request
+    def exclusion( force_reload = false )
+      @exclusion ||= proxy_association.owner.fund_grant.fund_allocations.
+        except_for( proxy_association.owner ).sum( :amount )
     end
 
     def appended
@@ -105,14 +125,14 @@ class FundRequest < ActiveRecord::Base
     # Returns users who have fulfilled unquantified approver requirements
     def fulfilled( approvers = Approver.unscoped )
       User.scoped.joins('INNER JOIN approvers').
-      merge( approvers.unquantified.fulfilled_for( @association.owner ).merge(
-        Approval.unscoped.where( :created_at.gt => @association.owner.approval_checkpoint)
+      merge( approvers.unquantified.fulfilled_for( proxy_association.owner ).merge(
+        Approval.unscoped.where( :created_at.gt => proxy_association.owner.approval_checkpoint)
       ) ).where( 'users.id = memberships.user_id' ).group('memberships.user_id', 'approvers.quantity')
     end
     # Returns users who have not fulfilled unquantified approver requirements
     def unfulfilled( approvers = Approver.unscoped )
-      User.scoped.not_approved( @association.owner ).joins('INNER JOIN approvers').
-      merge( approvers.unquantified.unfulfilled_for( @association.owner ) ).
+      User.scoped.not_approved( proxy_association.owner ).joins('INNER JOIN approvers').
+      merge( approvers.unquantified.unfulfilled_for( proxy_association.owner ) ).
       where( 'users.id = memberships.user_id' ).
       group('memberships.user_id', 'approvers.quantity')
     end
@@ -159,7 +179,7 @@ class FundRequest < ActiveRecord::Base
 
   state_machine :initial => :started do
 
-    state :finalized, :released, :tentative
+    state :finalized, :tentative, :released
 
     state :started do
       validate :no_draft_fund_request_exists, on: :create
@@ -176,6 +196,10 @@ class FundRequest < ActiveRecord::Base
     state :submitted do
       validates :fund_queue, presence: true
       validates :fund_queue_id, uniqueness: { scope: [ :fund_grant_id ] }
+    end
+
+    state :allocated do
+      validates :review_state, inclusion: { in: %w( ready ) }
     end
 
     event :approve do
@@ -203,6 +227,10 @@ class FundRequest < ActiveRecord::Base
       transition :submitted => :released, :if => :releasable?
     end
 
+    event :allocate do
+      transition [ :submitted, :released ] => :allocated, :if => :releasable?
+    end
+
     event :reject do
       transition [ :started, :tentative, :finalized, :submitted ] => :rejected
     end
@@ -225,13 +253,14 @@ class FundRequest < ActiveRecord::Base
       :do => [ :send_submitted_notice! ]
     after_transition all - [ :released ] => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
+    after_transition all - [ :allocated ] => :allocated, :do => :populate_activity_accounts!
 
   end
 
-  notifiable_events :started, :tentative, :finalized, :rejected, :submitted,
-    :released, :withdrawn, :if => :require_requestor_recipients!
+  notifiable_events :allocated, :started, :tentative, :finalized, :rejected, :submitted,
+    :released, :withdrawn, if: :require_requestor_recipients!
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
   scope :ordered, joins { [ fund_grant.fund_source, fund_grant.organization ] }.
     order( 'fund_sources.name ASC, organizations.last_name ASC, organizations.first_name ASC' )
@@ -272,6 +301,7 @@ class FundRequest < ActiveRecord::Base
       where { fund_request_types.id.eq( fund_requests.fund_request_type_id ) }
     ) }
   }
+  scope :released, lambda { with_state( :released, :allocated ) }
 
   paginates_per 10
 
@@ -299,7 +329,8 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  delegate :require_requestor_recipients!, :returning?, to: :fund_grant
+  delegate :require_requestor_recipients!, :returning?, :requestors, :reviewers,
+    to: :fund_grant
 
   # Is the request actionable?
   def actionable?; UNACTIONABLE_STATES.map(&:to_s).all? { |s| s != state }; end
@@ -416,6 +447,10 @@ class FundRequest < ActiveRecord::Base
       approval.approvable = self
       ApprovalMailer.fund_request_notice(approval).deliver
     end
+  end
+
+  def populate_activity_accounts!
+    fund_grant.activity_accounts.populate!
   end
 
 end

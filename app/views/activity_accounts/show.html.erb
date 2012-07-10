@@ -1,27 +1,21 @@
 <p>
-  <b>University account:</b>
-  <%= @activity_account.university_account %>
+  <b>Grant:</b> <%= @activity_account.fund_grant %>
 </p>
 
 <p>
-  <b>FundSource:</b>
-  <%= @activity_account.fund_source %>
-</p>
-
-<p>
-  <b>Category:</b>
-  <%= @activity_account.category %>
+  <b>Category:</b> <%= @activity_account.category %>
 </p>
 
 <p>
   <b>Comments:</b>
-  <%=markdown @activity_account.comments %>
 </p>
+
+<%=markdown @activity_account.comments %>
 
 <p>
 <% if permitted_to? :edit, @activity_account %>
 <%= link_to 'Edit', edit_activity_account_path(@activity_account) %> |
 <% end %>
-<%= link_to 'Back', university_account_activity_accounts_path( @activity_account.university_account ) %>
+<%= link_to 'Back', fund_grant_activity_accounts_path( @activity_account.fund_grant ) %>
 </p>
 

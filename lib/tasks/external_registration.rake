@@ -6,6 +6,7 @@ namespace :external_registrations do
     task :terms => [ :environment ] do
       puts "Importing all registration terms..."
       result = RegistrationImporter::ExternalTerm.import
+      update_frameworks result
       report_import_result( "all", "registration_terms", result )
     end
 
@@ -13,6 +14,7 @@ namespace :external_registrations do
     task :latest => [ :terms ] do
       puts "Importing latest registrations with contacts..."
       result = RegistrationImporter::ExternalRegistration.import :latest
+      update_frameworks result
       report_import_result( "latest", "registrations", result )
     end
 
@@ -20,7 +22,15 @@ namespace :external_registrations do
     task :all => [ :terms ] do
       puts "Importing all registrations with contacts..."
       result = RegistrationImporter::ExternalRegistration.import :all
+      update_frameworks result
       report_import_result( "all", "registrations", result )
+    end
+
+    # If no changes occurred, skip framework update as there is no reason
+    # to do it
+    def update_frameworks(result)
+      return true if result[0..2] == [0,0,0]
+      Framework.each { |framework| framework.update_memberships }
     end
 
     def report_import_result( context, type, result )

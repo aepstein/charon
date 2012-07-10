@@ -3,9 +3,11 @@ Dear Officers of <%= @fund_request.fund_grant.organization %>,
 </p>
 
 <p>
-This email is to inform you that your <%=h @fund_request %> has been processed and released for you to review.
+This email is to inform you may now review the preliminary determination for <%=h @fund_request %>.
 To see it, please go to: &lt;<%= link_to fund_request_url(@fund_request), fund_request_url(@fund_request) %>&gt;.
 </p>
 
 <%=markdown @fund_request.fund_grant.fund_source.release_message %>
+
+<%=markdown @fund_request.fund_queue.release_message %>
 

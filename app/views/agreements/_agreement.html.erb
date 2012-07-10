@@ -2,6 +2,6 @@
     <td><%=h agreement.name %></td>
     <td><%= link_to 'Show', agreement %></td>
     <td><%= link_to 'Edit', edit_agreement_path(agreement) %></td>
-    <td><%= link_to 'Destroy', agreement, :confirm => 'Are you sure?', :method => :delete %></td>
+    <td><%= link_to 'Destroy', agreement, data: { confirm: 'Are you sure?' }, method: :delete %></td>
   <% end %>
 

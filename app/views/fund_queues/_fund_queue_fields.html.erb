@@ -1,0 +1,18 @@
+<div class="nested-fields">
+  <%= f.inputs do %>
+    <%= f.input :advertised_submit_at, as: :date_time_picker,
+      hint: 'When is the advertised submission deadline (leave blank if same as enforced)?' %>
+    <%= f.input :submit_at, as: :date_time_picker,
+      hint: 'When must a request be submitted to qualify for this deadline?' %>
+    <%= f.input :release_at, as: :date_time_picker,
+      hint: 'When should decisions be released regarding requests associated with this deadline?' %>
+    <%= f.input :fund_request_types, as: :check_boxes,
+      hint: 'What fund request types may be associated with this queue?' %>
+    <%= f.input :release_message %>
+    <%= f.input :allocate_message %>
+  <% end %>
+  <p>
+  <%= link_to_remove_association 'remove queue', f %>
+  </p>
+</div>
+

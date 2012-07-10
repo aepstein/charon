@@ -89,7 +89,7 @@ class FrameworksController < ApplicationController
   end
 
   def initialize_index
-    @frameworks = Framework.scoped
+    @frameworks = Framework.scoped.ordered
   end
 
   def new_framework_from_params

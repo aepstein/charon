@@ -47,7 +47,12 @@
 <%=render :partial => 'fund_queues/fund_queues',
           :object => @fund_source.fund_queues %>
 
+<h3>Fund tiers</h3>
+
+<%= render partial: 'fund_tiers/fund_tiers', object: @fund_source.fund_tiers %>
+
 <% if permitted_to? :review, @fund_source  -%>
+
 <h3>Reviewer information</h3>
 
 <p>
@@ -70,18 +75,24 @@ Request quantity and amount report:
 </p>
 
 <p>
-  <b>Unreleased grant amount:</b> <%=number_to_currency @fund_source.fund_items.sum(:amount) %>
+  <b>Pending allocations amount:</b> <%=number_to_currency @fund_source.fund_allocations.pending.sum(:amount) %>
 </p>
 
 <p>
-  <b>Released grant amount:</b> <%=number_to_currency @fund_source.fund_items.sum(:released_amount) %>
+  <b>Final allocations amount:</b> <%=number_to_currency @fund_source.fund_allocations.final.sum(:amount) %>
 </p>
 
 <p>
-  <b>Release message:</b> (included in notices sent to requestor members when fund_request is released)
+  <b>Release message:</b> (included in notices sent to requestor members when preliminary determination is released)
 </p>
 
 <%=markdown @fund_source.release_message %>
+
+<p>
+  <b>Allocate message:</b> (included in notices sent to requestor members when allocation is released)
+</p>
+
+<%=markdown @fund_source.allocate_message %>
 
 <% end -%>
 <p>

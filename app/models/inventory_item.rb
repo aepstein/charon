@@ -4,34 +4,31 @@ class InventoryItem < ActiveRecord::Base
     :retired_on
   attr_readonly :organization_id
 
-  belongs_to :organization, :inverse_of => :inventory_items
+  belongs_to :organization, inverse_of: :inventory_items
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
-  default_scope includes(:organization).
-    order( 'organizations.last_name ASC, organizations.first_name ASC, ' +
-    'inventory_items.identifier ASC, inventory_items.acquired_on ASC, ' +
-    'inventory_items.description ASC' )
-
-  scope :active, where( :retired_on => nil)
+  scope :ordered, joins { organization }.order { [ organizations.last_name,
+    organizations.first_name, identifier, acquired_on, description ] }
+  scope :active, where( retired_on: nil)
   scope :retired, where { retired_on != nil }
   scope :organization_name_contains, lambda { |name|
     scoped.merge( Organization.name_contains( name ) )
   }
 
-  validates :organization, :presence => true
-  validates :identifier, :uniqueness => { :scope => [ :organization_id ] }
+  validates :organization, presence: true
+  validates :identifier, uniqueness: { scope: [ :organization_id ] }
   validates :purchase_price,
-    :numericality => { :greater_than_or_equal_to => 0.0 }
-  validates :current_value, :numericality => { :greater_than_or_equal_to => 0.0 }
-  validates :description, :presence => true
-  validates :acquired_on, :timeliness => { :type => :date }
+    numericality: { greater_than_or_equal_to: 0.0 }
+  validates :current_value, numericality: { greater_than_or_equal_to: 0.0 }
+  validates :description, presence: true
+  validates :acquired_on, timeliness: { type: :date }
   validates :scheduled_retirement_on,
-    :timeliness => { :type => :date, :after => :acquired_on }
-  validates :retired_on, :timeliness => { :type => :date, :allow_blank => true,
-    :after => :acquired_on }
+    timeliness: { type: :date, after: :acquired_on }
+  validates :retired_on, timeliness: { type: :date, allow_blank: true,
+    after: :acquired_on }
 
-  before_validation :initialize_current_value, :on => :create
+  before_validation :initialize_current_value, on: :create
 
   def to_s; description + ( identifier? ? " (#{identifier})" : "" ); end
 

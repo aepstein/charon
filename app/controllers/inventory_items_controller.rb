@@ -116,7 +116,7 @@ class InventoryItemsController < ApplicationController
   def initialize_index
     @inventory_items = InventoryItem.scoped
     @inventory_items = @inventory_items.scoped( :conditions => { :organization_id => @organization.id } ) if @organization
-    @inventory_items = @inventory_items.with_permissions_to(:show)
+    @inventory_items = @inventory_items.with_permissions_to(:show).ordered
   end
 
   def new_inventory_item_from_params

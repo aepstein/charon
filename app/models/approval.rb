@@ -2,16 +2,21 @@ class Approval < ActiveRecord::Base
   attr_accessible :as_of
   attr_readonly :user_id, :approvable_id, :approvable_type
 
-  has_paper_trail :class_name => 'SecureVersion'
+  has_paper_trail class_name: 'SecureVersion'
 
   belongs_to :approvable, polymorphic: true
   belongs_to :user, inverse_of: :approvals
 
-  default_scope includes( :user ).
-    order( 'users.last_name ASC, users.first_name ASC, users.middle_name ASC' )
-
-  scope :agreements, where( :approvable_type => 'Agreement' )
-  scope :fund_requests, where( :approvable_type => 'FundRequest' )
+  scope :ordered, joins { user }.
+    order { [ users.last_name, users.first_name, users.middle_name ] }
+  scope :agreements, where( approvable_type: 'Agreement' )
+  scope :fund_requests, where( approvable_type: 'FundRequest' )
+  scope :with_approvable, lambda { |approvable|
+    where { |a|
+      a.approvable_type.eq( approvable.class.to_s ) &
+      a.approvable_id.eq( approvable.id )
+    }
+  }
   scope :at_or_after, lambda { |time| where { |a| a.created_at.gte( time ) } }
 
   validates :as_of, timeliness: { type: :datetime }
@@ -38,8 +43,8 @@ class Approval < ActiveRecord::Base
     end
   end
 
-  after_create :approve_approvable, :deliver_approval_notice, :fulfill_user
-  after_destroy :unapprove_approvable, :deliver_unapproval_notice, :unfulfill_user
+  after_create :approve_approvable, :deliver_approval_notice, :update_frameworks
+  after_destroy :unapprove_approvable, :deliver_unapproval_notice, :update_frameworks
 
   def as_of=(datetime)
     @as_of=datetime.to_s
@@ -88,14 +93,12 @@ class Approval < ActiveRecord::Base
     end
   end
 
-  def fulfill_user
-    user.association(:approvals).reset
-    user.fulfillments.fulfill! if approvable_type == "Agreement"
+  def update_frameworks
+    unless approvable_type != 'Agreement' || Framework.skip_update_frameworks
+      user.update_frameworks
+    end
+    true
   end
 
-  def unfulfill_user
-    user.association(:approvals).reset
-    user.fulfillments.unfulfill! if approvable_type == "Agreement"
-  end
 end
 

@@ -1,10 +1,12 @@
     <td><%= link_to( 'Edit',
         edit_fund_request_fund_item_path( fund_request, managed_fund_item )
       ) if permitted_to?( :edit, fund_request ) %></td>
-    <td><%= link_to( 'Destroy', managed_fund_item, :confirm => 'Are you sure?',
-      :method => :delete ) if permitted_to?( :destroy, managed_fund_item ) %></td>
-    <td><%= link_to( 'Remove', managed_fund_item.fund_editions.for_request( fund_request ).first,
-      :confirm => 'Are you sure?', :method => :delete ) if
+    <td><%= link_to( 'Destroy', managed_fund_item,
+        data: { confirm: 'Are you sure?' }, method: :delete
+      ) if permitted_to?( :destroy, managed_fund_item ) %></td>
+    <td><%= link_to( 'Remove', managed_fund_item.fund_editions.
+        for_request( fund_request ).first,
+        data: { confirm: 'Are you sure?' }, method: :delete ) if
         managed_fund_item.fund_editions.for_request( fund_request ).any? &&
         permitted_to?( :destroy,
           managed_fund_item.fund_editions.for_request( fund_request ).first ) %></td>

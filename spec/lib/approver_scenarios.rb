@@ -27,8 +27,8 @@ module SpecApproverScenarios
 
   def half_approvers_scenario(reset_checkpoint=false)
     no_approvers_scenario
-    create(:approval, :approvable => @fund_request, :user => @quota_fulfilled )
-    create(:approval, :approvable => @fund_request, :user => @all_fulfilled )
+    create(:approval, approvable: @fund_request, user: @quota_fulfilled )
+    create(:approval, approvable: @fund_request, user: @all_fulfilled )
   end
 
   def all_approvers_scenario(reset_checkpoint=false)

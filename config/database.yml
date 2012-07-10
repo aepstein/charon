@@ -32,7 +32,7 @@ production:
 
 external_registrations_development:
   adapter: mysql2
-  database: new_sao
+  database: sao_development
   username: root
   host: localhost
 
