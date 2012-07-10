@@ -52,8 +52,8 @@ class ActivityAccount < ActiveRecord::Base
     attributes['sum_adjustments'] ? attributes['sum_adjustments'] : adjustments.sum(:amount)
   end
 
-  # Total available funds for activity account is allocation less manual adjustments
-  def sum_available; sum_allocations - sum_adjustments; end
+  # Total available funds for activity account is allocation plus manual adjustments
+  def sum_available; sum_allocations + sum_adjustments; end
 
 end
 

@@ -83,7 +83,7 @@ You have no closed fund grants.
 
 <% if @organization.activity_accounts.current.any? %>
 <%=render partial: 'activity_accounts/activity_accounts',
-  object: @organization.activity_accounts.current,
+  object: @organization.activity_accounts.with_balances.current,
   locals: { with_balances: true, organization: @organization } %>
 <% else %>
 <p>

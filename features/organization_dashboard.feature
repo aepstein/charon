@@ -17,6 +17,7 @@ Feature: Organization dashboard
     And I should see "You may request grants from 0 fund sources."
     And I should see "You have no current fund grants."
     And I should see "You have no closed fund grants."
+    And I should see "You have no available funds."
     And I should see "Your organization has not submitted a financial profile."
     And I should see "You may edit your organization's profile here."
 
@@ -65,4 +66,16 @@ Feature: Organization dashboard
     And a fund_grant exists with organization: organization "applicant", fund_source: the closed_fund_source
     And I am on the dashboard page for organization: "applicant"
     Then I should see "You may view 1 closed fund grant."
+
+  Scenario: Active accounts
+    Given a fund_source exists with name: "Easy Money"
+    And a fund_grant exists with fund_source: the fund_source, organization: organization "applicant"
+    And a category exists with name: "Flexible Funds"
+    And an activity_account exists with fund_grant: the fund_grant, category: the category
+    And an account_transaction exists
+    And account_adjustment exists with account_transaction: the account_transaction, activity_account: the activity_account, amount: 1000.0
+    And I am on the dashboard page for organization: "applicant"
+    Then I should see the following entries in "#activity-accounts":
+      | Source     | Category       | Allocations | Adjustments | Available |
+      | Easy Money | Flexible Funds | $0.00       | $1,000.00   | $1,000.00 |
 

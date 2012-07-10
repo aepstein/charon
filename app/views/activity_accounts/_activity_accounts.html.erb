@@ -9,7 +9,7 @@
     <th>Source</th>
     <th>Category</th>
     <% if with_balances %>
-    <th>Allocation</th>
+    <th>Allocations</th>
     <th>Adjustments</th>
     <th>Available</th>
     <% end %>
@@ -19,8 +19,8 @@
   </tr>
 </thead>
 <tbody>
-<%= render partial: "activity_account", collection: activity_accounts,
-  locals: { with_balances: with_balances } %>
+<%=render partial: "activity_accounts/activity_account", collection: activity_accounts,
+  locals: { with_balances: with_balances, organization: organization } %>
 </tbody>
 </table>
 
