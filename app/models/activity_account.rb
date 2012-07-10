@@ -8,9 +8,9 @@ class ActivityAccount < ActiveRecord::Base
   has_many :adjustments, dependent: :destroy, class_name: 'AccountAdjustment',
     inverse_of: :activity_account
   has_many :allocations, through: :fund_grant, source: :fund_allocations,
-    conditions: Proc.new { "fund_allocations.fund_item_id IN( SELECT fund_items.id " +
-      "FROM fund_items INNER JOIN nodes ON fund_items.node_id = nodes.id " +
-      "WHERE nodes.category_id = #{category_id} )" }
+    conditions: Proc.new {
+      { fund_item_id: FundItem.with_category( category ) }
+    }
   has_one :organization, through: :fund_grant
   has_one :fund_source, through: :fund_grant
 

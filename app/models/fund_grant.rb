@@ -29,7 +29,11 @@ class FundGrant < ActiveRecord::Base
   has_many :fund_items, inverse_of: :fund_grant, dependent: :destroy
   has_many :fund_editions, through: :fund_items
   has_many :nodes, through: :fund_items
-  has_many :categories, through: :nodes
+  has_many :categories, through: :nodes do
+    def without_activity_account
+      all - proxy_association.owner.activity_account_categories
+    end
+  end
   has_many :requestor_memberships, through: :organization,
     source: :active_memberships, autosave: false
   has_many :reviewer_memberships, through: :fund_source, source: :memberships,
@@ -42,7 +46,15 @@ class FundGrant < ActiveRecord::Base
     autosave: false do
     def reviewer; scoped.merge( Membership.unscoped.reviewer ); end
   end
-  has_many :activity_accounts, inverse_of: :fund_grant, dependent: :destroy
+  has_many :activity_account_categories, through: :activity_accounts,
+    source: :category
+  has_many :activity_accounts, inverse_of: :fund_grant, dependent: :destroy do
+    def populate!
+      proxy_association.owner.categories.without_activity_account.each do |category|
+        create( category_id: category.id )
+      end
+    end
+  end
 #  has_many :users, through: :organization do
 #    # Retrieves users associated with a perspective for the grant
 #    def for_perspective( perspective )

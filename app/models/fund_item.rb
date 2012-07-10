@@ -124,6 +124,7 @@ class FundItem < ActiveRecord::Base
     end
   }
   scope :documentable, joins { document_types.inner }
+  scope :with_category, lambda { |category| joins(:node).where( node: { category_id: category.id } ) }
 
   validates :title, presence: true
   validates :node, presence: true
