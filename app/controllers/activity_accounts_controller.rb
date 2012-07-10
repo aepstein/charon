@@ -97,7 +97,7 @@ class ActivityAccountsController < ApplicationController
     @activity_accounts = @activity_accounts.organization_id_equals( @organization.id ) if @organization
     @activity_accounts = @activity_accounts.where(
       fund_grant_id: @fund_grant.id ) if @fund_grant
-    @activity_accounts = @activity_accounts.with_permissions_to(:show)
+    @activity_accounts = @activity_accounts.with_permissions_to(:show).with_balances
   end
 
   def new_activity_account_from_params

@@ -3,7 +3,7 @@
 <%= paginate @activity_accounts %>
 
 <%= render partial: "activity_accounts", object: @activity_accounts,
-  locals: { organization: @organization } %>
+  locals: { organization: @organization, with_balances: true } %>
 
 <%= paginate @activity_accounts %>
 

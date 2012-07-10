@@ -253,6 +253,7 @@ class FundRequest < ActiveRecord::Base
       :do => [ :send_submitted_notice! ]
     after_transition all - [ :released ] => :released, :do => :send_released_notice!
     after_transition all - [ :withdrawn ] => :withdrawn, :do => :send_withdrawn_notice!
+    after_transition all - [ :allocated ] => :allocated, :do => :populate_activity_accounts!
 
   end
 
@@ -446,6 +447,10 @@ class FundRequest < ActiveRecord::Base
       approval.approvable = self
       ApprovalMailer.fund_request_notice(approval).deliver
     end
+  end
+
+  def populate_activity_accounts!
+    fund_grant.activity_accounts.populate!
   end
 
 end
