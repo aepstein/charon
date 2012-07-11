@@ -26,21 +26,41 @@ browser if this is incorrect or you wish to log out.  You may
   </table>
 <% end -%>
 
-<% unless current_user.registrations.current.unmatched.empty? -%>
-  <h3>Your <em>Unmatched</em> Registrations</h3>
+<% if current_user.registrations.current.unapproved.any? %>
+  <h3>Your <em>Pending</em> Registrations</h3>
 
   <p>
-  These are registrations that you have started with the Student Activities
-  Office, but have not yet matched to a corresponding record with SAFC or GPSAFC.
-  You should email <a href="mailto:safc@cornell.edu">safc@cornell.edu</a> or
-  <a href="mailto:gpsafc@cornell.edu">gpsafc@cornell.edu</a> to request that one
-  is set up.
+  You have registrations that the Student Activities Office has not yet approved.
+  Typically this is because you have not submitted all the documents required by
+  that office.  In order to request funds for the associated organizations, you
+  must complete the registration process with that office.  To obtain more
+  information click the link below or email
+  <a href="activities@cornell.edu">activities@cornell.edu</a>.
+  Approval should be reflected here within an hour.
   </p>
 
   <ul>
-  <%= render :partial => "registration", :collection => current_user.registrations.current.unmatched %>
+  <%= render partial: "registration",
+    collection: current_user.registrations.current.unapproved %>
   </ul>
+<% end %>
 
+<% if current_user.registrations.current.registered.unmatched.any? -%>
+  <h3>Your <em>Approved, Unmatched</em> Registrations</h3>
+
+  <p>
+  You have registrations that the Student Activities Office approved,
+  but have not yet matched to a corresponding record with SAFC or GPSAFC.
+  This should have happened automatically, so you should email
+  <a href="mailto:safc@cornell.edu">safc@cornell.edu</a> or
+  <a href="mailto:gpsafc@cornell.edu">gpsafc@cornell.edu</a> to request that
+  a matching record is set up now.
+  </p>
+
+  <ul>
+  <%= render partial: "registration",
+    collection: current_user.registrations.current.registered.unmatched %>
+  </ul>
 <% end -%>
 
 <% unless current_user.approved_agreements.empty?  %>

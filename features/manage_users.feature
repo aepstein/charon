@@ -112,25 +112,22 @@ Feature: Manage users
       | John Bo 1           |
       | John Bo 4           |
 
-  Scenario: Show organizations and unmatched registrations for the current user
-    Given a role: "president" exists with name: "president"
-    And a role: "allowed" exists with name: "allowed"
-    And a organization: "matched" exists with last_name: "matched organization"
-    And an organization: "unregistered" exists with last_name: "unregistered organization"
-    And an organization: "irrelevant" exists with last_name: "irrelevant organization"
-    And a current_registration: "matched" exists with organization: organization "matched"
-    And a current_registration: "unmatched" exists with name: "unmatched organization"
-    And a current_registration: "irrelevant registration" exists with name: "irrelevant registration"
-    And a membership exists with user: user "owner", role: role "allowed", registration: registration "matched"
-    And a membership exists with user: user "owner", role: role "allowed", registration: registration "unmatched"
-    And a membership exists with user: user "owner", role: role "allowed", organization: organization "unregistered", active: true
-    And I log in as user: "owner"
-    And I am on the profile page
-    Then I should see "matched organization"
-    And I should see "unmatched organization"
-    And I should see "unregistered organization"
-    And I should not see "irrelevant organization"
-    And I should not see "irrelevant registration"
+  Scenario Outline: Properly display information about pending and unmatched registrations
+    Given a requestor_role exists
+    And an organization exists with last_name: "focus <name>"
+    And a current_registration exists with name: "focus registration", organization: <organization>, registered: <registered>
+    And a user exists
+    And a membership exists with user: the user, organization: nil, registration: the current_registration
+    And I log in as the user
+    Then I should see "focus registration"
+    And I should <pending> "Your Pending Registrations"
+    And I should <unmatched> "Your Approved, Unmatched Registrations"
+    Examples:
+      | name         | organization     | registered | pending | unmatched |
+      | organization | the organization | true       | not see | not see   |
+      | organization | the organization | false      | see     | not see   |
+      | registration | nil              | true       | not see | see       |
+      | organization | nil              | true       | not see | not see   |
 
   Scenario: Delete user
     Given I log in as user: "admin"

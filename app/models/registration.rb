@@ -23,6 +23,7 @@ class Registration < ActiveRecord::Base
   scope :inactive, joins { registration_term }.where { registration_terms.current.eq( false ) |
     registration_terms.current.eq( nil ) }
   scope :registered, where { registered.eq( true ) }
+  scope :unapproved, where { registered.not_eq( true ) }
   scope :unmatched, where( :organization_id => nil )
   scope :named, lambda { |name| where { registrations.name.like( "%#{name}%" ) } }
   scope :min_percent_members_of_type, lambda { |percent, type|
@@ -87,7 +88,10 @@ class Registration < ActiveRecord::Base
   end
 
   def find_or_create_organization( params={}, options={} )
-    find_or_build_organization( params, options ).save if organization.nil? || organization.new_record?
+    if organization.nil? || organization.new_record?
+      find_or_build_organization( params, options ).save
+      save
+    end
     organization
   end
 

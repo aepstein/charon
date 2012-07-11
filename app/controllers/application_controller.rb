@@ -37,5 +37,15 @@ class ApplicationController < ActionController::Base
     end.join(' ')
   end
 
+  # Sets up matching organizations for approved, unmatched registrations of the current user
+  # * should call any time the user might expect to do something with the unmatched organization
+  # * should only call on approved registrations to limit possibility of duplicate
+  #   organization instantiation
+  def setup_matching_organizations
+    current_user.registrations.current.registered.unmatched.readonly(false).each do |registration|
+      registration.find_or_create_organization
+    end
+  end
+
 end
 

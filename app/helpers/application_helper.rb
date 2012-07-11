@@ -22,6 +22,12 @@ module ApplicationHelper
     link_to organization.name, "http://sao.cornell.edu/SO/search.php?igroup=#{organization.current_registration.external_id}"
   end
 
+  def link_to_registration(registration)
+    link_to registration.name,
+      "https://sao.cornell.edu/SO/org/#{registration.registration_term.short_description}/" +
+      "#{registration.external_id}"
+  end
+
   def link_to_directory(user)
     return user.name unless user.net_id
     link_to user.name, "http://www.cornell.edu/search/index.cfm?tab=people&netid=#{user.net_id}"

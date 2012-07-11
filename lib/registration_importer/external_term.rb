@@ -5,12 +5,13 @@ module RegistrationImporter
 
     MAP = {
       :term_id        => :external_id,
+      :term_sdescr    => :short_description,
       :term_ldescr    => :description,
       :current        => :current,
       :reg_start_time => :starts_at,
       :reg_end_time   => :ends_at
     }
-    REGISTRATION_TERM_ATTRIBUTES = [ :term_ldescr, :current, :reg_start_time, :reg_end_time ]
+    REGISTRATION_TERM_ATTRIBUTES = [ :term_sdescr, :term_ldescr, :current, :reg_start_time, :reg_end_time ]
 
     establish_connection "external_registrations_#{::Rails.env}".to_sym
     self.table_name = "terms"

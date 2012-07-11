@@ -6,6 +6,7 @@ class UsersController < ApplicationController
   before_filter :add_blank_address, :only => [ :new, :edit ]
   filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
   before_filter :setup_breadcrumbs, :except => [ :profile ]
+  before_filter :setup_matching_organizations, only: [ :profile ]
 
   def index
     @search = params[:search] || Hash.new
