@@ -30,7 +30,7 @@ namespace :external_registrations do
     # to do it
     def update_frameworks(result)
       return true if result[0..2] == [0,0,0]
-      Framework.each { |framework| framework.update_memberships }
+      Framework.all.each { |framework| framework.update_memberships }
     end
 
     def report_import_result( context, type, result )
