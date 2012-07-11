@@ -121,6 +121,7 @@ Feature: Manage approvals
     And I log in as user: "admin"
     And I am on the new approval page for the agreement
     Then I should see "Name: safc"
+    And I should not see "You will not be permitted to make additional changes to the document once it is approved."
     Given 1 second elapses
     And the Agreement records change
     When I press "Confirm Approval"
@@ -140,6 +141,7 @@ Feature: Manage approvals
     And I log in as the user
     And I am on the new approval page for the fund_request
     Then I should see "Important Item"
+    And I should see "You will not be permitted to make additional changes to the document once it is approved."
 #    And I should see "Requestor amount: $100.00"
     And I press "Confirm Approval"
     Then I should see "Approval was successfully created."

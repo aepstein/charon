@@ -19,6 +19,10 @@ Given /^#{capture_model} is (closed|current|upcoming)$/ do |name, state|
   end
 end
 
+Given /^#{capture_model} is destroyed$/ do |name|
+  model(name).destroy
+end
+
 Given /^(?:|I )(put|post|delete) on (.+)$/ do |method, page_name|
 #  visit path_to(page_name), method.to_sym
   # TODO this only works with the rack driver

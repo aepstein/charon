@@ -4,19 +4,25 @@
   Please review the document below and <strong>click "Confirm Approval" at the bottom</strong> if you approve.  Once your approval is registered, you should receive an email confirmation.
   </p>
 
-<%= semantic_form_for( @approval, :url => polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
-  <%= render "shared/error_messages", :target => f.object %>
+  <% if @approval.approvable.is_a? FundRequest %>
+  <p>
+  You will not be permitted to make additional changes to the document once it is approved.  If you discover a mistake while the document is still in a tentative state, you may remove your approval in order to unlock it and permit additional changes.
+  </p>
+  <% end %>
+
+<%= semantic_form_for( @approval, url: polymorphic_path( [ @approval.approvable, :approvals ] ) ) do |f| %>
+  <%= render "shared/error_messages", target: f.object %>
 
   <%= render 'shared/error_messages', target: f.object.approvable %>
 
-  <%= render :partial => "#{@approval.approvable_type.underscore.pluralize}/detail",
-    :object => @approval.approvable %>
+  <%= render partial: "#{@approval.approvable_type.underscore.pluralize}/detail",
+    object: @approval.approvable %>
 
   <%= f.inputs do %>
-    <%= f.input :as_of, :as => :hidden %>
+    <%= f.input :as_of, as: :hidden %>
   <% end %>
   <%= f.actions do %>
-    <%= f.action :submit, :label => 'Confirm Approval' %>
+    <%= f.action :submit, label: 'Confirm Approval' %>
   <% end %>
 <% end %>
 

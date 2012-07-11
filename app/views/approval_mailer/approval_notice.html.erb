@@ -5,3 +5,14 @@ This email is a confirmation that you approved <%=h @approval.approvable %> on
 &lt;<a href="mailto:<%= @approval.approvable.contact_email%>"><%= @approval.approvable.contact_email %></a>&gt;.
 </p>
 
+<% if @approval.approvable_type == 'FundRequest' %>
+<p>
+With your approval, the request is locked so no additional changes will be permitted.
+  <% if @approval.permitted_to?( :destroy, user: @approval.user ) %>
+  At this time, you still have an opportunity to remove your approval.
+  You may do so by visiting:
+  &lt;<%=link_to polymorphic_url( @approval ), @approval %></a>&gt;
+  <% end %>
+</p>
+<% end %>
+

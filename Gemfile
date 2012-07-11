@@ -22,7 +22,10 @@ gem 'formtastic'
 gem 'cocoon', '~> 1.0'
 gem 'declarative_authorization', '>= 0.5'
 gem 'cornell-assemblies-rails',
-  git: 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
+  git: 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git',
+  branch: '0-0-2'
+gem 'cornell-assemblies-branding',
+  git: 'git://assembly.cornell.edu/git/cornell-assemblies-branding.git'
 gem 'escape_utils'
 gem 'ancestry'
 group :assets do

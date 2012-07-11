@@ -17,7 +17,7 @@
 <h3>Agreements approved by user</h3>
 
 <ul>
-<% Agreement.find( @user.approved_agreements.map { |a| a.approvable_id } ).each do |agreement| %>
+<% @user.approved_agreements.each do |agreement| %>
 <li><%= agreement %></li>
 <% end %>
 </ul>

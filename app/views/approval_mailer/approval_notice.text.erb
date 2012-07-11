@@ -2,3 +2,8 @@ This email is a confirmation that you approved <%= @approval.approvable %> on <%
 
 If you have any questions, please contact <%= @approval.approvable.contact_name %> <<%= @approval.approvable.contact_email %>>.
 
+<% if @approval.approvable_type == 'FundRequest' %>
+With your approval, the request is locked so no additional changes will be permitted.
+<% if @approval.permitted_to?( :destroy, user: @approval.user ) %>At this time, you still have an opportunity to remove your approval. You may do so by visiting: <<%=polymorphic_url @approval %>>.<% end %>
+<% end %>
+

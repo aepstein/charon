@@ -22,72 +22,75 @@
 
 <hr class="banner-separator" />
 
-<div id="cu-identity">
-	<div id="cu-logo">
-		<a id="insignia-link" href="http://www.cornell.edu/"><img src="<%=image_path('cornell-assemblies-rails/layout/unit_signature.gif')%>" alt="Cornell University" width="283" height="76" border="0" /></a>
+<div id="cu-identity-wrap">
+	<div id="cu-identity-content">
+		<a id="insignia-link" href="http://www.cornell.edu/"><img src="<%=image_path 'layout/cu_logo_unstyled.gif' %>" alt="Cornell University" border="0" /></a>
 		<div id="unit-signature-links">
 			<a id="cornell-link" href="http://www.cornell.edu/">Cornell University</a>
-			<a id="unit-link" href="http://assembly.cornell.edu">Office of the Assemblies</a>
 		</div>
-  </div>
 
 	<div id="search-navigation">
-		<ul>
-			<li><a href="http://assembly.cornell.edu/Site/Search">Search Assemblies</a></li>
-			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
-		</ul>
+			<ul>
+				<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+			</ul>
+		</div>
 	</div>
 </div>
 
 <hr class="banner-separator" />
-<div id="header">
-	<div id="navigation">
-		<ul>
-<% if current_user %>
-<%= content_tag 'li', link_to( 'my profile', profile_path ) %>
-<%= content_tag 'li', link_to( 'logout', logout_path ) %>
-  <% if current_user.admin? %>
-  <%=raw %w( agreements categories document_types frameworks organizations registration_terms roles structures users ).map { |option|
-    content_tag 'li', link_to( option, send(option + '_path') )
-  }.join("\n") %>
+
+  <div id="header">
+	  <div id="navigation">
+		  <ul>
+  <% if current_user %>
+  <%= content_tag 'li', link_to( 'home', profile_path ) %>
+  <%= content_tag 'li', link_to( 'logout', logout_path ) %>
+    <% if current_user.admin? %>
+    <%=raw %w( agreements categories document_types frameworks organizations registration_terms roles structures users ).map { |option|
+      content_tag 'li', link_to( option, send(option + '_path') )
+    }.join("\n") %>
+    <% end %>
+  <% else %>
+  <%= content_tag 'li', link_to( 'login', login_path ) %>
   <% end %>
-<% else %>
-<%= content_tag 'li', link_to( 'login', login_path ) %>
-<% end %>
-		</ul>
-	</div>
-	<hr />
-	<div id="identity">
-		<h1>Charon Finance System</h1>
-	</div>
-</div>
-<hr />
-<div id="wrap">
-<div id="content">
-	<div id="main">
+		  </ul>
+	  </div>
+    <hr class="banner-separator" />
+	  <div id="identity">
+		  <h1>Charon Finance System</h1>
+	  </div>
+  </div> <!--#header -->
 
-<p style="color: red"><%= flash[:error] %></p>
-<p style="color: green"><%= flash[:notice] %></p>
+<div id="container">
 
-<% if breadcrumbs %>
-<p>
-  <%=raw breadcrumbs.map { |txt, path| link_to_unless(path.blank?, h(txt), path) }.join(" &gt; ") %>
-</p>
-<% end %>
+<hr class="banner-separator" />
 
-<%= yield %>
+  <div id="content">
 
-   </div> <!-- id=main -->
-</div> <!-- id=content -->
-</div> <!-- id=wrap -->
+  <% flash.each do |name, msg| %>
+    <%= content_tag :div, msg, id: "flash_#{name}" %>
+  <% end %>
+
+  <% if breadcrumbs %>
+  <p>
+    <%=raw breadcrumbs.map { |txt, path| link_to_unless(path.blank?, h(txt), path) }.join(" &gt; ") %>
+  </p>
+  <% end %>
+
+  <%= yield %>
+
+  </div> <!-- #content -->
+
+</div> <!-- #container -->
+
 <div id="footer">
-<div id="footer-content">
-&copy; 2008-<%=raw Time.zone.today.year %> Office of the Assemblies, Cornell University.
-We use <a href="http://www.fsf.org/">free software</a>.
-Questions? Contact
-<a href="mailto:assembly@cornell.edu">assembly@cornell.edu</a>.
-</div>
-</div>
+  <div id="footer-content">
+    &copy; 2008-<%=raw Time.zone.today.year %> Cornell University.
+    Built using <a href="http://www.fsf.org/">free software</a>.
+    Questions? Contact <a href="mailto:assembly@cornell.edu">assembly@cornell.edu</a>.
+  </div>
+</div> <!-- #footer -->
+
 </body>
 </html>
 

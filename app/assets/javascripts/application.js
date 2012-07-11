@@ -1,3 +1,2 @@
-//= require cornell-assemblies-rails
-//= require cocoon
+//= require cornell-assemblies-branding
 
