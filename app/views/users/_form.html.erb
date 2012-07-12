@@ -1,20 +1,22 @@
-  <%= render "shared/error_messages", :target => form.object %>
+  <%= render "shared/error_messages", target: form.object %>
   <%= form.inputs do %>
     <%= form.input :net_id %>
     <%= form.input :email %>
     <%= form.input :first_name %>
     <%= form.input :middle_name %>
     <%= form.input :last_name %>
-    <%= form.input :password, :label => (form.object.new_record? ? "Password" : "Change password") %>
+    <%= form.input :password,
+      label: (form.object.new_record? ? "Password" : "Change password") %>
     <%= form.input :password_confirmation %>
-    <%= form.input :date_of_birth, :as => :date_picker %>
+    <%= form.input :date_of_birth, as: :date_picker %>
     <% if current_user.admin? %>
-      <%= form.input :admin, :as => :radio %>
+      <%= form.input :admin, as: :radio %>
+      <%= form.input :staff, as: :radio %>
     <% end %>
   <% end %>
 
   <%= form.semantic_fields_for :addresses do |address_form| %>
-    <%= render :partial => 'addresses/form', :object => address_form %>
+    <%= render partial: 'addresses/form', object: address_form %>
   <% end %>
 
   <%= form.actions %>

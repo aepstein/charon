@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   attr_accessible :password, :password_confirmation, :email, :first_name,
     :middle_name, :last_name, :date_of_birth, :addresses_attributes,
     :as => [ :admin, :default ]
-  attr_accessible :admin, :net_id, :status, as: :admin
+  attr_accessible :admin, :staff, :net_id, :status, as: :admin
 
   default_scope order { [ last_name, first_name, middle_name, net_id ] }
   scope :fulfill_user_status_criterion, lambda { |criterion|

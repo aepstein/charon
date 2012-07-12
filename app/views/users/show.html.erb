@@ -12,6 +12,8 @@
 
 <p>Administrator? <%= @user.admin? ? 'Yes' : 'No' %></p>
 
+<p>Staff? <%= @user.staff? ? 'Yes' : 'No' %></p>
+
 <%= render :partial => 'addresses/address_detail', :collection => @user.addresses %>
 
 <h3>Agreements approved by user</h3>
