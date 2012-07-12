@@ -2,6 +2,7 @@ class Role < ActiveRecord::Base
   MANAGER = %w( staff )
   REVIEWER = %w( member eboard commissioner )
   REQUESTOR =  %w( president vice-president treasurer officer advisor )
+  LEADER = %w( eboard )
 
   attr_accessible :name
 

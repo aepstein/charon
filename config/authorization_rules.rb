@@ -187,6 +187,9 @@ authorization do
       if_attribute fund_request: { state: is { 'released' } }
     end
 
+    has_permission_on [ :fund_grants ], to: [ :update ] do
+      if_permitted_to :lead, :fund_source
+    end
     has_permission_on [ :fund_grants ], to: [ :show, :request_framework],
       join_by: :and do
       if_permitted_to :request, :organization
@@ -306,6 +309,9 @@ authorization do
     has_permission_on [ :fund_sources ], to: :show do
       if_attribute open_at: lte { Time.zone.now }
     end
+    has_permission_on [ :fund_sources ], to: :lead do
+      if_permitted_to :lead, :organization
+    end
 
     has_permission_on [ :memberships ], to: :show do
       if_permitted_to :show, :user
@@ -330,6 +336,12 @@ authorization do
         user_id: is { user.id },
         active: is { true },
         role: { name: is_in { Role::MANAGER } } }
+    end
+    has_permission_on [ :organizations ], to: [ :lead ] do
+      if_attribute memberships: {
+        user_id: is { user.id },
+        active: is { true },
+        role: { name: is_in { Role::LEADER } } }
     end
 
     has_permission_on :inventory_items, to: [ :show, :update ] do

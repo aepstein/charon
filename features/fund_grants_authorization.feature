@@ -12,9 +12,12 @@ Feature: Manage fund_grants authorization
     And an organization: "observer" exists with last_name: "Observer"
     And a manager_role: "manager" exists
     And a requestor_role: "requestor" exists
-    And a reviewer_role: "reviewer" exists
+    And a role: "reviewer" exists with name: "commissioner"
+    And a leader_role: "leader" exists
     And a user: "source_manager" exists
     And a membership exists with user: user "source_manager", organization: organization "source", role: role "manager"
+    And a user: "source_leader" exists
+    And a membership exists with user: user "source_leader", organization: organization "source", role: role "leader"
     And a user: "source_reviewer" exists
     And a membership exists with user: user "source_reviewer", organization: organization "source", role: role "reviewer"
     And a user: "applicant_requestor" exists
@@ -87,6 +90,7 @@ Feature: Manage fund_grants authorization
       | admin               | see     | see     | see     | see     |
       | staff               | see     | see     | see     | not see |
       | source_manager      | not see | see     | see     | see     |
+      | source_leader       | not see | see     | see     | not see |
       | source_reviewer     | not see | not see | see     | not see |
       | applicant_requestor | see     | not see | see     | not see |
       # TODO without with_permissions_to :show how do we implement?

@@ -41,7 +41,7 @@ Feature: Manage fund_grants
       |requestor|organization "requestor"|registration_criterion|not see|not see|not see  |see         |
       |requestor|nil                     |registration_criterion|not see|not see|not see  |see         |
 
-  Scenario: Create and update fund_grants
+  Scenario: Create fund_grants
     Given a fund_source exists with name: "Annual Budget"
     And a fund_queue exists with fund_source: the fund_source
     And fund_request_type: "unrestricted" is amongst the fund_request_types of the fund_queue
@@ -59,7 +59,28 @@ Feature: Manage fund_grants
     And I should see "Fund source: Annual Budget"
     And I should see "Request type: Unrestricted"
     And I should see "State: started"
-    # TODO: should we be able to edit a fund_grant?
+
+  Scenario: Update fund_grants
+    Given an organization exists with last_name: "Giving Club"
+    And a fund_source exists with name: "Annual Budget", organization: the organization
+    And a fund_tier exists with organization: the organization, maximum_allocation: 1000
+    And the fund_tier is amongst the fund_tiers of the fund_source
+    And a fund_tier exists with organization: the organization, maximum_allocation: 2000
+    And the fund_tier is amongst the fund_tiers of the fund_source
+    And a fund_grant exists with fund_source: the fund_source
+    And a leader_role exists
+    And a user exists
+    And a membership exists with organization: the organization, user: the user, role: leader_role
+    And I log in as the user
+    And I am on the edit page for the fund_grant
+    When I select "$1,000.00" from "Fund tier"
+    And I press "Update"
+    Then I should see "Fund grant was successfully updated."
+    And I should see "Fund tier: $1,000.00"
+    Given I am on the edit page for the fund_grant
+    When I select "$2,000.00" from "Fund tier"
+    And I press "Update"
+    Then I should see "Fund tier: $2,000.00"
 
   Scenario Outline: Display fund requests associated with a fund_grant
     Given an organization exists

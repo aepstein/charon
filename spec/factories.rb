@@ -349,6 +349,10 @@ FactoryGirl.define do
       sequence(:name, 0) { |n| Role::REVIEWER[n % Role::REVIEWER.length] }
     end
 
+    factory :leader_role do
+      sequence(:name, 0) { |n| Role::LEADER[n % Role::LEADER.length] }
+    end
+
     factory :manager_role do
       sequence(:name, 0) { |n| Role::MANAGER[n % Role::MANAGER.length] }
     end

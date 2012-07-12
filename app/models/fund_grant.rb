@@ -1,7 +1,8 @@
 class FundGrant < ActiveRecord::Base
   SEARCHABLE = [ :fund_source_name_contains, :organization_name_contains ]
 
-  attr_accessible :fund_source_id
+  attr_accessible :fund_source_id, as: [ :default ]
+  attr_accessible :fund_tier_id, as: [ :reviewer ]
   attr_readonly :organization_id, :fund_source_id
 
   belongs_to :organization, inverse_of: :fund_grants

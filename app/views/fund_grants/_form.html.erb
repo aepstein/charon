@@ -4,6 +4,8 @@
   <%= form.input :fund_source,
     collection: form.object.organization.fund_sources.allowed_for( current_user )
   %>
+  <% else %>
+  <%= form.input :fund_tier, collection: form.object.allowed_fund_tiers %>
   <% end -%>
 <% end %>
 <%= form.actions %>

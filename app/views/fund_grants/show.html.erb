@@ -16,6 +16,12 @@
   <b>Returning?</b> <%= @fund_grant.returning? ? 'Yes' : 'No'  %>
 </p>
 
+<% if @fund_grant.fund_tier %>
+<p>
+  <b>Fund tier:</b> <%= @fund_grant.fund_tier %>
+</p>
+<% end %>
+
 <%=content_tag 'h3', "Allocation summary" %>
 
 <p>The following amounts have been allocated per category.</p>

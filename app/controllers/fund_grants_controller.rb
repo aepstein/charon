@@ -94,7 +94,7 @@ class FundGrantsController < ApplicationController
   # PUT /fund_grants/1.xml
   def update
     respond_to do |format|
-      if @fund_grant.update_attributes(params[:fund_grant])
+      if @fund_grant.update_attributes(params[:fund_grant], as: :reviewer)
         flash[:notice] = 'Fund grant was successfully updated.'
         format.html { redirect_to @fund_grant }
         format.xml  { head :ok }
