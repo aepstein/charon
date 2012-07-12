@@ -71,11 +71,13 @@
     <%= content_tag :div, msg, id: "flash_#{name}" %>
   <% end %>
 
+<!-- TODO: Disable breadcrumbs for now, what to do in the future?
   <% if breadcrumbs %>
   <p>
     <%=raw breadcrumbs.map { |txt, path| link_to_unless(path.blank?, h(txt), path) }.join(" &gt; ") %>
   </p>
   <% end %>
+-->
 
   <%= yield %>
 
