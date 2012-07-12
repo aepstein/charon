@@ -24,41 +24,45 @@
 
 <div id="cu-identity-wrap">
 	<div id="cu-identity-content">
-		<a id="insignia-link" href="http://www.cornell.edu/"><img src="<%=image_path 'layout/cu_logo_unstyled.gif' %>" alt="Cornell University" border="0" /></a>
-		<div id="unit-signature-links">
-			<a id="cornell-link" href="http://www.cornell.edu/">Cornell University</a>
-		</div>
+	<a id="insignia-link" href="http://www.cornell.edu/"><img src="<%=image_path 'layout/cu_logo_unstyled.gif' %>" alt="Cornell University" border="0" /></a>
+	  <div id="unit-signature-links">
+		  <a id="cornell-link" href="http://www.cornell.edu/">Cornell University</a>
+	  </div><!-- #unit-signature-links -->
 
-	<div id="search-navigation">
-			<ul>
-				<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
-			</ul>
-		</div>
-	</div>
-</div>
+	  <div id="search-navigation">
+	    <ul>
+			  <li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		  </ul>
+	  </div> <!-- #search-navigation -->
+	</div> <!-- #cu-identity-content -->
+</div> <!-- cu-identity-wrap -->
 
 <hr class="banner-separator" />
 
   <div id="header">
-	  <div id="navigation">
-		  <ul>
-  <% if current_user %>
-  <%= content_tag 'li', link_to( 'home', profile_path ) %>
-  <%= content_tag 'li', link_to( 'logout', logout_path ) %>
-    <% if current_user.admin? %>
-    <%=raw %w( agreements categories document_types frameworks organizations registration_terms roles structures users ).map { |option|
-      content_tag 'li', link_to( option, send(option + '_path') )
-    }.join("\n") %>
-    <% end %>
-  <% else %>
-  <%= content_tag 'li', link_to( 'login', login_path ) %>
-  <% end %>
-		  </ul>
-	  </div>
+    <div id="navigation-wrap">
+	    <div id="navigation">
+		    <ul>
+        <% if current_user %>
+        <%= content_tag 'li', link_to( 'home', profile_path ) %>
+        <%= content_tag 'li', link_to( 'logout', logout_path ) %>
+          <% if current_user.admin? %>
+          <%=raw %w( agreements categories document_types frameworks organizations registration_terms roles structures users ).map { |option|
+            content_tag 'li', link_to( option, send(option + '_path') )
+          }.join("\n") %>
+          <% end %>
+        <% else %>
+        <%= content_tag 'li', link_to( 'login', login_path ) %>
+        <% end %>
+		    </ul>
+	    </div> <!-- #navigation -->
+	  </div> <!-- #navigation-wrap -->
     <hr class="banner-separator" />
-	  <div id="identity">
-		  <h1>Charon Finance System</h1>
-	  </div>
+    <div id="identity-wrap">
+	    <div id="identity">
+		    <h1>Student Organization Finances</h1>
+	    </div> <!-- #identity -->
+	  </div> <!-- #identity-wrap -->
   </div> <!--#header -->
 
 <div id="container">
