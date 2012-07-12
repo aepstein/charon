@@ -30,6 +30,8 @@ class User < ActiveRecord::Base
       map { |f| instance_eval(f).like( "%#{name}%" ) }.inject(&:|) |
       CONCAT(first_name,' ',last_name).like( "%#{name}%" ) }
   }
+  scope :admin, where( admin: true )
+  scope :staff, where( staff: true )
 
   is_fulfiller 'UserStatusCriterion', 'Agreement'
   is_authenticable

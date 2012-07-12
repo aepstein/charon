@@ -1,10 +1,14 @@
 class UsersController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index ]
+  before_filter :initialize_index, :only => [ :index, :admin, :staff ]
   before_filter :new_user_from_params, :only => [ :new, :create ]
   before_filter :add_blank_address, :only => [ :new, :edit ]
   filter_access_to :show, :new, :create, :edit, :update, :destroy, :attribute_check => true
+  filter_access_to :index
+  filter_access_to :admin, :staff do
+    permitted_to! :index
+  end
   before_filter :setup_breadcrumbs, :except => [ :profile ]
   before_filter :setup_matching_organizations, only: [ :profile ]
 
@@ -18,9 +22,19 @@ class UsersController < ApplicationController
     @users = @users.page(params[:page])
 
     respond_to do |format|
-      format.html # index.html.erb
+      format.html { render action: 'index' }
       format.xml  { render :xml => @users }
     end
+  end
+
+  def admin
+    @users = @users.admin
+    index
+  end
+
+  def staff
+    @users = @users.staff
+    index
   end
 
   def new

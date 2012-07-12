@@ -123,6 +123,9 @@ Charon::Application.routes.draw do
     resources :fulfillments, :only => [:index]
   end
   resources :users do
+    collection do
+      get :admin, :staff
+    end
     resources :addresses, :only => [ :index, :new, :create ]
     resources :approvals, :only => [ :index ]
     resources :fulfillments, :only => [ :index ]
