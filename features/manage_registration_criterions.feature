@@ -5,6 +5,7 @@ Feature: Manage registration_criterions
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
 
   Scenario Outline: Test permissions for registration criterions controller actions
@@ -32,6 +33,7 @@ Feature: Manage registration_criterions
     Examples:
       | user    | create  | update  | destroy | show    |
       | admin   | see     | see     | see     | see     |
+      | staff   | see     | see     | not see | see     |
       | regular | not see | not see | not see | see     |
 
   Scenario: Register new registration_criterion

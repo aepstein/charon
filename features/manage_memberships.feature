@@ -5,6 +5,7 @@ Feature: Manage memberships
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
 
   Scenario Outline: Test permissions for memberships controller index actions for registrations
@@ -25,6 +26,7 @@ Feature: Manage memberships
     Examples:
       | context              | user      | create  | update  | destroy | show    |
       | current_registration | admin     | not see | not see | not see | see     |
+      | current_registration | staff     | not see | not see | not see | see     |
       | current_registration | focus     | not see | not see | not see | see     |
       | current_registration | colleague | not see | not see | not see | see     |
       | current_registration | regular   | not see | not see | not see | not see |
@@ -62,14 +64,18 @@ Feature: Manage memberships
     Examples:
       | context              | user      | create  | update  | destroy | show    |
       | organization         | admin     | see     | see     | see     | see     |
+      | organization         | staff     | see     | see     | see     | see     |
       | organization         | focus     | not see | not see | not see | see     |
       | organization         | colleague | not see | not see | not see | see     |
       | organization         | regular   | not see | not see | not see | not see |
       | user                 | admin     | see     | see     | see     | see     |
+      | user                 | staff     | see     | see     | see     | see     |
       | user                 | focus     | not see | not see | not see | see     |
       | user                 | colleague | not see | not see | not see | see     |
       | user                 | regular   | not see | not see | not see | not see |
+#These are covered by other authorization test
 #      | registration         | admin     | not see | not see | not see | see     |
+#      | registration         | staff     | not see | not see | see     | see     |
       | registration         | focus     | not see | not see | not see | see     |
       | registration         | colleague | not see | not see | not see | see     |
       | registration         | regular   | not see | not see | not see | not see |

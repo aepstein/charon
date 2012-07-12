@@ -5,6 +5,7 @@ Feature: Manage organizations
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
 
   Scenario Outline: Test permissions for organizations controller
@@ -43,6 +44,7 @@ Feature: Manage organizations
     Examples:
       | user      | create  | update  | destroy | show | dashboard |
       | admin     | see     | see     | see     | see  | see       |
+      | staff     | see     | see     | not see | see  | see       |
       | manager   | not see | see     | see     | see  | see       |
       | requestor | not see | see     | not see | see  | see       |
       | reviewer  | not see | not see | not see | see  | see       |

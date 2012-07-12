@@ -5,6 +5,7 @@ Feature: Manage fund_sources
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And an organization: "source" exists with last_name: "Funding Source"
 
   Scenario Outline: Test permissions for fund_source controller actions
@@ -47,16 +48,19 @@ Feature: Manage fund_sources
     Examples:
       | time      | user               | create  | update  | destroy  | show    |
       |           | admin              | see     | see     | see      | see     |
+      |           | staff              | see     | see     | not see  | see     |
       |           | source_manager     | see     | see     | see      | see     |
       |           | source_reviewer    | not see | not see | not see  | see     |
       |           | observer_requestor | not see | not see | not see  | see     |
       |           | regular            | not see | not see | not see  | see     |
       | closed_   | admin              | see     | see     | see      | see     |
+      | closed_   | staff              | see     | see     | not see  | see     |
       | closed_   | source_manager     | see     | see     | see      | see     |
       | closed_   | source_reviewer    | not see | not see | not see  | see     |
       | closed_   | observer_requestor | not see | not see | not see  | see     |
       | closed_   | regular            | not see | not see | not see  | see     |
       | upcoming_ | admin              | see     | see     | see      | see     |
+      | upcoming_ | staff              | see     | see     | not see  | see     |
       | upcoming_ | source_manager     | see     | see     | see      | see     |
       | upcoming_ | source_reviewer    | not see | not see | not see  | see     |
       | upcoming_ | observer_requestor | not see | not see | not see  | not see |

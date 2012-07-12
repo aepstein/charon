@@ -122,6 +122,7 @@ class User < ActiveRecord::Base
 
   def role_symbols
     return [:admin,:user] if admin?
+    return [:staff,:user] if staff?
     [:user]
   end
 

@@ -5,6 +5,7 @@ Feature: Manage approvers
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
     And a framework: "safc" exists with name: "safc"
     And a framework: "gpsafc" exists with name: "gpsafc"
@@ -35,6 +36,7 @@ Feature: Manage approvers
     Examples:
       | user    | create  | update  | destroy  | show |
       | admin   | see     | see     | see      | see  |
+      | staff   | see     | see     | not see  | see  |
       | regular | not see | not see | not see  | see  |
 
   Scenario: Register new approver and update

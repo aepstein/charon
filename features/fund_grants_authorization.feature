@@ -6,6 +6,7 @@ Feature: Manage fund_grants authorization
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And an organization: "source" exists with last_name: "Funding Source"
     And an organization: "applicant" exists with last_name: "Applicant"
     And an organization: "observer" exists with last_name: "Observer"
@@ -53,8 +54,10 @@ Feature: Manage fund_grants authorization
     Examples:
       | user                | full    | part     | state     | ap  | ep  | tp  | ar  | er  |  tr |
       | admin               | see     | not see  | allocated | 0   | 0   | 0   | 200 | 250 | 450 |
+      | staff               | see     | not see  | allocated | 0   | 0   | 0   | 200 | 250 | 450 |
       | applicant_requestor | not see | see      | allocated |     |     |     | 200 | 250 | 450 |
       | admin               | see     | not see  | submitted | 200 | 250 | 450 | 0   | 0   | 0   |
+      | staff               | see     | not see  | submitted | 200 | 250 | 450 | 0   | 0   | 0   |
       | applicant_requestor | not see | see      | submitted |     |     |     | 0   | 0   | 0   |
 
   Scenario Outline: Test permissions for fund_grants controller w/o fund_source
@@ -82,6 +85,7 @@ Feature: Manage fund_grants authorization
     Examples:
       | user                | create  | update  | show    | destroy |
       | admin               | see     | see     | see     | see     |
+      | staff               | see     | see     | see     | not see |
       | source_manager      | not see | see     | see     | see     |
       | source_reviewer     | not see | not see | see     | not see |
       | applicant_requestor | see     | not see | see     | not see |

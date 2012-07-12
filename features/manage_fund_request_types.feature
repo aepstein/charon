@@ -5,6 +5,7 @@ Feature: Manage fund_request_types
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
 
   Scenario Outline: Test permissions for fund_request_types controller actions
     Given a user: "regular" exists
@@ -32,6 +33,7 @@ Feature: Manage fund_request_types
     Examples:
       | user    | create  | update  | destroy | show    |
       | admin   | see     | see     | see     | see     |
+      | staff   | see     | see     | not see | see     |
       | regular | not see | not see | not see | see     |
 
   Scenario: Register new fund_request_type and update

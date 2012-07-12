@@ -5,6 +5,7 @@ Feature: Manage fund_grants
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
 
   Scenario Outline: Test how permissions failures are reported to the user
@@ -34,6 +35,7 @@ Feature: Manage fund_grants
     Examples:
       |user     |organization            |fulfillable           |edit   |status |agreement|registration|
       |admin    |organization "requestor"|user_status_criterion |see    |not see|not see  |not see     |
+      |staff    |organization "requestor"|user_status_criterion |see    |not see|not see  |not see     |
       |requestor|organization "requestor"|user_status_criterion |not see|see    |not see  |not see     |
       |requestor|organization "requestor"|agreement             |not see|not see|see      |not see     |
       |requestor|organization "requestor"|registration_criterion|not see|not see|not see  |see         |

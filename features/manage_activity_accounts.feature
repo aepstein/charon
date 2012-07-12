@@ -5,6 +5,7 @@ Feature: Manage activity accounts
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
 
   Scenario Outline: Test permissions for activity_accounts controller
     Given an organization: "source" exists
@@ -46,6 +47,7 @@ Feature: Manage activity accounts
     Examples:
       | user              | create  | update  | show    | destroy |
       | admin             | see     | see     | see     | see     |
+      | staff             | see     | see     | see     | not see |
       | source_manager    | see     | see     | see     | see     |
       | member            | not see | not see | see     | not see |
       | regular           | not see | not see | not see | not see |

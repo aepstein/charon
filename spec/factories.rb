@@ -275,6 +275,7 @@ FactoryGirl.define do
   factory :registration do
     sequence(:name) { |n| "Registered Organization #{n}" }
     sequence(:external_id) { |i| i }
+    association(:registration_term)
 
     factory :current_registration do
       association :registration_term, factory: :current_registration_term

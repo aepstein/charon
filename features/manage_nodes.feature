@@ -5,6 +5,7 @@ Feature: Manage nodes
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
     And a structure: "annual" exists with name: "annual"
     And a category: "simple" exists with name: "simple"
@@ -35,6 +36,7 @@ Feature: Manage nodes
     Examples:
       | user    | create  | update  | destroy | show    |
       | admin   | see     | see     | see     | see     |
+      | staff   | see     | see     | not see | see     |
       | regular | not see | not see | not see | see     |
 
   Scenario: Create new node and update

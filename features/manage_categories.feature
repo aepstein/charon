@@ -5,6 +5,7 @@ Feature: Manage categories
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
 
   Scenario Outline: Test permissions for categories controller actions
     Given a user: "regular" exists
@@ -32,6 +33,7 @@ Feature: Manage categories
     Examples:
       | user    | create  | update  | destroy | show    |
       | admin   | see     | see     | see     | see     |
+      | staff   | see     | see     | not see | see     |
       | regular | not see | not see | not see | see     |
 
   Scenario: Register new category and update

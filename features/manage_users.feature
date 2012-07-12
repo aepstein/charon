@@ -5,6 +5,7 @@ Feature: Manage users
 
   Background:
     Given a user: "admin" exists with admin: true, last_name: "Bo 4"
+    And a user: "staff" exists with staff: true, last_name: "Bo 5"
     And a user: "owner" exists with last_name: "Bo 3", net_id: "zzz3332"
     And a user: "regular" exists with last_name: "Bo 2", net_id: "zzz3333"
     And a user exists with last_name: "Bo 1", net_id: "zzz4444"
@@ -34,6 +35,7 @@ Feature: Manage users
     Examples:
       | user    | create  | update  | destroy | show    |
       | admin   | see     | see     | see     | see     |
+      | staff   | see     | see     | not see | see     |
       | owner   | not see | see     | not see | see     |
       | regular | not see | not see | not see | not see |
 
@@ -105,6 +107,7 @@ Feature: Manage users
       | John Bo 2     |
       | John Bo 3     |
       | John Bo 4     |
+      | John Bo 5     |
     When I fill in "Name" with "4"
     And I press "Search"
     Then I should see the following users:
@@ -138,4 +141,5 @@ Feature: Manage users
       | John Bo 1     |
       | John Bo 2     |
       | John Bo 4     |
+      | John Bo 5     |
 

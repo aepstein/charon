@@ -9,7 +9,24 @@ authorization do
       :inventory_items, :nodes, :organizations, :registration_criterions,
       :registrations, :registration_terms, :roles, :structures,
       :university_accounts, :users, :user_status_criterions ],
-      to: [ :show, :manage ]
+      to: [ :manage ]
+
+    has_permission_on [ :users ], to: [ :admin ]
+
+    includes :staff
+
+  end
+
+  role :staff do
+
+    has_permission_on [ :activity_accounts, :activity_reports, :addresses,
+      :agreements, :approvers, :fund_sources, :categories, :document_types,
+      :fund_allocations, :fund_editions, :fund_grants, :fund_items, :fund_queues,
+      :fund_request_types, :fund_requests, :fund_sources, :frameworks,
+      :inventory_items, :nodes, :organizations, :registration_criterions,
+      :registrations, :registration_terms, :roles, :structures,
+      :university_accounts, :users, :user_status_criterions ],
+      to: [ :show, :create, :update, :dashboard ]
 
     has_permission_on [ :approvals ], to: [ :show, :destroy ]
 
@@ -38,6 +55,8 @@ authorization do
 
     has_permission_on [ :fund_items ], to: [ :request, :review ]
 
+    has_permission_on [ :local_event_expenses ], to: [ :index ]
+
     has_permission_on [ :memberships ], to: :manage do
       if_attribute registration_id: is { nil }
     end
@@ -47,8 +66,6 @@ authorization do
     end
 
     has_permission_on [ :university_accounts ], to: [ :activate ]
-
-    has_permission_on [ :users ], to: [ :admin ]
 
   end
 
@@ -104,6 +121,7 @@ authorization do
     end
     has_permission_on [ :approvals ], to: [ :destroy ] do
       if_permitted_to :manage, :approvable
+      if_permitted_to :unapprove_others, :approvable
     end
     has_permission_on [ :approvals ], to: [ :show ] do
       if_attribute user_id: is { user.id }
@@ -227,7 +245,7 @@ authorization do
       if_permitted_to :manage, :fund_grant
     end
     has_permission_on [ :fund_requests ], to: :reconsider, join_by: :and do
-      if_permitted_to :manage
+      if_permitted_to :update
       if_attribute state: is_in { %w( released ) }
       if_attribute review_state: is_in { %w( ready ) }
     end
@@ -244,9 +262,12 @@ authorization do
       if_permitted_to :request
       if_attribute state: is_in { %w( started tentative ) }
     end
-    has_permission_on [ :fund_requests ], to: :unapprove do
-      if_attribute approvals: { user_id: is { user.id } },
-        state: is_in { %w( tentative ) }
+    has_permission_on [ :fund_requests ], to: :unapprove, join_by: :and do
+      if_permitted_to :request
+      if_attribute state: is_in { %w( tentative ) }
+    end
+    has_permission_on [ :fund_requests ], to: :unapprove_others, join_by: :and do
+      if_permitted_to :unapprove
     end
     has_permission_on [ :fund_requests ], to: :approve, join_by: :and do
       if_permitted_to :review

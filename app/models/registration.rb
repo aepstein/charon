@@ -37,6 +37,8 @@ class Registration < ActiveRecord::Base
     send( ( criterion.must_register? ? :registered : :scoped ) )
   }
 
+  validates :registration_term, presence: true
+
   before_save :adopt_registration_term, :adopt_organization
   after_save :update_memberships, :update_organization, :update_peers
 

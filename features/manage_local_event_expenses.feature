@@ -5,6 +5,7 @@ Feature: Manage local_event_expenses
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
 
   Scenario Outline: Test permissions for local event listings controller
@@ -14,6 +15,7 @@ Feature: Manage local_event_expenses
     Examples:
       | user    | show    |
       | admin   | see     |
+      | staff   | see     |
       | regular | not see |
 
   Scenario: List local event expenses

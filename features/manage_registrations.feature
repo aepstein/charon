@@ -5,6 +5,7 @@ Feature: Manage registrations
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
 
   Scenario Outline: Test permissions for registrations controller actions
@@ -27,6 +28,7 @@ Feature: Manage registrations
     Examples:
       | user           | show    |
       | admin          | see     |
+      | staff          | see     |
       | requestor      | see     |
       | regular        | not see |
 

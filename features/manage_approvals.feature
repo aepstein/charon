@@ -5,6 +5,7 @@ Feature: Manage approvals
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
     And a user: "regular" exists
     And a user: "owner" exists with last_name: "Focus User"
 
@@ -67,6 +68,7 @@ Feature: Manage approvals
     Examples:
       |owner    |state    |review_state|user               |create |destroy|show   |
       |requestor|started  |unreviewed  |admin              |not see|see    |see    |
+      |requestor|started  |unreviewed  |staff              |not see|see    |see    |
       |requestor|started  |unreviewed  |source_manager     |not see|see    |see    |
       |requestor|started  |unreviewed  |source_reviewer    |not see|not see|see    |
       |requestor|started  |unreviewed  |applicant_requestor|see    |not see|see    |
@@ -74,13 +76,15 @@ Feature: Manage approvals
       |requestor|started  |unreviewed  |observer_requestor |not see|not see|not see|
       |requestor|started  |unreviewed  |regular            |not see|not see|not see|
       |requestor|tentative|unreviewed  |admin              |not see|see    |see    |
+      |requestor|tentative|unreviewed  |staff              |not see|see    |see    |
       |requestor|tentative|unreviewed  |source_manager     |not see|see    |see    |
       |requestor|tentative|unreviewed  |source_reviewer    |not see|not see|see    |
-      |requestor|tentative|unreviewed  |applicant_requestor|see    |not see|see    |
+      |requestor|tentative|unreviewed  |applicant_requestor|see    |see    |see    |
       |requestor|tentative|unreviewed  |owner              |not see|see    |see    |
       |requestor|tentative|unreviewed  |observer_requestor |not see|not see|not see|
       |requestor|tentative|unreviewed  |regular            |not see|not see|not see|
       |requestor|finalized|unreviewed  |admin              |not see|see    |see    |
+      |requestor|finalized|unreviewed  |staff              |not see|see    |see    |
       |requestor|finalized|unreviewed  |source_manager     |not see|see    |see    |
       |requestor|finalized|unreviewed  |source_reviewer    |not see|not see|see    |
       |requestor|finalized|unreviewed  |applicant_requestor|not see|not see|see    |
@@ -88,6 +92,7 @@ Feature: Manage approvals
       |requestor|finalized|unreviewed  |observer_requestor |not see|not see|not see|
       |requestor|finalized|unreviewed  |regular            |not see|not see|not see|
       |requestor|submitted|unreviewed  |admin              |not see|see    |see    |
+      |requestor|submitted|unreviewed  |staff              |not see|see    |see    |
       |requestor|submitted|unreviewed  |source_manager     |not see|see    |see    |
       |requestor|submitted|unreviewed  |source_reviewer    |see    |not see|see    |
       |requestor|submitted|unreviewed  |applicant_requestor|not see|not see|see    |
@@ -95,6 +100,7 @@ Feature: Manage approvals
       |requestor|submitted|unreviewed  |observer_requestor |not see|not see|not see|
       |requestor|submitted|unreviewed  |regular            |not see|not see|not see|
       |requestor|submitted|tentative   |admin              |not see|see    |see    |
+      |requestor|submitted|tentative   |staff              |not see|see    |see    |
       |requestor|submitted|tentative   |source_manager     |not see|see    |see    |
       |requestor|submitted|tentative   |source_reviewer    |see    |not see|see    |
       |requestor|submitted|tentative   |applicant_requestor|not see|not see|see    |
@@ -102,6 +108,7 @@ Feature: Manage approvals
       |requestor|submitted|tentative   |observer_requestor |not see|not see|not see|
       |requestor|submitted|tentative   |regular            |not see|not see|not see|
       |requestor|submitted|ready       |admin              |not see|see    |see    |
+      |requestor|submitted|ready       |staff              |not see|see    |see    |
       |requestor|submitted|ready       |source_manager     |not see|see    |see    |
       |requestor|submitted|ready       |source_reviewer    |not see|not see|see    |
       |requestor|submitted|ready       |applicant_requestor|not see|not see|see    |
@@ -109,12 +116,37 @@ Feature: Manage approvals
       |requestor|submitted|ready       |owner              |not see|not see|see    |
       |requestor|submitted|ready       |regular            |not see|not see|not see|
       |requestor|released |ready       |admin              |not see|see    |see    |
+      |requestor|released |ready       |staff              |not see|see    |see    |
       |requestor|released |ready       |source_manager     |not see|see    |see    |
       |requestor|released |ready       |source_reviewer    |not see|not see|see    |
       |requestor|released |ready       |applicant_requestor|not see|not see|see    |
       |requestor|released |ready       |owner              |not see|not see|see    |
       |requestor|released |ready       |observer_requestor |not see|not see|not see|
       |requestor|released |ready       |regular            |not see|not see|not see|
+      |requestor|released |unreviewed  |admin              |not see|see    |see    |
+      |requestor|released |unreviewed  |staff              |not see|see    |see    |
+      |requestor|released |unreviewed  |source_manager     |not see|see    |see    |
+      |requestor|released |unreviewed  |source_reviewer    |see    |not see|see    |
+      |requestor|released |unreviewed  |applicant_requestor|not see|not see|see    |
+      |requestor|released |unreviewed  |owner              |not see|not see|see    |
+      |requestor|released |unreviewed  |observer_requestor |not see|not see|not see|
+      |requestor|released |unreviewed  |regular            |not see|not see|not see|
+      |requestor|released |tentative   |admin              |not see|see    |see    |
+      |requestor|released |tentative   |staff              |not see|see    |see    |
+      |requestor|released |tentative   |source_manager     |not see|see    |see    |
+      |requestor|released |tentative   |source_reviewer    |see    |not see|see    |
+      |requestor|released |tentative   |applicant_requestor|not see|not see|see    |
+      |requestor|released |tentative   |owner              |not see|not see|see    |
+      |requestor|released |tentative   |observer_requestor |not see|not see|not see|
+      |requestor|released |tentative   |regular            |not see|not see|not see|
+      |requestor|allocated|ready       |admin              |not see|see    |see    |
+      |requestor|allocated|ready       |staff              |not see|see    |see    |
+      |requestor|allocated|ready       |source_manager     |not see|see    |see    |
+      |requestor|allocated|ready       |source_reviewer    |not see|not see|see    |
+      |requestor|allocated|ready       |applicant_requestor|not see|not see|see    |
+      |requestor|allocated|ready       |owner              |not see|not see|see    |
+      |requestor|allocated|ready       |observer_requestor |not see|not see|not see|
+      |requestor|allocated|ready       |regular            |not see|not see|not see|
 
   Scenario: Register new approval of an agreement
     Given an agreement exists with name: "safc"

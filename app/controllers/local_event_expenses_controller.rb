@@ -1,8 +1,6 @@
 class LocalEventExpensesController < ApplicationController
   before_filter :require_user
-  filter_access_to :index do
-    current_user.admin?
-  end
+  filter_access_to :index
 
   def index
     @events = LocalEventExpense.scoped.includes(

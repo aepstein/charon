@@ -5,8 +5,15 @@ describe Registration do
   let(:registration) { build(:registration) }
   let(:current_registration) { build(:current_registration) }
 
-  it "should create a new instance given valid attributes" do
-    registration.save!
+  context 'validation' do
+    it "should create a new instance given valid attributes" do
+      registration.save!
+    end
+
+    it "should not save without a registration_term" do
+      registration.registration_term = nil
+      registration.save.should be_false
+    end
   end
 
   context "member composition accessors" do

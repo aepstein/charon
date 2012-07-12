@@ -1,10 +1,11 @@
-Feature: Manage fund_requests
+Feature: Manage university_accounts
   In order to track university accounts associated with organizations
   As a staff member
   I want to manage university accounts
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
 
   Scenario Outline: Test permissions for university_accounts controller
     Given an organization exists
@@ -41,6 +42,7 @@ Feature: Manage fund_requests
     Examples:
       | user    | create  | update  | show    | destroy | activate |
       | admin   | see     | see     | see     | see     | see      |
+      | staff   | see     | see     | see     | not see | see      |
       | member  | not see | not see | not see | not see | not see  |
       | regular | not see | not see | not see | not see | not see  |
 

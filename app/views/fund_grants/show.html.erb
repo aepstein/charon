@@ -24,7 +24,7 @@
   <thead>
     <tr>
       <th>Category</th>
-      <% if permitted_to? :manage, @fund_grant %>
+      <% if permitted_to? :update, @fund_grant %>
        <th>Pending Allocation</th>
       <% end %>
       <th>Released Allocation</th>
@@ -34,7 +34,7 @@
     <% @fund_grant.categories.group { id }.each do |category| %>
       <%= table_row_tag do %>
         <td><%= category %></td>
-        <% if permitted_to? :manage, @fund_grant %>
+        <% if permitted_to? :update, @fund_grant %>
         <td><%=number_to_currency @fund_grant.fund_allocations.pending.for_category(category).sum(:amount) %></td>
         <% end %>
         <td><%=number_to_currency @fund_grant.fund_allocations.final.for_category(category).sum(:amount) %></td>
@@ -42,7 +42,7 @@
     <% end %>
     <%= table_row_tag do %>
       <td>TOTAL</td>
-      <% if permitted_to? :manage, @fund_grant %>
+      <% if permitted_to? :update, @fund_grant %>
       <td><%=number_to_currency @fund_grant.fund_allocations.pending.sum(:amount) %></td>
       <% end %>
       <td><%=number_to_currency @fund_grant.fund_allocations.final.sum(:amount) %></td>

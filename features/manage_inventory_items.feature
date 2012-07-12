@@ -5,6 +5,7 @@ Feature: Manage fund_requests
 
   Background:
     Given a user: "admin" exists with admin: true
+    And a user: "staff" exists with staff: true
 
   Scenario Outline: Test permissions for inventory_items controller
     Given an organization exists
@@ -46,6 +47,7 @@ Feature: Manage fund_requests
     Examples:
       | user    | create  | update  | show    | destroy |
       | admin   | see     | see     | see     | see     |
+      | staff   | see     | see     | see     | not see |
       | member  | not see | see     | see     | not see |
       | regular | not see | not see | not see | not see |
 
