@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: git://assembly.cornell.edu/git/cornell-assemblies-rails.git
-  revision: c6d6a67e3663df899dc5d2a5159e19f44e63c619
+  revision: 5a6e92dd84c4fd99b3d32f44a088e041806aecfa
   branch: 0-0-2
   specs:
     cornell-assemblies-rails (0.0.2)

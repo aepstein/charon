@@ -22,6 +22,21 @@ describe User do
     user.organizations.should_not include(inactive.organization)
   end
 
+  context 'refresh' do
+    let(:user) { create :user }
+
+    it "should call save on a user that has last been updated more than a month ago" do
+      user.should_receive(:save)
+      user.updated_at = Time.zone.now - 1.year
+      user.refresh
+    end
+
+    it "should not call save on a user tha has been updated less than a month ago" do
+      user.should_not_receive(:save)
+      user.refresh
+    end
+  end
+
   context 'fulfillments' do
 
     let(:user) { create :user, status: 'undergrad' }

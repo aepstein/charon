@@ -130,6 +130,8 @@ class User < ActiveRecord::Base
 
   def to_s; name; end
 
+  def refresh; save if updated_at < ( Time.zone.now - 1.month ); end
+
   protected
 
   def extract_email
