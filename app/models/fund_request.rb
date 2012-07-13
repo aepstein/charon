@@ -52,12 +52,15 @@ class FundRequest < ActiveRecord::Base
     # Allocate items according to specified preferences
     # * iterate through items according to specified priority
     # * limit allocations to cap if specified
+    # * limit allocations to fund_tier maximum if specified
     # * if request covers only some items, reduce cap by amount currently
     #   allocated to other items
     # * reset collection so changes are loaded
     def allocate!(cap = nil)
       if cap
         cap -= exclusion if exclusion
+      elsif proxy_association.owner.fund_grant.fund_tier
+        cap = proxy_association.owner.fund_grant.fund_tier.maximum_allocation
       end
       includes( :fund_editions ).roots.each do |fund_item|
           cap = allocate_fund_item! fund_item, cap

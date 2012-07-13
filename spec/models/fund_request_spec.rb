@@ -134,6 +134,13 @@ describe FundRequest do
     @fund_request.fund_items.allocate!(0.0)
     @fund_request.fund_items.first.fund_allocations.first.amount.should eql 0
     @fund_request.fund_items.last.fund_allocations.first.amount.should eql 0
+    fund_tier = create :fund_tier, organization: @fund_request.fund_grant.fund_source.organization,
+      maximum_allocation: 175.0
+    @fund_request.fund_grant.fund_source.fund_tiers << fund_tier
+    @fund_request.fund_grant.fund_tier = fund_tier; @fund_request.fund_grant.save!
+    @fund_request.fund_items.allocate!
+    @fund_request.fund_items.first.fund_allocations.first.amount.should eql 100
+    @fund_request.fund_items.last.fund_allocations.first.amount.should eql 75
   end
 
   it 'should have an incomplete scope that returns fund_requests that have initial editions without final editions' do

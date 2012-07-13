@@ -8,10 +8,11 @@ class FundQueue < ActiveRecord::Base
   has_many :fund_allocations, through: :fund_requests
   has_many :fund_requests, inverse_of: :fund_queue, dependent: :nullify do
     # Allocate all ready requests associated with this fund source
-    def allocate_with_caps(cap)
+    def allocate!(cap = nil)
       with_review_state( :ready ).includes { [ fund_editions.fund_item,
         fund_grant.organization ] }.each { |r| r.fund_items.allocate! cap }
     end
+
     # Returns CSV spreadsheet representing requests assigned to this queue
     def reviews_report
       # This gives cumulative allocation per category for each request
