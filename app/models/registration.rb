@@ -39,7 +39,8 @@ class Registration < ActiveRecord::Base
 
   validates :registration_term, presence: true
 
-  before_save :adopt_registration_term, :adopt_organization
+  before_validation :adopt_registration_term
+  before_save :adopt_organization
   after_save :update_memberships, :update_organization, :update_peers
 
   # Checks if any number_of_ attributes have changed

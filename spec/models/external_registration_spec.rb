@@ -10,6 +10,7 @@ describe RegistrationImporter::ExternalRegistration do
     ActiveRecord::IdentityMap.without do
       @insertable_registration = create(:external_registration)
     end
+    RegistrationImporter::ExternalTerm.import
     @registration = RegistrationImporter::ExternalRegistration.find( @insertable_registration.id )
   end
 

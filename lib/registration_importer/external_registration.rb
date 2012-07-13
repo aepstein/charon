@@ -106,7 +106,7 @@ module RegistrationImporter
     def self.import( set = :latest )
       Framework.skip_update_frameworks do
         adds, changes, deletes, starts = 0, 0, 0, Time.now
-        ExternalTerm.scoped.reset.all.each do |term|
+        ExternalTerm.all.each do |term|
           registrations = case set
           when :latest
             term.registrations.latest

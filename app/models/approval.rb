@@ -19,6 +19,9 @@ class Approval < ActiveRecord::Base
   }
   scope :at_or_after, lambda { |time| where { |a| a.created_at.gte( time ) } }
 
+  # TODO this is necessary for validates_timeliness (see issue #6)
+  # can remove after resolution
+  columns_hash["as_of"] = ActiveRecord::ConnectionAdapters::Column.new("as_of", nil, "datetime")
   validates :as_of, timeliness: { type: :datetime }
   validates :approvable_id, uniqueness: { scope: [ :approvable_type, :user_id ] }
   validates :approvable, presence: true
