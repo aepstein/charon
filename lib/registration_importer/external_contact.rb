@@ -39,7 +39,7 @@ module RegistrationImporter
         user = User.find_or_initialize_by_net_id( net_id )
         user.attributes = import_attributes( USER_ATTRIBUTES )
         user.save!
-        memo << [ contacttype, user ]
+        memo << [ contacttype, user ] if contacttype
       end
     end
 
@@ -49,7 +49,7 @@ module RegistrationImporter
     end
 
     def net_ids
-      "#{netid} #{email}".to_net_ids
+      "#{netid}".to_net_ids
     end
 
   end
