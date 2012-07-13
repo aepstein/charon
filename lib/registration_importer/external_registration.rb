@@ -82,7 +82,7 @@ module RegistrationImporter
       out = Array.new
       out << ( destination.new_record? ? 1 : 0  )
       out << ( destination.changed? ? 1 : 0 )
-      destination.save if out.last == 1
+      destination.save! if out.last == 1
       out[1] = 1 if import_contacts( destination )
       out
     end
@@ -95,7 +95,7 @@ module RegistrationImporter
         m = destination.memberships.build
         m.role = pair.first
         m.user = pair.last
-        m.save
+        m.save!
       end
       return (deletes + adds).length > 0
     end

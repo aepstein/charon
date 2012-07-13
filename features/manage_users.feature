@@ -4,8 +4,8 @@ Feature: Manage users
   I want to create, show, update, delete, and list user accounts
 
   Background:
-    Given a user: "admin" exists with admin: true, last_name: "Bo 4"
-    And a user: "staff" exists with staff: true, last_name: "Bo 5"
+    Given a user: "admin" exists with admin: true, last_name: "Bo 4", net_id: "zzz3330"
+    And a user: "staff" exists with staff: true, last_name: "Bo 5", net_id: "zzz3331"
     And a user: "owner" exists with last_name: "Bo 3", net_id: "zzz3332"
     And a user: "regular" exists with last_name: "Bo 2", net_id: "zzz3333"
     And a user exists with last_name: "Bo 1", net_id: "zzz4444"
