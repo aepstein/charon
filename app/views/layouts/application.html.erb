@@ -45,14 +45,16 @@
 		    <ul>
         <% if current_user %>
         <%= content_tag 'li', link_to( 'home', profile_path ) %>
-        <%= content_tag 'li', link_to( 'logout', logout_path ) %>
           <% if current_user.admin? %>
           <%=raw %w( agreements categories document_types frameworks organizations registration_terms roles structures users ).map { |option|
             content_tag 'li', link_to( option, send(option + '_path') )
           }.join("\n") %>
           <% end %>
+        <% unless sso_net_id %>
+        <%= content_tag 'li', link_to( 'log out', logout_path ) %>
+        <% end %>
         <% else %>
-        <%= content_tag 'li', link_to( 'login', login_path ) %>
+        <%= content_tag 'li', link_to( 'log in', login_path ) %>
         <% end %>
 		    </ul>
 	    </div> <!-- #navigation -->
