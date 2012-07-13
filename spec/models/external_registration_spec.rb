@@ -69,12 +69,13 @@ describe RegistrationImporter::ExternalRegistration do
   end
 
   it 'should have an importable scope that only identifies the latest records' do
-    @registration.update_attribute(:updated_time, Time.zone.now.to_i)
+    @registration.update_column(:updated_time, Time.zone.now.to_i)
     Registration.unscoped.count.should eql 0
     RegistrationImporter::ExternalRegistration.importable.length.should eql 1
     RegistrationImporter::ExternalRegistration.import
     RegistrationImporter::ExternalRegistration.importable.length.should eql 0
     insertable_newer = create(:external_registration, :updated_time => @registration.updated_time + 1)
+    RegistrationImporter::ExternalTerm.import
     newer = RegistrationImporter::ExternalRegistration.find( insertable_newer.id )
     RegistrationImporter::ExternalRegistration.importable.length.should eql 1
     RegistrationImporter::ExternalRegistration.import
