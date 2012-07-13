@@ -40,6 +40,7 @@ module RegistrationImporter
         user.attributes = import_attributes( USER_ATTRIBUTES )
         user.save!
         memo << [ contacttype, user ] if contacttype
+        memo
       end
     end
 
