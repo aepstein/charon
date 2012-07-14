@@ -1,7 +1,7 @@
 <%= render "shared/error_messages", :target => form.object %>
 
 <%= form.inputs do %>
-<%= form.input :statuses, :as => :checkboxes, :collection => User::STATUSES %>
+<%= form.input :statuses, :as => :check_boxes, :collection => User::STATUSES %>
 <% end %>
 
 <%= form.actions %>

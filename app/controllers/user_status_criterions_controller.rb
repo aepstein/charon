@@ -1,8 +1,14 @@
 class UserStatusCriterionsController < ApplicationController
+  before_filter :require_user
+  before_filter :initialize_context
+  before_filter :initialize_index, only: [ :index ]
+  before_filter :new_user_status_criterion_from_params, only: [ :new, :create ]
+  filter_resource_access
+
   # GET /user_status_criterions
   # GET /user_status_criterions.xml
   def index
-    @user_status_criterions = UserStatusCriterion.all
+    @user_status_criterions = @user_status_criterions.page(params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
@@ -13,9 +19,6 @@ class UserStatusCriterionsController < ApplicationController
   # GET /user_status_criterions/1
   # GET /user_status_criterions/1.xml
   def show
-    @user_status_criterion = UserStatusCriterion.find(params[:id])
-    raise AuthorizationError unless @user_status_criterion.may_see? current_user
-
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @user_status_criterion }
@@ -25,9 +28,6 @@ class UserStatusCriterionsController < ApplicationController
   # GET /user_status_criterions/new
   # GET /user_status_criterions/new.xml
   def new
-    @user_status_criterion = UserStatusCriterion.new
-    raise AuthorizationError unless @user_status_criterion.may_create? current_user
-
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @user_status_criterion }
@@ -36,19 +36,17 @@ class UserStatusCriterionsController < ApplicationController
 
   # GET /user_status_criterions/1/edit
   def edit
-    @user_status_criterion = UserStatusCriterion.find(params[:id])
-    raise AuthorizationError unless @user_status_criterion.may_update? current_user
+    respond_to do |format|
+      format.html # new.html.erb
+    end
   end
 
   # POST /user_status_criterions
   # POST /user_status_criterions.xml
   def create
-    @user_status_criterion = UserStatusCriterion.new(params[:user_status_criterion])
-    raise AuthorizationError unless @user_status_criterion.may_create? current_user
-
     respond_to do |format|
       if @user_status_criterion.save
-        flash[:notice] = 'UserStatusCriterion was successfully created.'
+        flash[:notice] = 'User status criterion was successfully created.'
         format.html { redirect_to(@user_status_criterion) }
         format.xml  { render :xml => @user_status_criterion, :status => :created, :location => @user_status_criterion }
       else
@@ -61,12 +59,9 @@ class UserStatusCriterionsController < ApplicationController
   # PUT /user_status_criterions/1
   # PUT /user_status_criterions/1.xml
   def update
-    @user_status_criterion = UserStatusCriterion.find(params[:id])
-    raise AuthorizationError unless @user_status_criterion.may_update? current_user
-
     respond_to do |format|
       if @user_status_criterion.update_attributes(params[:user_status_criterion])
-        flash[:notice] = 'UserStatusCriterion was successfully updated.'
+        flash[:notice] = 'User status criterion was successfully updated.'
         format.html { redirect_to(@user_status_criterion) }
         format.xml  { head :ok }
       else
@@ -79,14 +74,27 @@ class UserStatusCriterionsController < ApplicationController
   # DELETE /user_status_criterions/1
   # DELETE /user_status_criterions/1.xml
   def destroy
-    @user_status_criterion = UserStatusCriterion.find(params[:id])
-    raise AuthorizationError unless @user_status_criterion.may_destroy? current_user
     @user_status_criterion.destroy
 
     respond_to do |format|
       format.html { redirect_to(user_status_criterions_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def new_user_status_criterion_from_params
+    @user_status_criterion = UserStatusCriterion.new( params[:user_status_criterion] )
+  end
+
+  def initialize_context
+    @user_status_criterion = UserStatusCriterion.find params[:id] if params[:id]
+    add_breadcrumb 'User Status Criterions', user_status_criterions_path
+  end
+
+  def initialize_index
+    @user_status_criterions = UserStatusCriterion.scoped
   end
 end
 

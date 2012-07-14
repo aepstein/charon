@@ -73,7 +73,7 @@ authorization do
     has_permission_on [ :agreements, :approvers, :categories, :document_types,
       :frameworks, :fund_request_types, :nodes, :organizations,
       :registration_criterions, :registration_terms, :roles, :structures,
-      :user_state_criterions ],
+      :user_status_criterions ],
       to: [ :show ]
 
     has_permission_on [ :account_adjustments ], to: :manage do

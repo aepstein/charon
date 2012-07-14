@@ -1,8 +1,8 @@
 <%= table_row_tag do %>
   <td><%= user_status_criterion.statuses.sort.join ', ' %></td>
   <td><%= link_to 'Show', user_status_criterion %></td>
-  <td><%= link_to 'Edit', edit_user_status_criterion_path(user_status_criterion) %></td>
-  <td><%= link_to 'Destroy', user_status_criterion, data: { confirm: 'Are you sure?' },
-    method: :delete %></td>
+  <td><%= link_to 'Edit', edit_user_status_criterion_path(user_status_criterion) if permitted_to? :edit, user_status_criterion %></td>
+  <td><%= link_to( 'Destroy', user_status_criterion, data: { confirm: 'Are you sure?' },
+    method: :delete ) if permitted_to? :destroy, user_status_criterion %></td>
 <% end %>
 

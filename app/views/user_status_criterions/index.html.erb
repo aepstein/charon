@@ -5,6 +5,7 @@
 <br />
 
 <p>
-<%= link_to 'New user_status_criterion', new_user_status_criterion_path %>
+<%= link_to( 'New user_status_criterion', new_user_status_criterion_path
+  ) if permitted_to? :create, UserStatusCriterion.new %>
 </p>
 
