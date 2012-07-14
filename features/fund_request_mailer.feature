@@ -14,7 +14,7 @@ Feature: Manage fund_request mailers
     And an organization: "requestor" exists with last_name: "Money Taking Club"
     And an organization: "reviewer" exists with last_name: "Money Giving Club"
     And a structure exists
-    And a fund_source exists with structure: the structure, framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized *release* message.", allocate_message: "A customized *allocate* message."
+    And a fund_source: "source" exists with structure: the structure, framework: the framework, organization: organization "reviewer", name: "Money Taking Fund", release_message: "A customized *release* message.", allocate_message: "A customized *allocate* message."
     And a fund_queue exists with fund_source: the fund_source, release_message: "A queue-specific *release* message.", allocate_message: "A queue-specific *allocate* message."
     And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
     And the fund_request_type is amongst the fund_request_types of the fund_queue
@@ -29,8 +29,11 @@ Feature: Manage fund_request mailers
     And a membership exists with organization: organization "requestor", role: role "officer", user: user "officer", active: true
     And a membership exists with organization: organization "requestor", role: role "president", user: user "old_president", active: false
 
-  Scenario: Send notice regarding a started fund_request
+  Scenario Outline: Send notice regarding a started fund_request
     Given all emails have been delivered
+    And fund_source: "other" exists
+    And a fund_queue exists after the fund_queue with fund_source: fund_source "<source>"
+    And the fund_request_type is amongst the fund_request_types of the fund_queue
     And a started notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
@@ -42,6 +45,12 @@ Feature: Manage fund_request mailers
     And the email parts should contain "Jane Doe"
     And the email parts should contain "John Doe"
     And the email parts should not contain "Alpha Beta"
+    And the email parts <final> contain "The final deadline to submit this request is"
+    And the email parts <next> contain "The next deadline to submit this request is"
+    Examples:
+      | source | final      | next       |
+      | source | should not | should     |
+      | other  | should     | should not |
 
   Scenario: Send notice regarding a tentatively completed fund_request
     Given an approval exists with approvable: fund_request "started", user: user "president"

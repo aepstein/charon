@@ -124,7 +124,19 @@ class FundRequest < ActiveRecord::Base
       total
     end
   end
-  has_many :users, :through => :approvals do
+  has_many :fund_queues, through: :fund_grant
+  has_many :adoptable_fund_queues, through: :fund_grant, source: :fund_queues,
+    include: [ :fund_request_types ],
+    conditions: proc { { fund_request_types: { id: fund_request_type_id } } }
+  has_many :allowed_fund_request_types, through: :fund_queues, source: :fund_request_types,
+    conditions: proc { { fund_request_types: { allowed_for_first: (
+      first_actionable? ? true : [ true, false ]
+    ) } } } do
+    def future
+      where { fund_queues.submit_at.gt( Time.zone.now ) }
+    end
+  end
+  has_many :users, through: :approvals do
     # Returns users who have fulfilled unquantified approver requirements
     def fulfilled( approvers = Approver.unscoped )
       User.scoped.joins('INNER JOIN approvers').
@@ -342,7 +354,7 @@ class FundRequest < ActiveRecord::Base
   def first_actionable?
     fund_grant.new_record? ||
     ( actionable? &&
-      !fund_grant.fund_requests.actionable.where { id != my { id } }.any? )
+      fund_grant.fund_requests.actionable.where { |r| r.id.not_eq( id ) }.empty? )
   end
 
   # Are conditions met to advance from started => tentative state?
@@ -371,8 +383,8 @@ class FundRequest < ActiveRecord::Base
   # Sets approval checkpoint to current time
   def set_approval_checkpoint; self.approval_checkpoint = Time.zone.now; end
 
-  # Returns the closest future queue
-  def adoptable_queue; fund_grant.fund_source.fund_queues.active; end
+  # Returns the closest future adoptable queue
+  def adoptable_queue; adoptable_fund_queues.future.first; end
 
   # Return best queue to display for request
   # * assigned queue, if applicable
@@ -394,14 +406,6 @@ class FundRequest < ActiveRecord::Base
   def approver_perspective
     return FundEdition::PERSPECTIVES.last if review_state? :tentative
     FundEdition::PERSPECTIVES.first
-  end
-
-  # What fund request types are allowed for this request?
-  def allowed_fund_request_types(upcoming_only=false)
-    out = fund_grant.fund_source.fund_request_types
-    out = out.upcoming if upcoming_only
-    out = out.allowed_for_first if first_actionable?
-    out
   end
 
   def to_s

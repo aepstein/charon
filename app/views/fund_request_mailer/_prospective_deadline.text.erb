@@ -1,0 +1,5 @@
+<% if fund_request.adoptable_queue %>
+The <%= fund_request.adoptable_fund_queues.future.count > 1 ? 'next' : 'final' %> deadline to submit this request is <%= fund_request.adoptable_queue %>.
+
+<% end %>
+

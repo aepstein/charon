@@ -29,6 +29,8 @@ class FundGrant < ActiveRecord::Base
   end
   has_many :fund_items, inverse_of: :fund_grant, dependent: :destroy
   has_many :fund_editions, through: :fund_items
+  has_many :fund_queues, through: :fund_source
+  has_many :fund_request_types, through: :fund_queues
   has_many :nodes, through: :fund_items
   has_many :categories, through: :nodes do
     def without_activity_account

@@ -10,6 +10,7 @@ This email is to inform you that your <%= @fund_request %> has been started, but
 You may <%= link_to 'make changes to the fund_request here', fund_request_url(@fund_request) %>.
 </p>
 
+<%=render partial: 'fund_request_mailer/prospective_deadline', locals: { fund_request: @fund_request } %>
 <p>
 <strong>When the fund request is ready for submission,</strong> any of the following <%= link_to 'may approve it here', new_polymorphic_url( [@fund_request, 'approval'] ) %>:
 </p>
