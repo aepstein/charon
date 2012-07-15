@@ -4,6 +4,9 @@ Dear Officers of <%= @fund_request.fund_grant.organization %>,
 
 <p>
 This email is a confirmation that your fund request for <%=h @fund_request.fund_grant.fund_source %> has been accepted for review.
+<% if @fund_request.fund_queue %>
+Your request was submitted before the <%= @fund_request.fund_queue %> deadline.
+<% end %>
 You will receive additional notice when a determination is released.
 </p>
 

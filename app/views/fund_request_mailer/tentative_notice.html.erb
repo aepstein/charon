@@ -16,12 +16,7 @@ The following people must <%= link_to 'approve the fund_request', new_polymorphi
 <% end -%>
 </ul>
 
-<% if @fund_request.fund_grant.fund_source.fund_queues.future.length > 0 %>
-<p>
-The next deadline for submissions is <%= @fund_request.fund_grant.fund_source.fund_queues.future.first.submit_at.to_s :us_ordinal %>.
-</p>
-<% end %>
-
+<%=render partial: 'fund_request_mailer/prospective_deadline', locals: { fund_request: @fund_request } %>
 <% if @fund_request.fund_grant.fund_source.contact_web %>
 <p>
 More information is available <%= link_to 'here', @fund_request.fund_grant.fund_source.contact_web %>.
