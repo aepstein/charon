@@ -18,7 +18,7 @@ Feature: Manage fund_request mailers
     And a fund_queue exists with fund_source: the fund_source, release_message: "A queue-specific *release* message.", allocate_message: "A queue-specific *allocate* message."
     And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
     And the fund_request_type is amongst the fund_request_types of the fund_queue
-    And a fund_grant exists with fund_source: the fund_source, organization: organization "requestor"
+    And a fund_grant: "source" exists with fund_source: the fund_source, organization: organization "requestor"
     And an approvable_fund_request: "started" exists with state: "started", fund_grant: the fund_grant, fund_queue: the fund_queue
     And a user: "president" exists with email: "president@example.com", first_name: "John", last_name: "Doe"
     And a user: "treasurer" exists with email: "treasurer@example.com", first_name: "Jane", last_name: "Doe"
@@ -31,9 +31,13 @@ Feature: Manage fund_request mailers
 
   Scenario Outline: Send notice regarding a started fund_request
     Given all emails have been delivered
-    And fund_source: "other" exists
+    And fund_source: "other" exists with organization: organization "reviewer"
+    And a fund_grant: "other" exists with fund_source: fund_source "source"
     And a fund_queue exists after the fund_queue with fund_source: fund_source "<source>"
     And the fund_request_type is amongst the fund_request_types of the fund_queue
+    And a fund_tier exists with organization: organization "reviewer", maximum_allocation: 1000
+    And the fund_tier is amongst the fund_tiers of the organization: "reviewer"
+    And the fund_grant: "<source>" has fund_tier: the fund_tier
     And a started notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
@@ -47,10 +51,11 @@ Feature: Manage fund_request mailers
     And the email parts should not contain "Alpha Beta"
     And the email parts <final> contain "The final deadline to submit this request is"
     And the email parts <next> contain "The next deadline to submit this request is"
+    And the email parts <tier> contain "Because of its fund tier assignment, your organization is currently eligible to receive a maximum of $1,000.00 from Money Taking Fund."
     Examples:
-      | source | final      | next       |
-      | source | should not | should     |
-      | other  | should     | should not |
+      | source | final      | next       | tier       |
+      | source | should not | should     | should     |
+      | other  | should     | should not | should not |
 
   Scenario: Send notice regarding a tentatively completed fund_request
     Given an approval exists with approvable: fund_request "started", user: user "president"
