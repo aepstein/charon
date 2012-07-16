@@ -23,14 +23,20 @@ class FundGrant < ActiveRecord::Base
     def build_first
       request = build
       return request if proxy_association.owner.fund_source.blank?
-      request.fund_request_type = proxy_association.owner.fund_source.
-        fund_request_types.upcoming.allowed_for_first.first
+#      request.fund_request_type = proxy_association.owner.fund_source.
+#        fund_request_types.upcoming.allowed_for_first.first
     end
   end
   has_many :fund_items, inverse_of: :fund_grant, dependent: :destroy
   has_many :fund_editions, through: :fund_items
   has_many :fund_queues, through: :fund_source
   has_many :fund_request_types, through: :fund_queues
+  has_many :allowed_fund_request_types, through: :fund_queues, source: :fund_request_types,
+    conditions: { fund_request_types: { allowed_for_first: true } } do
+    def future
+      where { fund_queues.submit_at.gt( Time.zone.now ) }
+    end
+  end
   has_many :nodes, through: :fund_items
   has_many :categories, through: :nodes do
     def without_activity_account

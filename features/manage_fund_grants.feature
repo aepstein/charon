@@ -6,7 +6,7 @@ Feature: Manage fund_grants
   Background:
     Given a user: "admin" exists with admin: true
     And a user: "staff" exists with staff: true
-    And a fund_request_type: "unrestricted" exists with name: "Unrestricted"
+    And a fund_request_type: "unrestricted" exists with name: "Unrestricted", allowed_for_first: true
 
   Scenario Outline: Test how permissions failures are reported to the user
     Given an organization: "reviewer" exists with last_name: "Funding Source"

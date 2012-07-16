@@ -51,7 +51,7 @@ Feature: Manage fund_request mailers
     And the email parts should not contain "Alpha Beta"
     And the email parts <final> contain "The final deadline to submit this request is"
     And the email parts <next> contain "The next deadline to submit this request is"
-    And the email parts <tier> contain "Because of its fund tier assignment, your organization is currently eligible to receive a maximum of $1,000.00 from Money Taking Fund."
+    And the email parts <tier> contain "Because of its fund tier assignment, your organization is eligible to receive a maximum of $1,000.00 from Money Taking Fund."
     Examples:
       | source | final      | next       | tier       |
       | source | should not | should     | should     |

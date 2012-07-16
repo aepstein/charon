@@ -1,8 +1,8 @@
 <h2>New fund grant for <%= @fund_grant.organization %></h2>
 
 <%= semantic_form_for( @fund_grant,
-  :url => organization_fund_grants_path(@fund_grant.organization) ) do |f| %>
-  <%= render :partial => 'form', :object => f %>
+  url: organization_fund_grants_path(@fund_grant.organization) ) do |f| %>
+  <%= render partial: 'form', object: f %>
 <% end %>
 
 <% if @fund_grant.organization.fund_sources.unfulfilled_for( current_user ).any? %>

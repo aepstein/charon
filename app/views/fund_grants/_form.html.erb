@@ -1,4 +1,7 @@
-<%= render "shared/error_messages", target: form.object %>
+<%= render partial: "shared/error_messages", locals: { target: form.object } %>
+<% if form.object.new_record? && form.object.fund_requests.first %>
+<%= render partial: "shared/error_messages", locals: { target: form.object.fund_requests.first } %>
+<% end %>
 <%= form.inputs do %>
   <% if form.object.new_record? -%>
   <%= form.input :fund_source,

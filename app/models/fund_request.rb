@@ -162,6 +162,7 @@ class FundRequest < ActiveRecord::Base
   validate :fund_request_type_must_be_associated_with_fund_source,
     on: :create
 
+  before_validation :adopt_fund_request_type, on: :create
   after_create :send_started_notice!
 
   state_machine :review_state, initial: :unreviewed, namespace: 'review' do
@@ -415,6 +416,16 @@ class FundRequest < ActiveRecord::Base
 
   protected
 
+  def adopt_fund_request_type
+    return true unless fund_request_type.blank? && first_actionable? && fund_grant
+    self.fund_request_type = if fund_grant.new_record?
+      fund_grant.allowed_fund_request_types.future.first
+    else
+      allowed_fund_request_types.future.first
+    end
+    true
+  end
+
   def fund_source_must_be_same_for_grant_and_queue
     return if fund_grant.blank? || fund_queue.blank?
     if fund_grant.fund_source != fund_queue.fund_source
@@ -424,7 +435,10 @@ class FundRequest < ActiveRecord::Base
 
   def fund_request_type_must_be_associated_with_fund_source
     return unless fund_request_type && fund_grant
-    if !allowed_fund_request_types.include? fund_request_type
+    unless ( fund_grant.persisted? &&
+             allowed_fund_request_types.include?( fund_request_type ) ) ||
+      ( fund_grant.new_record? &&
+        fund_grant.allowed_fund_request_types.include?( fund_request_type ) )
       errors.add :fund_request_type, " is not allowed"
     end
   end
