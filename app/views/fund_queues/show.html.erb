@@ -37,21 +37,13 @@
 </p>
 
 <p>
-  <b>Total relevant allocations (unreleased):</b> <%=number_to_currency(
-    FundItem.where { |i| i.id.in( FundEdition.joins { fund_request }.
-      where { |e| e.fund_request.fund_queue_id == @fund_queue.id }.
-      select( :fund_item_id ) ) }.
-    sum( :amount )
-  ) %>
+  <b>Total pending allocations:</b> <%=number_to_currency(
+    @fund_queue.fund_allocations.pending.sum(:amount) ) %>
 </p>
 
 <p>
-  <b>Total relevant allocations (released):</b> <%=number_to_currency(
-    FundItem.where { |i| i.id.in( FundEdition.joins { fund_request }.
-      where { |e| e.fund_request.fund_queue_id == @fund_queue.id }.
-      select( :fund_item_id ) ) }.
-    sum( :released_amount )
-  ) %>
+  <b>Total final allocations:</b> <%=number_to_currency(
+    @fund_queue.fund_allocations.final.sum(:amount) ) %>
 </p>
 
 <h3>Reports</h3>

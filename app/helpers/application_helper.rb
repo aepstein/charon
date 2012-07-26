@@ -1,22 +1,6 @@
 # Methods added to this helper will be available to all templates in the application.
 module ApplicationHelper
 
-  def markdown( content )
-    sanitize Markdown.new(content).to_html
-  end
-
-  def table_row_tag(increment=true, preorder=false, &block)
-    content_tag 'tr', capture(&block), :class => table_row_class(increment,preorder)
-  end
-
-  def table_row_class(increment=true,preorder=false)
-    @table_row_class ||= 'row1'
-    out = @table_row_class
-    @table_row_class = ( @table_row_class == 'row1' ? 'row2' : 'row1' ) if increment
-    @table_row_class = 'row1' if increment == :reset
-    preorder ? @table_row_class : out
-  end
-
   def link_to_external_registration(organization)
     return organization.name unless organization.current_registration && organization.current_registration.external_id
     link_to organization.name, "http://sao.cornell.edu/SO/search.php?igroup=#{organization.current_registration.external_id}"

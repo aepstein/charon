@@ -8,11 +8,13 @@ GIT
 
 GIT
   remote: git://assembly.cornell.edu/git/cornell-assemblies-rails.git
-  revision: f9ed1e06abae0ceec01c8b73a67e780209a333de
+  revision: 2e27a8b4056f46fcab677e7343add0bbeda40363
   specs:
     cornell-assemblies-rails (0.0.2)
       bcrypt-ruby (~> 3.0)
+      bluecloth (~> 2.0)
       cocoon (~> 1.0)
+      cornell_ldap (~> 1.4.3)
       formtastic (~> 2.1)
       jquery-rails (~> 2.0)
       rails (~> 3.1)
@@ -119,7 +121,7 @@ GEM
     jquery-rails (2.0.2)
       railties (>= 3.2.0, < 5.0)
       thor (~> 0.14)
-    json (1.7.3)
+    json (1.7.4)
     kaminari (0.13.0)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -258,10 +260,8 @@ PLATFORMS
 
 DEPENDENCIES
   ancestry
-  bluecloth
   capybara
   carrierwave
-  cocoon (~> 1.0)
   coffee-rails (~> 3.1)
   cornell-assemblies-branding!
   cornell-assemblies-rails!
