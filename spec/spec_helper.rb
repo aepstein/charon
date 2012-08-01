@@ -11,7 +11,7 @@ Spork.prefork do
     config.fixture_path = "#{::Rails.root}/spec/fixtures"
     config.use_transactional_fixtures = false
     config.include ActionDispatch::TestProcess
-    config.include FactoryGirl::Syntax::Methods
+    require 'database_cleaner'
     config.before(:suite) do
       DatabaseCleaner.strategy = :truncation
       DatabaseCleaner[:active_record,
@@ -29,6 +29,9 @@ Spork.prefork do
 end
 
 Spork.each_run do
-  #require File.dirname(__FILE__) + "/factories"
+  require 'factory_girl_rails'
+  RSpec.configure do |config|
+    config.include FactoryGirl::Syntax::Methods
+  end
 end
 

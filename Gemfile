@@ -41,14 +41,13 @@ group :development do
   gem 'ruby_parser', require: false
 end
 group :test do
-  gem 'test-unit'
-  gem 'cucumber-rails'
+  gem 'test-unit', require: false
+  gem 'cucumber-rails', require: false
   gem 'database_cleaner', require: false
-  gem 'capybara'
+  gem 'capybara', '~> 2.0.0beta2', require: false
   gem 'spork', '~> 0.9.0'
-  gem 'factory_girl', '~> 2.0', require: false
-  gem 'factory_girl_rails', '~> 1.1'
-  gem 'pickle', '~> 0.4.8'
+  gem 'factory_girl_rails', '~> 1.1', require: false
+  gem 'pickle', '~> 0.4.8', require: false
   gem 'email_spec'
   gem 'launchy'
 end
