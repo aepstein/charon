@@ -26,7 +26,7 @@ describe RegistrationImporter::ExternalTerm do
 
   it 'should import a new record successfully' do
     RegistrationImporter::ExternalTerm.import[0,3].should eql [ 1, 0, 0 ]
-    @term.update_attribute :current, 'NO'
+    @term.update_column :current, 'NO'
     @term.current.should be_false
     r = RegistrationImporter::ExternalTerm.import[0,3].should eql [ 0, 1, 0 ]
     @term.destroy

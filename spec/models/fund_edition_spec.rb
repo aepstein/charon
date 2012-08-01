@@ -77,7 +77,7 @@ describe FundEdition do
 
     it 'should enforce an appendable quantity limit' do
       request = create(:fund_request)
-      request.fund_request_type.update_attribute :appendable_quantity_limit, 1
+      request.fund_request_type.update_column :appendable_quantity_limit, 1
       create(:fund_edition, :fund_request => request)
       invalid = build(:fund_edition, :fund_request => request)
       invalid.save.should be_false
@@ -86,7 +86,7 @@ describe FundEdition do
 
     it 'should enforce an amendable quantity limit' do
       request = create(:fund_request, :state => 'released')
-      request.fund_request_type.update_attribute :amendable_quantity_limit, 0
+      request.fund_request_type.update_column :amendable_quantity_limit, 0
       create(:fund_edition, :fund_request => request)
       original = create(:fund_edition, :fund_request => request)
       sleep 1
@@ -100,7 +100,7 @@ describe FundEdition do
 
     it 'should enforce a quantity limit' do
       request = create(:fund_request)
-      request.fund_request_type.update_attribute :quantity_limit, 2
+      request.fund_request_type.update_column :quantity_limit, 2
       create(:fund_edition, :fund_request => request)
       create(:fund_edition, :fund_request => request)
       invalid = build(:fund_edition, :fund_request => request)
@@ -110,7 +110,7 @@ describe FundEdition do
 
     it 'should enforce appendable amount limit' do
       request = create(:fund_request)
-      request.fund_request_type.update_attribute :appendable_amount_limit, 1000.0
+      request.fund_request_type.update_column :appendable_amount_limit, 1000.0
       create(:fund_edition, :fund_request => request, :amount => 99.0)
       create(:fund_edition, :fund_request => request, :amount => 900.0)
       request.association(:fund_editions).reset
@@ -140,7 +140,7 @@ describe FundEdition do
         :fund_request => fund_edition.fund_request )
       second_item = create(:fund_item, :parent => parent,
         :node => child_node, :fund_grant => parent.fund_grant )
-      child_node.update_attribute :item_quantity_limit, 1
+      child_node.update_column :item_quantity_limit, 1
       excessive_edition = build( :fund_edition, :fund_item => second_item,
         :fund_request => fund_edition.fund_request )
       excessive_edition.save.should be_false
@@ -155,8 +155,8 @@ describe FundEdition do
         :node => child_node, :fund_grant => parent.fund_grant )
       create( :fund_edition, :fund_item => first_item,
         :fund_request => fund_edition.fund_request )
-      fund_edition.fund_request.update_attribute :reject_message, 'rejected'
-      fund_edition.fund_request.update_attribute :state, 'rejected'
+      fund_edition.fund_request.update_column :reject_message, 'rejected'
+      fund_edition.fund_request.update_column :state, 'rejected'
       new_request = create( :fund_request, :fund_grant => fund_edition.fund_request.fund_grant )
       orphan_edition = build( :fund_edition, :fund_request => new_request, :fund_item => first_item )
       orphan_edition.save.should be_false
@@ -204,7 +204,7 @@ describe FundEdition do
       displaceable.fund_grant.association(:fund_requests).reset
       create( :fund_edition, :fund_item => displaceable, :fund_request => request )
       request.association(:fund_editions).reset
-      request.update_attribute :state, 'submitted'
+      request.update_column :state, 'submitted'
       other_request = create( :fund_request, :fund_grant => request.fund_grant )
       edition = create( :fund_edition, :fund_item => displacor,
         :fund_request => other_request )

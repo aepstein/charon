@@ -457,7 +457,7 @@ class FundRequest < ActiveRecord::Base
 
   # Timestamp state change if appropriate
   def timestamp_state!
-    update_attribute( "#{state}_at", Time.zone.now ) if has_attribute? "#{state}_at"
+    update_column( "#{state}_at", Time.zone.now ) if has_attribute? "#{state}_at"
   end
 
   # Delivers approval required notice to each user who must approve the request

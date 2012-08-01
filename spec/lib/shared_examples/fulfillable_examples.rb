@@ -15,13 +15,13 @@ shared_examples 'fulfillable scopes and requirements' do
   end
 
   it "should appear in matching role requirement fulfilled_by/unfulfilled_by fulfiller" do
-    requirements.each { |r| r.update_attribute :role_id, membership.role_id }
+    requirements.each { |r| r.update_column :role_id, membership.role_id }
     requirement_specs
   end
 
   it "should fulfill requirements restricted to other roles" do
     role = create(:requestor_role); role.id.should_not eql membership.role_id
-    requirements.each { |r| r.update_attribute :role_id, role.id }
+    requirements.each { |r| r.update_column :role_id, role.id }
     Requirement.fulfilled_by( membership ).should include fulfillable_requirement
     Requirement.fulfilled_by( membership ).should include unfulfillable_requirement
     Requirement.unfulfilled_by( membership ).should_not include fulfillable_requirement
@@ -33,7 +33,7 @@ shared_examples 'fulfillable scopes and requirements' do
   end
 
   it "should fulfill the membership once unfulfillable matching role requirement is removed" do
-    requirements.each { |r| r.update_attribute :role_id, membership.role_id }
+    requirements.each { |r| r.update_column :role_id, membership.role_id }
     fulfillment_specs
   end
 

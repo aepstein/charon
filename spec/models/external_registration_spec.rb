@@ -36,7 +36,7 @@ describe RegistrationImporter::ExternalRegistration do
     RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 1, 0, 0 ]
     import = Registration.first
     import.registered?.should be_true
-    @registration.update_attribute :reg_approved, 'NO'
+    @registration.update_column :reg_approved, 'NO'
     @registration.reg_approved.should be_false
     RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 0, 1, 0 ]
     RegistrationImporter::ExternalRegistration.import[0,3].should eql [ 0, 0, 0 ]
@@ -56,7 +56,7 @@ describe RegistrationImporter::ExternalRegistration do
     import = Registration.where( :external_id => @contact.org_id, :external_term_id => @contact.term_id).first
     import.users.length.should eql 1
     import.users.first.net_id.should eql 'zzz999'
-    @contact.update_attribute :netid, 'zzz998'
+    @contact.update_column :netid, 'zzz998'
     RegistrationImporter::ExternalRegistration.import(:all)[0,3].should eql [ 0, 1, 0 ]
     RegistrationImporter::ExternalRegistration.import(:all)[0,3].should eql [ 0, 0, 0 ]
     import.reload

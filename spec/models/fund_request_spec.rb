@@ -26,8 +26,12 @@ describe FundRequest do
     end
 
     it 'should not save without a fund_request_type' do
-      @fund_request.fund_request_type = nil
-      @fund_request.save.should be_false
+      @fund_request.save!
+      duplicate = build( :fund_request, :fund_grant => @fund_request.fund_grant,
+        :fund_request_type => @fund_request.fund_request_type )
+      @fund_request.update_column :state, 'submitted'
+      duplicate.fund_request_type = nil
+      duplicate.save.should be_false
     end
 
     it 'should not save with fund_request_type that is not associated with the source through its queues' do
@@ -36,7 +40,7 @@ describe FundRequest do
     end
 
     it 'should not save first request with a requestable type that is not allowed for first' do
-      @fund_request.fund_request_type.update_attribute :allowed_for_first, false
+      @fund_request.fund_request_type.update_column :allowed_for_first, false
       @fund_request.save.should be_false
     end
 
@@ -54,10 +58,10 @@ describe FundRequest do
       duplicate = build( :fund_request, :fund_grant => @fund_request.fund_grant,
         :fund_request_type => @fund_request.fund_request_type )
       %w( started tentative finalized ).each do |state|
-        @fund_request.update_attribute :state, state
+        @fund_request.update_column :state, state
         duplicate.save.should be_false
       end
-      @fund_request.update_attribute :state, 'submitted'
+      @fund_request.update_column :state, 'submitted'
       duplicate.save!
     end
   end
@@ -71,7 +75,7 @@ describe FundRequest do
     queue = @fund_request.fund_grant.fund_source.fund_queues.first
     @fund_request.state = 'tentative'
     @fund_request.save!
-    @fund_request.update_attribute :approval_checkpoint, 2.seconds.ago
+    @fund_request.update_column :approval_checkpoint, 2.seconds.ago
     old = @fund_request.approval_checkpoint
     @fund_request.fund_queue = queue
     @fund_request.submit!
@@ -166,7 +170,7 @@ describe FundRequest do
     @fund_request.save!
     item = create(:fund_edition, :fund_request => @fund_request, :amount => 100.0).fund_item
     @fund_request.can_approve?.should be_true
-    @fund_request.fund_editions.first.update_attribute :amount, 0.0
+    @fund_request.fund_editions.first.update_column :amount, 0.0
     @fund_request.can_approve?.should be_false
   end
 
@@ -198,7 +202,7 @@ describe FundRequest do
 
   it 'should have a duplicate scope' do
     @fund_request.save!
-    @fund_request.update_attribute :state, 'submitted'
+    @fund_request.update_column :state, 'submitted'
     duplicate = create(:fund_request, :fund_grant => @fund_request.fund_grant)
     different = create(:fund_request)
     duplicates = FundRequest.duplicate
@@ -216,7 +220,7 @@ describe FundRequest do
     other_state = create(:fund_request, :state => 'tentative')
     unnotified = create(:fund_request)
     notified_before = create(:fund_request)
-    notified_before.update_attribute :started_notice_at, 1.week.ago
+    notified_before.update_column :started_notice_at, 1.week.ago
     notified_before.reload
     week_ago = notified_before.started_notice_at
     FundRequest.notify_unnotified! :started

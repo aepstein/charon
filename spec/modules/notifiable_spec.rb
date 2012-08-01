@@ -7,7 +7,7 @@ shared_examples 'notifiable' do
     events.each do |event|
       scope = described_class.send( "no_#{event}_notice" )
       scope.should include notifiable
-      notifiable.update_attribute "#{event}_notice_at", Time.zone.now
+      notifiable.update_column "#{event}_notice_at", Time.zone.now
       scope.reset.should_not include notifiable
     end
   end
@@ -17,9 +17,9 @@ shared_examples 'notifiable' do
       t = Time.zone.now
       scope = described_class.send( "no_#{event}_notice_since", t )
       scope.should include notifiable
-      notifiable.update_attribute "#{event}_notice_at", (t - 1.minute)
+      notifiable.update_column "#{event}_notice_at", (t - 1.minute)
       scope.reset.should include notifiable
-      notifiable.update_attribute "#{event}_notice_at", (t + 1.minute)
+      notifiable.update_column "#{event}_notice_at", (t + 1.minute)
       scope.reset.should_not include notifiable
     end
   end

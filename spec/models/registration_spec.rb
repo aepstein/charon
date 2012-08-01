@@ -180,7 +180,7 @@ describe Registration do
     it "should have fulfill_registration_criterions scope that selects for must_register condition" do
       criterion = create( :registration_criterion, must_register: true )
       test_scope_unfulfilled criterion
-      registration.update_attribute :registered, true
+      registration.update_column :registered, true
       test_scope_fulfilled criterion
     end
 
@@ -198,11 +198,11 @@ describe Registration do
       criterion = create( :registration_criterion, minimal_percentage: 50,
         type_of_member: 'undergrads', must_register: true )
       test_scope_unfulfilled criterion
-      registration.update_attribute :registered, true
+      registration.update_column :registered, true
       test_scope_unfulfilled criterion
       registration.update_attributes registered: false, number_of_undergrads: 10
       test_scope_unfulfilled criterion
-      registration.update_attribute :registered, true
+      registration.update_column :registered, true
       test_scope_fulfilled criterion
     end
 

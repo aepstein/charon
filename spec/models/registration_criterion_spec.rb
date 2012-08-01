@@ -69,7 +69,7 @@ describe RegistrationCriterion do
       criterion.minimal_percentage = 50
       criterion.save!
       test_scope :fulfilled_by_registration
-      nonconforming_registration.update_attribute :number_of_undergrads, 10
+      nonconforming_registration.update_column :number_of_undergrads, 10
       test_scope :fulfilled_by_registration
       nonconforming_registration.update_attributes number_of_undergrads: 0, registered: true
       test_scope :fulfilled_by_registration

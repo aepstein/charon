@@ -32,7 +32,7 @@ describe FundItem do
 
   it 'should save a nested item just before the sibling of its parent' do
     fund_item.save!
-    fund_item.node.update_attribute :item_quantity_limit, 5
+    fund_item.node.update_column :item_quantity_limit, 5
     child_node = create( :node, :parent => fund_item.node,
       :structure => fund_item.node.structure )
     sibling = create( :fund_item, :node => fund_item.node,
