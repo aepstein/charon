@@ -80,7 +80,7 @@ describe RegistrationImporter::ExternalRegistration do
     RegistrationImporter::ExternalRegistration.importable.length.should eql 1
     RegistrationImporter::ExternalRegistration.import
     RegistrationImporter::ExternalRegistration.importable.length.should eql 0
-    newer.update_attribute(:updated_time, @registration.updated_time + 5)
+    newer.update_column(:updated_time, @registration.updated_time + 5)
     RegistrationImporter::ExternalRegistration.importable.length.should eql 1
     RegistrationImporter::ExternalRegistration.importable.should include newer
   end
