@@ -110,7 +110,7 @@ class Organization < ActiveRecord::Base
   # If at least one active membership is present in requestor perspective, true
   # Else: send registration_required_notice for requestor organization
   def require_requestor_recipients!
-    return true if active_memberships.requestor.any?
+    return true if memberships.requestor.any?
     send_registration_required_notice!
     false
   end

@@ -216,6 +216,15 @@ FactoryGirl.define do
           fund_item: fund_request.fund_grant.fund_items.first, amount: 100.0 )
       end
     end
+
+    factory :notifiable_fund_request do
+      after_build do |fund_request|
+        FactoryGirl.create( :membership,
+          organization: fund_request.fund_grant.organization,
+          role: ( Role.requestor.first || FactoryGirl.create(:requestor_role) ) )
+        fund_request.fund_grant.organization.association(:memberships).reset
+      end
+    end
   end
 
   factory :fund_request_type do

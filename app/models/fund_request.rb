@@ -20,7 +20,6 @@ class FundRequest < ActiveRecord::Base
       self.reject { |approval| approval.new_record? }
     end
   end
-  delegate :allowed_fund_tiers, to: :fund_grant
   has_many :fund_allocations, inverse_of: :fund_request, dependent: :destroy do
     def allocate!( fund_item, amount )
       allocation = find_or_build_by_fund_item(fund_item)
@@ -153,6 +152,10 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
+  delegate :allowed_fund_tiers, :returning?, :requestors, :reviewers,
+   :contact_name, :contact_email, :contact_to_email, :require_requestor_recipients!,
+   to: :fund_grant
+
   before_validation :set_approval_checkpoint, on: :create
 
   validates :fund_grant, presence: true
@@ -274,7 +277,7 @@ class FundRequest < ActiveRecord::Base
   end
 
   notifiable_events :allocated, :started, :tentative, :finalized, :rejected, :submitted,
-    :released, :withdrawn, if: :require_requestor_recipients!
+    :released, :withdrawn, :if => :require_requestor_recipients!
 
   has_paper_trail class_name: 'SecureVersion'
 
@@ -345,9 +348,6 @@ class FundRequest < ActiveRecord::Base
     end
   end
 
-  delegate :require_requestor_recipients!, :returning?, :requestors, :reviewers,
-    to: :fund_grant
-
   # Is the request actionable?
   def actionable?; UNACTIONABLE_STATES.map(&:to_s).all? { |s| s != state }; end
 
@@ -396,8 +396,6 @@ class FundRequest < ActiveRecord::Base
     return adoptable_queue if adoptable_queue
     nil
   end
-
-  delegate :contact_name, :contact_email, :contact_to_email, to: :fund_grant
 
   # Is the request ready for release?
   # * based on status of review state machine

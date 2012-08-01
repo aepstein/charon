@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'shared_examples/fulfiller_examples'
+require 'shared_examples/notifiable_examples'
 
 describe Organization do
 
@@ -125,6 +126,10 @@ describe Organization do
     def fulfiller_to_membership(f); f.current_registration; end
     def fulfiller_to_reflection(f); f.current_registration.organization; end
     def build_membership; build :registered_membership; end
+  end
+
+  it_behaves_like 'notifiable' do
+    let( :event ) { :registration_required }
   end
 
 end

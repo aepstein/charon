@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'approver_scenarios'
+require 'shared_examples/notifiable_examples'
 
 describe FundRequest do
 
@@ -212,14 +213,9 @@ describe FundRequest do
   end
 
   it 'should have a notify_unnotified! class method' do
-    class FundRequest
-      def require_requestor_recipients!
-        return true
-      end
-    end
-    other_state = create(:fund_request, :state => 'tentative')
-    unnotified = create(:fund_request)
-    notified_before = create(:fund_request)
+    other_state = create(:notifiable_fund_request, state: 'tentative')
+    unnotified = create(:notifiable_fund_request)
+    notified_before = create(:notifiable_fund_request)
     notified_before.update_column :started_notice_at, 1.week.ago
     notified_before.reload
     week_ago = notified_before.started_notice_at
@@ -255,6 +251,88 @@ describe FundRequest do
     @fund_request.reject_message = 'some messsage'
     @fund_request.reject!
     @fund_request.fund_queue.should be_nil
+  end
+
+  context 'notifiable' do
+
+    before(:each) do
+      notifiable.fund_queue = notifiable.fund_grant.fund_source.fund_queues.first
+      notifiable.save!
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request ) }
+      before(:each) { notifiable.update_column :started_notice_at, nil }
+      let( :event ) { :started }
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request ) }
+      let( :event ) { :tentative }
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request ) }
+      let( :event ) { :finalized }
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request ) }
+      let( :event ) { :submitted }
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request ) }
+      let( :event ) { :released }
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request ) }
+      let( :event ) { :allocated }
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request ) }
+      let( :event ) { :rejected }
+    end
+
+    it_behaves_like 'notifiable' do
+      let( :notifiable ) { create( :notifiable_fund_request, withdrawn_at: Time.zone.now ) }
+      let( :event ) { :withdrawn }
+    end
+
+  end
+
+  context 'notifiable with condition' do
+
+    it_behaves_like 'notifiable_with_condition' do
+      let( :event ) { :started }
+    end
+
+    it_behaves_like 'notifiable_with_condition' do
+      let( :event ) { :tentative }
+    end
+
+    it_behaves_like 'notifiable_with_condition' do
+      let( :event ) { :finalized }
+    end
+
+    it_behaves_like 'notifiable_with_condition' do
+      let( :event ) { :submitted }
+    end
+
+    it_behaves_like 'notifiable_with_condition' do
+      let( :event ) { :released }
+    end
+
+    it_behaves_like 'notifiable_with_condition' do
+      let( :event ) { :allocated }
+    end
+
+    it_behaves_like 'notifiable_with_condition' do
+      let( :event ) { :rejected }
+    end
+
   end
 
 end

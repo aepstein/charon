@@ -65,6 +65,9 @@ class FundGrant < ActiveRecord::Base
       end
     end
   end
+
+  delegate :contact_name, :contact_email, :contact_to_email, to: :fund_source
+  delegate :require_requestor_recipients!, :current_registration, to: :organization
 #  has_many :users, through: :organization do
 #    # Retrieves users associated with a perspective for the grant
 #    def for_perspective( perspective )
@@ -92,9 +95,6 @@ class FundGrant < ActiveRecord::Base
   validates :organization, presence: true
   validates :fund_source, presence: true
   validates :fund_source_id, uniqueness: { scope: :organization_id }
-
-  delegate :contact_name, :contact_email, :contact_to_email, to: :fund_source
-  delegate :require_requestor_recipients!, :current_registration, to: :organization
 
   def returning?
     fund_source.returning_fund_sources.
