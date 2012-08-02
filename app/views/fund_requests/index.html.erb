@@ -1,4 +1,4 @@
-<h2>Listing fund requests</h2>
+<h2>Listing fund requests for <%= @organization %> <%= @fund_source %> <%= @fund_queue %></h2>
 
 <%= form_tag polymorphic_path( [ @context, :fund_requests ] ), :method => :get do |f| %>
   <% unless @fund_source -%>

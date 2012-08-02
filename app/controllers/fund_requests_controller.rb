@@ -217,6 +217,7 @@ class FundRequestsController < ApplicationController
         where { |r| r.fund_grants.fund_source_id == @fund_source.id }
     end
     if @fund_queue
+      @fund_source = @fund_queue.fund_source
       @fund_requests = @fund_requests.
         where { |r| r.fund_queue_id == @fund_queue.id }
     end
