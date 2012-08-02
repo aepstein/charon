@@ -11,7 +11,7 @@ Charon::Application.configure do
   config.assets.compress = true
   config.assets.compile = false
   config.assets.digest = true
-  config.assets.precompile += %w( ie6.css ie7.css )
+  config.assets.precompile += %w( ie6.css ie7.css print.css )
   config.filter_parameters += [ :password, :password_confirmation ]
   config.middleware.use ExceptionNotifier,
     :email_prefix => "[charon] ",
