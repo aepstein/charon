@@ -18,6 +18,22 @@
   <b>Role:</b> <%=h @membership.role %>
 </p>
 
+<h3>Authorized frameworks</h3>
+
+<p>
+This membership has access in the following framework contexts:
+</p>
+
+<% if @membership.frameworks.any? %>
+<ul>
+<% @membership.frameworks.each do |framework| %>
+<li><%= framework %></li>
+<% end %>
+</ul>
+<% else %>
+<p>No frameworks.</p>
+<% end %>
+
 
 <p>
 <%= link_to( 'Edit', edit_membership_path(@membership) ) if permitted_to? :edit, @membership %> |
