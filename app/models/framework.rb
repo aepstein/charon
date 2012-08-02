@@ -37,7 +37,7 @@ class Framework < ActiveRecord::Base
   after_save :update_memberships
 
   def update_memberships
-    self.membership_ids = Membership.fulfill( self ).value_of(:id)
+    self.membership_ids = Membership.active.fulfill( self ).value_of(:id)
   end
 
   def to_s; name; end

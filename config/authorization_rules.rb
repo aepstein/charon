@@ -213,8 +213,9 @@ authorization do
       if_attribute fund_source: { open_at: lt { Time.zone.now },
         closed_at: gt { Time.zone.now } }
       if_attribute reviewer_memberships: {
-        user: is { user },
-        frameworks: contains { object.fund_source.framework }
+        user: is { user }
+#TODO: consider implementing support for this line
+#        frameworks: contains { object.fund_source.reviewer_framework }
       }
     end
     has_permission_on [ :fund_grants ], to: [ :create ], join_by: :and do
@@ -227,7 +228,7 @@ authorization do
         submit_at: gt { Time.zone.now },
         fund_request_types: { allowed_for_first: is { true } } } }
     end
-    has_permission_on [ :fund_grants ], to: [ :manage, :show, :allocate, :review ] do
+    has_permission_on [ :fund_grants ], to: [ :manage, :show, :allocate ] do
       if_permitted_to :manage, :fund_source
     end
 

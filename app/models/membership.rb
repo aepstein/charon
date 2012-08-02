@@ -60,7 +60,8 @@ class Membership < ActiveRecord::Base
 
   def update_frameworks
     return true if Framework.skip_update_frameworks
-    self.frameworks = Framework.fulfilled_by self
+    self.frameworks.clear unless active?
+    self.frameworks = Framework.fulfilled_by( self )
   end
 
   def set_organization_from_registration
