@@ -19,6 +19,7 @@ gem 'cornell_netid'
 gem 'cornell_ldap', '>= 1.3.1'
 gem 'formtastic'
 gem 'declarative_authorization', '>= 0.5'
+gem 'valium'
 gem 'cornell-assemblies-rails',
   git: 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
 gem 'cornell-assemblies-branding',
