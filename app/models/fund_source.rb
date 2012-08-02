@@ -126,7 +126,7 @@ class FundSource < ActiveRecord::Base
   validates :open_at, timeliness: { type: :datetime }
   validates :closed_at, timeliness: { type: :datetime, after: :open_at }
 
-  default_scope order { name }
+  scope :ordered, lambda { order { name } }
   scope :closed, lambda { where { closed_at.lt( Time.zone.now ) } }
   scope :current, lambda {
     where { open_at.lt( Time.zone.now ) & closed_at.gt( Time.zone.now ) }

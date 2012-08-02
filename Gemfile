@@ -44,7 +44,7 @@ group :test do
   gem 'test-unit', require: false
   gem 'cucumber-rails', require: false
   gem 'database_cleaner', require: false
-  gem 'capybara', '~> 2.0.0beta2', require: false
+  gem 'capybara', '~> 1.0', require: false
   gem 'spork', '~> 0.9.0'
   gem 'factory_girl_rails', '~> 1.1', require: false
   gem 'pickle', '~> 0.4.8', require: false

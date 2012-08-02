@@ -93,7 +93,7 @@ Feature: Manage approvals
       |requestor|finalized|unreviewed  |regular            |not see|not see|not see|
       |requestor|submitted|unreviewed  |admin              |not see|see    |see    |
       |requestor|submitted|unreviewed  |staff              |not see|see    |see    |
-      |requestor|submitted|unreviewed  |source_manager     |not see|see    |see    |
+      |requestor|submitted|unreviewed  |source_manager     |see    |see    |see    |
       |requestor|submitted|unreviewed  |source_reviewer    |see    |not see|see    |
       |requestor|submitted|unreviewed  |applicant_requestor|not see|not see|see    |
       |requestor|submitted|unreviewed  |owner              |not see|not see|see    |
@@ -101,7 +101,7 @@ Feature: Manage approvals
       |requestor|submitted|unreviewed  |regular            |not see|not see|not see|
       |requestor|submitted|tentative   |admin              |not see|see    |see    |
       |requestor|submitted|tentative   |staff              |not see|see    |see    |
-      |requestor|submitted|tentative   |source_manager     |not see|see    |see    |
+      |requestor|submitted|tentative   |source_manager     |see    |see    |see    |
       |requestor|submitted|tentative   |source_reviewer    |see    |not see|see    |
       |requestor|submitted|tentative   |applicant_requestor|not see|not see|see    |
       |requestor|submitted|tentative   |owner              |not see|not see|see    |
@@ -125,7 +125,7 @@ Feature: Manage approvals
       |requestor|released |ready       |regular            |not see|not see|not see|
       |requestor|released |unreviewed  |admin              |not see|see    |see    |
       |requestor|released |unreviewed  |staff              |not see|see    |see    |
-      |requestor|released |unreviewed  |source_manager     |not see|see    |see    |
+      |requestor|released |unreviewed  |source_manager     |see    |see    |see    |
       |requestor|released |unreviewed  |source_reviewer    |see    |not see|see    |
       |requestor|released |unreviewed  |applicant_requestor|not see|not see|see    |
       |requestor|released |unreviewed  |owner              |not see|not see|see    |
@@ -133,7 +133,7 @@ Feature: Manage approvals
       |requestor|released |unreviewed  |regular            |not see|not see|not see|
       |requestor|released |tentative   |admin              |not see|see    |see    |
       |requestor|released |tentative   |staff              |not see|see    |see    |
-      |requestor|released |tentative   |source_manager     |not see|see    |see    |
+      |requestor|released |tentative   |source_manager     |see    |see    |see    |
       |requestor|released |tentative   |source_reviewer    |see    |not see|see    |
       |requestor|released |tentative   |applicant_requestor|not see|not see|see    |
       |requestor|released |tentative   |owner              |not see|not see|see    |

@@ -111,7 +111,7 @@ class OrganizationsController < ApplicationController
   end
 
   def initialize_index
-    @organizations = Organization.scoped
+    @organizations = Organization.scoped.ordered
   end
 
   def initialize_organization_profile

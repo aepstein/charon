@@ -12,3 +12,4 @@ db/uploads
 public/assets
 .sass-cache/
 *.png
+C:*

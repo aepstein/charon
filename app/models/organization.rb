@@ -87,8 +87,7 @@ class Organization < ActiveRecord::Base
 
   before_validation :format_name
 
-  default_scope order { [ last_name, first_name ] }
-
+  scope :ordered, lambda { order { [ last_name, first_name ] } }
   scope :name_contains, lambda { |name|
     sql = %w( first_name last_name ).inject([]) do |memo, field|
       memo << "organizations.#{field} LIKE :name"

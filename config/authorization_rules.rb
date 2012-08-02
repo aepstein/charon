@@ -303,7 +303,7 @@ authorization do
     has_permission_on [ :fund_sources ], to: [ :review, :show ] do
       if_permitted_to :review, :organization
     end
-    has_permission_on [ :fund_sources ], to: :manage do
+    has_permission_on [ :fund_sources ], to: [ :manage, :review ] do
       if_permitted_to :manage, :organization
     end
     has_permission_on [ :fund_sources ], to: :show do
