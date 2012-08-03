@@ -7,7 +7,8 @@ class FundGrant < ActiveRecord::Base
 
   belongs_to :organization, inverse_of: :fund_grants
   belongs_to :fund_source, inverse_of: :fund_grants
-  belongs_to :fund_tier, inverse_of: :fund_grants
+  belongs_to :fund_tier_assignment, inverse_of: :fund_grant
+  has_one :fund_tier, through: :fund_tier_assignment
 
   has_many :allowed_fund_tiers, through: :fund_source, source: :fund_tiers
   has_many :fund_allocations, through: :fund_requests do
@@ -96,6 +97,8 @@ class FundGrant < ActiveRecord::Base
   validates :fund_source, presence: true
   validates :fund_source_id, uniqueness: { scope: :organization_id }
 
+  before_create :adopt_fund_tier_assignment
+
   def returning?
     fund_source.returning_fund_sources.
     where { |s| s.id.in( organization.fund_sources.released.select { id } ) }.
@@ -129,6 +132,18 @@ class FundGrant < ActiveRecord::Base
       end
       memo
     end
+  end
+
+  # Adopt previously assigned fund_tier OR auto-assign to lowest available tier
+  def adopt_fund_tier_assignment
+    return true if fund_tier_assignment || ( self.fund_tier_assignment =
+      fund_source.fund_tier_assignments.
+      where( organization_id: organization_id ).first ) ||
+      fund_source.fund_tiers.empty?
+    build_fund_tier_assignment
+    fund_tier_assignment.fund_source = fund_source
+    fund_tier_assignment.organization = organization
+    fund_tier_assignment.fund_tier = fund_source.fund_tiers.first
   end
 
   def to_s

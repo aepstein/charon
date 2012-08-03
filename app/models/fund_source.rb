@@ -109,6 +109,31 @@ class FundSource < ActiveRecord::Base
   has_and_belongs_to_many :fund_tiers
   has_many :allowed_fund_tiers, through: :organization, source: :fund_tiers
   has_many :memberships, through: :organization, source: :active_memberships
+  has_many :fund_tier_assignments, inverse_of: :fund_source do
+    # Populate assignments for returning organizations
+    # * use the most recent assignment associated with an allocated grant
+    def populate!
+      connection.execute <<-SQL
+        INSERT INTO fund_tier_assignments ( fund_source_id, organization_id,
+          fund_tier_id, created_at, updated_at )
+        SELECT #{proxy_association.owner.id}, organization_id, fund_tier_id,
+          #{connection.quote Time.zone.now}, #{connection.quote Time.zone.now},
+          FROM fund_tier_assignments INNER JOIN fund_grants
+          ON fund_tier_assignments.id = fund_grants.fund_tier_assignment_id
+          INNER JOIN fund_sources ON fund_grants.fund_source_id = fund_sources.id
+          INNER JOIN fund_requests ON fund_grants.id = fund_requests.fund_grant_id
+          WHERE fund_grants.fund_source_id IN
+          ( #{connection.quote proxy_association.owner.returning_fund_source_ids} )
+          AND fund_tier_assignments.organization_id NOT IN
+          (SELECT organization_id FROM fund_tier_assignments WHERE
+          fund_source_id = #{proxy_association.owner.id})
+          AND fund_requests.state = #{connection.quote 'allocated'}
+          ORDER BY fund_sources.closed_at DESC
+          GROUP BY fund_tier_assignments.organization_id
+      SQL
+      proxy_association.reset
+    end
+  end
 
   accepts_nested_attributes_for :fund_queues, allow_destroy: true,
     :reject_if => proc { |a|

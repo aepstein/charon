@@ -78,6 +78,7 @@ class Organization < ActiveRecord::Base
   belongs_to :last_current_registration, class_name: 'Registration'
   has_many :last_current_users, through: :last_current_registration,
     source: :users
+  has_many :fund_tier_assignments, inverse_of: :organization, dependent: :destroy
 
   accepts_nested_attributes_for :fund_tiers, allow_destroy: true,
     reject_if: :all_blank

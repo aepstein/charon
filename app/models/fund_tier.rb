@@ -3,8 +3,9 @@ class FundTier < ActiveRecord::Base
   attr_readonly :organization_id
 
   has_and_belongs_to_many :fund_sources
-  has_many :fund_grants, inverse_of: :fund_tier, dependent: :nullify
   has_many :fund_requests, inverse_of: :fund_tier, dependent: :nullify
+  has_many :fund_tier_assignments, inverse_of: :fund_tier, dependent: :destroy
+  has_many :fund_grants, through: :fund_tier_assignments
 
   belongs_to :organization, inverse_of: :fund_tiers
 

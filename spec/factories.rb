@@ -244,6 +244,10 @@ FactoryGirl.define do
     contact_email "contact@example.com"
     contact_web "http://example.com"
 
+    factory :tiered_fund_source do
+      fund_tiers { [ FactoryGirl.create( :fund_tier ) ] }
+    end
+
     factory :closed_fund_source do
       open_at { Time.zone.today - 1.year }
       closed_at { |b| b.open_at + 2.days }
@@ -258,6 +262,12 @@ FactoryGirl.define do
   factory :fund_tier do
     association :organization
     sequence(:maximum_allocation) { |n| n * 1000.0 }
+  end
+
+  factory :fund_tier_assignment do
+    association :fund_source, factory: :tiered_fund_source
+    association :organization
+    fund_tier { |a| a.fund_source.fund_tiers.first }
   end
 
   factory :inventory_item do
