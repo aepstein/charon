@@ -5,6 +5,8 @@ class Framework < ActiveRecord::Base
   has_many :approvers, inverse_of: :framework
   has_many :requirements, inverse_of: :framework
   has_many :fund_sources, inverse_of: :framework
+  has_many :submission_fund_sources, inverse_of: :submission_framework,
+    class_name: 'FundSource', foreign_key: :submission_framework_id
   has_many :requirement_roles, through: :requirements, source: :role,
     uniq: true
   has_and_belongs_to_many :memberships

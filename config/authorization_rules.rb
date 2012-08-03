@@ -263,8 +263,15 @@ authorization do
         review_state: is_in { %w( unreviewed ) }
     end
     has_permission_on [ :fund_requests ], to: :approve, join_by: :and do
-      if_permitted_to :request
+      if_permitted_to :request_frameworks
       if_attribute state: is_in { %w( started tentative ) }
+      if_attribute fund_grant: { fund_source: { open_at: lt { Time.zone.now },
+        closed_at: gt { Time.zone.now } },
+        requestor_memberships: {
+          user: is { user },
+          frameworks: contains { object.fund_source.submission_framework }
+        }
+      }
     end
     has_permission_on [ :fund_requests ], to: :unapprove, join_by: :and do
       if_permitted_to :request

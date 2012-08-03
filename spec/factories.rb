@@ -236,6 +236,7 @@ FactoryGirl.define do
     sequence(:name) { |n| "FundSource #{n}" }
     association :organization
     association :framework
+    submission_framework { |b| b.framework }
     association :structure
     open_at { |b| Time.zone.today - 1.days }
     closed_at { |b| b.open_at + 2.days }

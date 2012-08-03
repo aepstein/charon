@@ -1,13 +1,15 @@
 class FundSource < ActiveRecord::Base
-  attr_accessible :name, :framework_id, :structure_id, :contact_name,
-    :contact_email, :open_at, :closed_at, :release_message, :contact_web,
-    :fund_queues_attributes, :returning_fund_source_ids, :allocate_message,
-    :fund_tier_ids
-  attr_readonly :framework_id, :structure_id
+  attr_accessible :name, :framework_id, :submission_framework_id, :structure_id,
+    :contact_name, :contact_email, :open_at, :closed_at, :release_message,
+    :contact_web, :fund_queues_attributes, :returning_fund_source_ids,
+    :allocate_message, :fund_tier_ids
+  attr_readonly :framework_id, :submission_framework_id, :structure_id
 
   belongs_to :organization, inverse_of: :fund_sources
   belongs_to :structure, inverse_of: :fund_sources
   belongs_to :framework, inverse_of: :fund_sources
+  belongs_to :submission_framework, inverse_of: :submission_fund_sources,
+    class_name: 'Framework'
   has_many :activity_accounts, through: :fund_grants
   has_many :fund_allocations, through: :fund_requests
   has_many :fund_grants, dependent: :destroy, inverse_of: :fund_source do
@@ -118,6 +120,7 @@ class FundSource < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   validates :organization, presence: true
   validates :framework, presence: true
+  validates :submission_framework, presence: true
   validates :structure, presence: true
   validates :contact_name, presence: true
   validates :contact_email,
