@@ -1,4 +1,10 @@
+<% if requirements.any? %>
 <ul>
 <%= render :partial => 'requirements/requirement', :collection => requirements %>
 </ul>
+<% else %>
+<p>
+No requirements.
+</p>
+<% end %>
 

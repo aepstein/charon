@@ -7,7 +7,6 @@ Charon::Application.routes.draw do
     resources :fulfillments, :only => [ :index ]
   end
   resources :approvals, :only => [ :show, :destroy ]
-  resources :approvers, :except => [ :index, :create, :new ]
   resources :categories
   resources :documents, :only => [ :show ] do
     member do
@@ -15,9 +14,7 @@ Charon::Application.routes.draw do
     end
   end
   resources :document_types
-  resources :frameworks do
-    resources :approvers, :only => [ :index, :create, :new ]
-  end
+  resources :frameworks
   resources :fund_grants, :except => [ :create, :new, :index ] do
     resources :activity_accounts, :only => [ :index, :new, :create ]
     resources :fund_requests, :only => [ :create, :new, :index ]

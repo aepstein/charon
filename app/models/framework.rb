@@ -1,6 +1,6 @@
 class Framework < ActiveRecord::Base
   cattr_writer :skip_update_frameworks
-  attr_accessible :name, :requirements_attributes
+  attr_accessible :name, :requirements_attributes, :approvers_attributes
 
   has_many :approvers, inverse_of: :framework
   has_many :requirements, inverse_of: :framework
@@ -16,9 +16,8 @@ class Framework < ActiveRecord::Base
 
   validates :name, presence: true, uniqueness: true
 
-  accepts_nested_attributes_for :requirements,
-    reject_if: proc { |attributes| attributes['fulfillable_name'].blank? },
-    allow_destroy: true
+  accepts_nested_attributes_for :requirements, allow_destroy: true
+  accepts_nested_attributes_for :approvers, allow_destroy: true
 
   scope :ordered, order { name }
   # Find all fulfillables the membership fulfills

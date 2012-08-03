@@ -1,0 +1,14 @@
+<div class="nested-fields">
+  <%= f.input :perspective, label: 'Perspective', as: :select,
+    collection: FundEdition::PERSPECTIVES,
+    hint: 'What perspective does this apply to?' %>
+  <%= f.input :role, label: 'Approver role', input_html: { allow_blank: true },
+    hint: 'What is the role of the approver?' %>
+  <%= f.input :quantity,
+    hint: 'How many must approve? (Leave blank if all with role must approve.)' %>
+
+  <p>
+  <%= link_to_remove_association 'remove approver', f %>
+  </p>
+</div>
+

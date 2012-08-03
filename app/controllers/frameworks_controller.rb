@@ -27,7 +27,6 @@ class FrameworksController < ApplicationController
   # GET /frameworks/new
   # GET /frameworks/new.xml
   def new
-    @framework.requirements.build
     respond_to do |format|
       format.html # new.html.erb
       format.xml  { render :xml => @framework }
@@ -36,7 +35,6 @@ class FrameworksController < ApplicationController
 
   # GET /frameworks/1/edit
   def edit
-    @framework.requirements.build
     respond_to do |format|
       format.html # edit.html.erb
     end

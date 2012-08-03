@@ -1,12 +1,10 @@
-<table>
-<thead>
-  <tr>
-    <th>Perspective</th>
-    <th>Role</th>
-  </tr>
-</thead>
-<tbody>
-<%= render :partial => "approver", :collection => approvers %>
-</tbody>
-</table>
+<% if approvers.any? %>
+<ul>
+<%= render :partial => "approvers/approver", :collection => approvers %>
+</ul>
+<% else %>
+<p>
+No approvers.
+</p>
+<% end %>
 

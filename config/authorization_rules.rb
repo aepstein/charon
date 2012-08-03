@@ -3,7 +3,7 @@ authorization do
   role :admin do
 
     has_permission_on [ :activity_accounts, :activity_reports, :addresses,
-      :agreements, :approvers, :fund_sources, :categories, :document_types,
+      :agreements, :fund_sources, :categories, :document_types,
       :fund_allocations, :fund_editions, :fund_grants, :fund_items, :fund_queues,
       :fund_request_types, :fund_requests, :fund_sources, :frameworks,
       :inventory_items, :nodes, :organizations, :registration_criterions,
@@ -20,7 +20,7 @@ authorization do
   role :staff do
 
     has_permission_on [ :activity_accounts, :activity_reports, :addresses,
-      :agreements, :approvers, :fund_sources, :categories, :document_types,
+      :agreements, :fund_sources, :categories, :document_types,
       :fund_allocations, :fund_editions, :fund_grants, :fund_items, :fund_queues,
       :fund_request_types, :fund_requests, :fund_sources, :frameworks,
       :inventory_items, :nodes, :organizations, :registration_criterions,
@@ -70,7 +70,7 @@ authorization do
   end
 
   role :user do
-    has_permission_on [ :agreements, :approvers, :categories, :document_types,
+    has_permission_on [ :agreements, :categories, :document_types,
       :frameworks, :fund_request_types, :nodes, :organizations,
       :registration_criterions, :registration_terms, :roles, :structures,
       :user_status_criterions ],

@@ -48,5 +48,13 @@ class Approver < ActiveRecord::Base
   }
   scope :quantified, where { quantity != nil }
   scope :unquantified, where( quantity: nil )
+
+  def to_s
+    return super unless role && perspective
+    return "all #{perspective} #{role.to_s.pluralize}" if quantity.blank?
+    return "a #{perspective} #{role}" if quantity == 1
+    "#{quantity} #{perspective} #{role.pluralize}"
+  end
+
 end
 

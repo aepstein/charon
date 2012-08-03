@@ -2,10 +2,28 @@
   <%= form.inputs do %>
     <%= form.input :name %>
   <% end %>
-  <%= form.semantic_fields_for :requirements do |requirement_form| %>
-    <%= requirement_form.inputs do %>
-      <%= render partial: 'requirements/form', object: requirement_form %>
-    <% end %>
+
+  <%= form.inputs for: :requirements, name: 'requirements' do |subform| %>
+    <%= render partial: 'requirements/requirement_fields', locals: { f: subform } %>
   <% end %>
+
+  <div class='links'>
+    <p>
+      <%= link_to_add_association 'add requirement', form, :requirements,
+        partial: 'requirements/requirement_fields' %>
+    </p>
+  </div>
+
+  <%= form.inputs for: :approvers, name: 'Approvers' do |subform| %>
+    <%= render partial: 'approvers/approver_fields', locals: { f: subform } %>
+  <% end %>
+
+  <div class='links'>
+    <p>
+      <%= link_to_add_association 'add approver', form, :approvers,
+        partial: 'approvers/approver_fields' %>
+    </p>
+  </div>
+
   <%= form.actions %>
 

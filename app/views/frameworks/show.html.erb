@@ -6,7 +6,19 @@
 
 <h3>Requirements</h3>
 
+<p>
+The following requirements must be met before a membership grants privileges under this framework:
+</p>
+
 <%= render :partial => 'requirements/requirements', :object => @framework.requirements %>
+
+<h3>Approvers</h3>
+
+<p>
+The following must approve before the request can be submitted (requestor) or released (reviewer):
+</p>
+
+<%= render :partial => 'approvers/approvers', :object => @framework.approvers %>
 
 <p>
 <% if permitted_to? :edit, @framework -%>

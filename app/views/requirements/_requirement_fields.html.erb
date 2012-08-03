@@ -1,0 +1,13 @@
+<div class="nested-fields">
+  <%= f.input :fulfillable_name, label: 'Criterion', as: :select,
+    collection: Requirement.fulfillable_names,
+    hint: 'What criterion must be fulfilled?',
+    input_html: { allow_blank: true } %>
+  <%= f.input :role, input_html: { allow_blank: true },
+    hint: 'If criterion is user-based, should this be restricted to a particular role?' %>
+
+  <p>
+  <%= link_to_remove_association 'remove requirement', f %>
+  </p>
+</div>
+

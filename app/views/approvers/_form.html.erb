@@ -1,8 +1,0 @@
-  <%= render "shared/error_messages", :target => form.object %>
-  <%= form.inputs do %>
-  <%= form.input :perspective, :as => :select, :collection => FundEdition::PERSPECTIVES %>
-  <%= form.input :role %>
-  <%= form.input :quantity %>
-  <% end %>
-  <%= form.actions %>
-
