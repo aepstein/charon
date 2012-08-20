@@ -3,7 +3,6 @@ class FundSourcesController < ApplicationController
   before_filter :initialize_context
   before_filter :initialize_index, :only => [ :index ]
   before_filter :new_fund_source_from_params, :only => [ :new, :create ]
-  before_filter :populate_fund_queues, :only => [ :new, :edit ]
   filter_access_to :show, :edit, :update, :new, :create, :destroy, :attribute_check => true
   filter_access_to :index do
     permitted_to!( :show, @organization )
@@ -110,8 +109,5 @@ class FundSourcesController < ApplicationController
     @fund_source = @organization.fund_sources.build( params[:fund_source] )
   end
 
-  def populate_fund_queues
-    @fund_source.fund_queues.build
-  end
 end
 
