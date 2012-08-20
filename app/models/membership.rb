@@ -43,6 +43,12 @@ class Membership < ActiveRecord::Base
   scope :fulfill, lambda { |framework|
     fulfill_single_role( framework ).fulfill_all_role( framework )
   }
+  scope :approver_for, lambda { |framework|
+    where( role_id: framework.approvers.scoped.select { role_id } )
+  }
+  scope :unfulfilled_for, lambda { |framework|
+    where { |m| m.id.not_in( framework.memberships.scoped.select { id } ) }
+  }
 
   belongs_to :user, inverse_of: :memberships
   belongs_to :role, inverse_of: :memberships

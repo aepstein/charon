@@ -3,6 +3,7 @@ class FundRequest < ActiveRecord::Base
     :with_state, :with_review_state ]
   ACTIVE_STATES = [ :started, :tentative, :submitted, :finalized ]
   UNACTIONABLE_STATES = [ :withdrawn, :rejected ]
+  SUBMISSION_PENDING_STATES = [ :started, :tentative ]
 
   attr_accessible :fund_request_type_id
   attr_accessible :reject_message, as: :rejector
@@ -400,6 +401,10 @@ class FundRequest < ActiveRecord::Base
   # Is the request ready for release?
   # * based on status of review state machine
   def releasable?; review_state? :ready; end
+
+  # Is the request awaiting submission?
+  # * based on the state of the request
+  def submission_pending?; SUBMISSION_PENDING_STATES.include? state.to_sym; end
 
   # What is the perspective of approvers this request is waiting on
   def approver_perspective

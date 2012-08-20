@@ -233,5 +233,40 @@ Feature: Manage fund_requests
       | Semester    | Last Club  | started   |
     Given I am on the duplicate fund_requests page for fund_queue: "annual"
     Then I should see the following fund_requests:
-      | Fund source | Requestor  | State     |
+      | Requestor  | State     |
+
+  Scenario Outline: Display unfulfilled submission requirements
+    Given a framework: "focus" exists
+    And a framework: "other" exists
+    And a registration_criterion exists with must_register: true
+    And an agreement exists with name: "Ethical Conduct Statement"
+    And a requestor_role exists
+    And a requirement exists with framework: framework "<o_requirement>", fulfillable: the registration_criterion
+    And a requirement exists with framework: framework "<u_requirement>", fulfillable: the agreement, role: the requestor_role
+    And an approver exists with framework: framework "focus", role: the requestor_role
+    And a fund_source exists with name: "Annual Budget", submission_framework: framework "focus"
+    And a fund_queue exists with fund_source: the fund_source
+    And a fund_request_type exists
+    And the fund_request_type is amongst the fund_request_types of the fund_queue
+    And an organization exists with last_name: "Spending Club"
+    And a fund_grant exists with organization: the organization, fund_source: the fund_source
+    And an approvable_fund_request exists with fund_grant: the fund_grant
+    And a user: "applicant_requestor" exists
+    And a membership exists with organization: the organization, role: the requestor_role, user: user "applicant_requestor", active: true
+    And I log in as user: "<user>"
+    And I am on the page for the fund_request
+    Then I should <unfulfilled> "Unfulfilled submission requirements"
+    And I should <unfulfilled> "Certain requirements must be fulfilled before you may submit this request."
+    And I should <see_o> "Spending Club:"
+    And I should <see_o> "must have a current registration with an approved status"
+    And I should <see_u> "You:"
+    And I should <see_u> "must approve the Ethical Conduct Statement"
+    Given I am on the new approval page for the approvable_fund_request
+    Then I should <authorized> authorized
+    Examples:
+      |o_requirement|u_requirement|user               |unfulfilled|authorized|see_o  |see_u  |
+      |focus        |focus        |applicant_requestor|see        |not see   |see    |see    |
+      |focus        |other        |applicant_requestor|see        |not see   |see    |not see|
+      |other        |focus        |applicant_requestor|see        |not see   |not see|see    |
+      |other        |other        |applicant_requestor|not see    |see       |not see|not see|
 

@@ -94,5 +94,9 @@ class ApprovalsController < ApplicationController
     @approval = @approvable.approvals.build( params[:approval] )
     @approval.user = current_user
   end
+
+  def permission_framework
+    @fund_grant.fund_source.submission_framework
+  end
 end
 

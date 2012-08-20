@@ -135,12 +135,16 @@ class FundQueue < ActiveRecord::Base
     timeliness: { type: :datetime, before: :release_at, after: :open_at }
   validates :advertised_submit_at, presence: true,
     timeliness: { type: :datetime, on_or_before: :submit_at }
+  validates :release_at, presence: true,
+    timeliness: { type: :datetime, after: :submit_at }
 
   before_validation do |queue|
     queue.advertised_submit_at = queue.submit_at if queue.advertised_submit_at.blank?
   end
 
   def open_at; fund_source.open_at if fund_source; end
+
+  def closed_at; fund_source.closed_at if fund_source; end
 
   def to_s
     return super unless advertised_submit_at? || submit_at?

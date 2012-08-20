@@ -45,7 +45,15 @@ class FundGrant < ActiveRecord::Base
     end
   end
   has_many :requestor_memberships, through: :organization,
-    source: :active_memberships, autosave: false
+    source: :active_memberships, autosave: false do
+      def approvers
+        approver_for( proxy_association.owner.fund_source.submission_framework )
+      end
+      def unfulfilled_approvers
+        approver_for( proxy_association.owner.fund_source.submission_framework ).
+        unfulfilled_for( proxy_association.owner.fund_source.submission_framework )
+      end
+    end
   has_many :reviewer_memberships, through: :fund_source, source: :memberships,
     autosave: false
   has_many :requestors, through: :requestor_memberships, source: :user,
@@ -112,10 +120,13 @@ class FundGrant < ActiveRecord::Base
   def reviewer; fund_source ? fund_source.organization : nil; end
 
   # Fetch all unfulfilled requirements
-  def unfulfilled_requirements(reset=false)
-    @unfulfilled_requirements = nil if reset
-    @unfulfilled_requirements ||= requestor_memberships(reset).requestor.inject({}) { |memo, membership|
-      fund_source.framework.requirements.unfulfilled_by(membership).each do |requirement|
+  def unfulfilled_requirements(framework=nil,reset=false)
+    @unfulfilled_requirements ||= Hash.new
+    framework ||= fund_source.framework
+    @unfulfilled_requirements[framework] = nil if reset
+    @unfulfilled_requirements[framework] ||= requestor_memberships(reset).requestor.
+      inject({}) { |memo, membership|
+      framework.requirements.unfulfilled_by(membership).each do |requirement|
         target = membership.send( requirement.fulfiller_type.underscore.to_sym )
         memo[ target ] ||= []
         memo[ target ] << requirement
@@ -126,9 +137,10 @@ class FundGrant < ActiveRecord::Base
 
   # Fetch unfulfilled requirements for specific fulfillers
   def unfulfilled_requirements_for(*fulfillers)
+    options = fulfillers.extract_options!
     fulfillers.flatten.inject({}) do |memo, fulfiller|
-      unless unfulfilled_requirements[ fulfiller ].blank?
-        memo[ fulfiller ] = unfulfilled_requirements[ fulfiller ]
+      unless unfulfilled_requirements(options[:framework])[ fulfiller ].blank?
+        memo[ fulfiller ] = unfulfilled_requirements(options[:framework])[ fulfiller ]
       end
       memo
     end

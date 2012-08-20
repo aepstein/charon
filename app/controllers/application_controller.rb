@@ -20,10 +20,15 @@ class ApplicationController < ActionController::Base
     redirect_to profile_url, alert: alert
   end
 
+  def permission_framework
+    @fund_grant.fund_source.framework
+  end
+
   # Prepares a concise explanation of unfulfilled requirements pertinent to a
   # fund grant
   def unfulfilled_requirements_for_fund_grant(fund_grant, *fulfillers)
-    fund_grant.unfulfilled_requirements_for( fulfillers ).inject([]) do |memo, (fulfiller, requirements)|
+    fund_grant.unfulfilled_requirements_for( fulfillers, framework: permission_framework ).
+    inject([]) do |memo, (fulfiller, requirements)|
       fulfiller_str = case fulfiller
       when current_user
         'You'

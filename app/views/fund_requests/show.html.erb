@@ -1,5 +1,28 @@
 <%=content_tag 'h2', @fund_request %>
 
+<% if @fund_request.submission_pending? &&
+  @fund_request.fund_grant.requestor_memberships.unfulfilled_approvers.any? %>
+<div class="warning_messages">
+<h3>Unfulfilled submission requirements</h3>
+<p>
+Certain requirements must be fulfilled before you may submit this request.
+</p>
+
+<% @fund_request.fund_grant.unfulfilled_requirements_for(
+    [ @fund_request.fund_grant.requestor_memberships.unfulfilled_approvers.map(&:user),
+    @fund_request.fund_grant.organization ].flatten,
+    framework: @fund_request.fund_grant.fund_source.submission_framework ).
+    each do |fulfiller, requirements| %>
+  <p><%= fulfiller == current_user ? 'You' : fulfiller.to_s %>:</p>
+  <ul>
+    <% requirements.each do |requirement| %>
+    <li><%= requirement.to_s :condition %></li>
+    <% end %>
+  </ul>
+<% end %>
+</div>
+<% end %>
+
 <p>
   <b>Fund source:</b> <%= @fund_request.fund_grant.fund_source %>
 </p>
