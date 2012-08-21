@@ -13,6 +13,7 @@ class Approver < ActiveRecord::Base
     uniqueness: { scope: [ :framework_id, :perspective ] }
 
   scope :ordered, joins { role }.order { roles.name }
+  #TODO reformulate for modular frameworks
   scope :with_memberships_for, lambda { |fund_request|
     joins( "LEFT JOIN memberships ON approvers.role_id = memberships.role_id " +
       "AND memberships.active = #{connection.quote true} " +
