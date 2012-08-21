@@ -39,7 +39,7 @@ class FundGrant < ActiveRecord::Base
     end
   end
   has_many :nodes, through: :fund_items
-  has_many :categories, through: :nodes do
+  has_many :categories, uniq: true, through: :nodes do
     def without_activity_account
       all - proxy_association.owner.activity_account_categories
     end
