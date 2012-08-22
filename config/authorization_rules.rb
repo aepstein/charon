@@ -184,7 +184,7 @@ authorization do
     end
     has_permission_on [ :fund_editions ], to: :show, join_by: :and do
       if_permitted_to :show, :fund_request
-      if_attribute fund_request: { state: is { 'released' } }
+      if_attribute fund_request: { state: is_in { %w( released allocated ) } }
     end
 
     has_permission_on [ :fund_grants ], to: [ :update ] do
