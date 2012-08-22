@@ -1,25 +1,42 @@
 <%=content_tag 'h2', @fund_request %>
 
-<% if @fund_request.submission_pending? &&
-  @fund_request.fund_grant.requestor_memberships.unfulfilled_approvers.any? %>
+<% if @fund_request.submission_pending? %>
 <div class="warning_messages">
 <h2>Unfulfilled submission requirements</h2>
+<% if @fund_request.fund_grant.requestor_memberships.unfulfilled_approvers.any? %>
+  <p>
+  Certain requirements must be fulfilled before you may approve this request for submission.
+  </p>
+
+  <% @fund_request.fund_grant.unfulfilled_requirements_for(
+      [ @fund_request.fund_grant.requestor_memberships.unfulfilled_approvers.map(&:user),
+      @fund_request.fund_grant.organization ].flatten,
+      framework: @fund_request.fund_grant.fund_source.submission_framework ).
+      each do |fulfiller, requirements| %>
+    <p><%= fulfiller == current_user ? 'You' : fulfiller.to_s %>:</p>
+    <ul>
+      <% requirements.each do |requirement| %>
+      <li><%= requirement.to_s :condition %></li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>
+
+<% if FundRequest::ACTIVE_STATES.map(&:to_s).include?( @fund_request.state ) &&
+   @fund_request.users.unfulfilled.length > 0 %>
 <p>
-Certain requirements must be fulfilled before you may submit this request.
+The following users must approve before the request is submitted:
 </p>
 
-<% @fund_request.fund_grant.unfulfilled_requirements_for(
-    [ @fund_request.fund_grant.requestor_memberships.unfulfilled_approvers.map(&:user),
-    @fund_request.fund_grant.organization ].flatten,
-    framework: @fund_request.fund_grant.fund_source.submission_framework ).
-    each do |fulfiller, requirements| %>
-  <p><%= fulfiller == current_user ? 'You' : fulfiller.to_s %>:</p>
-  <ul>
-    <% requirements.each do |requirement| %>
-    <li><%= requirement.to_s :condition %></li>
-    <% end %>
-  </ul>
+<ul>
+<% @fund_request.users.unfulfilled.each do |user| %>
+<%=content_tag 'li', user.name(:net_id) %>
 <% end %>
+</ul>
+<% else %>
+<p>No more user approvals are required for submission.</p>
+<% end %>
+
 </div>
 <% end %>
 
@@ -89,21 +106,6 @@ The following users have approved:
   :locals => { :user => true } %>
 <% else %>
 <p>No users have approved.</p>
-<% end %>
-
-<% if FundRequest::ACTIVE_STATES.map(&:to_s).include?( @fund_request.state ) &&
-   @fund_request.users.unfulfilled.length > 0 %>
-<p>
-The following users must approve before the request is submitted:
-</p>
-
-<ul>
-<% @fund_request.users.unfulfilled.each do |user| %>
-<%=content_tag 'li', user.name(:net_id) %>
-<% end %>
-</ul>
-<% else %>
-<p>No more user approvals are required for submission.</p>
 <% end %>
 
 <p>
