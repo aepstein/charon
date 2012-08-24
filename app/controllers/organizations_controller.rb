@@ -1,7 +1,7 @@
 class OrganizationsController < ApplicationController
   before_filter :require_user
   before_filter :initialize_context
-  before_filter :initialize_index, :only => [ :index ]
+  before_filter :initialize_index, :only => [ :index, :untiered ]
   before_filter :new_organization_from_params, :only => [ :new, :create ]
   before_filter :initialize_organization_profile, :only => [ :new, :edit ]
   filter_access_to :new, :create, :edit, :update, :destroy, :dashboard, :attribute_check => true
@@ -23,6 +23,14 @@ class OrganizationsController < ApplicationController
       format.js # index.js.erb
       format.xml  { render :xml => @organizations }
     end
+  end
+
+  # GET /fund_sources/:fund_source_id/organizations/untiered
+  def untiered
+    @organizations = @organizations.where { |o|
+      id.not_in( @fund_source.fund_tier_assignments.scoped.select { organization_id } )
+    }
+    return index
   end
 
   # GET /organizations/1

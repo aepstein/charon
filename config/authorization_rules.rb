@@ -5,10 +5,10 @@ authorization do
     has_permission_on [ :activity_accounts, :activity_reports, :addresses,
       :agreements, :fund_sources, :categories, :document_types,
       :fund_allocations, :fund_editions, :fund_grants, :fund_items, :fund_queues,
-      :fund_request_types, :fund_requests, :fund_sources, :frameworks,
-      :inventory_items, :nodes, :organizations, :registration_criterions,
-      :registrations, :registration_terms, :roles, :structures,
-      :university_accounts, :users, :user_status_criterions ],
+      :fund_request_types, :fund_requests, :fund_sources, :fund_tier_assignments,
+      :frameworks, :inventory_items, :nodes, :organizations,
+      :registration_criterions, :registrations, :registration_terms, :roles,
+      :structures, :university_accounts, :users, :user_status_criterions ],
       to: [ :manage ]
 
     has_permission_on [ :users ], to: [ :admin ]
@@ -319,6 +319,10 @@ authorization do
     end
     has_permission_on [ :fund_sources ], to: :lead do
       if_permitted_to :lead, :organization
+    end
+
+    has_permission_on [ :fund_tier_assignments ], to: :update do
+      if_permitted_to :lead, :fund_source
     end
 
     has_permission_on [ :memberships ], to: :show do

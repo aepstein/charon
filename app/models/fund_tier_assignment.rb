@@ -1,5 +1,7 @@
 class FundTierAssignment < ActiveRecord::Base
-  attr_accessible :organization_id, :fund_tier_id
+  SEARCHABLE = [ :organization_name_contains ]
+
+  attr_accessible :organization_name, :fund_tier_id
   attr_readonly :fund_source_id, :organization_id
 
   belongs_to :fund_source, inverse_of: :fund_tier_assignments
@@ -15,6 +17,11 @@ class FundTierAssignment < ActiveRecord::Base
     inclusion: { in: lambda { |a| a.fund_source.fund_tiers },
       if: :fund_source }
 
+  scope :organization_name_contains, lambda { |k|
+    where( organization_id: Organization.name_contains(k) ) }
+  scope :ordered, lambda { joins { organization }.
+    order { [ organizations.last_name, organizations.first_name ] } }
+
   before_create :adopt_fund_grant
 
   def adopt_fund_grant
@@ -23,6 +30,8 @@ class FundTierAssignment < ActiveRecord::Base
     build_fund_grant
     fund_grant.organization = organization
   end
+
+  include OrganizationNameLookup
 
 end
 

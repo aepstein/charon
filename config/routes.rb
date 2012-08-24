@@ -48,7 +48,14 @@ Charon::Application.routes.draw do
         get :unqueued
       end
     end
+    resources :fund_tier_assignments, :only => [ :index, :new, :create ]
+    resources :organizations, :only => [] do
+      collection do
+        get :untiered
+      end
+    end
   end
+  resources :fund_tier_assignments, :only => [ :update, :destroy ]
   resources :inventory_items, :except => [ :new, :create ] do
       collection do
         get :retired, :active

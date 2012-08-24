@@ -26,7 +26,7 @@ gem 'cornell-assemblies-branding',
   git: 'git://assembly.cornell.edu/git/cornell-assemblies-branding.git'
 gem 'escape_utils'
 gem 'ancestry'
-gem 'decent_exposure'
+gem 'decent_exposure', '~>2.0.0rc1'
 group :assets do
   gem 'sass-rails', "~> 3.1"
   gem 'coffee-rails', "~> 3.1"

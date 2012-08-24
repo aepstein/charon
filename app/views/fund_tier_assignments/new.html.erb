@@ -1,0 +1,17 @@
+<h2>New fund tier assignment for <%= fund_source %></h2>
+
+<%= semantic_form_for( fund_tier_assignment,
+  url: fund_source_fund_tier_assignments_path(fund_source) ) do |form| %>
+
+<%= render partial: "shared/error_messages", locals: { target: form.object } %>
+
+<%= form.inputs do %>
+  <%= form.input :organization_name, label: 'Organization',
+    as: :autocomplete, url: untiered_fund_source_organizations_path( fund_source )  %>
+  <%= form.input :fund_tier, collection: fund_source.fund_tiers %>
+<% end %>
+
+<%= form.actions %>
+
+<% end %>
+

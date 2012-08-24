@@ -1,0 +1,8 @@
+<%= table_row_tag do %>
+  <td><%= fund_tier_assignment.organization %></td>
+  <td><%= fund_tier_assignment.fund_tier %></td>
+  <td><%= link_to( 'Destroy', fund_tier_assignment,
+      data: { confirm: 'Are you sure you wish to destroy?' }, method: :delete
+    ) if permitted_to? :destroy, fund_tier_assignment %></td>
+<% end %>
+

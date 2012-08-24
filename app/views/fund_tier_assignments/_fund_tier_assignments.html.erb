@@ -1,0 +1,18 @@
+<% if fund_tier_assignments.any? %>
+<table>
+  <thead>
+    <tr>
+      <th>Organization</th>
+      <th>Fund tier</th>
+    </tr>
+  </thead>
+  <tbody>
+  <%= render partial: 'fund_tier_assignments/fund_tier_assignment', collection: fund_tier_assignments %>
+  </tbody>
+</table>
+<% else %>
+<p>
+No fund tier assignments.
+</p>
+<% end %>
+
