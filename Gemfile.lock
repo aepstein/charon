@@ -8,10 +8,11 @@ GIT
 
 GIT
   remote: git://assembly.cornell.edu/git/cornell-assemblies-rails.git
-  revision: 8a790a309a46d2277beaebdfadb2be89bb54843c
+  revision: c157b7c04e7b7434e8f9dd381c8a7b441b537dab
   specs:
     cornell-assemblies-rails (0.0.2)
       bcrypt-ruby (~> 3.0)
+      best_in_place (~> 1.1)
       bluecloth (~> 2.0)
       cocoon (~> 1.0)
       cornell_ldap (~> 1.4.3)
@@ -56,6 +57,9 @@ GEM
       activerecord (>= 2.3.14)
     arel (3.0.2)
     bcrypt-ruby (3.0.1)
+    best_in_place (1.1.2)
+      jquery-rails
+      rails (~> 3.1)
     bluecloth (2.2.0)
     builder (3.0.0)
     capybara (1.1.2)
@@ -263,6 +267,7 @@ PLATFORMS
 
 DEPENDENCIES
   ancestry
+  best_in_place
   capybara (~> 1.0)
   carrierwave
   coffee-rails (~> 3.1)

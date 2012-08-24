@@ -10,7 +10,9 @@ Feature: Manage fund_tier_assignments
     And a fund_tier: "focus" exists with maximum_allocation: 1000.0, organization: organization "source"
 
   Scenario: Create fund_tier_assignments
-    And a fund_source exists with name: "Annual", organization: organization "source"
+    Given a fund_source exists with name: "Annual", organization: organization "source"
+    And the fund_tier is amongst the fund_tiers of the fund_source
+    And a fund_tier: "higher" exists with maximum_allocation: 2000.0, organization: organization "source"
     And the fund_tier is amongst the fund_tiers of the fund_source
     And an organization exists with last_name: "Spending Club"
     And I log in as user: "admin"
@@ -19,9 +21,23 @@ Feature: Manage fund_tier_assignments
     And I select "$1,000.00" from "Fund tier"
     And I press "Create"
     Then I should see "Fund tier assignment was successfully created."
+    And show me the page
     And I should see the following fund_tier_assignments:
       | Organization  | Fund tier |
       | Spending Club | $1,000.00 |
+
+  @javascript
+  Scenario: Edit fund_tier_assignments
+    Given a fund_source exists with name: "Annual", organization: organization "source"
+    And the fund_tier is amongst the fund_tiers of the fund_source
+    And a fund_tier: "higher" exists with maximum_allocation: 2000.0, organization: organization "source"
+    And the fund_tier is amongst the fund_tiers of the fund_source
+    And an organization exists with last_name: "Spending Club"
+    And a fund_tier_assignment exists with fund_tier: fund_tier "focus", organization: the organization, fund_source: the fund_source
+    And I log in as user: "admin"
+    And I am on the fund_tier_assignments page for the fund_source
+    When I select "$2,000.00" for the "fund_tier_id" of the fund_tier_assignment in place
+    Then the fund_tier_assignment's to_s should be "$2,000.00"
 
   Scenario: List and delete fund_tier_assignments
     Given a fund_source: "annual" exists with name: "Annual", organization: organization "source"

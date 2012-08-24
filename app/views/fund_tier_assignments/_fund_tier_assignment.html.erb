@@ -1,6 +1,8 @@
 <%= table_row_tag do %>
   <td><%= fund_tier_assignment.organization %></td>
-  <td><%= fund_tier_assignment.fund_tier %></td>
+  <td><%= best_in_place_if permitted_to?(:update, fund_tier_assignment),
+    fund_tier_assignment, :fund_tier_id, type: :select,
+    collection: fund_tier_assignment.fund_source.fund_tiers.map { |t| [ t.id, t.to_s ] } %></td>
   <td><%= link_to( 'Destroy', fund_tier_assignment,
       data: { confirm: 'Are you sure you wish to destroy?' }, method: :delete
     ) if permitted_to? :destroy, fund_tier_assignment %></td>

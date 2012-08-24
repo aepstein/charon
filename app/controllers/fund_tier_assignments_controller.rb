@@ -49,10 +49,10 @@ class FundTierAssignmentsController < ApplicationController
     respond_to do |format|
       if fund_tier_assignment.update_attributes(params[:fund_tier_assignment])
         format.html { redirect_to fund_tier_assignment, notice: 'Fund tier assignment was successfully updated.' }
-        format.json { head :no_content }
+        format.json { respond_with_bip(fund_tier_assignment) }
       else
         format.html { render action: "edit" }
-        format.json { render json: fund_tier_assignment.errors, status: :unprocessable_entity }
+        format.json { respond_with_bip(fund_tier_assignment) }
       end
     end
   end

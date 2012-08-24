@@ -27,6 +27,7 @@ gem 'cornell-assemblies-branding',
 gem 'escape_utils'
 gem 'ancestry'
 gem 'decent_exposure', '~>2.0.0rc1'
+gem 'best_in_place'
 group :assets do
   gem 'sass-rails', "~> 3.1"
   gem 'coffee-rails', "~> 3.1"

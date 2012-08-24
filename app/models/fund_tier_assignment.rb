@@ -33,5 +33,10 @@ class FundTierAssignment < ActiveRecord::Base
 
   include OrganizationNameLookup
 
+  def to_s
+    return super() unless fund_tier && fund_tier.maximum_allocation?
+    fund_tier.to_s
+  end
+
 end
 
