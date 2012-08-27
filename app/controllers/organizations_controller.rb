@@ -21,7 +21,7 @@ class OrganizationsController < ApplicationController
 
     respond_to do |format|
       format.html { render action: 'index' } # index.html.erb
-      format.js { render action: 'index' } # index.js.erb
+      format.json { render json: @organizations.map { |o| { id: o.id, label: o.name, value: o.name(:last_first) } } }
       format.xml  { render :xml => @organizations }
     end
   end

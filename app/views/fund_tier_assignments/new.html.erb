@@ -7,7 +7,7 @@
 
 <%= form.inputs do %>
   <%= form.input :organization_name, label: 'Organization',
-    as: :autocomplete, url: untiered_fund_source_organizations_path( fund_source )  %>
+    as: :autocomplete, url: untiered_fund_source_organizations_path( fund_source, format: :json )  %>
   <%= form.input :fund_tier, collection: fund_source.fund_tiers %>
 <% end %>
 
