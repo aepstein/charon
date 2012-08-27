@@ -129,7 +129,7 @@ class Organization < ActiveRecord::Base
     when :file
       name.downcase.gsub /[^\w]+/, '-'
     else
-      "#{first_name} #{last_name}".squeeze
+      "#{first_name} #{last_name}".squeeze ' '
     end
   end
 
