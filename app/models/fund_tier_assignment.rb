@@ -27,8 +27,6 @@ class FundTierAssignment < ActiveRecord::Base
   def adopt_fund_grant
     return true if fund_grant || ( self.fund_grant = fund_source.fund_grants.
       where( organization_id: organization_id ).first )
-    build_fund_grant
-    fund_grant.organization = organization
   end
 
   include OrganizationNameLookup
