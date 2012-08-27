@@ -66,6 +66,12 @@ The following users must approve before the request is submitted:
   <b>Deadline:</b> <%= @fund_request.target_queue ? @fund_request.target_queue : 'None available' %>
 </p>
 
+<% if @fund_request.fund_grant.fund_tier %>
+<p>
+  <b>Fund tier assignment:</b> <%= @fund_request.fund_grant.fund_tier %>
+</p>
+<% end %>
+
 <p>
   <b>Returning?</b> <%= @fund_request.returning? ? 'Yes' : 'No'  %>
 </p>
