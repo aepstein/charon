@@ -115,6 +115,7 @@ class OrganizationsController < ApplicationController
   def initialize_context
     @organization = Organization.find params[:id] if params[:id]
     @registration = Registration.find params[:registration_id] if params[:registration_id]
+    @fund_source = FundSource.find params[:fund_source_id] if params[:fund_source_id]
     add_breadcrumb 'Organizations', organizations_path
     add_breadcrumb "#{@registration.name} registration", url_for( @registration ) if @registration
   end
