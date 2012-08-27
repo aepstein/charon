@@ -10,6 +10,7 @@ class OrganizationsController < ApplicationController
   # GET /organizations.xml
   def index
     @search = params[:search] || Hash.new
+    @search[:name_contains] = params[:term] if params[:term]
     @search.each do |k,v|
       if !v.blank? && Organization::SEARCHABLE.include?( k.to_sym )
         @organizations = @organizations.send k, v
@@ -28,7 +29,7 @@ class OrganizationsController < ApplicationController
   # GET /fund_sources/:fund_source_id/organizations/untiered
   def untiered
     @organizations = @organizations.where { |o|
-      id.not_in( @fund_source.fund_tier_assignments.scoped.select { organization_id } )
+      o.id.not_in( @fund_source.fund_tier_assignments.scoped.select { organization_id } )
     }
     return index
   end
