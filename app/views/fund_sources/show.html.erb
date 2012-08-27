@@ -107,6 +107,9 @@ Request quantity and amount report:
 <%= link_to 'Fund grants', fund_source_fund_grants_path( @fund_source ) %> |
 <%= nested_index @fund_source, :fund_requests, [ :unqueued ] %> |
 <% end -%>
+<% if @fund_source.fund_tiers.any? && permitted_to?( :review, @fund_source ) %>
+<%= link_to 'Fund tier assignments', fund_source_fund_tier_assignments_path( @fund_source ) %> |
+<% end %>
 <%= link_to 'Back', organization_fund_sources_path( @fund_source.organization ) %>
 </p>
 
