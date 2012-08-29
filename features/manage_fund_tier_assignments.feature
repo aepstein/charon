@@ -9,6 +9,45 @@ Feature: Manage fund_tier_assignments
     And an organization "source" exists
     And a fund_tier: "focus" exists with maximum_allocation: 1000.0, organization: organization "source"
 
+  Scenario Outline:
+    Given a fund_source exists with name: "Annual", organization: organization "source"
+    And a manager_role exists
+    And a user: "manager" exists
+    And a membership exists with role: the manager_role, user: user "manager", organization: organization "source"
+    And a leader_role exists
+    And a user: "leader" exists
+    And a membership exists with role: the leader_role, user: user "leader", organization: organization "source"
+    And a user: "conflictor" exists
+    And a membership exists with role: the leader_role, user: user "conflictor", organization: organization "source"
+    And the fund_tier is amongst the fund_tiers of the fund_source
+    And a fund_tier: "higher" exists with maximum_allocation: 2000.0, organization: organization "source"
+    And the fund_tier is amongst the fund_tiers of the fund_source
+    And an organization exists with last_name: "Spending Club"
+    And a requestor_role exists
+    And a user: "requestor" exists
+    And a membership exists with role: the requestor_role, user: user "requestor", organization: the organization
+    And a membership exists with role: the requestor_role, user: user "conflictor", organization: the organization
+    And a fund_tier_assignment exists with fund_tier: fund_tier "focus", organization: the organization, fund_source: the fund_source
+    And I log in as user: "<user>"
+    When I am on the fund_tier_assignments page for the fund_source
+    Then I should <index> authorized
+    When I am on the new fund_tier_assignment page for the fund_source
+    Then I should <create> authorized
+    When I post on the fund_tier_assignments page for the fund_source
+    Then I should <create> authorized
+    When I put on the page for the fund_tier_assignment
+    Then I should <update> authorized
+    When I delete on the page for the fund_tier_assignment
+    Then I should <destroy> authorized
+    Examples:
+      | user       | index   | create  | update  | destroy |
+      | admin      | see     | see     | see     | see     |
+      | staff      | see     | see     | see     | not see |
+      | manager    | see     | see     | see     | not see |
+      | leader     | see     | see     | see     | not see |
+      | conflictor | see     | see     | not see | not see |
+      | requestor  | not see | not see | not see | not see |
+
   Scenario: Create fund_tier_assignments
     Given a fund_source exists with name: "Annual", organization: organization "source"
     And the fund_tier is amongst the fund_tiers of the fund_source

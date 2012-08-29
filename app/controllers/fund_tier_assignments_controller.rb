@@ -7,7 +7,7 @@ class FundTierAssignmentsController < ApplicationController
     a
   end
   expose( :fund_tier_assignments ) { fund_source.fund_tier_assignments.ordered.page(params[:page]) }
-  filter_access_to [ :new, :edit, :create, :update, :destroy ],
+  filter_access_to [ :new, :create, :update, :destroy ],
     load_method: :fund_tier_assignment, attribute_check: true
   filter_access_to [ :index ] do
     permitted_to! :review, fund_source if fund_source
@@ -48,7 +48,8 @@ class FundTierAssignmentsController < ApplicationController
   def update
     respond_to do |format|
       if fund_tier_assignment.update_attributes(params[:fund_tier_assignment])
-        format.html { redirect_to fund_tier_assignment, notice: 'Fund tier assignment was successfully updated.' }
+        format.html { redirect_to fund_source_fund_tier_assignments_url( fund_tier_assignment.fund_source ),
+          notice: 'Fund tier assignment was successfully updated.' }
         format.json { respond_with_bip(fund_tier_assignment) }
       else
         format.html { render action: "edit" }

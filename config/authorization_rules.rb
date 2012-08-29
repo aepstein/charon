@@ -32,7 +32,7 @@ authorization do
 
     has_permission_on :authorization_rules, to: :read
 
-    has_permission_on [ :fund_sources ], to: [ :review ]
+    has_permission_on [ :fund_sources ], to: [ :review, :lead ]
 
     has_permission_on [ :fund_requests, :agreements ], to: [ :unapprove ]
     has_permission_on [ :fund_requests ], to: [ :submit ] do
@@ -321,8 +321,9 @@ authorization do
       if_permitted_to :lead, :organization
     end
 
-    has_permission_on [ :fund_tier_assignments ], to: :update do
+    has_permission_on [ :fund_tier_assignments ], to: [ :create, :update ], join_by: :and do
       if_permitted_to :lead, :fund_source
+      if_attribute organization_id: is_not_in { user.organization_ids }
     end
 
     has_permission_on [ :memberships ], to: :show do
@@ -343,7 +344,7 @@ authorization do
         active: is { true },
         role: { name: is_in { Role::REVIEWER } } }
     end
-    has_permission_on [ :organizations ], to: [ :manage, :allocate ] do
+    has_permission_on [ :organizations ], to: [ :manage, :allocate, :lead ] do
       if_attribute memberships: {
         user_id: is { user.id },
         active: is { true },
