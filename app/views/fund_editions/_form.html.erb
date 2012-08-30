@@ -8,7 +8,8 @@
     <% end -%>
     <% if form.object.perspective == FundEdition::PERSPECTIVES.first -%>
       <%= form.input :displace_item_id, :label => 'Move to priority of',
-        :hint => 'Use this to change the priority of this item relative to others',
+        :hint => 'Use this to change the priority of this item relative to others. ' +
+          'The item you are editing (and its subitems) will be placed immediately below the item (and its subitems) you select.',
         :as => :select, :collection => options_for_displace_item(form.object) %>
     <% end -%>
     <% if form.object.requestable %>
