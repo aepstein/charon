@@ -53,8 +53,20 @@ The following users must approve before the request is submitted:
 </p>
 
 <p>
+  <b>Started at: </b> <%= @fund_request.created_at.to_formatted_s :us_ordinal %>
+</p>
+
+<p>
   <b>State:</b> <%= @fund_request.state %>
 </p>
+
+<% if @fund_request.rejected? %>
+<p>
+<b>Reason rejected:</b>
+</p>
+
+<%=markdown @fund_request.reject_message %>
+<% end %>
 
 <% if permitted_to? :review, @fund_request %>
 <p>
