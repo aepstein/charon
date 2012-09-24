@@ -22,7 +22,7 @@
 <% fund_item.fund_editions.for_request( fund_request ).each do |fund_edition| %>
   <% if permitted_to? :show, fund_edition %>
     <% if fund_request.review_state == 'ready' ||
-      permitted_to?( :edit, fund_edition )  %>
+      permitted_to?( :review, fund_edition )  %>
     <%=render :partial => 'fund_requests/fund_edition',
       :object => fund_edition %>
     <% else %>
