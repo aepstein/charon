@@ -48,6 +48,10 @@ class FundQueue < ActiveRecord::Base
         registration_terms.id WHERE registration_terms.current = 1 AND
         registrations.organization_id = organizations.id LIMIT 1) AS
         independent, fund_requests.state,
+        (SELECT fund_tiers.maximum_allocation FROM fund_tiers INNER JOIN
+        fund_tier_assignments ON fund_tiers.id = fund_tier_assignments.fund_tier_id
+        WHERE fund_tier_assignments.fund_grant_id = fund_grants.id LIMIT 1
+        ) AS tier,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'requestor' AND fund_request_id = fund_requests.id ) AS request,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
@@ -67,7 +71,7 @@ class FundQueue < ActiveRecord::Base
       SQL
       CSV.generate do |csv|
         csv << ( %w( organization account subaccount active? returning?
-          registered? independent? state request review cumulative_allocation
+          registered? independent? state tier request review cumulative_allocation
           queue_allocation ) + proxy_association.owner.fund_source.
           structure.categories.map(&:name) )
         rows.each { |row| csv << row }
