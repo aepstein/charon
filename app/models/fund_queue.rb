@@ -50,7 +50,7 @@ class FundQueue < ActiveRecord::Base
         independent, fund_requests.state,
         (SELECT fund_tiers.maximum_allocation FROM fund_tiers INNER JOIN
         fund_tier_assignments ON fund_tiers.id = fund_tier_assignments.fund_tier_id
-        WHERE fund_tier_assignments.fund_grant_id = fund_grants.id LIMIT 1
+        WHERE fund_tier_assignments.id = fund_grants.fund_tier_assignment_id LIMIT 1
         ) AS tier,
         (SELECT SUM(fund_editions.amount) FROM fund_editions WHERE perspective
         = 'requestor' AND fund_request_id = fund_requests.id ) AS request,
