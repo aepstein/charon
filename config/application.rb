@@ -15,6 +15,7 @@ module Charon
     config.active_record.identity_map = true
     config.assets.enabled = true
     config.assets.version = '1.1'
+    config.action_view.sanitized_allowed_tags = 'table', 'thead', 'tbody', 'tr', 'th', 'td'
 
     def self.app_config
       @@app_config ||= YAML.load(File.read(File.expand_path('../application.yml', __FILE__)))[Rails.env]
