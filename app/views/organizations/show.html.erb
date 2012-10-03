@@ -57,13 +57,22 @@ The organization manages the following fund tiers:
 </p>
 <%=render partial: 'fund_tiers/fund_tiers', object: @organization.fund_tiers %>
 
+<% if permitted_to? :admin, @organization %>
+<h3>University accounts</h3>
+
+<p>
+The organization is associated with the following university accounts:
+</p>
+
+<%=render partial: 'university_accounts/university_accounts',
+  object: @organization.university_accounts,
+  locals: { organization: @organization } %>
+<% end %>
+
 <p>
 <% if permitted_to? :edit, @organization -%>
 <%= link_to 'Edit', edit_organization_path(@organization) %> |
 <% end -%>
-<% if permitted_to? :manage, @organization %>
-<%= link_to 'List university accounts', organization_university_accounts_path(@organization) %> |
-<% end %>
 <%= nested_index @organization, :fund_requests, [ :duplicate ] %> |
 <%= link_to 'List registrations', organization_registrations_path(@organization) %> |
 <%= link_to 'List fund_sources', organization_fund_sources_path(@organization) %> |

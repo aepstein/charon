@@ -88,7 +88,7 @@ class OrganizationsController < ApplicationController
   def update
     respond_to do |format|
       if @organization.update_attributes( params[:organization],
-        :as => ( permitted_to?( :manage, @organization ) ? :admin : :default ) )
+        :as => ( permitted_to?( :admin, @organization ) ? :admin : :default ) )
         flash[:notice] = 'Organization was successfully updated.'
         format.html { redirect_to(@organization) }
         format.xml  { head :ok }

@@ -59,7 +59,7 @@ Feature: Manage organizations
     And a requestor_role exists
     And a user: "registered" exists with first_name: "Mister", last_name: "Registered"
     And a membership exists with role: the requestor_role, user: user "registered", registration: the current_registration
-    And I log in as user: "admin"
+    And I log in as user: "staff"
     And I am on the new organization <context>
     When I fill in "First name" with "Cornell"
     And I fill in "Last name" with "Club"
@@ -69,6 +69,9 @@ Feature: Manage organizations
     And I fill in "Current assets" with "10.0"
     And I follow "add tier"
     And I fill in "Maximum allocation" with "1000.0"
+    And I follow "add university account"
+    And I fill in "Account code" with "A000001"
+    And I fill in "Subaccount code" with "00000"
     And I press "Create"
     Then I should see "Organization was successfully created."
     And I should see "First name: Cornell"
@@ -81,6 +84,10 @@ Feature: Manage organizations
     And I should see the following entries in "#fund-tiers":
       | Maximum Allocation  |
       | $1,000.00           |
+    And I should not see "No university accounts."
+    And I should see the following entries in "#university-accounts":
+      | Account code | Subaccount code |
+      | A000001      | 00000           |
     When I follow "Edit"
     And I fill in "First name" with "The Cornell"
     And I fill in "Last name" with "Night Club"
@@ -91,6 +98,7 @@ Feature: Manage organizations
     And I follow "remove tier"
     And I follow "add tier"
     And I fill in "Maximum allocation" with "2000.0"
+    And I follow "remove university account"
     And I press "Update"
     Then I should see "Organization was successfully updated."
     And I should see "First name: The Cornell"
@@ -105,6 +113,7 @@ Feature: Manage organizations
     And I should see the following entries in "#fund-tiers":
       | Maximum Allocation  |
       | $2,000.00           |
+    And I should see "No university accounts."
     And I follow "List memberships"
     Then I should <registered> "Mister Registered"
     Examples:

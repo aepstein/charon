@@ -1,6 +1,6 @@
 <%= render "shared/error_messages", target: form.object %>
 <%= form.inputs do %>
-  <% if permitted_to? :manage, form.object %>
+  <% if permitted_to? :admin, form.object %>
     <%= form.input :first_name %>
     <%= form.input :last_name %>
   <% end %>
@@ -12,6 +12,18 @@
   <% end %>
 <% end %>
 
+<% if permitted_to? :admin, form.object %>
+<%= form.inputs for: :university_accounts, name: 'University Accounts' do |account| %>
+  <%= render partial: 'university_accounts/university_account_fields', locals: { f: account } %>
+<% end %>
+
+<div class='links'>
+  <p>
+    <%= link_to_add_association 'add university account', form, :university_accounts,
+      partial: 'university_accounts/university_account_fields' %>
+  </p>
+</div>
+
 <%= form.inputs for: :fund_tiers, name: 'Fund Tiers' do |tier| %>
   <%= render partial: 'fund_tiers/fund_tier_fields', locals: { f: tier } %>
 <% end %>
@@ -22,6 +34,7 @@
       partial: 'fund_tiers/fund_tier_fields' %>
   </p>
 </div>
+<% end %>
 
 <%= form.actions %>
 

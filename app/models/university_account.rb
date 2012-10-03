@@ -2,6 +2,8 @@ class UniversityAccount < ActiveRecord::Base
   include OrganizationNameLookup
 
   attr_accessible :account_code, :subaccount_code, :organization_name, :active
+  attr_accessible :account_code, :subaccount_code, :organization_name, :active,
+    as: :admin
 
   belongs_to :organization, inverse_of: :university_accounts
 

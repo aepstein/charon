@@ -61,6 +61,8 @@ authorization do
       if_attribute registration_id: is { nil }
     end
 
+    has_permission_on [ :organizations ], to: :admin
+
     has_permission_on [ :registrations ], to: [ :match ] do
       if_attribute organization_id: is { nil }
     end

@@ -2,7 +2,8 @@ class Organization < ActiveRecord::Base
   SEARCHABLE = [ :name_contains ]
   attr_accessible :organization_profile_attributes
   attr_accessible :first_name, :last_name, :fund_tiers_attributes,
-    :organization_profile_attributes, :member_sources_attributes, as: :admin
+    :organization_profile_attributes, :member_sources_attributes,
+    :university_accounts_attributes, as: :admin
 
   notifiable_events :registration_required
   is_fulfiller 'RegistrationCriterion'
@@ -85,6 +86,7 @@ class Organization < ActiveRecord::Base
   accepts_nested_attributes_for :organization_profile, update_only: true
   accepts_nested_attributes_for :member_sources, allow_destroy: true,
     reject_if: :all_blank
+  accepts_nested_attributes_for :university_accounts, allow_destroy: true
 
   before_validation :format_name
 
