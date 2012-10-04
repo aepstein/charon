@@ -46,7 +46,7 @@
 		    <ul>
         <% if current_user %>
         <%= content_tag 'li', link_to( 'home', profile_path ) %>
-          <% if current_user.admin? %>
+          <% if current_user.admin? || current_user.staff? %>
           <%=raw %w( agreements categories document_types frameworks organizations registration_terms roles structures users ).map { |option|
             content_tag 'li', link_to( option, send(option + '_path') )
           }.join("\n") %>
