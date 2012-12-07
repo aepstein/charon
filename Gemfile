@@ -33,7 +33,8 @@ group :assets do
   gem 'coffee-rails', "~> 3.1"
   gem 'uglifier'
   gem 'execjs'
-  gem 'therubyracer'
+  gem 'therubyracer', "~> 0.10.2"
+#  gem 'libv8', '= 3.11.8.2'
 end
 group :development, :test do
   gem 'rspec-rails', '~> 2.6'
