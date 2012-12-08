@@ -33,7 +33,7 @@ class ApprovalsController < ApplicationController
   # GET /:approvable_class/:approvable_id/approvals/new
   # GET /:approvable_class/:approvable_id/approvals/new.xml
   def new
-    @approval.as_of = @approval.approvable.updated_at
+    @approval.as_of = @approval.approvable.updated_at.to_i
 
     respond_to do |format|
       format.html # new.html.erb
@@ -46,11 +46,10 @@ class ApprovalsController < ApplicationController
   def create
     respond_to do |format|
       if @approval.save
-        flash[:notice] = 'Approval was successfully created.'
-        format.html { redirect_to(@approval.approvable) }
+        format.html { redirect_to(@approval.approvable, notice: 'Approval was successfully created.') }
         format.xml  { render :xml => @approval, :status => :created, :location => @approval }
       else
-        @approval.as_of = @approval.approvable.updated_at
+        @approval.as_of = @approval.approvable.updated_at.to_i
         format.html { render :action => 'new' }
         format.xml  { render :xml => @approval.errors, :status => :unprocessable_entity }
       end

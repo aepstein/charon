@@ -156,6 +156,7 @@ class FundGrant < ActiveRecord::Base
     fund_tier_assignment.fund_source = fund_source
     fund_tier_assignment.organization = organization
     fund_tier_assignment.fund_tier = fund_source.fund_tiers.first
+    fund_tier_assignment.save
   end
 
   def to_s

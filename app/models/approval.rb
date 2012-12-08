@@ -2,6 +2,8 @@ class Approval < ActiveRecord::Base
   attr_accessible :as_of
   attr_readonly :user_id, :approvable_id, :approvable_type
 
+  attr_accessor :as_of
+
   has_paper_trail class_name: 'SecureVersion'
 
   belongs_to :approvable, polymorphic: true
@@ -19,10 +21,8 @@ class Approval < ActiveRecord::Base
   }
   scope :at_or_after, lambda { |time| where { |a| a.created_at.gte( time ) } }
 
-  # TODO this is necessary for validates_timeliness (see issue #6)
-  # can remove after resolution
-  columns_hash["as_of"] = ActiveRecord::ConnectionAdapters::Column.new("as_of", nil, "datetime")
-  validates :as_of, timeliness: { type: :datetime }
+  validates :as_of, on: :create, presence: true,
+    numericality: { greater_than: 0, only_integer: 0 }
   validates :approvable_id, uniqueness: { scope: [ :approvable_type, :user_id ] }
   validates :approvable, presence: true
   validates :user, presence: true
@@ -49,22 +49,13 @@ class Approval < ActiveRecord::Base
   after_create :approve_approvable, :deliver_approval_notice, :update_frameworks
   after_destroy :unapprove_approvable, :deliver_unapproval_notice, :update_frameworks
 
-  def as_of=(datetime)
-    @as_of=datetime.to_s
-  end
-
-  def as_of
-    return nil unless @as_of
-    @as_of.to_datetime
-  end
-
   def to_s; "Approval of #{user} for #{fund_request}"; end
 
   protected
 
   def approvable_must_not_change
-    return unless approvable && as_of
-    if approvable.updated_at.to_s.to_datetime > as_of
+    return unless approvable && as_of && as_of.to_i
+    if approvable.updated_at.to_i > as_of.to_i
       errors.add :base,
         "#{approvable} has changed since you saw it.  Please review again and confirm approval."
     end

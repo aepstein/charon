@@ -60,7 +60,6 @@ Feature: Manage fund_tier_assignments
     And I select "$1,000.00" from "Fund tier"
     And I press "Create"
     Then I should see "Fund tier assignment was successfully created."
-    And show me the page
     And I should see the following fund_tier_assignments:
       | Organization  | Fund tier |
       | Spending Club | $1,000.00 |

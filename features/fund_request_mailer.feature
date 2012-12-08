@@ -37,6 +37,7 @@ Feature: Manage fund_request mailers
     And the fund_request_type is amongst the fund_request_types of the fund_queue
     And a fund_tier exists with organization: organization "reviewer", maximum_allocation: 1000
     And the fund_tier is amongst the fund_tiers of the organization: "reviewer"
+    And the fund_tier is amongst the fund_tiers of the fund_source: "source"
     And the fund_grant: "<source>" has fund_tier: the fund_tier
     And a started notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
