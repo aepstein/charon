@@ -75,7 +75,10 @@ Feature: Manage fund_tier_assignments
     And I log in as user: "admin"
     And I am on the fund_tier_assignments page for the fund_source
     When I select "$2,000.00" for the "fund_tier_id" of the fund_tier_assignment in place
-    Then the fund_tier_assignment's to_s should be "$2,000.00"
+    And I am on the fund_tier_assignments page for the fund_source
+    Then I should see the following fund_tier_assignments:
+      | Organization  | Fund tier |
+      | Spending Club | $2,000.00 |
 
   Scenario: List and delete fund_tier_assignments
     Given a fund_source: "annual" exists with name: "Annual", organization: organization "source"
