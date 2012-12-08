@@ -38,7 +38,8 @@ Feature: Manage fund_request mailers
     And a fund_tier exists with organization: organization "reviewer", maximum_allocation: 1000
     And the fund_tier is amongst the fund_tiers of the organization: "reviewer"
     And the fund_tier is amongst the fund_tiers of the fund_source: "source"
-    And the fund_grant: "<source>" has fund_tier: the fund_tier
+    And the fund_tier is amongst the fund_tiers of the fund_source: "other"
+    And the fund_tier_assignment exists with fund_source: fund_source "<source>", organization: organization "requestor", fund_tier: the fund_tier, fund_grant: fund_grant: "<source>"
     And a started notice email is sent for fund_request: "started"
     Then 0 emails should be delivered to "old_president@example.com"
     And 1 email should be delivered to "president@example.com"
