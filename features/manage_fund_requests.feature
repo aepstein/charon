@@ -255,8 +255,8 @@ Feature: Manage fund_requests
     And a membership exists with organization: the organization, role: the requestor_role, user: user "applicant_requestor", active: true
     And I log in as user: "<user>"
     And I am on the page for the fund_request
-    Then I should <unfulfilled> "Unfulfilled submission requirements"
-    And I should <unfulfilled> "Certain requirements must be fulfilled before you may submit this request."
+    Then I should see "Unfulfilled submission requirements"
+    And I should <unfulfilled> "Certain requirements must be fulfilled before you may approve this request for submission."
     And I should <see_o> "Spending Club:"
     And I should <see_o> "must have a current registration with an approved status"
     And I should <see_u> "You:"
