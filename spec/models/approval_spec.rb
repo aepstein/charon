@@ -28,7 +28,7 @@ describe Approval do
     end
 
     it "should not save if the approvable has changed after as_of" do
-      approval.as_of = approval.approvable.updated_at - 2.minutes
+      approval.as_of = ( approval.approvable.updated_at - 2.minutes ).to_i
       approval.save.should be_false
     end
 

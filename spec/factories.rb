@@ -61,7 +61,7 @@ FactoryGirl.define do
   factory :approval do
     association :user
     association :approvable, :factory => :approvable_fund_request
-    as_of { |approval| approval.approvable.updated_at + 1.second }
+    as_of { |approval| approval.approvable.updated_at.to_i + 1.second }
   end
 
   factory :approver do
