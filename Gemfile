@@ -2,7 +2,6 @@ source 'http://rubygems.org'
 
 gem 'rails', '~> 3.2.0'
 gem 'mysql2', '~> 0.2'
-gem 'exception_notification'
 gem 'json'
 gem 'jquery-rails'
 gem 'kaminari'
