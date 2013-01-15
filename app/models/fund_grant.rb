@@ -152,11 +152,11 @@ class FundGrant < ActiveRecord::Base
       fund_source.fund_tier_assignments.
       where( organization_id: organization_id ).first ) ||
       fund_source.fund_tiers.empty?
-    build_fund_tier_assignment
-    fund_tier_assignment.fund_source = fund_source
-    fund_tier_assignment.organization = organization
-    fund_tier_assignment.fund_tier = fund_source.fund_tiers.first
-    fund_tier_assignment.save
+    create_fund_tier_assignment do |assignment|
+      assignment.fund_source = fund_source
+      assignment.organization = organization
+      assignment.fund_tier = fund_source.fund_tiers.first
+    end
   end
 
   def to_s

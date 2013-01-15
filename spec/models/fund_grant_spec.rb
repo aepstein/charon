@@ -85,6 +85,30 @@ describe FundGrant do
 
   end
 
+  context "adopt_fund_tier_assignment" do
+
+    let(:fund_source) { create :fund_source, organization: low_tier.organization, fund_tiers: [ high_tier, low_tier ] }
+    let(:high_tier) { create :fund_tier, organization: low_tier.organization, maximum_allocation: ( low_tier.maximum_allocation + 1000 ) }
+    let(:low_tier) { create :fund_tier }
+    let(:fund_grant) { create :fund_grant, organization: requestor, fund_source: fund_source }
+    let(:requestor) { create :organization, last_name: "Requestor" }
+
+    it "should adopt lowest tier for fund_source" do
+      fund_source.association(:fund_tiers).reset
+      fund_grant.fund_tier.should eql low_tier
+    end
+
+    it "should adopt no fund tier if fund_source has no fund_tiers" do
+      fund_source.fund_tiers.clear
+      fund_grant.fund_tier_assignment.should be_nil
+    end
+
+    it "should retain an established assignment" do
+      create :fund_tier_assignment, fund_source: fund_source, organization: requestor, fund_tier: high_tier
+      fund_grant.fund_tier.should eql high_tier
+    end
+  end
+
   context 'scopes' do
 
     let(:fund_grant) { create :fund_grant }
