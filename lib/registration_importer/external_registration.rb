@@ -83,6 +83,7 @@ module RegistrationImporter
       out << ( destination.new_record? ? 1 : 0  )
       out << ( destination.changed? ? 1 : 0 )
       destination.save! if out.last == 1
+      logger.info "Imported #{destination.name}"
       out[1] = 1 if import_contacts( destination )
       out
     end
