@@ -17,11 +17,15 @@
         <td><%=number_to_currency fund_request.fund_editions.
         where { perspective == 'reviewer' }.sum(:amount) %></td>
       <% end %>
+    <% end %>
       <%= table_row_tag do %>
         <td>Final allocation (additional funds from this request)</td>
+        <% if permitted_to?( :review, fund_request ) || fund_request.state == 'allocated' %>
         <td><%=number_to_currency fund_request.fund_allocations.final.sum(:amount) %></td>
+        <% else %>
+        <%=content_tag :td, content_tag( :em, "to be released" ) %>
+        <% end %>
       <% end %>
-    <% end %>
   </tbody>
 </table>
 
