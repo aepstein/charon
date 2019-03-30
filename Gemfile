@@ -20,9 +20,11 @@ gem 'formtastic'
 gem 'declarative_authorization', '>= 0.5'
 gem 'valium'
 gem 'cornell-assemblies-rails',
-  git: 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
+#  git: 'git://assembly.cornell.edu/git/cornell-assemblies-rails.git'
+  git: 'https://github.com/aepstein/cornell-assemblies-rails.git'
 gem 'cornell-assemblies-branding',
-  git: 'git://assembly.cornell.edu/git/cornell-assemblies-branding.git'
+#  git: 'git://assembly.cornell.edu/git/cornell-assemblies-branding.git'
+  git: 'https://github.com/aepstein/cornell-assemblies-branding.git'
 gem 'escape_utils'
 gem 'ancestry'
 gem 'decent_exposure', '~>2.0.0rc1'
